@@ -1,0 +1,15 @@
+mkdir in catalina_home for plugins
+
+mvn install:install-file -Dfile=libs/protege.jar -DgroupId=edu.stanford.smi.protege -DartifactId=protege -Dversion=3.4.8 -Dpackaging=jar
+
+mvn install:install-file -Dfile=libs/protege-owl.jar -DgroupId=edu.stanford.smi.protege -DartifactId=protege-owl -Dversion=3.4.8 -Dpackaging=jar
+
+mvn install:install-file -Dfile=libs/jess.jar -DgroupId=jessrules.com -DartifactId=jess -Dversion=7.1 -Dpackaging=jar
+
+mvn install:install-file -Dfile=libs/swrl-jess-bridge.jar -DgroupId=edu.stanford.smi.protege -DartifactId=swrl-jess-bridge -Dversion=3.4.8 -Dpackaging=jar
+
+mvn install:install-file -Dfile=libs/arena.jar -DgroupId=com.safran -DartifactId=arena -Dversion=1.1 -Dpackaging=jar
+
+mvn install:install-file -Dfile=libs/fp.jar -DgroupId=eu.arena -DartifactId=fp -Dversion=7.1 -Dpackaging=jar
+
+mvn install:install-file -Dfile=libs/ServicePlatformInterface.jar -DgroupId=org.arena -DartifactId=ServicePlatformInterfaceJava -Dversion=1.0-SNAPSHOT -Dpackaging=jar

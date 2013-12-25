@@ -1,0 +1,86 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans     
+        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://www.springframework.org/schema/task
+        http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+
+	<!-- DAL layer -->
+	<bean id="Persistance" class="itti.com.pl.arena.cm.persistence.jdbc.JdbcPersistence"
+		init-method="init">
+		<property name="propertiesFile" value="jdbc.properties" />
+		<property name="schemaFile" value="schema.properties" />
+	</bean>
+
+	<!-- Servlet layer -->
+	<bean id="GpsListener" class="itti.com.pl.arena.cm.web.servlet.GpsListener"
+		init-method="init" destroy-method="shutdown">
+		<property name="locationListener" ref="contextManager" />
+	</bean>
+
+	<!-- dummy GPS object used for developing/testing purposes TODO: must be 
+		removed/commented out before official release -->
+	<bean id="GpsListenerMock" class="itti.com.pl.arena.cm.utils.GpsListenerMock"
+		init-method="init" destroy-method="shutdown">
+		<property name="locationListener" ref="contextManager" />
+		<property name="startLocation" ref="dummyStartLocation" />
+		<property name="endLocation" ref="dummyEndLocation" />
+		<property name="steps" value="10000" />
+	</bean>
+	<bean id="dummyStartLocation" class="itti.com.pl.arena.cm.dto.PlatformLocation">
+		<constructor-arg name="platformId" value="Truck_A1"/>
+		<constructor-arg name="longitude" value="53.17654"/>
+		<constructor-arg name="latitude" value="17.34342"/>
+		<constructor-arg name="altitude" value="120.324"/>
+	</bean>
+	<bean id="dummyEndLocation" class="itti.com.pl.arena.cm.dto.PlatformLocation">
+		<constructor-arg name="platformId" value="Truck_A1"/>
+		<constructor-arg name="longitude" value="53.37654"/>
+		<constructor-arg name="latitude" value="17.14342"/>
+		<constructor-arg name="altitude" value="20.124"/>
+	</bean>
+
+	<task:scheduled-tasks scheduler="GpsMockScheduler">
+		<task:scheduled ref="GpsListenerMock" method="updateLocation"
+			fixed-delay="5000" />
+	</task:scheduled-tasks>
+
+	<task:scheduler id="GpsMockScheduler" pool-size="10" />
+
+	<!-- Ontology bean -->
+	<bean id="Ontology" class="itti.com.pl.arena.cm.ontology.ContextModuleOntologyManager"
+		init-method="init">
+ 		<property name="ontologyLocation" value="Arena_update_v06b.owl" />
+ 		<property name="ontologyNamespace" value="http://www.owl-ontologies.com/Ontology1350654591.owl#" />
+		<property name="locationDelta" value="5.02"/>
+	</bean>
+
+	<!-- Geoportal bean -->
+	<bean id="Geoportal" class="itti.com.pl.arena.cm.geoportal.govpl.GeoportalGovPl" />
+
+	<!-- Service layer -->
+	<bean id="contextManager" class="itti.com.pl.arena.cm.service.DefaultArenaTracker">
+		<property name="persistence" ref="Persistance" />
+		<property name="ontology" ref="Ontology" />
+		<property name="geoportal" ref="Geoportal" />
+	</bean>
+
+	<!-- Communication layer -->
+	<bean id="contextModuleJmsService" class="itti.com.pl.arena.cm.service.jms.ContextModuleZeroMqService" 
+		init-method="init" destroy-method="shutdown"> 
+
+		<property name="contextManager" ref="contextManager" />
+		<property name="brokerUrl" value="127.0.0.1"/>
+		<!-- current IP address by default -->
+		<!-- 
+		<property name="localIpAddress" value="localhost"/>
+		 -->
+		 <!-- random port, can be changed using any other value-->
+		<property name="connectionPort" value="45444"/>
+		</bean>
+</beans>
