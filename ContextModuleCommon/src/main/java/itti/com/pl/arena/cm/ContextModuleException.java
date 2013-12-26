@@ -1,7 +1,5 @@
 package itti.com.pl.arena.cm;
 
-import itti.com.pl.arena.cm.utils.helpers.StringHelper;
-
 /**
  * Default exception thrown by the ContextModule
  * All ContextModule exceptions should extend this one
@@ -10,22 +8,35 @@ import itti.com.pl.arena.cm.utils.helpers.StringHelper;
  */
 public abstract class ContextModuleException extends Exception{
 
-	private static final String EXCEPTION_MESSAGE = ContextModuleException.class.getSimpleName();
-
 	/**
-	 * 
+	 * Class UID
 	 */
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Base exception class thrown by the ContextModule
+	 * @param message message
+	 * @param throwable exception
+	 * @param args list of message parameters
+	 */
 	public ContextModuleException(String message, Throwable throwable, Object... args){
-		super(StringHelper.hasContent(message) ? String.format(message, args) : EXCEPTION_MESSAGE, throwable);
+		super(String.format(message, args), throwable);
 	}
 
+	/**
+	 * Base exception class thrown by the ContextModule
+	 * @param message message
+	 * @param args list of message parameters
+	 */
 	public ContextModuleException(String message, Object... args){
-		this(message, (Throwable)null, args);
+		super(String.format(message, args));
 	}
 
-	public ContextModuleException(String message){
-		super(message);
+	/**
+	 * Base exception class thrown by the ContextModule
+	 * @param throwable exception
+	 */
+	public ContextModuleException(Throwable throwable){
+		super(throwable);
 	}
 }
