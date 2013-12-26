@@ -76,7 +76,7 @@ public final class GeoportalHelper {
 		GeoportalRequestObject object = null;
 		// try to deserialize string into object
 		try {
-			object = JsonHelper.getJsonParser().fromJson(jsonRequestObject,
+			object = JsonHelper.fromJson(jsonRequestObject,
 					GeoportalRequestObject.class);
 		} catch (RuntimeException exc) {
 			LogHelper
