@@ -6,6 +6,7 @@ import itti.com.pl.arena.cm.geoportal.GeoportalException;
 import itti.com.pl.arena.cm.geoportal.GeoportalException.GeoportalExceptionCodes;
 import itti.com.pl.arena.cm.geoportal.govpl.dto.GeoportalRequestObject;
 import itti.com.pl.arena.cm.utils.helpers.IOHelper;
+import itti.com.pl.arena.cm.utils.helpers.IOHelperException;
 import itti.com.pl.arena.cm.utils.helpers.LogHelper;
 import itti.com.pl.arena.cm.utils.helpers.StringHelper;
 
@@ -77,7 +78,7 @@ public final class GeoportalGovPl implements Geoportal{
 			//get the response data stream
 			response = IOHelper.readStreamData(connection.getInputStream());
 
-		}catch(IOException | RuntimeException exc){
+		}catch(IOException | IOHelperException | RuntimeException exc){
 			LogHelper.exception(GeoportalGovPl.class, "getGeoportalData", "Could not retrieve Geoportal data", exc);
 
 			throw new GeoportalException(GeoportalExceptionCodes.API_GET_FAILED.getErrorMsg(), (Throwable)exc);

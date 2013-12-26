@@ -1,6 +1,7 @@
 package itti.com.pl.arena.cm.utils;
 
 import itti.com.pl.arena.cm.utils.helpers.IOHelper;
+import itti.com.pl.arena.cm.utils.helpers.IOHelperException;
 import itti.com.pl.arena.cm.utils.helpers.StringHelper;
 
 import java.io.IOException;
@@ -21,7 +22,7 @@ public class IOHelperTest {
 	private Random random = new Random();
 
 	@Test
-	public void testReadStreamBinaryData() throws IOException{
+	public void testReadStreamBinaryData() throws IOHelperException{
 		//lengths of binary arrays to be sent/receive using IOHelper
 		int[] lengthsToCheck = new int[]{0, 1, 12, 16, 32, 33, 64, 65, 512, 1024, 1025, 3343, random.nextInt(100000), random.nextInt(100000)};
 
@@ -39,7 +40,7 @@ public class IOHelperTest {
 	}
 
 	@Test
-	public void testReadStreamStringData() throws IOException{
+	public void testReadStreamStringData() throws IOHelperException{
 
 		//strings to be used during the test
 		String[] stringsToCheck = new String[]{"", "some text", UUID.randomUUID().toString(), getDummyString(64), getDummyString(1024), getDummyString(1300)};

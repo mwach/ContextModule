@@ -1,7 +1,8 @@
 package itti.com.pl.arena.cm.service;
 
 /**
- * Constants used by the ContextModule
+ * Constants used by the ContextModule service Contains names of all parameters
+ * used during communication with other modules
  * 
  * @author mawa
  * 
@@ -24,7 +25,8 @@ public final class Constants {
 		 */
 		getGISData,
 		/**
-		 * Service name used by the {@link ContextModule} 'getGeoportalData' method
+		 * Service name used by the {@link ContextModule} 'getGeoportalData'
+		 * method
 		 */
 		getGeoportalData;
 	}
@@ -43,15 +45,12 @@ public final class Constants {
 		/**
 		 * Instance of the Camera node
 		 */
-		CameraId,
-		CameraPosition,
-		CameraType,
-		CameraAngleX,
-		CameraAngleY,
-		
-		Bearing,
+		CameraId, 
+		CameraPosition, 
+		CameraType, 
+		CameraAngleX, 
+		CameraAngleY, 
+		Bearing, 
 		;
-
 	}
-
 }
