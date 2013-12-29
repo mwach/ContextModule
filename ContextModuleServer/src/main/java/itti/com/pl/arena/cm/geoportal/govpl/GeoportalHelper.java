@@ -12,6 +12,7 @@ import itti.com.pl.arena.cm.geoportal.govpl.dto.GeoportalResponse;
 import itti.com.pl.arena.cm.utils.helpers.JsonHelper;
 import itti.com.pl.arena.cm.utils.helpers.LogHelper;
 import itti.com.pl.arena.cm.utils.helpers.StringHelper;
+import itti.com.pl.arena.cm.utils.helpers.StringHelperException;
 
 public final class GeoportalHelper {
 
@@ -101,6 +102,7 @@ public final class GeoportalHelper {
 	 * @return parameters part of the request URL
 	 * @throws GeoportalException
 	 *             could not create the request URL
+	 * @throws StringHelperException 
 	 */
 	public static String toRequest(GeoportalRequestObject requestObject)
 			throws GeoportalException {
@@ -114,13 +116,19 @@ public final class GeoportalHelper {
 		String geometry = JsonHelper.toJson(requestObject.getGeometry());
 		String mapExtent = JsonHelper.toJson(requestObject.getMapExtent());
 		// prepare request data using object data
-		return String.format(REQUEST_DATA_FORMAT,
-				StringHelper.encodeUrl(geometry),
-				requestObject.getGeometryType(),
-				StringHelper.encodeUrl(mapExtent),
-				requestObject.getImageDisplay(), requestObject.getSr(),
-				requestObject.isReturnGeometry(), requestObject.getTolerance(),
-				requestObject.getLayers(), requestObject.getFormat());
+		String requestUrl = null;
+		try {
+		    requestUrl= String.format(REQUEST_DATA_FORMAT,
+		    		StringHelper.encodeUrl(geometry),
+		    		requestObject.getGeometryType(),
+		    		StringHelper.encodeUrl(mapExtent),
+		    		requestObject.getImageDisplay(), requestObject.getSr(),
+		    		requestObject.isReturnGeometry(), requestObject.getTolerance(),
+		    		requestObject.getLayers(), requestObject.getFormat());
+		} catch (StringHelperException e) {
+		    throw new GeoportalException(e.getLocalizedMessage());
+		}
+		return requestUrl;
 	}
 
 	/**
@@ -131,9 +139,10 @@ public final class GeoportalHelper {
 	 * @return parameters part of the request URL
 	 * @throws GeoportalException
 	 *             could not create the request URL
+	 * @throws StringHelperException 
 	 */
 	public static String toRequest(GeoportalRequestImageObject requestObject)
-			throws GeoportalException {
+			throws GeoportalException, StringHelperException {
 		// check, if provided object is not empty
 		if (requestObject == null) {
 			throw new GeoportalException(

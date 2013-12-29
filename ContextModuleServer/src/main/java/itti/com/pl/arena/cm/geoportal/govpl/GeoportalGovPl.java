@@ -92,7 +92,7 @@ public final class GeoportalGovPl implements Geoportal{
 
 	private String prepareRequestUrl(GeoportalService service, GeoportalRequestObject requestObject) 
 			throws GeoportalException {
-		return String.format("%s%s", service.getServiceURL(), GeoportalHelper.toRequest(requestObject));	
+		return String.format("%s%s", service.getServiceURL(), GeoportalHelper.toRequest(requestObject));
 	}
 
 	/**

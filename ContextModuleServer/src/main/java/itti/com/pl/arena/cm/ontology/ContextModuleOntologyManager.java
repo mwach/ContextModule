@@ -12,7 +12,7 @@ import itti.com.pl.arena.cm.geoportal.govpl.GeoportalKeys;
 import itti.com.pl.arena.cm.geoportal.govpl.dto.GeoportalResponse;
 import itti.com.pl.arena.cm.ontology.Constants.ContextModuleConstants;
 import itti.com.pl.arena.cm.utils.helpers.LogHelper;
-import itti.com.pl.arena.cm.utils.helpers.NumericHelper;
+import itti.com.pl.arena.cm.utils.helpers.NumbersHelper;
 import itti.com.pl.arena.cm.utils.helpers.StringHelper;
 
 import java.util.ArrayList;
@@ -68,8 +68,8 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 					String[] angleY = cameraInstance.get(ContextModuleConstants.Camera_has_angle_y.name());
 					String[] view = cameraInstance.get(ContextModuleConstants.Camera_view.name());
 
-					Double angleXVal = NumericHelper.getDoubleFromString(angleX != null && angleX.length > 0 ? angleX[0] : null);
-					Double angleYVal = NumericHelper.getDoubleFromString(angleY != null && angleY.length > 0 ? angleY[0] : null);
+					Double angleXVal = NumbersHelper.getDoubleFromString(angleX != null && angleX.length > 0 ? angleX[0] : null);
+					Double angleYVal = NumbersHelper.getDoubleFromString(angleY != null && angleY.length > 0 ? angleY[0] : null);
 					RelativePosition position = RelativePosition.getPostion(view != null && view.length > 0 ? view[0] : null);
 					
 					Camera cameraInfo = new Camera(cameraId, platformId,
@@ -83,7 +83,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 			}
 		}
 		String[] bearing = properties.get(ContextModuleConstants.Object_has_GPS_bearing.name());
-		Integer bearingVal = NumericHelper.getIntValue(bearing != null && bearing.length > 0 ? bearing[0] : null);
+		Integer bearingVal = NumbersHelper.getIntegerFromString(bearing != null && bearing.length > 0 ? bearing[0] : null);
 		information.addBearing(bearingVal);
 
 		return information;

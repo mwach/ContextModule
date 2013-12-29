@@ -19,7 +19,16 @@ public enum ErrorMessages {
 	IO_HELPER_COULD_NOT_READ_DATA_FROM_FILE("Could not read data from the file: %s. Details: %s"),
 	IO_HELPER_NO_OUTPUT_FILE_PROVIDED("Output file name not specified"),
 	IO_HELPER_NO_OUTPUT_DATA_PROVIDED("No data to be saved in '%s' was provided"),
-	IO_HELPER_COULD_NOT_WRITE_DATA_TO_FILE("Could not write data to file: %s. Details: %s"),
+	IO_HELPER_COULD_NOT_WRITE_DATA_TO_FILE("Could not write data to file: %s. Details: %s"), 
+	NETWORK_HELPER_CANNOT_OBTAIN_IP("Could not determine IP address of the host: %s"), 
+	PROPERTIES_HELPER_NO_FILE_PROVIDED("Empty properties file name provided"), 
+	PROPERTIES_HELPER_COULD_NOT_PARSE("Failed to load properties file '%s' Details: '%s'"), 
+	STRING_HELPER_CANNOT_ENCODE("Could not encode string '%s' using default charsed. Details: %s"), 
+	SPRING_HELPER_EMPTY_RESOURCE_LOCATION("Empty resource provided"), 
+	SPRING_HELPER_COULD_NOT_OPEN_RESOURCE("Could not open resource '%s'. Details: %s"),
+	SPRING_HELPER_COULD_NOT_READ_RESOURCE("Could not read resource '%s'. Details: %s"), 
+	ONTOLOGY_CANNOT_LOAD("Failed to load ontlogy '%s' Details: '%s'"),
+	
 	;
 
 

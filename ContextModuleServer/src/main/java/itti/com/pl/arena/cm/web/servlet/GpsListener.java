@@ -4,6 +4,7 @@ import itti.com.pl.arena.cm.Constants;
 import itti.com.pl.arena.cm.location.LocationListener;
 import itti.com.pl.arena.cm.location.LocationPublisher;
 import itti.com.pl.arena.cm.utils.helpers.IOHelper;
+import itti.com.pl.arena.cm.utils.helpers.IOHelperException;
 import itti.com.pl.arena.cm.utils.helpers.LogHelper;
 import itti.com.pl.arena.cm.utils.helpers.StringHelper;
 
@@ -63,6 +64,8 @@ public class GpsListener implements HttpRequestHandler, LocationPublisher{
 
 			notifyListener(newLocation);
 
+		} catch (IOHelperException e) {
+			LogHelper.warning(GpsListener.class, "doPost", "Could not process the request: %s", e.getLocalizedMessage());
 		}finally{
 			IOHelper.closeStream(request.getInputStream());
 			IOHelper.closeStream(response.getOutputStream());

@@ -16,6 +16,7 @@ import itti.com.pl.arena.cm.geoportal.govpl.dto.GeoportalResponse;
 import itti.com.pl.arena.cm.geoportal.govpl.dto.GeoportalRequestObject.Wkid;
 import itti.com.pl.arena.cm.utils.helpers.IOHelper;
 import itti.com.pl.arena.cm.utils.helpers.IOHelperException;
+import itti.com.pl.arena.cm.utils.helpers.StringHelperException;
 
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -100,7 +101,7 @@ public class GeoportalHelperTest {
 	}
 
 	@Test
-	public void testToRequestNull() throws GeoportalException{
+	public void testToRequestNull() throws GeoportalException, StringHelperException{
 
 		expectedException.expect(GeoportalException.class);
 		expectedException.expectMessage(GeoportalExceptionCodes.HELPER_REQUEST_NULL_OBJECT_PROVIDED.getErrorMsg());
@@ -111,7 +112,7 @@ public class GeoportalHelperTest {
 
 	@Test
 	@Ignore
-	public void testToRequestValid() throws GeoportalException{
+	public void testToRequestValid() throws GeoportalException, StringHelperException{
 
 		String refJsonRequest="geometry=%7B%22x%22%3A" +
 				"17.972947" +
@@ -131,7 +132,7 @@ public class GeoportalHelperTest {
 
 	@Test
 	@Ignore
-	public void testToImageRequestValid() throws GeoportalException{
+	public void testToImageRequestValid() throws GeoportalException, StringHelperException{
 
 		String refJsonRequest="dpi=96&transparent=true&format=PNG8" +
 				"&layers=show%3A0%2C1%2C2&bbox=17.974734282593246%2C53.12344164937794%2C17.97981294467757%2C53.12567982988655" +

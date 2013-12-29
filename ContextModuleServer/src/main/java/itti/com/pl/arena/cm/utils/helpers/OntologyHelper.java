@@ -1,5 +1,6 @@
 package itti.com.pl.arena.cm.utils.helpers;
 
+import itti.com.pl.arena.cm.ErrorMessages;
 import itti.com.pl.arena.cm.utils.helpers.IOHelper;
 import itti.com.pl.arena.cm.utils.helpers.IOHelperException;
 import itti.com.pl.arena.cm.utils.helpers.LogHelper;
@@ -31,7 +32,7 @@ public class OntologyHelper {
 			model = ProtegeOWL.createJenaOWLModelFromInputStream(
 					ontologyInputStream);
 		}catch(RuntimeException exc){
-			throw new IOHelperException(exc, "Failed to load ontlogy '%s' Details: '%s'", ontologyLocation, exc.getLocalizedMessage());
+			throw new IOHelperException(exc, ErrorMessages.ONTOLOGY_CANNOT_LOAD, ontologyLocation, exc.getLocalizedMessage());
 		}finally{
 			IOHelper.closeStream(ontologyInputStream);
 		}

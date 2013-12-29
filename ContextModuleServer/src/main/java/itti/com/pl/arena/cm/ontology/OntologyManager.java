@@ -2,7 +2,7 @@ package itti.com.pl.arena.cm.ontology;
 
 import itti.com.pl.arena.cm.ontology.Constants.ContextModuleConstants;
 import itti.com.pl.arena.cm.utils.helpers.LogHelper;
-import itti.com.pl.arena.cm.utils.helpers.NumericHelper;
+import itti.com.pl.arena.cm.utils.helpers.NumbersHelper;
 import itti.com.pl.arena.cm.utils.helpers.OntologyHelper;
 import itti.com.pl.arena.cm.utils.helpers.StringHelper;
 
@@ -163,8 +163,8 @@ public class OntologyManager{
 						OWLIndividual valueInd = model.getOWLIndividual(value);
 						if(valueInd != null){
 							addMultiProperty(individual, property, valueInd);
-						}else if(NumericHelper.isNumber(value)){
-							int valueInt = NumericHelper.getIntValue(value);
+						}else if(NumbersHelper.isInteger(value)){
+							int valueInt = NumbersHelper.getIntegerFromString(value);
 							addMultiProperty(individual, property, valueInt);
 						}else{
 							addMultiProperty(individual, property, value);
