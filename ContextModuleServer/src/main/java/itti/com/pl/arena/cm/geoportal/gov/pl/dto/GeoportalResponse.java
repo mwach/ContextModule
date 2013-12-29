@@ -1,4 +1,4 @@
-package itti.com.pl.arena.cm.geoportal.govpl.dto;
+package itti.com.pl.arena.cm.geoportal.gov.pl.dto;
 
 import java.util.ArrayList;
 import java.util.HashMap;

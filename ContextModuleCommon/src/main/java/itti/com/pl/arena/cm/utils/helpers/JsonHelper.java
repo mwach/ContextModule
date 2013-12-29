@@ -47,7 +47,7 @@ public final class JsonHelper {
 	 * @return value of the property
 	 */
 	public static String getJsonValue(String jsonString, String jsonProperty){
-		return getJsonValue(jsonString, jsonProperty, false);
+		return getJsonValue(jsonString, jsonProperty, true);
 	}
 
 	/**

@@ -4,7 +4,6 @@ import itti.com.pl.arena.cm.ContextModuleException;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.Ignore;
 import org.junit.rules.ExpectedException;
 
 public class ContextModuleExceptionTest {
@@ -16,8 +15,7 @@ public class ContextModuleExceptionTest {
 	public ExpectedException expectedException = ExpectedException.none();
 
 	@Test
-	@Ignore
-	public void testArenaPlatformExceptionStringNull() throws ContextModuleException{
+	public void testContextModuleExceptionStringNull() throws ContextModuleException{
 
 		expectedException.expect(ContextModuleException.class);
 		expectedException.expectMessage(ContextModuleException.class.getSimpleName());
@@ -27,8 +25,7 @@ public class ContextModuleExceptionTest {
 	}
 
 	@Test
-	@Ignore
-	public void testArenaPlatformExceptionStringNullParams() throws ContextModuleException{
+	public void testContextModuleExceptionStringNullParams() throws ContextModuleException{
 
 		expectedException.expect(ContextModuleException.class);
 		expectedException.expectMessage(ContextModuleException.class.getSimpleName());
@@ -38,7 +35,7 @@ public class ContextModuleExceptionTest {
 	}
 
 	@Test
-	public void testArenaPlatformExceptionStringEmptyParams() throws ContextModuleException{
+	public void testContextModuleExceptionStringEmptyParams() throws ContextModuleException{
 
 		expectedException.expect(ContextModuleException.class);
 		expectedException.expectMessage("");
@@ -48,8 +45,7 @@ public class ContextModuleExceptionTest {
 	}
 
 	@Test
-	@Ignore
-	public void testArenaPlatformExceptionStringNullThrowableEmptyParams() throws ContextModuleException{
+	public void testContextModuleExceptionStringNullThrowableEmptyParams() throws ContextModuleException{
 
 		expectedException.expect(ContextModuleException.class);
 		expectedException.expectMessage(ContextModuleException.class.getSimpleName());
@@ -59,7 +55,7 @@ public class ContextModuleExceptionTest {
 	}
 
 	@Test
-	public void testArenaPlatformExceptionStringThrowableEmptyParams() throws ContextModuleException{
+	public void testContextModuleExceptionStringThrowableEmptyParams() throws ContextModuleException{
 
 		expectedException.expect(ContextModuleException.class);
 		expectedException.expectMessage("");
@@ -69,7 +65,7 @@ public class ContextModuleExceptionTest {
 	}
 
 	@Test
-	public void testArenaPlatformExceptionStringThrowableValidParams() throws ContextModuleException{
+	public void testContextModuleExceptionStringThrowableValidParams() throws ContextModuleException{
 
 		expectedException.expect(ContextModuleException.class);
 		expectedException.expectMessage("");
@@ -79,7 +75,7 @@ public class ContextModuleExceptionTest {
 	}
 
 	@Test
-	public void testArenaPlatformExceptionStringThrowableValidExcp() throws ContextModuleException{
+	public void testContextModuleExceptionStringThrowableValidExcp() throws ContextModuleException{
 
 		String msg = "values %s %s";
 
@@ -91,7 +87,7 @@ public class ContextModuleExceptionTest {
 	}
 
 	@Test
-	public void testArenaPlatformExceptionStringThrowableValidExcpNotFull() throws ContextModuleException{
+	public void testContextModuleExceptionStringThrowableValidExcpNotFull() throws ContextModuleException{
 
 		String msg = "values %s";
 

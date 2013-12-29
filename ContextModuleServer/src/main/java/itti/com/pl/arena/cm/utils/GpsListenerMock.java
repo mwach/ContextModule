@@ -3,10 +3,10 @@ package itti.com.pl.arena.cm.utils;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.annotation.Required;
 
+import itti.com.pl.arena.cm.ErrorMessages;
 import itti.com.pl.arena.cm.dto.Location;
 import itti.com.pl.arena.cm.dto.PlatformLocation;
 import itti.com.pl.arena.cm.geoportal.GeoportalException;
-import itti.com.pl.arena.cm.geoportal.GeoportalException.GeoportalExceptionCodes;
 import itti.com.pl.arena.cm.location.LocationListener;
 import itti.com.pl.arena.cm.location.LocationPublisher;
 import itti.com.pl.arena.cm.utils.helpers.LogHelper;
@@ -83,10 +83,10 @@ public class GpsListenerMock implements LocationPublisher {
 
 		try{
 		if(getStartLocation() == null){
-			throw new GeoportalException(GeoportalExceptionCodes.VALIDATION_NULL_START_LOCATION);
+			throw new GeoportalException(ErrorMessages.GEOPORTAL_NULL_START_LOCATION);
 		}
 		if(getStartLocation() == null){
-			throw new GeoportalException(GeoportalExceptionCodes.VALIDATION_NULL_START_LOCATION);
+			throw new GeoportalException(ErrorMessages.GEOPORTAL_NULL_START_LOCATION);
 		}
 		}catch(GeoportalException exc){
 			LogHelper.exception(GpsListenerMock.class, "init", "Could not initialize component", exc);

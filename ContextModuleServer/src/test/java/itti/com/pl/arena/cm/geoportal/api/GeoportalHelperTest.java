@@ -5,15 +5,15 @@ import static org.junit.Assert.*;
 import java.util.Random;
 import java.util.UUID;
 
+import itti.com.pl.arena.cm.ErrorMessages;
 import itti.com.pl.arena.cm.geoportal.GeoportalException;
-import itti.com.pl.arena.cm.geoportal.GeoportalException.GeoportalExceptionCodes;
-import itti.com.pl.arena.cm.geoportal.govpl.GeoportalHelper;
-import itti.com.pl.arena.cm.geoportal.govpl.GeoportalKeys;
-import itti.com.pl.arena.cm.geoportal.govpl.dto.GeoportalRequestDataObject;
-import itti.com.pl.arena.cm.geoportal.govpl.dto.GeoportalRequestImageObject;
-import itti.com.pl.arena.cm.geoportal.govpl.dto.GeoportalRequestObject;
-import itti.com.pl.arena.cm.geoportal.govpl.dto.GeoportalResponse;
-import itti.com.pl.arena.cm.geoportal.govpl.dto.GeoportalRequestObject.Wkid;
+import itti.com.pl.arena.cm.geoportal.gov.pl.GeoportalHelper;
+import itti.com.pl.arena.cm.geoportal.gov.pl.GeoportalKeys;
+import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalRequestDataObject;
+import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalRequestImageObject;
+import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalRequestObject;
+import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalResponse;
+import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalRequestObject.Wkid;
 import itti.com.pl.arena.cm.utils.helpers.IOHelper;
 import itti.com.pl.arena.cm.utils.helpers.IOHelperException;
 import itti.com.pl.arena.cm.utils.helpers.StringHelperException;
@@ -34,7 +34,7 @@ public class GeoportalHelperTest {
 	public void testToJsonObjectNull() throws GeoportalException{
 
 		expectedException.expect(GeoportalException.class);
-		expectedException.expectMessage(GeoportalExceptionCodes.HELPER_SERIALIZE_NULL_OBJECT_PROVIDED.getErrorMsg());
+		expectedException.expectMessage(ErrorMessages.GEOPORTAL_SERIALIZE_NULL_OBJECT_PROVIDED.getMessage());
 		
 		GeoportalHelper.toJson(null);
 	}
@@ -43,7 +43,7 @@ public class GeoportalHelperTest {
 	public void testFromJsonStringNull() throws GeoportalException{
 
 		expectedException.expect(GeoportalException.class);
-		expectedException.expectMessage(GeoportalExceptionCodes.HELPER_DESERIALIZE_NULL_JSON_PROVIDED.getErrorMsg());
+		expectedException.expectMessage(ErrorMessages.GEOPORTAL_DESERIALIZE_NULL_JSON_PROVIDED.getMessage());
 		
 		GeoportalHelper.fromJson(null);
 	}
@@ -52,7 +52,7 @@ public class GeoportalHelperTest {
 	public void testFromJsonStringEmpty() throws GeoportalException{
 
 		expectedException.expect(GeoportalException.class);
-		expectedException.expectMessage(GeoportalExceptionCodes.HELPER_DESERIALIZE_NULL_JSON_PROVIDED.getErrorMsg());
+		expectedException.expectMessage(ErrorMessages.GEOPORTAL_DESERIALIZE_NULL_JSON_PROVIDED.getMessage());
 		
 		GeoportalHelper.fromJson("");
 	}
@@ -61,7 +61,7 @@ public class GeoportalHelperTest {
 	public void testFromJsonStringInvalid() throws GeoportalException{
 
 		expectedException.expect(GeoportalException.class);
-		expectedException.expectMessage(GeoportalExceptionCodes.HELPER_DESERIALIZE_INVALID_JSON_PROVIDED.getErrorMsg());
+		expectedException.expectMessage(ErrorMessages.GEOPORTAL_DESERIALIZE_INVALID_JSON_PROVIDED.getMessage());
 		
 		GeoportalHelper.fromJson(UUID.randomUUID().toString());
 	}
@@ -104,7 +104,7 @@ public class GeoportalHelperTest {
 	public void testToRequestNull() throws GeoportalException, StringHelperException{
 
 		expectedException.expect(GeoportalException.class);
-		expectedException.expectMessage(GeoportalExceptionCodes.HELPER_REQUEST_NULL_OBJECT_PROVIDED.getErrorMsg());
+		expectedException.expectMessage(ErrorMessages.GEOPORTAL_REQUEST_NULL_OBJECT_PROVIDED.getMessage());
 		
 		GeoportalHelper.toRequest(null);
 	}

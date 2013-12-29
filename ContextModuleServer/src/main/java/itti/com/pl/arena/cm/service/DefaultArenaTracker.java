@@ -9,13 +9,13 @@ import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.dto.Location;
 import itti.com.pl.arena.cm.dto.PlatformInformation;
 import itti.com.pl.arena.cm.dto.PlatformLocation;
-import itti.com.pl.arena.cm.geoportal.Geoportal;
 import itti.com.pl.arena.cm.geoportal.GeoportalException;
-import itti.com.pl.arena.cm.geoportal.govpl.GeoportalHelper;
-import itti.com.pl.arena.cm.geoportal.govpl.GeoportalKeys;
-import itti.com.pl.arena.cm.geoportal.govpl.GeoportalService;
-import itti.com.pl.arena.cm.geoportal.govpl.dto.GeoportalRequestDataObject;
-import itti.com.pl.arena.cm.geoportal.govpl.dto.GeoportalResponse;
+import itti.com.pl.arena.cm.geoportal.gov.pl.GeoportalService;
+import itti.com.pl.arena.cm.geoportal.gov.pl.GeoportalUrls;
+import itti.com.pl.arena.cm.geoportal.gov.pl.GeoportalHelper;
+import itti.com.pl.arena.cm.geoportal.gov.pl.GeoportalKeys;
+import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalRequestDataObject;
+import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalResponse;
 import itti.com.pl.arena.cm.location.LocationListener;
 import itti.com.pl.arena.cm.ontology.Ontology;
 import itti.com.pl.arena.cm.ontology.OntologyException;
@@ -27,7 +27,7 @@ public class DefaultArenaTracker implements ContextManagerService, LocationListe
 
 	private Persistence persistence = null;
 	private Ontology ontology = null;
-	private Geoportal geoportal = null;
+	private GeoportalService geoportal = null;
 
 	private Persistence getPersistence() {
 		return persistence;
@@ -47,12 +47,12 @@ public class DefaultArenaTracker implements ContextManagerService, LocationListe
 		this.ontology = ontology;
 	}
 
-	private Geoportal getGeoportal() {
+	private GeoportalService getGeoportal() {
 		return geoportal;
 	}
 
 	@Required
-	public void setGeoportal(Geoportal geoportal) {
+	public void setGeoportal(GeoportalService geoportal) {
 		this.geoportal = geoportal;
 	}
 
@@ -138,8 +138,8 @@ public class DefaultArenaTracker implements ContextManagerService, LocationListe
 	public List<GeoObject> getGeoportalData(double x, double y) {
 
 		try {
-			String geoportalData = getGeoportal().getGeoportalStringData(
-					GeoportalService.TOPOGRAPHIC_DATA_SERVICE, 
+			String geoportalData = getGeoportal().getGeoportalData(
+					GeoportalUrls.TOPOGRAPHIC_DATA_SERVICE, 
 					new GeoportalRequestDataObject(x, y));
 			GeoportalResponse response = 
 					GeoportalHelper.fromResponse(geoportalData, GeoportalKeys.getTopographyKeys());

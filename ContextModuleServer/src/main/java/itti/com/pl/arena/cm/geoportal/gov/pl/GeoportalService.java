@@ -1,10 +1,10 @@
-package itti.com.pl.arena.cm.geoportal.govpl;
+package itti.com.pl.arena.cm.geoportal.gov.pl;
 
 import itti.com.pl.arena.cm.Constants;
+import itti.com.pl.arena.cm.ErrorMessages;
 import itti.com.pl.arena.cm.geoportal.Geoportal;
 import itti.com.pl.arena.cm.geoportal.GeoportalException;
-import itti.com.pl.arena.cm.geoportal.GeoportalException.GeoportalExceptionCodes;
-import itti.com.pl.arena.cm.geoportal.govpl.dto.GeoportalRequestObject;
+import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalRequestObject;
 import itti.com.pl.arena.cm.utils.helpers.IOHelper;
 import itti.com.pl.arena.cm.utils.helpers.IOHelperException;
 import itti.com.pl.arena.cm.utils.helpers.LogHelper;
@@ -19,11 +19,19 @@ import java.net.URL;
  * @author mawa
  *
  */
-public final class GeoportalGovPl implements Geoportal{
+public final class GeoportalService implements Geoportal{
 //TODO: geoportal for other countries
 	private static final String REQUEST_METHOD = "GET";
 	private static final String PROPERTY_CHARSET = "charset";
 	private static final int CONNECTION_TIMEOUT = 10 * 1000;
+
+	@Override
+	public String getGeoportalData(String geoportalUrl)
+		throws GeoportalException {
+		LogHelper.debug(GeoportalService.class, "getGeoportalStringData", "init");
+		byte[] serviceSesponse = getGeoportalByteData(geoportalUrl);
+		return StringHelper.toUtf8String(serviceSesponse);
+	}
 
 	/**
 	 * Calls selected Geoportal service and returns returned data
@@ -32,13 +40,16 @@ public final class GeoportalGovPl implements Geoportal{
 	 * @return data returned from the Geoportal service
 	 * @throws GeoportalException could not process request
 	 */
-	public String getGeoportalStringData(GeoportalService service, GeoportalRequestObject requestObject) throws GeoportalException{
+	public String getGeoportalData(GeoportalUrls service, GeoportalRequestObject requestObject) throws GeoportalException{
 
-		LogHelper.debug(GeoportalGovPl.class, "getGeoportalStringData", "init");
-		byte[] serviceSesponse = getGeoportalData(service, requestObject);
-		return StringHelper.toUtf8String(serviceSesponse);
+		LogHelper.debug(GeoportalService.class, "getGeoportalStringData", "init");
+		//validate request parameters
+		validateRequest(service, requestObject);
+
+		//prepare URL
+		String requestUrl = prepareRequestUrl(service, requestObject);
+		return getGeoportalData(requestUrl);
 	}
-
 		
 	/**
 	 * Calls selected Geoportal service and returns returned data
@@ -47,23 +58,17 @@ public final class GeoportalGovPl implements Geoportal{
 	 * @return data returned from the Geoportal service
 	 * @throws GeoportalException could not process request
 	 */
-	private byte[] getGeoportalData(GeoportalService service, GeoportalRequestObject requestObject) throws GeoportalException{
+	private byte[] getGeoportalByteData(String requestUrl) throws GeoportalException{
 
-		LogHelper.debug(GeoportalGovPl.class, "getGeoportalData", "init");
-
-		//validate request parameters
-		validateRequest(service, requestObject);
+		LogHelper.debug(GeoportalService.class, "getGeoportalData", "init");
 
 		//objects used during connection
 		byte[] response = null;
 		HttpURLConnection connection = null;
 
 		try{
-			//prepare URL
-			String requestUrl = prepareRequestUrl(service, requestObject);
-
 			URL url = new URL(requestUrl);
-			LogHelper.debug(GeoportalGovPl.class, "getGeoportalData", "requestUrl: %s", url);
+			LogHelper.debug(GeoportalService.class, "getGeoportalData", "requestUrl: %s", url);
 
 			//open connection
 			connection = (HttpURLConnection) url.openConnection();           
@@ -79,18 +84,18 @@ public final class GeoportalGovPl implements Geoportal{
 			response = IOHelper.readStreamData(connection.getInputStream());
 
 		}catch(IOException | IOHelperException | RuntimeException exc){
-			LogHelper.exception(GeoportalGovPl.class, "getGeoportalData", "Could not retrieve Geoportal data", exc);
+			LogHelper.exception(GeoportalService.class, "getGeoportalData", "Could not retrieve Geoportal data", exc);
 
-			throw new GeoportalException(GeoportalExceptionCodes.API_GET_FAILED.getErrorMsg(), (Throwable)exc);
+			throw new GeoportalException(exc, ErrorMessages.GEOPORTAL_REQUEST_FAILED);
 		}finally{
 			IOHelper.closeConnection(connection);
 		}
-		LogHelper.debug(GeoportalGovPl.class, "getGeoportalData", "done. Read bytes: %s", response.length);
+		LogHelper.debug(GeoportalService.class, "getGeoportalData", "done. Read bytes: %s", response.length);
 
 		return response;
 	}
 
-	private String prepareRequestUrl(GeoportalService service, GeoportalRequestObject requestObject) 
+	private String prepareRequestUrl(GeoportalUrls service, GeoportalRequestObject requestObject) 
 			throws GeoportalException {
 		return String.format("%s%s", service.getServiceURL(), GeoportalHelper.toRequest(requestObject));
 	}
@@ -101,20 +106,18 @@ public final class GeoportalGovPl implements Geoportal{
 	 * @param requestObject data to be sent in the request
 	 * @throws GeoportalException validation failed
 	 */
-	private void validateRequest(GeoportalService service, GeoportalRequestObject requestObject) throws GeoportalException {
+	private void validateRequest(GeoportalUrls service, GeoportalRequestObject requestObject) throws GeoportalException {
 
 		if(service == null){
-			LogHelper.error(GeoportalGovPl.class, "validateRequest", "validation failed: service is null");
+			LogHelper.error(GeoportalService.class, "validateRequest", "validation failed: service is null");
 
-			throw new GeoportalException(
-					GeoportalExceptionCodes.VALIDATION_SERVICE_NOT_PROVIDED);
+			throw new GeoportalException(ErrorMessages.GEOPORTAL_SERVICE_NOT_PROVIDED);
 		}		
 
 		if(requestObject == null){
-			LogHelper.error(GeoportalGovPl.class, "validateRequest", "validation failed: request data not provided");
+			LogHelper.error(GeoportalService.class, "validateRequest", "validation failed: request data not provided");
 
-			throw new GeoportalException(
-					GeoportalExceptionCodes.VALIDATION_REQUEST_DATA_NOT_PROVIDED);
+			throw new GeoportalException(ErrorMessages.GEOPORTAL_REQUEST_DATA_NOT_PROVIDED);
 		}		
 	}
 }

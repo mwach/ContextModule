@@ -1,10 +1,19 @@
 package itti.com.pl.arena.cm.geoportal;
 
-import itti.com.pl.arena.cm.geoportal.govpl.GeoportalService;
-import itti.com.pl.arena.cm.geoportal.govpl.dto.GeoportalRequestObject;
-
+/**
+ * General Geoportal service interface
+ * @author cm-admin
+ *
+ */
 public interface Geoportal {
 
-	public String getGeoportalStringData(GeoportalService service, GeoportalRequestObject requestObject) throws GeoportalException;
+    /**
+     * do a HTTP request to retrieve Geoportal data
+     * @param service
+     * @param requestObject
+     * @return
+     * @throws GeoportalException
+     */
+    public String getGeoportalData(String geoportalUrl) throws GeoportalException;
 
 }

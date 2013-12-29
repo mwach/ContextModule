@@ -1,12 +1,12 @@
 package itti.com.pl.arena.cm.geoportal.api;
 
 import static org.junit.Assert.*;
+import itti.com.pl.arena.cm.ErrorMessages;
 import itti.com.pl.arena.cm.geoportal.GeoportalException;
-import itti.com.pl.arena.cm.geoportal.GeoportalException.GeoportalExceptionCodes;
-import itti.com.pl.arena.cm.geoportal.govpl.GeoportalGovPl;
-import itti.com.pl.arena.cm.geoportal.govpl.GeoportalService;
-import itti.com.pl.arena.cm.geoportal.govpl.dto.GeoportalRequestDataObject;
-import itti.com.pl.arena.cm.geoportal.govpl.dto.GeoportalRequestObject;
+import itti.com.pl.arena.cm.geoportal.gov.pl.GeoportalService;
+import itti.com.pl.arena.cm.geoportal.gov.pl.GeoportalUrls;
+import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalRequestDataObject;
+import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalRequestObject;
 
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -19,33 +19,33 @@ public class GeoportalGovPlTest {
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
 
-	private GeoportalGovPl geoportal = new GeoportalGovPl();
+	private GeoportalService geoportal = new GeoportalService();
 
 	@Test
 	public void testGeoportalAPINullParams() throws GeoportalException{
 
 		expectedException.expect(GeoportalException.class);
-		expectedException.expectMessage(GeoportalExceptionCodes.VALIDATION_SERVICE_NOT_PROVIDED.getErrorMsg());
+		expectedException.expectMessage(ErrorMessages.GEOPORTAL_SERVICE_NOT_PROVIDED.getMessage());
 
-		geoportal.getGeoportalStringData(null, null);
+		geoportal.getGeoportalData(null, null);
 	}
 
 	@Test
 	public void testGeoportalAPINullUrl() throws GeoportalException{
 
 		expectedException.expect(GeoportalException.class);
-		expectedException.expectMessage(GeoportalExceptionCodes.VALIDATION_SERVICE_NOT_PROVIDED.getErrorMsg());
+		expectedException.expectMessage(ErrorMessages.GEOPORTAL_SERVICE_NOT_PROVIDED.getMessage());
 
-		geoportal.getGeoportalStringData(null, new GeoportalRequestDataObject(1,1));
+		geoportal.getGeoportalData(null, new GeoportalRequestDataObject(1,1));
 	}
 
 	@Test
 	public void testGeoportalAPINullRequest() throws GeoportalException{
 
 		expectedException.expect(GeoportalException.class);
-		expectedException.expectMessage(GeoportalExceptionCodes.VALIDATION_REQUEST_DATA_NOT_PROVIDED.getErrorMsg());
+		expectedException.expectMessage(ErrorMessages.GEOPORTAL_REQUEST_DATA_NOT_PROVIDED.getMessage());
 
-		geoportal.getGeoportalStringData(GeoportalService.CATASTRAL_DATA_SERVICE, null);
+		geoportal.getGeoportalData(GeoportalUrls.CATASTRAL_DATA_SERVICE, null);
 	}
 
 	@Test
@@ -54,7 +54,7 @@ public class GeoportalGovPlTest {
 		//invalid coordinates in the request data - Geoportal should process the request and return empty data set
 		GeoportalRequestObject requestObject = new GeoportalRequestDataObject(-1, -1);
 
-		geoportal.getGeoportalStringData(GeoportalService.BOUNDARIES_REGISTRY_DATA_SERVICE, requestObject);
+		geoportal.getGeoportalData(GeoportalUrls.BOUNDARIES_REGISTRY_DATA_SERVICE, requestObject);
 	}
 
 
@@ -62,7 +62,7 @@ public class GeoportalGovPlTest {
 	public void testGeoportalAPIValidCatastralRequest() throws GeoportalException{
 
 		GeoportalRequestObject requestObject = new GeoportalRequestDataObject(17.972946559166793, 53.124318916278824);
-		String response = geoportal.getGeoportalStringData(GeoportalService.CATASTRAL_DATA_SERVICE, requestObject);
+		String response = geoportal.getGeoportalData(GeoportalUrls.CATASTRAL_DATA_SERVICE, requestObject);
 		assertNotNull(response);
 	}
 
@@ -70,7 +70,7 @@ public class GeoportalGovPlTest {
 	public void testGeoportalAPIValidBoundariesRequest() throws GeoportalException{
 
 		GeoportalRequestObject requestObject = new GeoportalRequestDataObject(17.972946559166793, 53.124318916278824);
-		String response = geoportal.getGeoportalStringData(GeoportalService.BOUNDARIES_REGISTRY_DATA_SERVICE, requestObject);
+		String response = geoportal.getGeoportalData(GeoportalUrls.BOUNDARIES_REGISTRY_DATA_SERVICE, requestObject);
 		assertNotNull(response);
 	}
 
@@ -78,7 +78,7 @@ public class GeoportalGovPlTest {
 	public void testGeoportalAPIValidVmapl2Request() throws GeoportalException{
 
 		GeoportalRequestObject requestObject = new GeoportalRequestDataObject(17.972946559166793, 53.124318916278824);
-		String response = geoportal.getGeoportalStringData(GeoportalService.TOPOGRAPHIC_VMAPL2_DATA_SERVICE, requestObject);
+		String response = geoportal.getGeoportalData(GeoportalUrls.TOPOGRAPHIC_VMAPL2_DATA_SERVICE, requestObject);
 		assertNotNull(response);
 	}
 
@@ -86,7 +86,7 @@ public class GeoportalGovPlTest {
 	public void testGeoportalAPIValidTopographicRequest() throws GeoportalException{
 
 		GeoportalRequestObject requestObject = new GeoportalRequestDataObject(17.972946559166793, 53.124318916278824);
-		String response = geoportal.getGeoportalStringData(GeoportalService.TOPOGRAPHIC_DATA_SERVICE, requestObject);
+		String response = geoportal.getGeoportalData(GeoportalUrls.TOPOGRAPHIC_DATA_SERVICE, requestObject);
 		assertNotNull(response);
 	}
 }

@@ -1,11 +1,11 @@
-package itti.com.pl.arena.cm.geoportal.govpl;
+package itti.com.pl.arena.cm.geoportal.gov.pl;
 
 /**
  * List of all available Geoportal services
  * @author mawa
  *
  */
-public enum GeoportalService {
+public enum GeoportalUrls {
 
 	/**
 	 * DATA SERVICES
@@ -70,7 +70,7 @@ public enum GeoportalService {
 	 * Constructor
 	 * @param serviceURL URL to the service
 	 */
-	private GeoportalService(String serviceURL){
+	private GeoportalUrls(String serviceURL){
 		this.serviceUrl = serviceURL;
 	}
 	

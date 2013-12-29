@@ -1,4 +1,4 @@
-package itti.com.pl.arena.cm.geoportal.govpl;
+package itti.com.pl.arena.cm.geoportal.gov.pl;
 
 import itti.com.pl.arena.cm.utils.helpers.StringHelper;
 

@@ -1,14 +1,14 @@
-package itti.com.pl.arena.cm.geoportal.govpl;
+package itti.com.pl.arena.cm.geoportal.gov.pl;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import itti.com.pl.arena.cm.ErrorMessages;
 import itti.com.pl.arena.cm.geoportal.GeoportalException;
-import itti.com.pl.arena.cm.geoportal.GeoportalException.GeoportalExceptionCodes;
-import itti.com.pl.arena.cm.geoportal.govpl.dto.GeoportalRequestImageObject;
-import itti.com.pl.arena.cm.geoportal.govpl.dto.GeoportalRequestObject;
-import itti.com.pl.arena.cm.geoportal.govpl.dto.GeoportalResponse;
+import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalRequestImageObject;
+import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalRequestObject;
+import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalResponse;
 import itti.com.pl.arena.cm.utils.helpers.JsonHelper;
 import itti.com.pl.arena.cm.utils.helpers.LogHelper;
 import itti.com.pl.arena.cm.utils.helpers.StringHelper;
@@ -50,8 +50,7 @@ public final class GeoportalHelper {
 		// check, if provided object is not null
 		if (requestObject == null) {
 			throw new GeoportalException(
-					GeoportalExceptionCodes.HELPER_SERIALIZE_NULL_OBJECT_PROVIDED
-							.getErrorMsg());
+					ErrorMessages.GEOPORTAL_SERIALIZE_NULL_OBJECT_PROVIDED);
 		}
 		return JsonHelper.toJson(requestObject);
 	}
@@ -71,8 +70,7 @@ public final class GeoportalHelper {
 		// check, if provided string contains data
 		if (!StringHelper.hasContent(jsonRequestObject)) {
 			throw new GeoportalException(
-					GeoportalExceptionCodes.HELPER_DESERIALIZE_NULL_JSON_PROVIDED
-							.getErrorMsg());
+					ErrorMessages.GEOPORTAL_DESERIALIZE_NULL_JSON_PROVIDED);
 		}
 		GeoportalRequestObject object = null;
 		// try to deserialize string into object
@@ -87,9 +85,8 @@ public final class GeoportalHelper {
 							String.format(
 									"Could not deserialize object into JSON. Object: '%s'",
 									jsonRequestObject), exc);
-			throw new GeoportalException(
-					GeoportalExceptionCodes.HELPER_DESERIALIZE_INVALID_JSON_PROVIDED
-							.getErrorMsg(), exc);
+			throw new GeoportalException(exc,
+				ErrorMessages.GEOPORTAL_DESERIALIZE_INVALID_JSON_PROVIDED);
 		}
 		return object;
 	}
@@ -109,8 +106,7 @@ public final class GeoportalHelper {
 		// check, if provided object is not empty
 		if (requestObject == null) {
 			throw new GeoportalException(
-					GeoportalExceptionCodes.HELPER_REQUEST_NULL_OBJECT_PROVIDED
-							.getErrorMsg());
+				ErrorMessages.GEOPORTAL_REQUEST_NULL_OBJECT_PROVIDED);
 		}
 		// prepare some request chunks as JSON strings
 		String geometry = JsonHelper.toJson(requestObject.getGeometry());
@@ -125,8 +121,8 @@ public final class GeoportalHelper {
 		    		requestObject.getImageDisplay(), requestObject.getSr(),
 		    		requestObject.isReturnGeometry(), requestObject.getTolerance(),
 		    		requestObject.getLayers(), requestObject.getFormat());
-		} catch (StringHelperException e) {
-		    throw new GeoportalException(e.getLocalizedMessage());
+		} catch (StringHelperException exc) {
+		    throw new GeoportalException(exc, ErrorMessages.GEOPORTAL_CANNOT_PREPARE_REQUEST_URL, exc.getLocalizedMessage());
 		}
 		return requestUrl;
 	}
@@ -146,8 +142,7 @@ public final class GeoportalHelper {
 		// check, if provided object is not empty
 		if (requestObject == null) {
 			throw new GeoportalException(
-					GeoportalExceptionCodes.HELPER_REQUEST_NULL_OBJECT_PROVIDED
-							.getErrorMsg());
+				ErrorMessages.GEOPORTAL_REQUEST_NULL_OBJECT_PROVIDED);
 		}
 		// prepare some request chunks as JSON strings
 		String bboxJson = StringHelper.encodeUrl(requestObject.getBboxString());

@@ -24,11 +24,6 @@ public enum ErrorMessages {
 	PROPERTIES_HELPER_NO_FILE_PROVIDED("Empty properties file name provided"), 
 	PROPERTIES_HELPER_COULD_NOT_PARSE("Failed to load properties file '%s' Details: '%s'"), 
 	STRING_HELPER_CANNOT_ENCODE("Could not encode string '%s' using default charsed. Details: %s"), 
-	SPRING_HELPER_EMPTY_RESOURCE_LOCATION("Empty resource provided"), 
-	SPRING_HELPER_COULD_NOT_OPEN_RESOURCE("Could not open resource '%s'. Details: %s"),
-	SPRING_HELPER_COULD_NOT_READ_RESOURCE("Could not read resource '%s'. Details: %s"), 
-	ONTOLOGY_CANNOT_LOAD("Failed to load ontlogy '%s' Details: '%s'"),
-	
 	;
 
 

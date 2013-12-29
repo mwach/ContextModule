@@ -1,10 +1,9 @@
 package itti.com.pl.arena.cm.geoportal.api;
 
 import static org.junit.Assert.*;
-
-import itti.com.pl.arena.cm.geoportal.govpl.dto.GeoportalRequestDataObject;
-import itti.com.pl.arena.cm.geoportal.govpl.dto.GeoportalRequestObject;
-import itti.com.pl.arena.cm.geoportal.govpl.dto.GeoportalRequestObject.Wkid;
+import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalRequestDataObject;
+import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalRequestObject;
+import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalRequestObject.Wkid;
 
 import java.util.Random;
 

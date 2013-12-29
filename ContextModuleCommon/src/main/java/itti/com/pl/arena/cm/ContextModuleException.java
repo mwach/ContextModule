@@ -20,7 +20,7 @@ public abstract class ContextModuleException extends Exception{
 	 * @param args list of message parameters
 	 */
 	public ContextModuleException(String message, Throwable throwable, Object... args){
-		super(String.format(message, args), throwable);
+		super(message == null ? ContextModuleException.class.getSimpleName() : String.format(message, args), throwable);
 	}
 
 	/**
@@ -29,7 +29,7 @@ public abstract class ContextModuleException extends Exception{
 	 * @param args list of message parameters
 	 */
 	public ContextModuleException(String message, Object... args){
-		super(String.format(message, args));
+		super(message == null ? ContextModuleException.class.getSimpleName() : String.format(message, args));
 	}
 
 	/**

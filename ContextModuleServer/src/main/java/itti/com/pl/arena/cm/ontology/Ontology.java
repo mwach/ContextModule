@@ -4,7 +4,7 @@ import java.util.List;
 
 import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.dto.PlatformInformation;
-import itti.com.pl.arena.cm.geoportal.govpl.dto.GeoportalResponse;
+import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalResponse;
 
 public interface Ontology {
 
