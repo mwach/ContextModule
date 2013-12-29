@@ -24,17 +24,6 @@ import org.springframework.beans.factory.BeanInitializationException;
 
 public class ContextModuleOntologyManager extends OntologyManager implements Ontology, Service{
 
-	private double locationDelta = 0.02;
-
-	public void setLocationDelta(double delta)
-	{
-		this.locationDelta = delta;
-	}
-
-	private double getLocationDelta()
-	{
-		return locationDelta;
-	}
 	@Override
 	public void init(){
 		try {
@@ -89,7 +78,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 		return information;
 	}
 
-	public List<String> getPlatforms(double x, double y) throws OntologyException {
+	public List<String> getPlatforms(double x, double y, double radius) throws OntologyException {
 
 		List<String> resultList = new ArrayList<String>();
 
@@ -105,7 +94,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 		String query = String.format(queryPattern, getOntologyNamespace(), 
 				var, var, 
 				ContextModuleConstants.Vehicle.name(), var, 
-				x-getLocationDelta(), x+getLocationDelta(), y-getLocationDelta(), y+getLocationDelta());
+				x-radius, x+radius, y-radius, y+radius);
 
 		//execute the query
 		List<String> matches = executeSparqlQuery(query, var);
@@ -164,7 +153,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 	}
 
 	@Override
-	public List<String> getGISObjects(double x, double y)
+	public List<String> getGISObjects(double x, double y, double radius)
 			throws OntologyException {
 
 		List<String> resultList = new ArrayList<String>();
@@ -180,7 +169,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 		String query = String.format(queryPattern, getOntologyNamespace(), 
 				var, var, 
 				ContextModuleConstants.Parking.name(), var, 
-				x-getLocationDelta(), x+getLocationDelta(), y-getLocationDelta(), y+getLocationDelta());
+				x-radius, x+radius, y-radius, y+radius);
 
 		//execute the query
 		List<String> matches = executeSparqlQuery(query, var);

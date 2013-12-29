@@ -62,6 +62,18 @@ public class DefaultArenaTracker implements ContextManagerService, LocationListe
 		this.geoportal = geoportal;
 	}
 
+	private double locationDelta = 0.02;
+
+	public void setLocationDelta(double delta)
+	{
+		this.locationDelta = delta;
+	}
+
+	private double getLocationDelta()
+	{
+		return locationDelta;
+	}
+
 	public Location getLastPosition(){
 		Location lastPos = null;
 		try {
@@ -115,7 +127,7 @@ public class DefaultArenaTracker implements ContextManagerService, LocationListe
 	public List<PlatformInformation> getPlatformsData(double x, double y) {
 		List<PlatformInformation> platformsInformation = new ArrayList<>();
 		try {
-			List<String> platformNames = getOntology().getPlatforms(x, y);
+			List<String> platformNames = getOntology().getPlatforms(x, y, getLocationDelta());
 			for (String platformId : platformNames) {
 				platformsInformation.add(getOntology().getPlatformInformation(platformId));
 			}
@@ -130,7 +142,7 @@ public class DefaultArenaTracker implements ContextManagerService, LocationListe
 
 		List<GeoObject> gisInformation = new ArrayList<>();
 		try {
-			List<String> platformNames = getOntology().getGISObjects(x, y);
+			List<String> platformNames = getOntology().getGISObjects(x, y, getLocationDelta());
 			for (String gisObjectId : platformNames) {
 				gisInformation.add(getOntology().getGISObject(gisObjectId));
 			}
