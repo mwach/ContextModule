@@ -120,4 +120,14 @@ public final class GeoportalService implements Geoportal{
 			throw new GeoportalException(ErrorMessages.GEOPORTAL_REQUEST_DATA_NOT_PROVIDED);
 		}		
 	}
+
+	@Override
+	public void init() {
+	    //nothing to be done here for that implementation
+	}
+
+	@Override
+	public void shutdown() {
+	    //nothing to be done here for that implementation
+	}
 }

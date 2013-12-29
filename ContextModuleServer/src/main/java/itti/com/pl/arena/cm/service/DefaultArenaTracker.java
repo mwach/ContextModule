@@ -2,6 +2,7 @@ package itti.com.pl.arena.cm.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Required;
 
@@ -28,6 +29,11 @@ public class DefaultArenaTracker implements ContextManagerService, LocationListe
 	private Persistence persistence = null;
 	private Ontology ontology = null;
 	private GeoportalService geoportal = null;
+
+	/*
+	 * ID of the listener (random UUID generated during initialization)
+	 */
+	private String id;
 
 	private Persistence getPersistence() {
 		return persistence;
@@ -148,5 +154,20 @@ public class DefaultArenaTracker implements ContextManagerService, LocationListe
 			LogHelper.exception(DefaultArenaTracker.class, "getgeoportalData", e.getLocalizedMessage(), e);
 		}
 		return getGISData(x, y);
+	}
+
+	@Override
+	public String getId() {
+	    return id;
+	}
+
+	@Override
+	public void init() {
+	    this.id = UUID.randomUUID().toString();
+	}
+
+	@Override
+	public void shutdown() {
+	    //not used by this servive
 	}
 }

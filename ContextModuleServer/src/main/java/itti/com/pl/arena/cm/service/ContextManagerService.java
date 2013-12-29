@@ -2,10 +2,11 @@ package itti.com.pl.arena.cm.service;
 
 import java.util.List;
 
+import itti.com.pl.arena.cm.Service;
 import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.dto.PlatformInformation;
 
-public interface ContextManagerService {
+public interface ContextManagerService extends Service{
 
 	public void startTracking();
 	
