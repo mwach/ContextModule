@@ -27,7 +27,7 @@ public enum ErrorMessages {
 
     PERSISTENCE_CANNOT_INITIALIZE(600, "Could not initialize HSQL database. Details: %s"), 
     PERSISTENCE_CANNOT_LOAD_DRIVER(601, "Failed to load HSQLDB JDBC driver. Details: %s"),
-    PERSISTENCE_CANNOT_LOAD_PROPERTIES(602, "Failed to load DAO properties. Details: %s"),
+    PERSISTENCE_CANNOT_LOAD_PROPERTIES(602, "Failed to load DAO properties."),
     PERSISTENCE_CANNOT_CLOSE_CONNECTION(603, "Could not close connection. Details: %s"), 
     PERSISTENCE_CANNOT_PREPARE_TIMESTAMP(604, "Could not parse provided timestamp '%d' into DB-supported form. Details: %s"), 
     PERSISTENCE_CANNOT_CREATE_RECORD(605, "Could not add new entry to the database. Details: %s"),

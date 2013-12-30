@@ -1,4 +1,4 @@
-package itti.com.pl.arena.cm.geoportal.api;
+package itti.com.pl.arena.cm.geoportal.gov.pl.dto;
 
 import static org.junit.Assert.*;
 import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalRequestDataObject;
