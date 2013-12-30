@@ -1,4 +1,4 @@
-package itti.com.pl.arena.cm.geoportal.api;
+package itti.com.pl.arena.cm.geoportal.gov.pl;
 
 import static org.junit.Assert.*;
 import itti.com.pl.arena.cm.ErrorMessages;
@@ -12,7 +12,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-public class GeoportalGovPlTest {
+public class GeoportalServiceTest {
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();

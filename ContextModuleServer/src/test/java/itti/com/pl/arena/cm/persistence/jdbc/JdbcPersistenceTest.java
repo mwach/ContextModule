@@ -13,7 +13,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class HsqlDbPersistenceTest {
+public class JdbcPersistenceTest {
 
     private static JdbcPersistence persistence = null;
 
@@ -22,8 +22,10 @@ public class HsqlDbPersistenceTest {
     @BeforeClass
     public static void before() throws PersistenceException, IOHelperException {
 	persistence = new JdbcPersistence();
-	persistence.setPropertiesFile("jdbc.test.properties");
-	persistence.setSchemaFile("schema.test.properties");
+	JdbcProperties properties = new JdbcProperties();
+	properties.setPropertiesFile("jdbc.test.properties");
+	properties.setSchemaFile("schema.test.properties");
+	persistence.setJdbcProperties(properties);
 	persistence.init();
     }
 

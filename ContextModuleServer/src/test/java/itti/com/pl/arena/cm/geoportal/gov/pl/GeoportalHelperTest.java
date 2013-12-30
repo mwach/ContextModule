@@ -1,4 +1,4 @@
-package itti.com.pl.arena.cm.geoportal.api;
+package itti.com.pl.arena.cm.geoportal.gov.pl;
 
 import static org.junit.Assert.*;
 

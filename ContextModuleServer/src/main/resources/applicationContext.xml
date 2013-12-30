@@ -12,6 +12,11 @@
 	<!-- DAL layer -->
 	<bean id="Persistance" class="itti.com.pl.arena.cm.persistence.jdbc.JdbcPersistence"
 		init-method="init">
+		<property name="jdbcProperties" ref="jdbcProperties" />
+	</bean>
+
+	<bean id="JdbcProperties" class="itti.com.pl.arena.cm.persistence.jdbc.JdbcProperties"
+		init-method="init">
 		<property name="propertiesFile" value="jdbc.properties" />
 		<property name="schemaFile" value="schema.properties" />
 	</bean>
@@ -35,18 +40,17 @@
 				<ref bean="arenaTracker" />
 			</array>
 		</property>
-		<property name="startLocation" ref="dummyStartLocation" />
-		<property name="endLocation" ref="dummyEndLocation" />
+		<property name="id" ref="dummyPlatform" />
+		<property name="start" ref="dummyStartLocation" />
+		<property name="destination" ref="dummyEndLocation" />
 		<property name="steps" value="10000" />
 	</bean>
-	<bean id="dummyStartLocation" class="itti.com.pl.arena.cm.dto.PlatformLocation">
-		<constructor-arg name="platformId" value="Truck_A1" />
+	<bean id="dummyStartLocation" class="itti.com.pl.arena.cm.dto.Location">
 		<constructor-arg name="longitude" value="53.17654" />
 		<constructor-arg name="latitude" value="17.34342" />
 		<constructor-arg name="altitude" value="120.324" />
 	</bean>
-	<bean id="dummyEndLocation" class="itti.com.pl.arena.cm.dto.PlatformLocation">
-		<constructor-arg name="platformId" value="Truck_A1" />
+	<bean id="dummyEndLocation" class="itti.com.pl.arena.cm.dto.Location">
 		<constructor-arg name="longitude" value="53.37654" />
 		<constructor-arg name="latitude" value="17.14342" />
 		<constructor-arg name="altitude" value="20.124" />

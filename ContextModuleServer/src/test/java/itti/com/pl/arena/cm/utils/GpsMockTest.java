@@ -36,8 +36,8 @@ public class GpsMockTest {
 		PlatformLocation startLocation = new PlatformLocation(UUID.randomUUID().toString(), 1, 1, 1, 0, 0, 0, 0);
 		Location endLocation = new Location(2, 2, 2, 0, 0, 0, 0);
 		GpsListenerMock mockDefault = new GpsListenerMock();
-		mockDefault.setStartLocation(startLocation);
-		mockDefault.setEndLocation(endLocation);
+		mockDefault.setStart(startLocation);
+		mockDefault.setDestination(endLocation);
 		mockDefault.setSteps(noOfSteps);
 		mockDefault.init();
 

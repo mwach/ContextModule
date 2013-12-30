@@ -6,8 +6,6 @@ import itti.com.pl.arena.cm.persistence.Persistence;
 import itti.com.pl.arena.cm.persistence.PersistenceException;
 import itti.com.pl.arena.cm.utils.helpers.DateTimeHelper;
 import itti.com.pl.arena.cm.utils.helpers.DateTimeHelperException;
-import itti.com.pl.arena.cm.utils.helpers.IOHelperException;
-import itti.com.pl.arena.cm.utils.helpers.SpringHelper;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -17,7 +15,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
@@ -34,63 +31,40 @@ import org.springframework.beans.factory.annotation.Required;
  */
 public class JdbcPersistence implements Persistence {
 
-    private final static String PROPERTY_URL = "url";
-    private final static String PROPERTY_DRIVER = "driver";
-    private final static String PROPERTY_USER = "user";
-    private final static String PROPERTY_PASSWORD = "password";
-    private final static String PROPERTY_TIMESTAMP = "timestamp";
+    private JdbcProperties properties = null;
 
-    private final static String QUERY_LOCATION_CREATE = "LOCATION_CREATE";
-    private final static String QUERY_LOCATION_INSERT = "LOCATION_INSERT";
-    private final static String QUERY_LOCATION_READ_LAST = "LOCATION_READ_LAST";
-    private final static String QUERY_LOCATION_READ = "LOCATION_READ";
-    private final static String QUERY_LOCATION_DELETE = "LOCATION_DELETE";
+    @Required
+    public void setJdbcProperties(JdbcProperties properties){
+	this.properties = properties;
+    }
+    private JdbcProperties getProperties(){
+	return properties;
+    }
 
-    private String propertiesFile;
-    private String schemaFile;
+    private String getConnectionPropertyValue(String property){
+	return getProperties().getConnectionPropertyValue(property);
+    }
+    private String getQueryPropertyValue(String property){
+	return getProperties().getConnectionPropertyValue(property);
+    }
 
-    private Properties queryProperties = null;
-    private Properties jdbcProperties = null;
     private String timestampFormat = null;
 
     private Connection connection = null;
     private LocationRowProcessor locationRowProcessor = new LocationRowProcessor();
-
-    private String getPropertiesFile() {
-	return propertiesFile;
-    }
-
-    @Required
-    public void setPropertiesFile(String propertiesFile) {
-	this.propertiesFile = propertiesFile;
-    }
-
-    private String getSchemaFile() {
-	return schemaFile;
-    }
-
-    @Required
-    public void setSchemaFile(String schemaFile) {
-	this.schemaFile = schemaFile;
-    }
 
     @Override
     public void init() throws PersistenceException {
 
 	boolean initialized = false;
 	try {
-	    jdbcProperties = SpringHelper
-		    .loadPropertiesFromResource(getPropertiesFile());
-	    queryProperties = SpringHelper
-		    .loadPropertiesFromResource(getSchemaFile());
-
-	    Class.forName(jdbcProperties.getProperty(PROPERTY_DRIVER));
+	    Class.forName(getConnectionPropertyValue(JdbcProperties.PROPERTY_DRIVER));
 
 	    connection = DriverManager.getConnection(
-		    jdbcProperties.getProperty(PROPERTY_URL),
-		    jdbcProperties.getProperty(PROPERTY_USER),
-		    jdbcProperties.getProperty(PROPERTY_PASSWORD));
-	    timestampFormat = jdbcProperties.getProperty(PROPERTY_TIMESTAMP);
+		    getConnectionPropertyValue(JdbcProperties.PROPERTY_URL),
+		    getConnectionPropertyValue(JdbcProperties.PROPERTY_USER),
+		    getConnectionPropertyValue(JdbcProperties.PROPERTY_PASSWORD));
+	    timestampFormat = getConnectionPropertyValue(JdbcProperties.PROPERTY_TIMESTAMP);
 
 	    prepareTables();
 	    initialized = true;
@@ -102,10 +76,6 @@ public class JdbcPersistence implements Persistence {
 	} catch (ClassNotFoundException e) {
 	    throw new PersistenceException(e,
 		    ErrorMessages.PERSISTENCE_CANNOT_LOAD_DRIVER, e.getLocalizedMessage());
-	} catch (IOHelperException e) {
-	    throw new PersistenceException(e,
-		    ErrorMessages.PERSISTENCE_CANNOT_LOAD_PROPERTIES,
-		    e.getLocalizedMessage());
 	} finally {
 	    if (!initialized) {
 		shutdown();
@@ -117,8 +87,8 @@ public class JdbcPersistence implements Persistence {
 	Statement statement = null;
 	try {
 	    statement = connection.createStatement();
-	    statement.execute(queryProperties
-		    .getProperty(QUERY_LOCATION_CREATE));
+	    statement.execute(properties
+		    .getQueryPropertyValue(JdbcProperties.QUERY_LOCATION_CREATE));
 	} finally {
 	    if (statement != null) {
 		statement.close();
@@ -148,7 +118,7 @@ public class JdbcPersistence implements Persistence {
 		    timestampFormat);
 
 	    runner.update(connection,
-		    queryProperties.getProperty(QUERY_LOCATION_INSERT), 1,
+		    getQueryPropertyValue(JdbcProperties.QUERY_LOCATION_INSERT), 1,
 		    location.getLongitude(), location.getLatitude(),
 		    location.getAltitude(), location.getBearing(),
 		    timestampString, location.getSpeed(),
@@ -177,7 +147,7 @@ public class JdbcPersistence implements Persistence {
 		Location.class, locationRowProcessor);
 	try {
 	    Location = runner.query(connection,
-		    queryProperties.getProperty(QUERY_LOCATION_READ_LAST),
+		    getQueryPropertyValue(JdbcProperties.QUERY_LOCATION_READ_LAST),
 		    rsHandler);
 	} catch (SQLException exc) {
 	    throw new PersistenceException(
@@ -202,7 +172,7 @@ public class JdbcPersistence implements Persistence {
 		    timestampFormat);
 
 	    retList = runner.query(connection,
-		    queryProperties.getProperty(QUERY_LOCATION_READ),
+		    getQueryPropertyValue(JdbcProperties.QUERY_LOCATION_READ),
 		    rsHandler, timestampString);
 	} catch (DateTimeHelperException exc) {
 	    throw new PersistenceException(exc, ErrorMessages.PERSISTENCE_CANNOT_PREPARE_TIMESTAMP, timestamp, exc.getLocalizedMessage());
@@ -224,7 +194,7 @@ public class JdbcPersistence implements Persistence {
 		    timestampFormat);
 
 	    runner.update(connection,
-		    queryProperties.getProperty(QUERY_LOCATION_DELETE),
+		    getQueryPropertyValue(JdbcProperties.QUERY_LOCATION_DELETE),
 		    timestampString);
 	} catch (DateTimeHelperException exc) {
 	    throw new PersistenceException(exc, ErrorMessages.PERSISTENCE_CANNOT_PREPARE_TIMESTAMP, timestamp, exc.getLocalizedMessage());
