@@ -50,7 +50,7 @@ public class PlatformInformation {
 				+ lastLocation + ", cameras=" + cameras + "]";
 	}
 
-	public void addBearing(Integer bearing) {
+	public void setBearing(Integer bearing) {
 		this.bearing = bearing;
 	}
 	public Integer getBearing() {

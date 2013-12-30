@@ -1,6 +1,5 @@
 package itti.com.pl.arena.cm.ontology;
 
-import itti.com.pl.arena.cm.Service;
 import itti.com.pl.arena.cm.dto.Building;
 import itti.com.pl.arena.cm.dto.Camera;
 import itti.com.pl.arena.cm.dto.GeoObject;
@@ -11,7 +10,6 @@ import itti.com.pl.arena.cm.dto.RelativePosition;
 import itti.com.pl.arena.cm.geoportal.gov.pl.GeoportalKeys;
 import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalResponse;
 import itti.com.pl.arena.cm.ontology.Constants.ContextModuleConstants;
-import itti.com.pl.arena.cm.utils.helpers.LogHelper;
 import itti.com.pl.arena.cm.utils.helpers.NumbersHelper;
 import itti.com.pl.arena.cm.utils.helpers.StringHelper;
 
@@ -20,59 +18,78 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.BeanInitializationException;
+/**
+ * Extension of the {@link OntologyManager} providing ContextManager-specific services
+ * 
+ * @author cm-admin
+ * 
+ */
+public class ContextModuleOntologyManager extends OntologyManager implements Ontology {
 
-public class ContextModuleOntologyManager extends OntologyManager implements Ontology, Service {
-
-    @Override
-    public void init() {
-	try {
-	    super.init();
-	} catch (OntologyException exc) {
-	    LogHelper.exception(ContextModuleOntologyManager.class, "init", "Coulnd not initialize component", exc);
-	    throw new BeanInitializationException("Could not initialize ontology component", exc);
-	}
-    }
-
-    @Override
-    public void shutdown() {
-    }
-
+    /*
+     * (non-Javadoc)
+     * 
+     * @see itti.com.pl.arena.cm.ontology.Ontology#getPlatformInformation(java.lang.String)
+     */
     @Override
     public PlatformInformation getPlatformInformation(String platformId) throws OntologyException {
 
-	Map<String, String[]> properties = getInstanceProperties(platformId);
-
+	// prepare data object
 	PlatformInformation information = new PlatformInformation(platformId, null, null);
 
+	// get information about the platform from ontology
+	Map<String, String[]> properties = getInstanceProperties(platformId);
+
+	// get information about cameras installed on platform
 	String[] cameras = properties.get(ContextModuleConstants.Vehicle_has_camera.name());
 	if (cameras != null) {
 	    for (String cameraId : cameras) {
+		Camera cameraInfo = getCameraInformation(cameraId);
+		information.addCamera(cameraInfo);
 
-		Map<String, String[]> cameraInstance = getInstanceProperties(cameraId);
-		if (!cameraInstance.isEmpty()) {
-		    String[] cameraType = cameraInstance.get(ContextModuleConstants.Camera_type.name());
-		    String[] angleX = cameraInstance.get(ContextModuleConstants.Camera_has_angle_x.name());
-		    String[] angleY = cameraInstance.get(ContextModuleConstants.Camera_has_angle_y.name());
-		    String[] view = cameraInstance.get(ContextModuleConstants.Camera_view.name());
-
-		    Double angleXVal = NumbersHelper.getDoubleFromString(angleX != null && angleX.length > 0 ? angleX[0] : null);
-		    Double angleYVal = NumbersHelper.getDoubleFromString(angleY != null && angleY.length > 0 ? angleY[0] : null);
-		    RelativePosition position = RelativePosition.getPostion(view != null && view.length > 0 ? view[0] : null);
-
-		    Camera cameraInfo = new Camera(cameraId, platformId, cameraType == null || cameraType.length == 0 ? null
-			    : cameraType[0], angleXVal == null ? 0 : angleXVal, angleYVal == null ? 0 : angleYVal, position);
-		    information.addCamera(cameraInfo);
-		}
 	    }
 	}
 	String[] bearing = properties.get(ContextModuleConstants.Object_has_GPS_bearing.name());
 	Integer bearingVal = NumbersHelper.getIntegerFromString(bearing != null && bearing.length > 0 ? bearing[0] : null);
-	information.addBearing(bearingVal);
+	information.setBearing(bearingVal);
 
 	return information;
     }
 
+    /**
+     * Retrieves information about camera from ontology
+     * 
+     * @param cameraId
+     *            ID of the camera
+     * @return camera object
+     * @throws OntologyException
+     */
+    private Camera getCameraInformation(String cameraId) throws OntologyException {
+
+	Camera cameraInfo = null;
+
+	Map<String, String[]> cameraInstance = getInstanceProperties(cameraId);
+	if (!cameraInstance.isEmpty()) {
+	    String[] cameraType = cameraInstance.get(ContextModuleConstants.Camera_type.name());
+	    String[] angleX = cameraInstance.get(ContextModuleConstants.Camera_has_angle_x.name());
+	    String[] angleY = cameraInstance.get(ContextModuleConstants.Camera_has_angle_y.name());
+	    String[] view = cameraInstance.get(ContextModuleConstants.Camera_view.name());
+
+	    Double angleXVal = NumbersHelper.getDoubleFromString(angleX != null && angleX.length > 0 ? angleX[0] : null);
+	    Double angleYVal = NumbersHelper.getDoubleFromString(angleY != null && angleY.length > 0 ? angleY[0] : null);
+	    RelativePosition position = RelativePosition.getPostion(view != null && view.length > 0 ? view[0] : null);
+
+	    cameraInfo = new Camera(cameraId, cameraType == null || cameraType.length == 0 ? null : cameraType[0],
+		    angleXVal == null ? 0 : angleXVal, angleYVal == null ? 0 : angleYVal, position);
+	}
+	return cameraInfo;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see itti.com.pl.arena.cm.ontology.Ontology#getPlatforms(double, double, double)
+     */
     public List<String> getPlatforms(double x, double y, double radius) throws OntologyException {
 
 	List<String> resultList = new ArrayList<String>();
@@ -96,6 +113,11 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 	return resultList;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see itti.com.pl.arena.cm.ontology.Ontology#getGISObject(java.lang.String)
+     */
     @Override
     public GeoObject getGISObject(String objectId) throws OntologyException {
 
@@ -137,6 +159,11 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 	return information;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see itti.com.pl.arena.cm.ontology.Ontology#getGISObjects(double, double, double)
+     */
     @Override
     public List<String> getGISObjects(double x, double y, double radius) throws OntologyException {
 
@@ -161,6 +188,12 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 	return resultList;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see itti.com.pl.arena.cm.ontology.Ontology#addGeoportalData(double, double,
+     * itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalResponse)
+     */
     @Override
     public void addGeoportalData(double x, double y, GeoportalResponse geoportalData) {
 

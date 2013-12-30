@@ -19,7 +19,7 @@ public enum ErrorMessages {
     GEOPORTAL_DESERIALIZE_INVALID_JSON_PROVIDED(122, "Could not deserialize given string into valid object"), 
     GEOPORTAL_REQUEST_NULL_OBJECT_PROVIDED(123, "Could not create valid request from null object"),
 
-    ONTOLOGY_CANNOT_LOAD(200, "Failed to load ontlogy '%s' Details: '%s'"),
+    ONTOLOGY_CANNOT_LOAD(200, "Failed to load ontology '%s'"),
 
     SPRING_HELPER_EMPTY_RESOURCE_LOCATION(501, "Empty resource provided"), 
     SPRING_HELPER_COULD_NOT_OPEN_RESOURCE(502, "Could not open resource '%s'. Details: %s"),

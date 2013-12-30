@@ -1,6 +1,7 @@
 package itti.com.pl.arena.cm.ontology;
 
 import itti.com.pl.arena.cm.ErrorMessages;
+import itti.com.pl.arena.cm.Service;
 import itti.com.pl.arena.cm.ontology.Constants.ContextModuleConstants;
 import itti.com.pl.arena.cm.utils.helpers.IOHelper;
 import itti.com.pl.arena.cm.utils.helpers.LogHelper;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.annotation.Required;
 
 import edu.stanford.smi.protege.model.Instance;
@@ -42,7 +44,7 @@ import edu.stanford.smi.protegex.owl.swrl.parser.SWRLParseException;
  * @author cm-admin
  * 
  */
-public class OntologyManager {
+public class OntologyManager implements Service{
 
     // in-memory ontology model
     private JenaOWLModel model = null;
@@ -96,18 +98,27 @@ public class OntologyManager {
      * @throws OntologyException
      *             could not load ontology
      */
-    public void init() throws OntologyException {
+    @Override
+    public void init() {
 
 	LogHelper.debug(OntologyManager.class, "init", "Initialization of the ontology '%s'", getOntologyLocation());
 	try {
 	    model = loadModel(getOntologyLocation());
 	} catch (Exception exc) {
 	    LogHelper.exception(OntologyManager.class, "init", "Could not initialize ontology", exc);
-	    throw new OntologyException(ErrorMessages.ONTOLOGY_CANNOT_LOAD, String.valueOf(getOntologyLocation()),
-		    exc.getLocalizedMessage());
+	    throw new BeanInitializationException(String.format(ErrorMessages.ONTOLOGY_CANNOT_LOAD.getMessage(), String.valueOf(getOntologyLocation())), exc);
 	}
     }
 
+    /**
+     * Closes ontlogy model
+     */
+    @Override
+    public void shutdown(){
+	if(model != null){
+	    model.close();
+	}
+    }
     /**
      * Returns list of direct (first level) instances of given ontology class
      * 
