@@ -1,16 +1,28 @@
 package itti.com.pl.arena.cm.ontology;
 
 import itti.com.pl.arena.cm.ContextModuleException;
+import itti.com.pl.arena.cm.ErrorMessages;
 
-public class OntologyException extends ContextModuleException{
+/**
+ * Exception thrown by the Ontology module
+ * 
+ * @author cm-admin
+ * 
+ */
+public class OntologyException extends ContextModuleException {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    /**
+     * ID of the class
+     */
+    private static final long serialVersionUID = 1L;
 
-	public OntologyException(String message, Object... args) {
-		super(message, args);
-	}
+    /**
+     * Default exception
+     * @param message message
+     * @param args optional message arguments
+     */
+    public OntologyException(ErrorMessages message, Object... args) {
+	super(message.getMessage(), args);
+    }
 
 }
