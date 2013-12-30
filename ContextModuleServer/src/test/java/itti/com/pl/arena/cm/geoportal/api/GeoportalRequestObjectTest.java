@@ -11,33 +11,31 @@ import org.junit.Test;
 
 public class GeoportalRequestObjectTest {
 
-	private Random random = new Random();
-	private static final double MAX_DOUBLE_DELTA = 0.0001;
+    private Random random = new Random();
+    private static final double MAX_DOUBLE_DELTA = 0.0001;
 
-	@Test
-	public void tetsGeoportalRequestObjectBasic(){
+    @Test
+    public void tetsGeoportalRequestObjectBasic() {
 
-		double longitude = random.nextFloat();
-		double latitude = random.nextFloat();
-		GeoportalRequestObject requestObject = new GeoportalRequestDataObject(
-				longitude, latitude);
+	double longitude = random.nextFloat();
+	double latitude = random.nextFloat();
+	GeoportalRequestObject requestObject = new GeoportalRequestDataObject(longitude, latitude);
 
-		assertEquals(longitude, requestObject.getLongitude(), MAX_DOUBLE_DELTA);
-		assertEquals(latitude, requestObject.getLatitude(), MAX_DOUBLE_DELTA);
-	}
+	assertEquals(longitude, requestObject.getLongitude(), MAX_DOUBLE_DELTA);
+	assertEquals(latitude, requestObject.getLatitude(), MAX_DOUBLE_DELTA);
+    }
 
-	@Test
-	public void tetsGeoportalRequestObjectExt(){
+    @Test
+    public void tetsGeoportalRequestObjectExt() {
 
-		double longitude = random.nextFloat();
-		double latitude = random.nextFloat();
-		Wkid wkid = Wkid.W_2180;
-		GeoportalRequestObject requestObject = new GeoportalRequestDataObject(
-				longitude, latitude, wkid);
+	double longitude = random.nextFloat();
+	double latitude = random.nextFloat();
+	Wkid wkid = Wkid.W_2180;
+	GeoportalRequestObject requestObject = new GeoportalRequestDataObject(longitude, latitude, wkid);
 
-		assertEquals(longitude, requestObject.getLongitude(), MAX_DOUBLE_DELTA);
-		assertEquals(latitude, requestObject.getLatitude(), MAX_DOUBLE_DELTA);
-		assertEquals(String.valueOf(wkid.getValue()), requestObject.getWkid());
-	}
+	assertEquals(longitude, requestObject.getLongitude(), MAX_DOUBLE_DELTA);
+	assertEquals(latitude, requestObject.getLatitude(), MAX_DOUBLE_DELTA);
+	assertEquals(String.valueOf(wkid.getValue()), requestObject.getWkid());
+    }
 
 }

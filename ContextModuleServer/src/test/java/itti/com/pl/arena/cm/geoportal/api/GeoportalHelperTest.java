@@ -18,7 +18,6 @@ import itti.com.pl.arena.cm.utils.helpers.IOHelper;
 import itti.com.pl.arena.cm.utils.helpers.IOHelperException;
 import itti.com.pl.arena.cm.utils.helpers.StringHelperException;
 
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -68,7 +67,6 @@ public class GeoportalHelperTest {
 
 
 	@Test
-	@Ignore
 	public void testToFromObjectValid() throws GeoportalException{
 
 		GeoportalRequestObject requestObject = 
@@ -80,7 +78,6 @@ public class GeoportalHelperTest {
 	}
 
 	@Test
-	@Ignore
 	public void testToFromObjectinvalid() throws GeoportalException{
 
 		//some values were changed
@@ -111,7 +108,6 @@ public class GeoportalHelperTest {
 
 
 	@Test
-	@Ignore
 	public void testToRequestValid() throws GeoportalException, StringHelperException{
 
 		String refJsonRequest="geometry=%7B%22x%22%3A" +
@@ -131,7 +127,6 @@ public class GeoportalHelperTest {
 
 
 	@Test
-	@Ignore
 	public void testToImageRequestValid() throws GeoportalException, StringHelperException{
 
 		String refJsonRequest="dpi=96&transparent=true&format=PNG8" +

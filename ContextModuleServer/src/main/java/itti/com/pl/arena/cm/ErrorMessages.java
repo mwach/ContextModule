@@ -33,8 +33,12 @@ public enum ErrorMessages {
     PERSISTENCE_CANNOT_CREATE_RECORD(605, "Could not add new entry to the database. Details: %s"),
     PERSISTENCE_CANNOT_READ_LAST_RECORD(606, "Could not read last entry from the database. Details: %s"),
     PERSISTENCE_CANNOT_READ_RECORDS(607, "Could not read list of entries from the database. Details: %s"),
-    PERSISTENCE_CANNOT_DELETE_RECORD(608, "Could not delete entry from the database. Details: %s"),
+    PERSISTENCE_CANNOT_DELETE_RECORD(608, "Could not delete entry from the database. Details: %s"), 
     
+    JMS_SERVER_IP_NOT_PROVIDED(700, "ServerIpAddress not provided"),
+    JMS_CLIENT_IP_NOT_PROVIDED(700, "ClientIpAddress not provided"),
+    JMS_CLIENT_PORT_NOT_PROVIDED(700, "ClientPort not provided"),
+
     ;
 
     /*

@@ -26,8 +26,6 @@ public class GpsMockTest {
 		//this one has invalid params, so use default ones
 		GpsListenerMock mockInvalidDefault = new GpsListenerMock();
 		mockInvalidDefault.init();
-
-		mockInvalidDefault.init();
 	}
 
 	@Test

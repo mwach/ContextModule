@@ -1,73 +1,85 @@
 package itti.com.pl.arena.cm.persistence.jdbc;
 
 import static org.junit.Assert.*;
-
 import itti.com.pl.arena.cm.dto.Location;
 import itti.com.pl.arena.cm.persistence.PersistenceException;
-import itti.com.pl.arena.cm.persistence.PersistenceTestHelper;
 import itti.com.pl.arena.cm.persistence.jdbc.JdbcPersistence;
 import itti.com.pl.arena.cm.utils.helpers.IOHelperException;
 
 import java.util.List;
+import java.util.Random;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class HsqlDbPersistenceTest {
 
-	private static JdbcPersistence persistence = null;
+    private static JdbcPersistence persistence = null;
 
-	@BeforeClass
-	public static void before() throws PersistenceException, IOHelperException{
-		persistence = new JdbcPersistence();
-		persistence.setPropertiesFile("jdbc.test.properties");
-		persistence.setSchemaFile("schema.test.properties");
-		persistence.init();	
-	}
+    private static Random random = new Random();
 
-	@AfterClass
-	public static void afterClass() throws PersistenceException{
-		persistence.shutdown();
-	}
+    @BeforeClass
+    public static void before() throws PersistenceException, IOHelperException {
+	persistence = new JdbcPersistence();
+	persistence.setPropertiesFile("jdbc.test.properties");
+	persistence.setSchemaFile("schema.test.properties");
+	persistence.init();
+    }
 
-	@Test
-	@Ignore
-	public void testInsertPosition() throws PersistenceException {
+    @AfterClass
+    public static void afterClass() throws PersistenceException {
+	persistence.shutdown();
+    }
 
-		long timestamp = System.currentTimeMillis();
+    @Test
+    public void testInsertPosition() throws PersistenceException {
 
-		Location location = PersistenceTestHelper.createDummyLocation(timestamp);
+	long timestamp = System.currentTimeMillis();
 
-		persistence.create(location);
-		Location lastLocation = persistence.readLastPosition();
-	
-		assertEquals(location, lastLocation);
-	}
+	Location location = createDummyLocation(timestamp);
 
-	@Test
-	public void testMultiInsertPosition() throws PersistenceException {
+	persistence.create(location);
+	Location lastLocation = persistence.readLastPosition();
 
-		long timestamp = System.currentTimeMillis();
+	assertEquals(location, lastLocation);
+    }
 
-		Location locationOne = PersistenceTestHelper.createDummyLocation(timestamp);
-		Location locationTwo = PersistenceTestHelper.createDummyLocation(timestamp +1);
+    @Test
+    public void testMultiInsertPosition() throws PersistenceException {
 
-		persistence.create(locationOne);
-		persistence.create(locationTwo);
-		Location lastLocation = persistence.readLastPosition();
-		assertEquals(locationTwo, lastLocation);
+	long timestamp = System.currentTimeMillis();
 
-		List<Location> Locations = persistence.readHistory(timestamp);
-		assertEquals(2, Locations.size());
-		assertEquals(locationOne, Locations.get(0));
-		assertEquals(locationTwo, Locations.get(1));
+	Location locationOne = createDummyLocation(timestamp);
+	Location locationTwo = createDummyLocation(timestamp + 1);
 
-		persistence.delete(timestamp);
-		Locations = persistence.readHistory(timestamp);
-		assertEquals(1, Locations.size());
-		assertEquals(locationTwo, Locations.get(0));
+	persistence.create(locationOne);
+	persistence.create(locationTwo);
+	Location lastLocation = persistence.readLastPosition();
+	assertEquals(locationTwo, lastLocation);
 
-	}
+	List<Location> Locations = persistence.readHistory(timestamp);
+	assertEquals(2, Locations.size());
+	assertEquals(locationOne, Locations.get(0));
+	assertEquals(locationTwo, Locations.get(1));
+
+	persistence.delete(timestamp);
+	Locations = persistence.readHistory(timestamp);
+	assertEquals(1, Locations.size());
+	assertEquals(locationTwo, Locations.get(0));
+
+    }
+
+    public static Location createDummyLocation(long timestamp) {
+	Location dummyLocation = new Location(random.nextDouble() * 100, // longitude
+	        random.nextDouble() * 100, // latitude
+	        random.nextDouble() * 100, // altitude
+	        random.nextInt(180), // bearing
+	        random.nextDouble() * 100, // speed
+	        timestamp, // time
+	        random.nextDouble() * 100 // accuracy
+	);
+	return dummyLocation;
+    }
+
 }
