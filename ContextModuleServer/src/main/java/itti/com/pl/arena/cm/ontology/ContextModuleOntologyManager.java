@@ -1,6 +1,5 @@
 package itti.com.pl.arena.cm.ontology;
 
-import itti.com.pl.arena.cm.dto.Building;
 import itti.com.pl.arena.cm.dto.Camera;
 import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.dto.Infrastructure;
@@ -137,21 +136,6 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 		    infrastructure.setId(infrastrId);
 		    infrastructure.setGpsCoordinates(coordinates);
 		    information.addStaticObject(infrastructure);
-		}
-	    }
-	}
-
-	String[] buildingList = properties.get(ContextModuleConstants.Parking_has_building.name());
-	if (buildingList != null) {
-	    for (String buildingId : buildingList) {
-
-		Map<String, String[]> buildingProperties = getInstanceProperties(buildingId);
-		if (!buildingProperties.isEmpty()) {
-		    String[] coordinates = buildingProperties.get(ContextModuleConstants.Object_has_GPS_coordinates.name());
-		    GeoObject building = new Building();
-		    building.setId(buildingId);
-		    building.setGpsCoordinates(coordinates);
-		    information.addStaticObject(building);
 		}
 	    }
 	}

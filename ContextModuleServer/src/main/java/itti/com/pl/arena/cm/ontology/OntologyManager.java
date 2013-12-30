@@ -94,9 +94,6 @@ public class OntologyManager implements Service{
 
     /**
      * Initializes ontology by loading it from file into memory
-     * 
-     * @throws OntologyException
-     *             could not load ontology
      */
     @Override
     public void init() {
@@ -111,7 +108,7 @@ public class OntologyManager implements Service{
     }
 
     /**
-     * Closes ontlogy model
+     * Closes ontology model
      */
     @Override
     public void shutdown(){
@@ -119,6 +116,7 @@ public class OntologyManager implements Service{
 	    model.close();
 	}
     }
+
     /**
      * Returns list of direct (first level) instances of given ontology class
      * 
