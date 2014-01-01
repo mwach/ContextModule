@@ -5,9 +5,9 @@ public class Constants {
 	public enum ContextModuleConstants{
 		Vehicle,
 		Parking,
-		Vehicle_has_camera,
+		Vehicle_has_cameras,
 		Camera,
-		Camera_type,
+		Camera_has_type,
 		Camera_has_angle_x,
 		Camera_has_angle_y,
 		Camera_view,

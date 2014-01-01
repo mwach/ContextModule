@@ -55,7 +55,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 	Map<String, String[]> properties = getInstanceProperties(platformId);
 
 	// get information about cameras installed on platform
-	String[] cameras = properties.get(ContextModuleConstants.Vehicle_has_camera.name());
+	String[] cameras = properties.get(ContextModuleConstants.Vehicle_has_cameras.name());
 	if (cameras != null) {
 	    for (String cameraId : cameras) {
 		Camera cameraInfo = getCameraInformation(cameraId);
@@ -94,7 +94,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 		updateCameraInformation(camera.getValue());
 		cameraIds[currentCamera++] = camera.getKey();
 	    }
-	    properties.put(ContextModuleConstants.Vehicle_has_camera.name(), cameraIds);
+	    properties.put(ContextModuleConstants.Vehicle_has_cameras.name(), cameraIds);
 	}
 	// create instance in the ontology
 	createSimpleInstance(platform.getType().name(), platform.getId(), properties);
@@ -114,7 +114,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 
 	Map<String, String[]> cameraInstance = getInstanceProperties(cameraId);
 	if (!cameraInstance.isEmpty()) {
-	    String cameraType = getStringProperty(cameraInstance, ContextModuleConstants.Camera_type);
+	    String cameraType = getStringProperty(cameraInstance, ContextModuleConstants.Camera_has_type);
 	    Double angleXVal = getDoubleProperty(cameraInstance, ContextModuleConstants.Camera_has_angle_x);
 	    Double angleYVal = getDoubleProperty(cameraInstance, ContextModuleConstants.Camera_has_angle_y);
 	    RelativePosition position = getRelativePosition(cameraInstance, ContextModuleConstants.Camera_view);
@@ -128,7 +128,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
     private OWLIndividual updateCameraInformation(Camera camera) throws OntologyException {
 
 	Map<String, String[]> properties = new HashMap<>();
-	properties.put(ContextModuleConstants.Camera_type.name(), new String[] { camera.getType() });
+	properties.put(ContextModuleConstants.Camera_has_type.name(), new String[] { camera.getType() });
 	properties.put(ContextModuleConstants.Camera_has_angle_x.name(), new String[] { String.valueOf(camera.getAngleX()) });
 	properties.put(ContextModuleConstants.Camera_has_angle_y.name(), new String[] { String.valueOf(camera.getAngleY()) });
 	properties.put(ContextModuleConstants.Camera_view.name(), new String[] { camera.getPosition().name() });
