@@ -44,7 +44,7 @@ import edu.stanford.smi.protegex.owl.swrl.parser.SWRLParseException;
  * @author cm-admin
  * 
  */
-public class OntologyManager implements Service{
+public class OntologyManager implements Service {
 
     // in-memory ontology model
     private JenaOWLModel model = null;
@@ -103,7 +103,8 @@ public class OntologyManager implements Service{
 	    model = loadModel(getOntologyLocation());
 	} catch (Exception exc) {
 	    LogHelper.exception(OntologyManager.class, "init", "Could not initialize ontology", exc);
-	    throw new BeanInitializationException(String.format(ErrorMessages.ONTOLOGY_CANNOT_LOAD.getMessage(), String.valueOf(getOntologyLocation())), exc);
+	    throw new BeanInitializationException(String.format(ErrorMessages.ONTOLOGY_CANNOT_LOAD.getMessage(),
+		    String.valueOf(getOntologyLocation())), exc);
 	}
     }
 
@@ -111,8 +112,8 @@ public class OntologyManager implements Service{
      * Closes ontology model
      */
     @Override
-    public void shutdown(){
-	if(model != null){
+    public void shutdown() {
+	if (model != null) {
 	    model.close();
 	}
     }
@@ -230,34 +231,45 @@ public class OntologyManager implements Service{
      *            optional list of instance properties
      * @return reference to the newly created instance
      */
-    public OWLIndividual createSimpleInstance(String className, String instanceName, Map<String, String[]> properties) {
+    public OWLIndividual createSimpleInstance(String className, String instanceName, Map<String, String[]> properties)
+	    throws OntologyException {
 
 	LogHelper.debug(OntologyManager.class, "createSimpleInstance", "Creating instance '%s' for class '%s'", instanceName,
 	        className);
-	OWLIndividual individual = null;
 
-	// find parent class, then create individual
-	OWLNamedClass parentClass = model.getOWLNamedClass(className);
-	if (parentClass != null) {
-	    individual = parentClass.createOWLIndividual(instanceName);
-	} else {
-	    LogHelper.warning(OntologyManager.class, "createSimpleInstance", "Base class '%s' not found in the ontology",
-		    className);
-	}
+	// create individual
+	OWLIndividual individual = createInstanceOnly(className, instanceName);
 
-	if (individual != null) {
-	    // individual create, now add all the properties
-	    if (properties != null) {
-		for (Entry<String, String[]> entry : properties.entrySet()) {
-		    createPropertyValue(individual, className, entry.getKey(), entry.getValue());
-		}
+	// individual created, now add all the properties
+	if (properties != null) {
+	    for (Entry<String, String[]> entry : properties.entrySet()) {
+		createPropertyValue(individual, entry.getKey(), entry.getValue());
 	    }
-	    return individual;
 	}
-	return null;
+	return individual;
     }
 
-    private void createPropertyValue(OWLIndividual individual, String parentClass, String propertyName, String[] values) {
+    private OWLIndividual createInstanceOnly(String className, String instanceName) throws OntologyException {
+
+	OWLNamedClass parentClass = model.getOWLNamedClass(className);
+	OWLIndividual individual = null;
+	if (parentClass == null) {
+	    LogHelper
+		    .warning(OntologyManager.class, "createInstanceOnly", "Base class '%s' not found in the ontology", className);
+	    throw new OntologyException(ErrorMessages.ONTOLOGY_CLASS_DOESNT_EXIST, className);
+	}
+	try {
+	    individual = parentClass.createOWLIndividual(instanceName);
+	} catch (RuntimeException exc) {
+	    LogHelper.exception(OntologyManager.class, "createInstanceOnly",
+		    String.format("Cannot create instance '%s' of class '%s'. Probably a duplicate", instanceName, className),
+		    exc);
+	    throw new OntologyException(ErrorMessages.ONTOLOGY_COULD_NOT_ADD_INSTANCE, instanceName, className);
+	}
+	return individual;
+    }
+
+    private void createPropertyValue(OWLIndividual individual, String propertyName, String[] values) {
 
 	LogHelper.debug(OntologyManager.class, "createPropertyValue", "Creting property '%s' for instance", propertyName,
 	        individual.getName());
@@ -265,8 +277,8 @@ public class OntologyManager implements Service{
 	// get the property
 	RDFProperty property = model.getRDFProperty(propertyName);
 	if (property == null) {
-	    LogHelper.warning(OntologyManager.class, "createSimpleInstance", "Property '%s' not found for class %s",
-		    propertyName, parentClass);
+	    LogHelper.warning(OntologyManager.class, "createSimpleInstance", "Property '%s' not found for type %s", propertyName,
+		    individual.getBrowserText());
 	} else {
 	    // now, set property value
 	    for (String value : values) {
@@ -332,16 +344,18 @@ public class OntologyManager implements Service{
 
     /**
      * Creates a new class in the ontology model
-     * @param className name of the class
+     * 
+     * @param className
+     *            name of the class
      * @return true, if class was successfully created, or already existed in the ontology, false otherwise
      */
     public boolean createOwlClass(String className) {
 
 	LogHelper.debug(OntologyManager.class, "createOwlClass", "Creating class '%s'", className);
 
-	//check, if class existed in the ontology
+	// check, if class existed in the ontology
 	if (model.getOWLIndividual(className) == null) {
-	    //if not, try to create it
+	    // if not, try to create it
 	    OWLNamedClass individual = model.createOWLNamedClass(className);
 	    return individual != null;
 	}
@@ -350,16 +364,20 @@ public class OntologyManager implements Service{
 
     /**
      * Adds a value of the property to the instance
-     * @param instance OWL instance
-     * @param property property of the instance
-     * @param value value to be set
+     * 
+     * @param instance
+     *            OWL instance
+     * @param property
+     *            property of the instance
+     * @param value
+     *            value to be set
      */
     public void setPropertyValue(OWLIndividual instance, RDFProperty property, Object value) {
 
-	//get the current value of the property
+	// get the current value of the property
 	Object currentOntValue = instance.getPropertyValue(property);
 
-	//if new value is different that the old one, replace
+	// if new value is different that the old one, replace
 	if (currentOntValue == null || !currentOntValue.equals(value)) {
 	    instance.addPropertyValue(property, value);
 	}
@@ -367,7 +385,9 @@ public class OntologyManager implements Service{
 
     /**
      * Saves current ontology model to file
-     * @param fileName location of the file, where ontology should be saved
+     * 
+     * @param fileName
+     *            location of the file, where ontology should be saved
      */
     public void saveOntology(String fileName) {
 	saveModel(getModel(), fileName);
@@ -379,19 +399,18 @@ public class OntologyManager implements Service{
 
 	if (swrlRules != null) {
 
-	    //create rule factory
+	    // create rule factory
 	    SWRLFactory factory = new SWRLFactory(model);
 
 	    try {
 
 		for (String rule : swrlRules) {
-		    //add rule to the model
+		    // add rule to the model
 		    factory.createImp(rule);
 		    LogHelper.debug(OntologyManager.class, "addSwrlRules", "Rule '%s' added suffessfully", rule);
 		}
 	    } catch (SWRLParseException e) {
-		LogHelper.error(OntologyManager.class, "addSwrlRules", "Failed to add rule: %s",
-		        e.getLocalizedMessage());
+		LogHelper.error(OntologyManager.class, "addSwrlRules", "Failed to add rule: %s", e.getLocalizedMessage());
 	    }
 
 	} else {
@@ -399,7 +418,6 @@ public class OntologyManager implements Service{
 		    "Cannot update model with swrl rules. There are no rules provided");
 	}
     }
-
 
     /**
      * Runs SWRL engine on existing model
@@ -409,8 +427,8 @@ public class OntologyManager implements Service{
 	LogHelper.info(OntologyManager.class, "runSwrlEngine", "Swrl Rule bridge will be run now");
 
 	try {
-//	    SWRLFactory factory = new SWRLFactory(getModel());
-//	    factory.createImp("Man(?x) ∧ Object_is_in_parking_zone(?x, ?y) ∧ Parking_zone_gives_properties(?y, ?z) →  Man_has_properties(?x, ?z)");
+	    // SWRLFactory factory = new SWRLFactory(getModel());
+	    // factory.createImp("Man(?x) ∧ Object_is_in_parking_zone(?x, ?y) ∧ Parking_zone_gives_properties(?y, ?z) →  Man_has_properties(?x, ?z)");
 	    SWRLRuleEngineBridge bridge = BridgeFactory.createBridge("SWRLJessBridge", getModel());
 
 	    LogHelper.debug(OntologyManager.class, "runSwrlEngine", "Bridge infer");
@@ -422,17 +440,22 @@ public class OntologyManager implements Service{
 	    model = (JenaOWLModel) bridge.getOWLModel();
 
 	} catch (Exception exc) {
-	    LogHelper.exception(OntologyManager.class, "runSwrlEngine", String.format("Error during running SWRL engine: %s", exc.toString()), exc);
+	    LogHelper.exception(OntologyManager.class, "runSwrlEngine",
+		    String.format("Error during running SWRL engine: %s", exc.toString()), exc);
 	} catch (SWRLRuleEngineBridgeException exc) {
-	    LogHelper.exception(OntologyManager.class, "runSwrlEngine", String.format("Error during using SWRL bridge: %s", exc.toString()), exc);
+	    LogHelper.exception(OntologyManager.class, "runSwrlEngine",
+		    String.format("Error during using SWRL bridge: %s", exc.toString()), exc);
 	}
     }
 
     /**
      * Load ontology model from file
-     * @param ontologyLocation location of the ontology file
+     * 
+     * @param ontologyLocation
+     *            location of the ontology file
      * @return loaded model
-     * @throws OntologyException could not load ontology
+     * @throws OntologyException
+     *             could not load ontology
      */
     public static JenaOWLModel loadModel(String ontologyLocation) throws OntologyException {
 

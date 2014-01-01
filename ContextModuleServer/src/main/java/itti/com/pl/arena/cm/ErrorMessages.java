@@ -20,6 +20,8 @@ public enum ErrorMessages {
     GEOPORTAL_REQUEST_NULL_OBJECT_PROVIDED(123, "Could not create valid request from null object"),
 
     ONTOLOGY_CANNOT_LOAD(200, "Failed to load ontology '%s'"),
+    ONTOLOGY_CLASS_DOESNT_EXIST(201, "Class '%s' not found in ontology"),
+    ONTOLOGY_COULD_NOT_ADD_INSTANCE(202, "Could not add instance '%s' of class '%s' to the ontology"),
 
     SPRING_HELPER_EMPTY_RESOURCE_LOCATION(501, "Empty resource provided"), 
     SPRING_HELPER_COULD_NOT_OPEN_RESOURCE(502, "Could not open resource '%s'. Details: %s"),

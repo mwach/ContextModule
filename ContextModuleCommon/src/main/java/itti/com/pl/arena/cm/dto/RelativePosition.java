@@ -24,13 +24,16 @@ public enum RelativePosition{
 		return position;
 	}
 
-	public static RelativePosition getPostion(String position){
+    public static RelativePosition getPostion(String position){
 
-		for (RelativePosition positionEnum : RelativePosition.values()) {
-			if(StringHelper.equalsIgnoreCase(positionEnum.getPosition(), position)){
-				return positionEnum;
-			}
-		}
-		return null;
+	if(position == null){
+	    return null;
 	}
+	for (RelativePosition positionEnum : RelativePosition.values()) {
+	    if(StringHelper.equalsIgnoreCase(positionEnum.getPosition(), position)){
+		return positionEnum;
+	    }
+	}
+	return null;
+    }
 }

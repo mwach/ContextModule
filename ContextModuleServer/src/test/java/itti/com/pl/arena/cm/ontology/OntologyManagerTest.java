@@ -17,8 +17,8 @@ import org.springframework.beans.factory.BeanInitializationException;
 
 public class OntologyManagerTest {
 
-    private static final String location = "TestOntology.owl";
-    private static final String namespace = "http://www.owl-ontologies.com/Ontology1350654591.owl#";
+    public static final String ONTOLOGY_LOCATION = "TestOntology.owl";
+    public static final String ONTOLOGY_NAMESPACE = "http://www.owl-ontologies.com/Ontology1350654591.owl#";
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -29,8 +29,8 @@ public class OntologyManagerTest {
 
 	//to speed up tests, load ontology and then reuse it among tests
 	ontologyManager = new OntologyManager();
-	ontologyManager.setOntologyLocation(location);
-	ontologyManager.setOntologyNamespace(namespace);
+	ontologyManager.setOntologyLocation(ONTOLOGY_LOCATION);
+	ontologyManager.setOntologyNamespace(ONTOLOGY_NAMESPACE);
 	ontologyManager.init();
     }
     
@@ -49,7 +49,7 @@ public class OntologyManagerTest {
     }
 
     @Test
-    public void testCreateOwlClass(){
+    public void testCreateOwlClass() throws OntologyException{
 	String className = UUID.randomUUID().toString();
 	String instanceName = className + "inst";
 	//verify class was added

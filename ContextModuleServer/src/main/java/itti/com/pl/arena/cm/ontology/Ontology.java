@@ -3,7 +3,7 @@ package itti.com.pl.arena.cm.ontology;
 import java.util.List;
 
 import itti.com.pl.arena.cm.dto.GeoObject;
-import itti.com.pl.arena.cm.dto.PlatformInformation;
+import itti.com.pl.arena.cm.dto.Platform;
 import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalResponse;
 
 /**
@@ -17,11 +17,19 @@ public interface Ontology {
     /**
      * Returns information about platform
      * @param platformId ID of the platform
-     * @return {@link PlatformInformation} object containing information about the platform
+     * @return {@link Platform} object containing information about the platform
      * @throws OntologyException could not retrieve information from the ontology
      */
-    public PlatformInformation getPlatformInformation(String platformId)
+    public Platform getPlatform(String platformId)
 	    throws OntologyException;
+
+    /**
+     * Updates (or create new if not found) ontology object representing platform
+     * @param platformInformation information about platform
+     * @throws OntologyException could not update information about platform
+     */
+    public void updatePlatform(Platform platformInformation)
+    		throws OntologyException;
 
     /**
      * Returns IDs of platforms found near given location

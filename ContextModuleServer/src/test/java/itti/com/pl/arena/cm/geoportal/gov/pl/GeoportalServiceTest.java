@@ -19,6 +19,7 @@ public class GeoportalServiceTest {
 
     private GeoportalService geoportal = new GeoportalService();
 
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings(value="NP", justification="NULL passed for testing purposes only")
     @Test
     public void testGeoportalAPINullParams() throws GeoportalException {
 
@@ -28,6 +29,7 @@ public class GeoportalServiceTest {
 	geoportal.getGeoportalData(null, null);
     }
 
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings(value="NP", justification="NULL passed for testing purposes only")
     @Test
     public void testGeoportalAPINullUrl() throws GeoportalException {
 

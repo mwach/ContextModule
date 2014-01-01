@@ -6,6 +6,7 @@ public class Constants {
 		Vehicle,
 		Parking,
 		Vehicle_has_camera,
+		Camera,
 		Camera_type,
 		Camera_has_angle_x,
 		Camera_has_angle_y,

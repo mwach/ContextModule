@@ -10,7 +10,7 @@ import itti.com.pl.arena.cm.ErrorMessages;
 import itti.com.pl.arena.cm.Service;
 import itti.com.pl.arena.cm.dto.Camera;
 import itti.com.pl.arena.cm.dto.GeoObject;
-import itti.com.pl.arena.cm.dto.PlatformInformation;
+import itti.com.pl.arena.cm.dto.Platform;
 import itti.com.pl.arena.cm.service.Constants.ContextModuleRequestProperties;
 import itti.com.pl.arena.cm.service.Constants.ContextModuleRequests;
 import itti.com.pl.arena.cm.service.ContextManagerService;
@@ -179,20 +179,18 @@ public class ContextModuleZeroMqService extends ModuleImpl implements ContextMod
 	Object response = factory.createObject();
 
 	String platformId = objectId.getValue();
-	PlatformInformation platformInformation = getContextManager().getPlatformData(platformId);
+	Platform platformInformation = getContextManager().getPlatformData(platformId);
 	if (platformInformation != null) {
 	    FeatureVector vector = factory.createFeatureVector();
 	    vector.setDataSourceId(Constants.MODULE_NAME);
 	    vector.getFeature()
 		    .add(createSimpleNamedValue(ContextModuleRequestProperties.Id.name(), platformInformation.getId()));
-	    if (platformInformation.getBearing() != null) {
-		vector.getFeature().add(
-		        createSimpleNamedValue(ContextModuleRequestProperties.Bearing.name(), platformInformation.getBearing()));
-	    }
 	    if (platformInformation.getLastLocation() != null) {
 		vector.getFeature().add(
 		        createLocation(ContextModuleRequestProperties.Location.name(), platformInformation.getLastLocation()
 		                .getLatitude(), platformInformation.getLastLocation().getLongitude()));
+		vector.getFeature().add(
+		        createSimpleNamedValue(ContextModuleRequestProperties.Bearing.name(), platformInformation.getLastLocation().getBearing()));
 	    }
 	    if (platformInformation.getCameras() != null) {
 		for (Camera camera : platformInformation.getCameras().values()) {
@@ -209,11 +207,11 @@ public class ContextModuleZeroMqService extends ModuleImpl implements ContextMod
 
 	Situation response = factory.createSituation();
 
-	List<PlatformInformation> platformsInformation = getContextManager().getPlatformsData(location.getX(), location.getY());
+	List<Platform> platformsInformation = getContextManager().getPlatformsData(location.getX(), location.getY());
 	if (platformsInformation != null) {
 	    FeatureVector fv = new FeatureVector();
 
-	    for (PlatformInformation platformInformation : platformsInformation) {
+	    for (Platform platformInformation : platformsInformation) {
 		fv.getFeature().add(createSimpleNamedValue(platformInformation.getId(), JsonHelper.toJson(platformInformation)));
 	    }
 	    response.setGlobalSceneProperty(fv);

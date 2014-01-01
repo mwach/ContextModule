@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Required;
 
 import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.dto.Location;
-import itti.com.pl.arena.cm.dto.PlatformInformation;
+import itti.com.pl.arena.cm.dto.Platform;
 import itti.com.pl.arena.cm.dto.PlatformLocation;
 import itti.com.pl.arena.cm.geoportal.GeoportalException;
 import itti.com.pl.arena.cm.geoportal.gov.pl.GeoportalService;
@@ -107,16 +107,16 @@ public class DefaultArenaTracker implements ContextManagerService, LocationListe
 			//
 		}
 		try {
-			getOntology().getPlatformInformation(newLocation.getId());
+			getOntology().getPlatform(newLocation.getId());
 		} catch (OntologyException e) {
 			LogHelper.exception(DefaultArenaTracker.class, "onLocationChange", e.getLocalizedMessage(), e);
 		}
 	}
 
 	@Override
-	public PlatformInformation getPlatformData(String platformId) {
+	public Platform getPlatformData(String platformId) {
 		try {
-			return getOntology().getPlatformInformation(platformId);
+			return getOntology().getPlatform(platformId);
 		} catch (OntologyException e) {
 			LogHelper.exception(DefaultArenaTracker.class, "getPlatformData", e.getLocalizedMessage(), e);
 		}
@@ -124,12 +124,12 @@ public class DefaultArenaTracker implements ContextManagerService, LocationListe
 	}
 
 	@Override
-	public List<PlatformInformation> getPlatformsData(double x, double y) {
-		List<PlatformInformation> platformsInformation = new ArrayList<>();
+	public List<Platform> getPlatformsData(double x, double y) {
+		List<Platform> platformsInformation = new ArrayList<>();
 		try {
 			List<String> platformNames = getOntology().getPlatforms(x, y, getLocationDelta());
 			for (String platformId : platformNames) {
-				platformsInformation.add(getOntology().getPlatformInformation(platformId));
+				platformsInformation.add(getOntology().getPlatform(platformId));
 			}
 		} catch (OntologyException e) {
 			LogHelper.exception(DefaultArenaTracker.class, "getPlatformsData", e.getLocalizedMessage(), e);

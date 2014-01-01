@@ -155,7 +155,7 @@ public final class LogHelper {
 			if (exception) {
 				logger.log(level, formattedMessage, (Throwable) args[0]);
 			} else {
-				logger.log(level, message, args);
+				logger.log(level, formattedMessage, args);
 			}
 		}
 	}
