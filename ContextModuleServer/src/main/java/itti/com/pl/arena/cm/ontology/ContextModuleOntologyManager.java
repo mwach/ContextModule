@@ -30,6 +30,15 @@ import edu.stanford.smi.protegex.owl.model.OWLIndividual;
  */
 public class ContextModuleOntologyManager extends OntologyManager implements Ontology {
 
+    private static final String QUERY_GET_PLATFORMS = 
+	 "PREFIX ns: <%s> " + "SELECT ?%s " + "WHERE " + "{ " + "?%s rdf:type ?subclass. "
+	        + "?subclass rdfs:subClassOf ns:%s. " + "?%s ns:Platform_has_GPS_coordinates ?coordinate. "
+	        + "FILTER ( (?coordinate >= %f && ?coordinate <= %f) || (?coordinate >= %f && ?coordinate <= %f)) " + "}";
+
+    private static final String QUERY_GIS_OBJECTS = "PREFIX ns: <%s> " + "SELECT ?%s " + "WHERE " + "{ " + "?%s rdf:type ns:%s. "
+	        + "?%s ns:Parking_has_GPS_coordinates ?coordinate. "
+	        + "FILTER ( (?coordinate >= %f && ?coordinate <= %f) || (?coordinate >= %f && ?coordinate <= %f)) " + "}";
+
     /*
      * (non-Javadoc)
      * 
@@ -74,7 +83,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 	    platform.getLastLocation().getLatitude();
 	    platform.getLastLocation().getLatitude();
 	    properties.put(ContextModuleConstants.Object_has_GPS_bearing.name(),
-		    new String[] { platform.getLastLocation().toString() });
+		    new String[] { String.valueOf(platform.getLastLocation().getBearing()) });
 	}
 
 	// process cameras
@@ -135,9 +144,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 
 	List<String> resultList = new ArrayList<String>();
 
-	String queryPattern = "PREFIX ns: <%s> " + "SELECT ?%s " + "WHERE " + "{ " + "?%s rdf:type ?subclass. "
-	        + "?subclass rdfs:subClassOf ns:%s. " + "?%s ns:Platform_has_GPS_coordinates ?coordinate. "
-	        + "FILTER ( (?coordinate >= %f && ?coordinate <= %f) || (?coordinate >= %f && ?coordinate <= %f)) " + "} ";
+	String queryPattern = QUERY_GET_PLATFORMS;
 	String query = String.format(queryPattern, getOntologyNamespace(), VAR, VAR, ContextModuleConstants.Vehicle.name(), VAR,
 	        x - radius, x + radius, y - radius, y + radius);
 
@@ -195,9 +202,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 
 	List<String> resultList = new ArrayList<String>();
 
-	String queryPattern = "PREFIX ns: <%s> " + "SELECT ?%s " + "WHERE " + "{ " + "?%s rdf:type ns:%s. "
-	        + "?%s ns:Parking_has_GPS_coordinates ?coordinate. "
-	        + "FILTER ( (?coordinate >= %f && ?coordinate <= %f) || (?coordinate >= %f && ?coordinate <= %f)) " + "} ";
+	String queryPattern = QUERY_GIS_OBJECTS;
 	String query = String.format(queryPattern, getOntologyNamespace(), VAR, VAR, ContextModuleConstants.Parking.name(), VAR,
 	        x - radius, x + radius, y - radius, y + radius);
 

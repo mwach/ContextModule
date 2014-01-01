@@ -12,5 +12,4 @@ public class Truck extends Platform{
     public PlatformType getType() {
 	return PlatformType.Truck;
     }
-
 }

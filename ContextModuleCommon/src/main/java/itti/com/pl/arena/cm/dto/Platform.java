@@ -15,8 +15,8 @@ public abstract class Platform {
 	this.lastLocation = lastLocation;
 	if (cameras != null) {
 	    for (Camera camera : cameras) {
-	        this.cameras.put(camera.getId(), camera);
-            }
+		this.cameras.put(camera.getId(), camera);
+	    }
 	}
     }
 
@@ -50,6 +50,7 @@ public abstract class Platform {
 
     @Override
     public String toString() {
-	return "PlatformInformation [id=" + id + ", lastLocation=" + lastLocation + ", cameras=" + cameras + "]";
+	return String.format("%s [id=%s, lastLocation=%s, cameras=%s]", Platform.class.getSimpleName(), getId(),
+	        getLastLocation(), getCameras());
     }
 }
