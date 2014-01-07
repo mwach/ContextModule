@@ -1,5 +1,7 @@
 package itti.com.pl.arena.cm.ontology;
 
+import static org.junit.Assert.*;
+
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -43,7 +45,9 @@ public class ContextModuleOntologyManagerTest {
     }
 
     @Test
-    public void updateTruck() throws OntologyException {
+    public void testAddRetrieveTruck() throws OntologyException {
+	//adds a new truck to the ontology
+	//then tries to retrieve it
 	Set<Camera> cameras = new HashSet<Camera>();
 	Camera cameraOne = new Camera(UUID.randomUUID().toString(), "typeA", random.nextDouble(), random.nextDouble(), RelativePosition.Back);
 	Camera cameraTwo = new Camera(UUID.randomUUID().toString(), "typeB", random.nextDouble(), random.nextDouble(), RelativePosition.Front);
@@ -51,6 +55,20 @@ public class ContextModuleOntologyManagerTest {
 	cameras.add(cameraTwo);
 	Platform information = new Truck(UUID.randomUUID().toString(), new Location(random.nextDouble(), random.nextDouble(), random.nextInt(100)), cameras);
 	cmOntologyManager.updatePlatform(information);
+	assertEquals(information, cmOntologyManager.getPlatform(information.getId()));
+    }
+
+    @Test
+    public void testUpdateTruckPosition() throws OntologyException {
+	//checks, if location of the platform is correctly updated
+	Location initLocation = new Location(random.nextDouble(), random.nextDouble(), random.nextInt(100));
+	Location nextLocation = new Location(random.nextDouble(), random.nextDouble(), random.nextInt(100));
+	Platform information = new Truck("truck_m1", initLocation, null);
+	cmOntologyManager.updatePlatform(information);
+	assertEquals(initLocation, cmOntologyManager.getPlatform(information.getId()).getLastLocation());
+	information.setLastPosition(nextLocation);
+	cmOntologyManager.updatePlatform(information);
+	assertEquals(nextLocation, cmOntologyManager.getPlatform(information.getId()).getLastLocation());
     }
 
 }

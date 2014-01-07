@@ -14,6 +14,8 @@ public class Constants {
 		Static_object,
 		Object_has_GPS_coordinates,
 		Object_has_GPS_bearing,
+		Platform_has_GPS_x,
+		Platform_has_GPS_y,
 
 		Parking_has_GPS_x,
 		Parking_has_GPS_y,

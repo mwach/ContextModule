@@ -63,10 +63,17 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 
 	    }
 	}
-	//TODO
-	information.setLastPosition(new Location(0, 0, getIntProperty(properties, ContextModuleConstants.Object_has_GPS_bearing)));
+	Location lastLocation = prepareLastLocation(properties);
+	information.setLastPosition(lastLocation);
 
 	return information;
+    }
+
+    private Location prepareLastLocation(Map<String, String[]> properties) {
+	double longitude = getDoubleProperty(properties, ContextModuleConstants.Platform_has_GPS_x);
+	double latitude = getDoubleProperty(properties, ContextModuleConstants.Platform_has_GPS_y);
+	int bearing = getIntProperty(properties, ContextModuleConstants.Object_has_GPS_bearing);
+	return new Location(longitude, latitude, bearing);    
     }
 
     /*
@@ -80,8 +87,10 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 	Map<String, String[]> properties = new HashMap<>();
 	// TODO
 	if (platform.getLastLocation() != null) {
-	    platform.getLastLocation().getLatitude();
-	    platform.getLastLocation().getLatitude();
+	    properties.put(ContextModuleConstants.Platform_has_GPS_x.name(),
+		    new String[] { String.valueOf(platform.getLastLocation().getLongitude()) });
+	    properties.put(ContextModuleConstants.Platform_has_GPS_y.name(),
+		    new String[] { String.valueOf(platform.getLastLocation().getLatitude()) });
 	    properties.put(ContextModuleConstants.Object_has_GPS_bearing.name(),
 		    new String[] { String.valueOf(platform.getLastLocation().getBearing()) });
 	}

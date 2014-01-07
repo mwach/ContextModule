@@ -23,8 +23,8 @@ import java.util.Map.Entry;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.annotation.Required;
 
+import edu.stanford.smi.protege.model.DefaultInstance;
 import edu.stanford.smi.protege.model.Instance;
-import edu.stanford.smi.protege.model.SimpleInstance;
 import edu.stanford.smi.protegex.owl.ProtegeOWL;
 import edu.stanford.smi.protegex.owl.jena.JenaOWLModel;
 import edu.stanford.smi.protegex.owl.model.OWLIndividual;
@@ -183,9 +183,8 @@ public class OntologyManager implements Service {
 	if (!StringHelper.hasContent(instanceName)) {
 	    return null;
 	}
-
-	String queryPattern = "PREFIX ns: <%s> SELECT ?%s WHERE { ns:%s rdfs:subClassOf ?%s }";
-	String query = String.format(queryPattern, getOntologyNamespace(), VAR, VAR, instanceName);
+	String queryPattern = "PREFIX ns:<%s> SELECT ?%s WHERE { ns:%s rdf:type ?%s }";
+	String query = String.format(queryPattern, getOntologyNamespace(), VAR, instanceName, VAR);
 	List<String> results = executeSparqlQuery(query, VAR);
 	return results.isEmpty() ? null : results.get(0);
     }
@@ -207,9 +206,9 @@ public class OntologyManager implements Service {
 	try {
 	    QueryResults results = model.executeSPARQLQuery(query);
 	    while (results.hasNext()) {
-		@SuppressWarnings("unchecked")
-		Map<String, SimpleInstance> rsRow = (Map<String, SimpleInstance>) results.next();
-		resultList.add(rsRow.get(variable).getBrowserText());
+		DefaultInstance response = (DefaultInstance)results.next().get(variable);
+		String result = response.getBrowserText();
+		resultList.add(result);
 	    }
 
 	} catch (Exception exc) {
@@ -237,8 +236,13 @@ public class OntologyManager implements Service {
 	LogHelper.debug(OntologyManager.class, "createSimpleInstance", "Creating instance '%s' for class '%s'", instanceName,
 	        className);
 
-	// create individual
-	OWLIndividual individual = createInstanceOnly(className, instanceName);
+	// create individual, or get the existing one
+	OWLIndividual individual = null;
+	if(getDirectInstances(className).contains(instanceName)){
+	    individual = getInstance(className, instanceName);
+	}else{
+	    individual = createInstanceOnly(className, instanceName);	    
+	}
 
 	// individual created, now add all the properties
 	if (properties != null) {
@@ -247,6 +251,26 @@ public class OntologyManager implements Service {
 	    }
 	}
 	return individual;
+    }
+
+    /**
+     * Creates a new class in the ontology model
+     * 
+     * @param className
+     *            name of the class
+     * @return true, if class was successfully created, or already existed in the ontology, false otherwise
+     * @throws OntologyException 
+     */
+    public OWLIndividual getInstance(String className, String instanceName) throws OntologyException {
+
+	LogHelper.debug(OntologyManager.class, "getInstance", "Searching for instance '%s' of class '%s'", instanceName, className);
+	OWLNamedClass parentClass = model.getOWLNamedClass(className);
+	if (parentClass == null) {
+	    LogHelper
+		    .warning(OntologyManager.class, "getInstance", "Base class '%s' not found in the ontology", className);
+	    throw new OntologyException(ErrorMessages.ONTOLOGY_CLASS_DOESNT_EXIST, className);
+	}
+	return model.getOWLIndividual(instanceName);
     }
 
     private OWLIndividual createInstanceOnly(String className, String instanceName) throws OntologyException {
