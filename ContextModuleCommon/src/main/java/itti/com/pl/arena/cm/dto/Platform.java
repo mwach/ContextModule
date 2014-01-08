@@ -53,4 +53,51 @@ public abstract class Platform {
 	return String.format("%s [id=%s, lastLocation=%s, cameras=%s]", Platform.class.getSimpleName(), getId(),
 	        getLastLocation(), getCameras());
     }
+
+    @Override
+    public int hashCode() {
+	final int prime = 31;
+	int result = 1;
+	result = prime * result + ((cameras == null) ? 0 : cameras.hashCode());
+	result = prime * result + ((id == null) ? 0 : id.hashCode());
+	result = prime * result + ((lastLocation == null) ? 0 : lastLocation.hashCode());
+	return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+	if (this == obj)
+	    return true;
+	if (obj == null)
+	    return false;
+	if (getClass() != obj.getClass())
+	    return false;
+	Platform other = (Platform) obj;
+	if (cameras == null) {
+	    if (other.cameras != null)
+		return false;
+	} else if (cameras.size() != other.cameras.size())
+	    return false;
+	else{
+	    for (Camera camera : cameras.values()) {
+	        if(!other.cameras.containsValue(camera)){
+	            return false;
+	        }
+            }
+	}
+	
+	if (id == null) {
+	    if (other.id != null)
+		return false;
+	} else if (!id.equals(other.id))
+	    return false;
+	if (lastLocation == null) {
+	    if (other.lastLocation != null)
+		return false;
+	} else if (!lastLocation.equals(other.lastLocation))
+	    return false;
+	return true;
+    }
+
+    
 }

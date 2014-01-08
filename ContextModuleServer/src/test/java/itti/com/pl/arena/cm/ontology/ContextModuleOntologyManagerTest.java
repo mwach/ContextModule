@@ -53,7 +53,7 @@ public class ContextModuleOntologyManagerTest {
 	Camera cameraTwo = new Camera(UUID.randomUUID().toString(), "typeB", random.nextDouble(), random.nextDouble(), RelativePosition.Front);
 	cameras.add(cameraOne);
 	cameras.add(cameraTwo);
-	Platform information = new Truck(UUID.randomUUID().toString(), new Location(random.nextDouble(), random.nextDouble(), random.nextInt(100)), cameras);
+	Platform information = new Truck("Truck_test1", new Location(random.nextDouble(), random.nextDouble(), random.nextInt(100)), cameras);
 	cmOntologyManager.updatePlatform(information);
 	assertEquals(information, cmOntologyManager.getPlatform(information.getId()));
     }

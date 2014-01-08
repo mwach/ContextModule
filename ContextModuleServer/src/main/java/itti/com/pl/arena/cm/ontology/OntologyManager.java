@@ -30,6 +30,9 @@ import edu.stanford.smi.protegex.owl.jena.JenaOWLModel;
 import edu.stanford.smi.protegex.owl.model.OWLIndividual;
 import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
 import edu.stanford.smi.protegex.owl.model.RDFProperty;
+import edu.stanford.smi.protegex.owl.model.impl.DefaultRDFIndividual;
+import edu.stanford.smi.protegex.owl.model.impl.DefaultRDFList;
+import edu.stanford.smi.protegex.owl.model.impl.DefaultRDFSLiteral;
 import edu.stanford.smi.protegex.owl.model.query.QueryResults;
 import edu.stanford.smi.protegex.owl.swrl.bridge.BridgeFactory;
 import edu.stanford.smi.protegex.owl.swrl.bridge.SWRLRuleEngineBridge;
@@ -206,9 +209,17 @@ public class OntologyManager implements Service {
 	try {
 	    QueryResults results = model.executeSPARQLQuery(query);
 	    while (results.hasNext()) {
-		DefaultInstance response = (DefaultInstance)results.next().get(variable);
-		String result = response.getBrowserText();
+		Object value = results.next().get(variable);
+		String result = null;
+		if(value instanceof DefaultInstance){
+		    result = ((DefaultInstance)value).getBrowserText();
+		}else if(value instanceof DefaultRDFSLiteral){
+		    result = ((DefaultRDFSLiteral)value).getBrowserText();
+		}else{
+		    LogHelper.warning(OntologyManager.class, "executeSparqlQuery", "Unrecognized query results class: '%s'", value);
+		}
 		resultList.add(result);
+
 	    }
 
 	} catch (Exception exc) {
@@ -247,7 +258,7 @@ public class OntologyManager implements Service {
 	// individual created, now add all the properties
 	if (properties != null) {
 	    for (Entry<String, String[]> entry : properties.entrySet()) {
-		createPropertyValue(individual, entry.getKey(), entry.getValue());
+		updateProperty(individual, entry.getKey(), entry.getValue());
 	    }
 	}
 	return individual;
@@ -293,7 +304,7 @@ public class OntologyManager implements Service {
 	return individual;
     }
 
-    private void createPropertyValue(OWLIndividual individual, String propertyName, String[] values) {
+    private void updateProperty(OWLIndividual individual, String propertyName, String[] values) {
 
 	LogHelper.debug(OntologyManager.class, "createPropertyValue", "Creting property '%s' for instance", propertyName,
 	        individual.getName());
@@ -304,6 +315,13 @@ public class OntologyManager implements Service {
 	    LogHelper.warning(OntologyManager.class, "createSimpleInstance", "Property '%s' not found for type %s", propertyName,
 		    individual.getBrowserText());
 	} else {
+	    
+		// remove current value of the property
+		int propsCount = individual.getPropertyValueCount(property);
+		for(int i=0 ; i<propsCount ; i++){
+		    Object currentOntValue = individual.getPropertyValue(property);
+		    individual.removePropertyValue(property, currentOntValue);
+		}	    
 	    // now, set property value
 	    for (String value : values) {
 		// find value as an instance
@@ -397,14 +415,8 @@ public class OntologyManager implements Service {
      *            value to be set
      */
     public void setPropertyValue(OWLIndividual instance, RDFProperty property, Object value) {
-
-	// get the current value of the property
-	Object currentOntValue = instance.getPropertyValue(property);
-
-	// if new value is different that the old one, replace
-	if (currentOntValue == null || !currentOntValue.equals(value)) {
-	    instance.addPropertyValue(property, value);
-	}
+	// set new value of the property
+	instance.addPropertyValue(property, value);
     }
 
     /**

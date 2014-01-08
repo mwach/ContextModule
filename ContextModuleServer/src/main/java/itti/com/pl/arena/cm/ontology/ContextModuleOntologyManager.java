@@ -70,10 +70,14 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
     }
 
     private Location prepareLastLocation(Map<String, String[]> properties) {
-	double longitude = getDoubleProperty(properties, ContextModuleConstants.Platform_has_GPS_x);
-	double latitude = getDoubleProperty(properties, ContextModuleConstants.Platform_has_GPS_y);
-	int bearing = getIntProperty(properties, ContextModuleConstants.Object_has_GPS_bearing);
-	return new Location(longitude, latitude, bearing);    
+	Double longitude = getDoubleProperty(properties, ContextModuleConstants.Platform_has_GPS_x);
+	Double latitude = getDoubleProperty(properties, ContextModuleConstants.Platform_has_GPS_y);
+	Integer bearing = getIntProperty(properties, ContextModuleConstants.Object_has_GPS_bearing);
+	return new Location(
+		longitude == null ? 0 : longitude.doubleValue(),
+		latitude == null ? 0 : latitude.doubleValue(),
+		bearing == null ? 0 : bearing.intValue()
+	);
     }
 
     /*
@@ -85,7 +89,6 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
     public void updatePlatform(Platform platform) throws OntologyException {
 
 	Map<String, String[]> properties = new HashMap<>();
-	// TODO
 	if (platform.getLastLocation() != null) {
 	    properties.put(ContextModuleConstants.Platform_has_GPS_x.name(),
 		    new String[] { String.valueOf(platform.getLastLocation().getLongitude()) });
