@@ -71,4 +71,9 @@ public class ContextModuleOntologyManagerTest {
 	assertEquals(nextLocation, cmOntologyManager.getPlatform(information.getId()).getLastLocation());
     }
 
+    @Test
+    public void testGetGISObjects() throws OntologyException{
+	Set<String> gisObjects = cmOntologyManager.getParkingLots(1, 1, 100);
+	assertFalse(gisObjects.isEmpty());
+    }
 }

@@ -2,6 +2,7 @@ package itti.com.pl.arena.cm.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Required;
@@ -127,7 +128,7 @@ public class DefaultArenaTracker implements ContextManagerService, LocationListe
 	public List<Platform> getPlatformsData(double x, double y) {
 		List<Platform> platformsInformation = new ArrayList<>();
 		try {
-			List<String> platformNames = getOntology().getPlatforms(x, y, getLocationDelta());
+			Set<String> platformNames = getOntology().getPlatforms(x, y, getLocationDelta());
 			for (String platformId : platformNames) {
 				platformsInformation.add(getOntology().getPlatform(platformId));
 			}
@@ -142,7 +143,7 @@ public class DefaultArenaTracker implements ContextManagerService, LocationListe
 
 		List<GeoObject> gisInformation = new ArrayList<>();
 		try {
-			List<String> platformNames = getOntology().getGISObjects(x, y, getLocationDelta());
+			Set<String> platformNames = getOntology().getParkingLots(x, y, getLocationDelta());
 			for (String gisObjectId : platformNames) {
 				gisInformation.add(getOntology().getGISObject(gisObjectId));
 			}
@@ -162,7 +163,7 @@ public class DefaultArenaTracker implements ContextManagerService, LocationListe
 			GeoportalResponse response = 
 					GeoportalHelper.fromResponse(geoportalData, GeoportalKeys.getTopographyKeys());
 			getOntology().addGeoportalData(x, y, response);
-		} catch (GeoportalException | RuntimeException e) {
+		} catch (GeoportalException | RuntimeException | OntologyException e) {
 			LogHelper.exception(DefaultArenaTracker.class, "getgeoportalData", e.getLocalizedMessage(), e);
 		}
 		return getGISData(x, y);

@@ -1,8 +1,9 @@
 package itti.com.pl.arena.cm.ontology;
 
-import java.util.List;
+import java.util.Set;
 
 import itti.com.pl.arena.cm.dto.GeoObject;
+import itti.com.pl.arena.cm.dto.Location;
 import itti.com.pl.arena.cm.dto.Platform;
 import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalResponse;
 
@@ -39,18 +40,29 @@ public interface Ontology {
      * @return list of platforms IDs
      * @throws OntologyException could not retrieve information from the ontology
      */
-    public List<String> getPlatforms(double x, double y, double radius)
+    public Set<String> getPlatforms(double x, double y, double radius)
 	    throws OntologyException;
+
+    /**
+     * Returns IDs of GIS objects (like buildings or parking lots) found near given location
+     * @param location location
+     * @param radius radius of the search area
+     * @param classesFilter optional filter: list of classes names, which should be returned
+     * @return list of GIS objects IDs
+     * @throws OntologyException could not retrieve information from the ontology
+     */
+    public Set<String> getParkingLots(Location location, double radius) throws OntologyException;
 
     /**
      * Returns IDs of GIS objects (like buildings or parking lots) found near given location
      * @param x latitude
      * @param y longitude
-     * @param radius
+     * @param radius radius of the search area
+     * @param classesFilter optional filter: list of classes names, which should be returned
      * @return list of GIS objects IDs
      * @throws OntologyException could not retrieve information from the ontology
      */
-    public List<String> getGISObjects(double x, double y, double radius)
+    public Set<String> getParkingLots(double x, double y, double radius)
 	    throws OntologyException;
 
 
@@ -70,5 +82,13 @@ public interface Ontology {
      * @throws OntologyException could not retrieve information from the ontology
      */
     public void addGeoportalData(double x, double y,
-	    GeoportalResponse geoportalData);
+	    GeoportalResponse geoportalData) throws OntologyException;
+
+    /**
+     * Calculates distance between platform, and objects localized on given parking lot
+     * @param platformId ID of the platform, calculations should be done
+     * @param radius radius of the search area
+     * @throws OntologyException processing exception
+     */
+    public void calculateDistancesForPlatform(String platformId, double radius) throws OntologyException;
 }

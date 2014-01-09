@@ -30,8 +30,6 @@ import edu.stanford.smi.protegex.owl.jena.JenaOWLModel;
 import edu.stanford.smi.protegex.owl.model.OWLIndividual;
 import edu.stanford.smi.protegex.owl.model.OWLNamedClass;
 import edu.stanford.smi.protegex.owl.model.RDFProperty;
-import edu.stanford.smi.protegex.owl.model.impl.DefaultRDFIndividual;
-import edu.stanford.smi.protegex.owl.model.impl.DefaultRDFList;
 import edu.stanford.smi.protegex.owl.model.impl.DefaultRDFSLiteral;
 import edu.stanford.smi.protegex.owl.model.query.QueryResults;
 import edu.stanford.smi.protegex.owl.swrl.bridge.BridgeFactory;
@@ -178,18 +176,24 @@ public class OntologyManager implements Service {
      * @param instanceName
      *            name of the instance
      * @return parent class name. If instance was not found in the ontology, null will be returned
+     * @exception OntologyExceptiont could not find object
      */
-    public String getInstanceClass(String instanceName) {
+    public String getInstanceClass(String instanceName) throws OntologyException{
 
-	LogHelper.debug(OntologyManager.class, "getInstanceClass", "Query for parent class of '%s'", instanceName);
+	LogHelper.debug(OntologyManager.class, "getInstanceClass", "Query for parent class of '%s'", String.valueOf(instanceName));
 
 	if (!StringHelper.hasContent(instanceName)) {
-	    return null;
+	    LogHelper.warning(OntologyManager.class, "getInstanceClass", "Null instance name provided");
+	    throw new OntologyException(ErrorMessages.ONTOLOGY_EMPTY_INSTANCE_NAME);
 	}
 	String queryPattern = "PREFIX ns:<%s> SELECT ?%s WHERE { ns:%s rdf:type ?%s }";
 	String query = String.format(queryPattern, getOntologyNamespace(), VAR, instanceName, VAR);
 	List<String> results = executeSparqlQuery(query, VAR);
-	return results.isEmpty() ? null : results.get(0);
+	if(results.isEmpty()){
+	    LogHelper.warning(OntologyManager.class, "getInstanceClass", "No results were found for instance '%s'", instanceName);
+	    throw new OntologyException(ErrorMessages.ONTOLOGY_INSTANCE_NOT_FOUND, instanceName);
+	}
+	return results.get(0);
     }
 
     /**

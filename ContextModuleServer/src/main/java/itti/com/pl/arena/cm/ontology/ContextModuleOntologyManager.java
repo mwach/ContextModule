@@ -1,5 +1,6 @@
 package itti.com.pl.arena.cm.ontology;
 
+import itti.com.pl.arena.cm.ErrorMessages;
 import itti.com.pl.arena.cm.dto.Camera;
 import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.dto.Infrastructure;
@@ -14,11 +15,12 @@ import itti.com.pl.arena.cm.utils.helpers.LogHelper;
 import itti.com.pl.arena.cm.utils.helpers.NumbersHelper;
 import itti.com.pl.arena.cm.utils.helpers.StringHelper;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import edu.stanford.smi.protegex.owl.model.OWLIndividual;
 
@@ -35,10 +37,13 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 	        + "?subclass rdfs:subClassOf ns:%s. " + "?%s ns:Platform_has_GPS_coordinates ?coordinate. "
 	        + "FILTER ( (?coordinate >= %f && ?coordinate <= %f) || (?coordinate >= %f && ?coordinate <= %f)) " + "}";
 
-    private static final String QUERY_GIS_OBJECTS = "PREFIX ns: <%s> " + "SELECT ?%s " + "WHERE " + "{ " + "?%s rdf:type ns:%s. "
-	        + "?%s ns:Parking_has_GPS_coordinates ?coordinate. "
-	        + "FILTER ( (?coordinate >= %f && ?coordinate <= %f) || (?coordinate >= %f && ?coordinate <= %f)) " + "}";
+    private static final String QUERY_PARKING_OBJECTS = 
+	    "PREFIX ns: <%s> " + "SELECT ?%s " + "WHERE " + "{ " + "?%s rdf:type ns:%s. "
+	        + "?%s ns:Parking_has_GPS_y ?coordinate_y. "
+	        + "?%s ns:Parking_has_GPS_x ?coordinate_x. "
+	        + "FILTER ( (?coordinate_y >= %f && ?coordinate_y <= %f) || (?coordinate_x >= %f && ?coordinate_x <= %f)) " + "}";
 
+    
     /*
      * (non-Javadoc)
      * 
@@ -152,9 +157,9 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
      * 
      * @see itti.com.pl.arena.cm.ontology.Ontology#getPlatforms(double, double, double)
      */
-    public List<String> getPlatforms(double x, double y, double radius) throws OntologyException {
+    public Set<String> getPlatforms(double x, double y, double radius) throws OntologyException {
 
-	List<String> resultList = new ArrayList<String>();
+	Set<String> resultList = new HashSet<String>();
 
 	String queryPattern = QUERY_GET_PLATFORMS;
 	String query = String.format(queryPattern, getOntologyNamespace(), VAR, VAR, ContextModuleConstants.Vehicle.name(), VAR,
@@ -207,14 +212,29 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
     /*
      * (non-Javadoc)
      * 
+     * @see itti.com.pl.arena.cm.ontology.Ontology#getGISObjects(Location, double)
+     */
+    @Override
+    public Set<String> getParkingLots(Location location, double radius) throws OntologyException {
+	if(location == null){
+	    LogHelper.warning(ContextModuleOntologyManager.class, "getGISObjects",
+		    "Null location provided");
+	    throw new OntologyException(ErrorMessages.ONTOLOGY_CANNOT_LOAD);
+	}
+	return getParkingLots(location.getLongitude(), location.getLatitude(), radius);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see itti.com.pl.arena.cm.ontology.Ontology#getGISObjects(double, double, double)
      */
     @Override
-    public List<String> getGISObjects(double x, double y, double radius) throws OntologyException {
+    public Set<String> getParkingLots(double x, double y, double radius) throws OntologyException {
 
-	List<String> resultList = new ArrayList<String>();
+	Set<String> resultList = new HashSet<String>();
 
-	String queryPattern = QUERY_GIS_OBJECTS;
+	String queryPattern = QUERY_PARKING_OBJECTS;
 	String query = String.format(queryPattern, getOntologyNamespace(), VAR, VAR, ContextModuleConstants.Parking.name(), VAR,
 	        x - radius, x + radius, y - radius, y + radius);
 
@@ -262,6 +282,18 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 	}
     }
 
+    /* (non-Javadoc)
+     * @see itti.com.pl.arena.cm.ontology.Ontology#calculateDistancesForTruck(java.lang.String, double)
+     */
+    @Override
+    public void calculateDistancesForPlatform(String platformId, double radius) throws OntologyException {
+
+	//get the platform data from ontology
+	Platform platform = getPlatform(platformId);
+	Set<String> gisObjects = getParkingLots(platform.getLastLocation(), radius);
+    }
+      
+    
     private String getStringProperty(Map<String, String[]> properties, ContextModuleConstants propertyName) {
 
 	if (properties == null || propertyName == null) {
@@ -283,5 +315,4 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
     private RelativePosition getRelativePosition(Map<String, String[]> properties, ContextModuleConstants propertyName) {
 	return RelativePosition.getPostion(getStringProperty(properties, propertyName));
     }
-
 }
