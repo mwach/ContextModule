@@ -25,6 +25,8 @@ public enum ErrorMessages {
     ONTOLOGY_EMPTY_INSTANCE_NAME(203, "Empty instance name was provided"),
     ONTOLOGY_INSTANCE_NOT_FOUND(204, "Base class for instance '%s' not found in the ontology"),
     ONTOLOGY_EMPTY_LOCATION_OBJECT(205, "Null Location was provided"),
+    ONTOLOGY_EMPTY_PARKING_ID_OBJECT(206, "Null parkingId was provided"),
+    ONTOLOGY_INSTANCE_IS_NOT_A_PARKING(207, "Provided object '%s' does not represent a parking lot"),
 
     SPRING_HELPER_EMPTY_RESOURCE_LOCATION(501, "Empty resource provided"), 
     SPRING_HELPER_COULD_NOT_OPEN_RESOURCE(502, "Could not open resource '%s'. Details: %s"),

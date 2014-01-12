@@ -13,6 +13,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import itti.com.pl.arena.cm.ErrorMessages;
 import itti.com.pl.arena.cm.dto.Camera;
 import itti.com.pl.arena.cm.dto.Location;
 import itti.com.pl.arena.cm.dto.Platform;
@@ -72,8 +73,34 @@ public class ContextModuleOntologyManagerTest {
     }
 
     @Test
-    public void testGetGISObjects() throws OntologyException{
+    public void testGetParkingLots() throws OntologyException{
+	//corrects args - at least one parking expected
 	Set<String> gisObjects = cmOntologyManager.getParkingLots(1, 1, 100);
 	assertFalse(gisObjects.isEmpty());
+
+	//incorrect args - no parking lots expected
+	gisObjects = cmOntologyManager.getParkingLots(1, 1, 0);
+	assertTrue(gisObjects.isEmpty());
     }
+
+    @Test
+    public void testGetParkingLotObjectsValid() throws OntologyException{
+	//all object from existing parking
+	Set<String> gisObjects = cmOntologyManager.getParkingLotInfrastructure("Parking_Reading");
+	assertFalse(gisObjects.isEmpty());
+	Set<String> buildings = cmOntologyManager.getParkingLotInfrastructure("Parking_Reading", "Building");
+	assertFalse(buildings.isEmpty());
+	//there are more infrastructure objects than buildings
+	assertTrue(buildings.size() < gisObjects.size());
+    }
+
+    @Test
+    public void testGetParkingLotObjectsInvalid() throws OntologyException{
+	//all object from non-existing parking
+	String parkingId = "dummy parking lot";
+	expectedException.expect(OntologyException.class);
+	expectedException.expectMessage(String.format(ErrorMessages.ONTOLOGY_INSTANCE_NOT_FOUND.getMessage(), parkingId));
+	cmOntologyManager.getParkingLotInfrastructure(parkingId);
+    }
+
 }

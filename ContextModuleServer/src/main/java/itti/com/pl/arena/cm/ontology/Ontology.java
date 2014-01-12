@@ -44,27 +44,33 @@ public interface Ontology {
 	    throws OntologyException;
 
     /**
-     * Returns IDs of GIS objects (like buildings or parking lots) found near given location
+     * Returns IDs parking lots found near given location
      * @param location location
      * @param radius radius of the search area
-     * @param classesFilter optional filter: list of classes names, which should be returned
-     * @return list of GIS objects IDs
+     * @return list of GIS object IDs
      * @throws OntologyException could not retrieve information from the ontology
      */
     public Set<String> getParkingLots(Location location, double radius) throws OntologyException;
 
     /**
-     * Returns IDs of GIS objects (like buildings or parking lots) found near given location
+     * Returns IDs of parking lots found near given location
      * @param x latitude
      * @param y longitude
      * @param radius radius of the search area
-     * @param classesFilter optional filter: list of classes names, which should be returned
-     * @return list of GIS objects IDs
+     * @return list of GIS object IDs
      * @throws OntologyException could not retrieve information from the ontology
      */
     public Set<String> getParkingLots(double x, double y, double radius)
 	    throws OntologyException;
 
+    /**
+     * Returns IDs of all GIS objects (like buildings, fences, trees) found on given parking lot
+     * @param parkingId ID of the parking lot
+     * @param classFilter returns only objects belonging to specified classes
+     * @return list of GIS object IDs
+     * @throws OntologyException could not retrieve information from the ontology
+     */
+    public Set<String> getParkingLotInfrastructure(String parkingId, String... classFilter) throws OntologyException;
 
     /**
      * Returns information about GIS object identified by its ID
