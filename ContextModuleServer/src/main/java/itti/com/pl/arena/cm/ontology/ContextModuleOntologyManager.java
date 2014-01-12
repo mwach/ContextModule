@@ -39,8 +39,10 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 	    + "FILTER ( (?coordinate >= %f && ?coordinate <= %f) || (?coordinate >= %f && ?coordinate <= %f)) " + "}";
 
     private static final String QUERY_PARKING_OBJECTS = "PREFIX ns: <%s> " + "SELECT ?%s " + "WHERE " + "{ "
-	    + "?%s rdf:type ns:%s. " + "?%s ns:Parking_has_GPS_y ?coordinate_y. " + "?%s ns:Parking_has_GPS_x ?coordinate_x. "
-	    + "FILTER ( (?coordinate_y >= %f && ?coordinate_y <= %f) || (?coordinate_x >= %f && ?coordinate_x <= %f)) " + "}";
+	    + "?%s rdf:type ns:%s. " + 
+	    "?%s ns:Parking_has_GPS_x ?coordinate_x. " +
+	    "?%s ns:Parking_has_GPS_y ?coordinate_y. " + 
+	    "FILTER ( (?coordinate_x >= %f && ?coordinate_x <= %f) || (?coordinate_y >= %f && ?coordinate_y <= %f)) " + "}";
 
     /*
      * (non-Javadoc)
@@ -157,8 +159,8 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 	Set<String> resultList = new HashSet<String>();
 
 	String queryPattern = QUERY_GET_PLATFORMS;
-	String query = String.format(queryPattern, getOntologyNamespace(), VAR, VAR, OntologyConstants.Vehicle.name(), VAR,
-	        x - radius, x + radius, y - radius, y + radius);
+	String query = String.format(queryPattern, getOntologyNamespace(), VAR, VAR, OntologyConstants.Vehicle.name(), VAR, x
+	        - radius, x + radius, y - radius, y + radius);
 
 	// execute the query
 	List<String> matches = executeSparqlQuery(query, VAR);
@@ -226,7 +228,8 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
     @Override
     public Set<String> getParkingLotInfrastructure(String parkingId, String... classFilters) throws OntologyException {
 
-	LogHelper.debug(ContextModuleOntologyManager.class, "getParkingLotObjects", "get parking objects for '%s'", String.valueOf(parkingId));
+	LogHelper.debug(ContextModuleOntologyManager.class, "getParkingLotObjects", "get parking objects for '%s'",
+	        String.valueOf(parkingId));
 	if (!StringHelper.hasContent(parkingId)) {
 	    LogHelper.warning(ContextModuleOntologyManager.class, "getParkingLotObjects", "Null parkingId provided");
 	    throw new OntologyException(ErrorMessages.ONTOLOGY_EMPTY_PARKING_ID_OBJECT);
@@ -234,39 +237,37 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 	// check, if parking is defined in the ontology
 	String parkingClass = getInstanceClass(parkingId);
 	// and it's member of valid class
-	if(!StringHelper.equals(OntologyConstants.Parking.name(), parkingClass)){
-	    LogHelper.warning(ContextModuleOntologyManager.class, "getParkingLotObjects", "Provided object '%s' is not a member of Parking class", parkingId);
-	    throw new OntologyException(ErrorMessages.ONTOLOGY_INSTANCE_IS_NOT_A_PARKING, parkingId);	    
+	if (!StringHelper.equals(OntologyConstants.Parking.name(), parkingClass)) {
+	    LogHelper.warning(ContextModuleOntologyManager.class, "getParkingLotObjects",
+		    "Provided object '%s' is not a member of Parking class", parkingId);
+	    throw new OntologyException(ErrorMessages.ONTOLOGY_INSTANCE_IS_NOT_A_PARKING, parkingId);
 	}
 
 	// get information about parking lot infrastructure
 	Map<String, String[]> properties = getInstanceProperties(parkingId);
-	//prepare the response
+	// prepare the response
 	Set<String> parkingObjects = new HashSet<>();
-	//add infrastructure objects
-	if(properties.containsKey(OntologyConstants.Parking_has_infrastructure.name())){
+	// add infrastructure objects
+	if (properties.containsKey(OntologyConstants.Parking_has_infrastructure.name())) {
 	    parkingObjects.addAll(Arrays.asList(properties.get(OntologyConstants.Parking_has_infrastructure.name())));
 	}
-	//add buildings objects
-	if(properties.containsKey(OntologyConstants.Parking_has_building.name())){
+	// add buildings objects
+	if (properties.containsKey(OntologyConstants.Parking_has_building.name())) {
 	    parkingObjects.addAll(Arrays.asList(properties.get(OntologyConstants.Parking_has_building.name())));
 	}
-	//apply filters (if defined)
-	if(classFilters != null && classFilters.length > 0){
+	// apply filters (if defined)
+	if (classFilters != null && classFilters.length > 0) {
 	    Set<String> filters = new HashSet<>(Arrays.asList(classFilters));
 	    Set<String> filteredParkingObjects = new HashSet<>();
 	    for (String parkingObject : parkingObjects) {
-	        if(
-	        	filters.contains(getInstanceClass(parkingObject)) ||
-	        	filters.contains(getInstanceGrandClass(parkingObject))
-	        	)
-	        {
-	            filteredParkingObjects.add(parkingObject);
-	        }
-            }
+		if (filters.contains(getInstanceClass(parkingObject)) || filters.contains(getInstanceGrandClass(parkingObject))) {
+		    filteredParkingObjects.add(parkingObject);
+		}
+	    }
 	    parkingObjects = filteredParkingObjects;
 	}
-	LogHelper.debug(ContextModuleOntologyManager.class, "getParkingLotObjects", "returning %d objects: %s", parkingObjects.size(), parkingObjects);
+	LogHelper.debug(ContextModuleOntologyManager.class, "getParkingLotObjects", "returning %d objects: %s",
+	        parkingObjects.size(), parkingObjects);
 	return parkingObjects;
     }
 
@@ -279,8 +280,8 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
     public Set<String> getParkingLots(double x, double y, double radius) throws OntologyException {
 
 	String queryPattern = QUERY_PARKING_OBJECTS;
-	String query = String.format(queryPattern, getOntologyNamespace(), VAR, VAR, OntologyConstants.Parking.name(), VAR,
-	        VAR, x - radius, x + radius, y - radius, y + radius);
+	String query = String.format(queryPattern, getOntologyNamespace(), VAR, VAR, OntologyConstants.Parking.name(), VAR, VAR,
+	        x - radius, x + radius, y - radius, y + radius);
 
 	// execute the query
 	List<String> matches = executeSparqlQuery(query, VAR);
@@ -336,11 +337,68 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 	    LogHelper.warning(ContextModuleOntologyManager.class, "calculateDistancesForPlatform",
 		    "There are no parkings for platform %s in location %s and radius %f", platformId, platform.getLastLocation(),
 		    radius);
+	    return;
 	}
-	Set<String> buildings = getParkingLotInfrastructure("Parking_Reading", OntologyConstants.Building.name());
+	//use first parking as a default one
+	Set<String> buildings = getParkingLotInfrastructure(parkingLots.iterator().next());
 	for (String buildingId : buildings) {
-	    
-        }
+	    calculateDistanceForObject(buildingId, platform.getLastLocation());
+	}
+    }
+
+    /**
+     * Calculated distance between object identified by its ID and given location
+     * 
+     * @param objectId
+     *            ID of the object, for which distance should be calculated
+     * @param referenceLocation
+     *            reference location (distance will be calculated between object position and that location)
+     * @throws OntologyException could not calculate location
+     */
+    private void calculateDistanceForObject(String objectId, Location referenceLocation) throws OntologyException {
+
+	LogHelper.debug(ContextModuleOntologyManager.class, "calculateDistanceForObject",
+	        "calculate distance for object '%s' and location %s'", String.valueOf(objectId),
+	        String.valueOf(referenceLocation));
+	if (!StringHelper.hasContent(objectId)) {
+	    LogHelper.warning(ContextModuleOntologyManager.class, "calculateDistanceForObject", "ObjectId was not provided");
+	    throw new OntologyException(ErrorMessages.ONTOLOGY_EMPTY_INSTANCE_NAME);
+	}
+	if(referenceLocation == null){
+	    LogHelper.warning(ContextModuleOntologyManager.class, "calculateDistanceForObject", "Location was not provided");
+	    throw new OntologyException(ErrorMessages.ONTOLOGY_EMPTY_LOCATION_OBJECT);	    
+	}
+	Map<String, String[]> objectProperties = getInstanceProperties(objectId);
+	String[] objectCoordinates = objectProperties.get(OntologyConstants.Object_has_GPS_coordinates.name());
+	if(objectCoordinates != null)
+	{
+	    Double maxDistance = null;
+	    for (String coordinate : objectCoordinates) {
+		Double distance = calculateDistance(coordinate, referenceLocation);
+		if(distance != null && (maxDistance == null || maxDistance < distance)){
+		    maxDistance = distance;
+		}
+            }
+	    updatePropertyValue(objectId, OntologyConstants.Object_has_distance.name(), maxDistance.toString());
+	}else{
+		LogHelper.info(ContextModuleOntologyManager.class, "calculateDistanceForObject", "No GPS coordinates found for instance: '%s'", objectId);	    
+	}
+    }
+
+    /**
+     * Calculates distance between two locations. One is stored as a string: 'xPos, yPos', the second one is stored as a {@link Location} object
+     * @param coordinateString first coordinate in string form 
+     * @param referenceLocation second coordinate
+     * @return
+     */
+    private Double calculateDistance(String coordinateString, Location referenceLocation) {
+	Double[] coordinates = NumbersHelper.getDoublesFromString(coordinateString, ",");
+	//invalid coordinates, ignore
+	if(coordinates == null || coordinates.length != 2 || coordinates[0] == null || coordinates[1] == null){
+	    return null;
+	}
+	//TODO: how to calculate distance in meters between two geographical coordinates
+	return 0.0;
     }
 
     private String getStringProperty(Map<String, String[]> properties, OntologyConstants propertyName) {

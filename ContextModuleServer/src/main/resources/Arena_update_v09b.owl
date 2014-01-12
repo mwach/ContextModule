@@ -78,26 +78,20 @@
       <owl:Class rdf:about="#Infrastructure"/>
     </rdfs:subClassOf>
   </owl:Class>
+  <owl:Class rdf:ID="Track_and_lorry_parking">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#Infrastructure"/>
+    </rdfs:subClassOf>
+  </owl:Class>
   <owl:Class>
     <owl:unionOf rdf:parseType="Collection">
       <owl:Class rdf:ID="Dynamic_object"/>
       <owl:Class rdf:about="#Static_object"/>
     </owl:unionOf>
   </owl:Class>
-  <owl:Class rdf:ID="Track_and_lorry_parking">
-    <rdfs:subClassOf>
-      <owl:Class rdf:about="#Infrastructure"/>
-    </rdfs:subClassOf>
-  </owl:Class>
   <owl:Class rdf:ID="Camera"/>
   <owl:Class rdf:about="#Weather">
     <rdfs:subClassOf rdf:resource="#General_information_about_Parking"/>
-  </owl:Class>
-  <owl:Class>
-    <owl:unionOf rdf:parseType="Collection">
-      <owl:Class rdf:about="#Dynamic_object"/>
-      <owl:Class rdf:about="#Static_object"/>
-    </owl:unionOf>
   </owl:Class>
   <owl:Class rdf:ID="Petrol_refuelling_area">
     <rdfs:subClassOf>
@@ -114,6 +108,24 @@
     <rdfs:subClassOf>
       <owl:Class rdf:about="#Building"/>
     </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class>
+    <owl:unionOf rdf:parseType="Collection">
+      <owl:Class rdf:about="#Dynamic_object"/>
+      <owl:Class rdf:about="#Static_object"/>
+    </owl:unionOf>
+  </owl:Class>
+  <owl:Class>
+    <owl:unionOf rdf:parseType="Collection">
+      <owl:Class rdf:about="#Dynamic_object"/>
+      <owl:Class rdf:about="#Static_object"/>
+    </owl:unionOf>
+  </owl:Class>
+  <owl:Class>
+    <owl:unionOf rdf:parseType="Collection">
+      <owl:Class rdf:about="#Dynamic_object"/>
+      <owl:Class rdf:about="#Static_object"/>
+    </owl:unionOf>
   </owl:Class>
   <owl:Class rdf:ID="Fence">
     <rdfs:subClassOf rdf:resource="#Infrastructure"/>
@@ -151,6 +163,12 @@
   <owl:Class rdf:ID="LPG_auto_gas_refuelling_area">
     <rdfs:subClassOf rdf:resource="#Infrastructure"/>
   </owl:Class>
+  <owl:Class>
+    <owl:unionOf rdf:parseType="Collection">
+      <owl:Class rdf:about="#Dynamic_object"/>
+      <owl:Class rdf:about="#Static_object"/>
+    </owl:unionOf>
+  </owl:Class>
   <owl:Class rdf:ID="Time">
     <rdfs:subClassOf rdf:resource="#General_information_about_Parking"/>
   </owl:Class>
@@ -173,20 +191,8 @@
   <owl:Class rdf:ID="Service_area">
     <rdfs:subClassOf rdf:resource="#Infrastructure"/>
   </owl:Class>
-  <owl:Class>
-    <owl:unionOf rdf:parseType="Collection">
-      <owl:Class rdf:about="#Dynamic_object"/>
-      <owl:Class rdf:about="#Static_object"/>
-    </owl:unionOf>
-  </owl:Class>
   <owl:Class rdf:about="#Dynamic_object">
     <rdfs:subClassOf rdf:resource="#Object"/>
-  </owl:Class>
-  <owl:Class>
-    <owl:unionOf rdf:parseType="Collection">
-      <owl:Class rdf:about="#Dynamic_object"/>
-      <owl:Class rdf:about="#Static_object"/>
-    </owl:unionOf>
   </owl:Class>
   <owl:Class rdf:ID="Man">
     <rdfs:subClassOf rdf:resource="#Dynamic_object"/>
@@ -230,35 +236,29 @@
     <rdfs:subClassOf rdf:resource="#Infrastructure"/>
   </owl:Class>
   <owl:Class rdf:ID="Parking"/>
-  <owl:Class>
-    <owl:unionOf rdf:parseType="Collection">
-      <owl:Class rdf:about="#Dynamic_object"/>
-      <owl:Class rdf:about="#Static_object"/>
-    </owl:unionOf>
-  </owl:Class>
   <owl:Class rdf:about="#Building">
     <rdfs:subClassOf rdf:resource="#Static_object"/>
-  </owl:Class>
-  <owl:Class>
-    <owl:unionOf rdf:parseType="Collection">
-      <owl:Class rdf:about="#Dynamic_object"/>
-      <owl:Class rdf:about="#Static_object"/>
-    </owl:unionOf>
   </owl:Class>
   <owl:Class rdf:ID="Car_parking_zone">
     <rdfs:subClassOf rdf:resource="#Infrastructure"/>
   </owl:Class>
-  <owl:Class rdf:ID="Bus">
-    <rdfs:subClassOf rdf:resource="#Vehicle"/>
-  </owl:Class>
   <owl:Class>
     <owl:unionOf rdf:parseType="Collection">
       <owl:Class rdf:about="#Dynamic_object"/>
       <owl:Class rdf:about="#Static_object"/>
     </owl:unionOf>
   </owl:Class>
+  <owl:Class rdf:ID="Bus">
+    <rdfs:subClassOf rdf:resource="#Vehicle"/>
+  </owl:Class>
   <owl:Class rdf:ID="Road">
     <rdfs:subClassOf rdf:resource="#Infrastructure"/>
+  </owl:Class>
+  <owl:Class>
+    <owl:unionOf rdf:parseType="Collection">
+      <owl:Class rdf:about="#Dynamic_object"/>
+      <owl:Class rdf:about="#Static_object"/>
+    </owl:unionOf>
   </owl:Class>
   <owl:Class rdf:ID="Trees">
     <rdfs:subClassOf rdf:resource="#Infrastructure"/>
@@ -341,13 +341,13 @@
     <rdfs:range>
       <owl:DataRange>
         <owl:oneOf rdf:parseType="Resource">
-          <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
-          >wall</rdf:first>
           <rdf:rest rdf:parseType="Resource">
-            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
             <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
             >net</rdf:first>
+            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
           </rdf:rest>
+          <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+          >wall</rdf:first>
         </owl:oneOf>
       </owl:DataRange>
     </rdfs:range>
@@ -380,6 +380,8 @@
     <rdfs:range>
       <owl:DataRange>
         <owl:oneOf rdf:parseType="Resource">
+          <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+          >front</rdf:first>
           <rdf:rest rdf:parseType="Resource">
             <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
             >back</rdf:first>
@@ -395,9 +397,9 @@
                   <rdf:rest rdf:parseType="Resource">
                     <rdf:rest rdf:parseType="Resource">
                       <rdf:rest rdf:parseType="Resource">
-                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
                         <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
                         >left back</rdf:first>
+                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
                       </rdf:rest>
                       <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
                       >right back</rdf:first>
@@ -409,8 +411,6 @@
               </rdf:rest>
             </rdf:rest>
           </rdf:rest>
-          <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-          >front</rdf:first>
         </owl:oneOf>
       </owl:DataRange>
     </rdfs:range>
@@ -425,17 +425,17 @@
     <rdfs:range>
       <owl:DataRange>
         <owl:oneOf rdf:parseType="Resource">
-          <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
-          >wall</rdf:first>
           <rdf:rest rdf:parseType="Resource">
-            <rdf:rest rdf:parseType="Resource">
-              <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
-              >no fence</rdf:first>
-              <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
-            </rdf:rest>
             <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
             >net</rdf:first>
+            <rdf:rest rdf:parseType="Resource">
+              <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+              <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+              >no fence</rdf:first>
+            </rdf:rest>
           </rdf:rest>
+          <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+          >wall</rdf:first>
         </owl:oneOf>
       </owl:DataRange>
     </rdfs:range>
@@ -449,17 +449,17 @@
     <rdfs:range>
       <owl:DataRange>
         <owl:oneOf rdf:parseType="Resource">
-          <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
-          >Low</rdf:first>
           <rdf:rest rdf:parseType="Resource">
             <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
             >Medium</rdf:first>
             <rdf:rest rdf:parseType="Resource">
+              <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
               <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
               >High</rdf:first>
-              <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
             </rdf:rest>
           </rdf:rest>
+          <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+          >Low</rdf:first>
         </owl:oneOf>
       </owl:DataRange>
     </rdfs:range>
@@ -510,9 +510,9 @@
     <rdfs:range>
       <owl:DataRange>
         <owl:oneOf rdf:parseType="Resource">
+          <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+          >infrared</rdf:first>
           <rdf:rest rdf:parseType="Resource">
-            <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-            >spherical</rdf:first>
             <rdf:rest rdf:parseType="Resource">
               <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
               >fisheye</rdf:first>
@@ -520,15 +520,15 @@
                 <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
                 >thermal</rdf:first>
                 <rdf:rest rdf:parseType="Resource">
-                  <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
                   <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
                   >other</rdf:first>
+                  <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
                 </rdf:rest>
               </rdf:rest>
             </rdf:rest>
+            <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+            >spherical</rdf:first>
           </rdf:rest>
-          <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-          >infrared</rdf:first>
         </owl:oneOf>
       </owl:DataRange>
     </rdfs:range>
@@ -548,21 +548,21 @@
       <owl:DataRange>
         <owl:oneOf rdf:parseType="Resource">
           <rdf:rest rdf:parseType="Resource">
-            <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-            >Busy time of the year</rdf:first>
             <rdf:rest rdf:parseType="Resource">
-              <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-              >Busy time of the day</rdf:first>
               <rdf:rest rdf:parseType="Resource">
+                <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+                >Remote area</rdf:first>
                 <rdf:rest rdf:parseType="Resource">
                   <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
                   >Bad weather conditions</rdf:first>
                   <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
                 </rdf:rest>
-                <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-                >Remote area</rdf:first>
               </rdf:rest>
+              <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+              >Busy time of the day</rdf:first>
             </rdf:rest>
+            <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+            >Busy time of the year</rdf:first>
           </rdf:rest>
           <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
           >Busy route</rdf:first>
@@ -578,24 +578,26 @@
     <rdfs:range>
       <owl:DataRange>
         <owl:oneOf rdf:parseType="Resource">
+          <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+          >windy</rdf:first>
           <rdf:rest rdf:parseType="Resource">
             <rdf:rest rdf:parseType="Resource">
               <rdf:rest rdf:parseType="Resource">
+                <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+                >ice on lakes, rivers</rdf:first>
                 <rdf:rest rdf:parseType="Resource">
                   <rdf:rest rdf:parseType="Resource">
                     <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
                     >trees with leaves</rdf:first>
                     <rdf:rest rdf:parseType="Resource">
+                      <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
                       <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
                       >snowy</rdf:first>
-                      <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
                     </rdf:rest>
                   </rdf:rest>
                   <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
                   >trees without leaves</rdf:first>
                 </rdf:rest>
-                <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
-                >ice on lakes, rivers</rdf:first>
               </rdf:rest>
               <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
               >sunny</rdf:first>
@@ -603,8 +605,6 @@
             <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
             >rainy</rdf:first>
           </rdf:rest>
-          <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
-          >windy</rdf:first>
         </owl:oneOf>
       </owl:DataRange>
     </rdfs:range>
@@ -614,13 +614,13 @@
     <rdfs:range>
       <owl:DataRange>
         <owl:oneOf rdf:parseType="Resource">
+          <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+          >good-no obstacles</rdf:first>
           <rdf:rest rdf:parseType="Resource">
             <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
             >poor-obstacles</rdf:first>
             <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
           </rdf:rest>
-          <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
-          >good-no obstacles</rdf:first>
         </owl:oneOf>
       </owl:DataRange>
     </rdfs:range>
@@ -633,6 +633,8 @@
     <rdfs:range>
       <owl:DataRange>
         <owl:oneOf rdf:parseType="Resource">
+          <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+          >High</rdf:first>
           <rdf:rest rdf:parseType="Resource">
             <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
             >Medium</rdf:first>
@@ -642,8 +644,6 @@
               <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
             </rdf:rest>
           </rdf:rest>
-          <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-          >High</rdf:first>
         </owl:oneOf>
       </owl:DataRange>
     </rdfs:range>
@@ -666,44 +666,6 @@
     </Parking_has_infrastructure>
   </Toilets_zone>
   <Trees rdf:ID="Tree_A"/>
-  <owl:DataRange>
-    <owl:oneOf rdf:parseType="Resource">
-      <rdf:rest rdf:parseType="Resource">
-        <rdf:rest rdf:parseType="Resource">
-          <rdf:rest rdf:parseType="Resource">
-            <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
-            >Remote area</rdf:first>
-            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
-          </rdf:rest>
-          <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
-          >Busy time of a year</rdf:first>
-        </rdf:rest>
-        <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
-        >Busy time of a day</rdf:first>
-      </rdf:rest>
-      <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
-      >Busy route</rdf:first>
-    </owl:oneOf>
-  </owl:DataRange>
-  <owl:DataRange>
-    <owl:oneOf rdf:parseType="Resource">
-      <rdf:rest rdf:parseType="Resource">
-        <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
-        >Sunny</rdf:first>
-        <rdf:rest rdf:parseType="Resource">
-          <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
-          >Windy</rdf:first>
-          <rdf:rest rdf:parseType="Resource">
-            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
-            <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
-            >Cloudily</rdf:first>
-          </rdf:rest>
-        </rdf:rest>
-      </rdf:rest>
-      <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
-      >Rainy</rdf:first>
-    </owl:oneOf>
-  </owl:DataRange>
   <Lorry rdf:ID="Lorry_A3"/>
   <Car rdf:ID="Car_A2"/>
   <Lorry rdf:ID="Lorry_A2">
@@ -715,10 +677,33 @@
     ></Parking_has_historic_data>
   </Historic_data>
   <Car rdf:ID="Car_A3"/>
+  <owl:DataRange>
+    <owl:oneOf rdf:parseType="Resource">
+      <rdf:rest rdf:parseType="Resource">
+        <rdf:rest rdf:parseType="Resource">
+          <rdf:rest rdf:parseType="Resource">
+            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+            <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+            >Remote area</rdf:first>
+          </rdf:rest>
+          <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+          >Busy time of a year</rdf:first>
+        </rdf:rest>
+        <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+        >Busy time of a day</rdf:first>
+      </rdf:rest>
+      <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+      >Busy route</rdf:first>
+    </owl:oneOf>
+  </owl:DataRange>
   <owl:DataRange/>
   <Lawn rdf:ID="Lawn_A"/>
   <swrl:Variable rdf:ID="e"/>
   <Vehicle_with_cameras rdf:ID="Vehicla_with_cameras_R1">
+    <Vehicle_has_GPS_x rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
+    >-0.9459925</Vehicle_has_GPS_x>
+    <Vehicle_has_GPS_y rdf:datatype="http://www.w3.org/2001/XMLSchema#float"
+    >51.43807</Vehicle_has_GPS_y>
     <Vehicle_has_cameras>
       <Camera rdf:ID="Camera_1">
         <Camera_has_type rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
@@ -1126,6 +1111,7 @@
   <swrl:Imp rdf:ID="Visible_objects">
     <swrl:head>
       <swrl:AtomList>
+        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
         <rdf:first>
           <swrl:IndividualPropertyAtom>
             <swrl:argument2>
@@ -1137,90 +1123,72 @@
             <swrl:propertyPredicate rdf:resource="#Vehicle_has_visible_objects"/>
           </swrl:IndividualPropertyAtom>
         </rdf:first>
-        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
       </swrl:AtomList>
     </swrl:head>
     <swrl:body>
       <swrl:AtomList>
+        <rdf:first>
+          <swrl:ClassAtom>
+            <swrl:classPredicate rdf:resource="#Vehicle_with_cameras"/>
+            <swrl:argument1 rdf:resource="#x"/>
+          </swrl:ClassAtom>
+        </rdf:first>
         <rdf:rest>
           <swrl:AtomList>
             <rdf:rest>
               <swrl:AtomList>
                 <rdf:first>
                   <swrl:ClassAtom>
+                    <swrl:classPredicate rdf:resource="#Camera"/>
                     <swrl:argument1>
                       <swrl:Variable rdf:ID="z"/>
                     </swrl:argument1>
-                    <swrl:classPredicate rdf:resource="#Camera"/>
                   </swrl:ClassAtom>
                 </rdf:first>
                 <rdf:rest>
                   <swrl:AtomList>
-                    <rdf:first>
-                      <swrl:IndividualPropertyAtom>
-                        <swrl:propertyPredicate rdf:resource="#Vehicle_has_cameras"/>
-                        <swrl:argument2 rdf:resource="#z"/>
-                        <swrl:argument1 rdf:resource="#x"/>
-                      </swrl:IndividualPropertyAtom>
-                    </rdf:first>
                     <rdf:rest>
                       <swrl:AtomList>
                         <rdf:first>
                           <swrl:IndividualPropertyAtom>
-                            <swrl:argument1 rdf:resource="#x"/>
-                            <swrl:argument2 rdf:resource="#y"/>
                             <swrl:propertyPredicate rdf:resource="#Vehicle_has_close_objects"/>
+                            <swrl:argument2 rdf:resource="#y"/>
+                            <swrl:argument1 rdf:resource="#x"/>
                           </swrl:IndividualPropertyAtom>
                         </rdf:first>
                         <rdf:rest>
                           <swrl:AtomList>
+                            <rdf:first>
+                              <swrl:DatavaluedPropertyAtom>
+                                <swrl:argument2>
+                                  <swrl:Variable rdf:ID="a"/>
+                                </swrl:argument2>
+                                <swrl:argument1 rdf:resource="#z"/>
+                                <swrl:propertyPredicate rdf:resource="#Camera_angle_max"/>
+                              </swrl:DatavaluedPropertyAtom>
+                            </rdf:first>
                             <rdf:rest>
                               <swrl:AtomList>
-                                <rdf:first>
-                                  <swrl:DatavaluedPropertyAtom>
-                                    <swrl:argument1 rdf:resource="#z"/>
-                                    <swrl:argument2>
-                                      <swrl:Variable rdf:ID="b"/>
-                                    </swrl:argument2>
-                                    <swrl:propertyPredicate rdf:resource="#Camera_angle_min"/>
-                                  </swrl:DatavaluedPropertyAtom>
-                                </rdf:first>
                                 <rdf:rest>
                                   <swrl:AtomList>
+                                    <rdf:first>
+                                      <swrl:DatavaluedPropertyAtom>
+                                        <swrl:propertyPredicate rdf:resource="#Object_has_angle"/>
+                                        <swrl:argument1 rdf:resource="#y"/>
+                                        <swrl:argument2>
+                                          <swrl:Variable rdf:ID="c"/>
+                                        </swrl:argument2>
+                                      </swrl:DatavaluedPropertyAtom>
+                                    </rdf:first>
                                     <rdf:rest>
                                       <swrl:AtomList>
-                                        <rdf:rest>
-                                          <swrl:AtomList>
-                                            <rdf:first>
-                                              <swrl:BuiltinAtom>
-                                                <swrl:arguments>
-                                                  <rdf:List>
-                                                    <rdf:first>
-                                                      <swrl:Variable rdf:ID="c"/>
-                                                    </rdf:first>
-                                                    <rdf:rest>
-                                                      <rdf:List>
-                                                        <rdf:first rdf:resource="#b"/>
-                                                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
-                                                      </rdf:List>
-                                                    </rdf:rest>
-                                                  </rdf:List>
-                                                </swrl:arguments>
-                                                <swrl:builtin rdf:resource="http://www.w3.org/2003/11/swrlb#greaterThan"/>
-                                              </swrl:BuiltinAtom>
-                                            </rdf:first>
-                                            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
-                                          </swrl:AtomList>
-                                        </rdf:rest>
                                         <rdf:first>
                                           <swrl:BuiltinAtom>
                                             <swrl:arguments>
                                               <rdf:List>
                                                 <rdf:rest>
                                                   <rdf:List>
-                                                    <rdf:first>
-                                                      <swrl:Variable rdf:ID="a"/>
-                                                    </rdf:first>
+                                                    <rdf:first rdf:resource="#a"/>
                                                     <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
                                                   </rdf:List>
                                                 </rdf:rest>
@@ -1230,51 +1198,87 @@
                                             <swrl:builtin rdf:resource="http://www.w3.org/2003/11/swrlb#lessThanOrEqual"/>
                                           </swrl:BuiltinAtom>
                                         </rdf:first>
+                                        <rdf:rest>
+                                          <swrl:AtomList>
+                                            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                                            <rdf:first>
+                                              <swrl:BuiltinAtom>
+                                                <swrl:builtin rdf:resource="http://www.w3.org/2003/11/swrlb#greaterThan"/>
+                                                <swrl:arguments>
+                                                  <rdf:List>
+                                                    <rdf:rest>
+                                                      <rdf:List>
+                                                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                                                        <rdf:first>
+                                                          <swrl:Variable rdf:ID="b"/>
+                                                        </rdf:first>
+                                                      </rdf:List>
+                                                    </rdf:rest>
+                                                    <rdf:first rdf:resource="#c"/>
+                                                  </rdf:List>
+                                                </swrl:arguments>
+                                              </swrl:BuiltinAtom>
+                                            </rdf:first>
+                                          </swrl:AtomList>
+                                        </rdf:rest>
                                       </swrl:AtomList>
                                     </rdf:rest>
-                                    <rdf:first>
-                                      <swrl:DatavaluedPropertyAtom>
-                                        <swrl:propertyPredicate rdf:resource="#Object_has_angle"/>
-                                        <swrl:argument1 rdf:resource="#y"/>
-                                        <swrl:argument2 rdf:resource="#c"/>
-                                      </swrl:DatavaluedPropertyAtom>
-                                    </rdf:first>
                                   </swrl:AtomList>
                                 </rdf:rest>
+                                <rdf:first>
+                                  <swrl:DatavaluedPropertyAtom>
+                                    <swrl:propertyPredicate rdf:resource="#Camera_angle_min"/>
+                                    <swrl:argument2 rdf:resource="#b"/>
+                                    <swrl:argument1 rdf:resource="#z"/>
+                                  </swrl:DatavaluedPropertyAtom>
+                                </rdf:first>
                               </swrl:AtomList>
                             </rdf:rest>
-                            <rdf:first>
-                              <swrl:DatavaluedPropertyAtom>
-                                <swrl:argument1 rdf:resource="#z"/>
-                                <swrl:argument2 rdf:resource="#a"/>
-                                <swrl:propertyPredicate rdf:resource="#Camera_angle_max"/>
-                              </swrl:DatavaluedPropertyAtom>
-                            </rdf:first>
                           </swrl:AtomList>
                         </rdf:rest>
                       </swrl:AtomList>
                     </rdf:rest>
+                    <rdf:first>
+                      <swrl:IndividualPropertyAtom>
+                        <swrl:argument1 rdf:resource="#x"/>
+                        <swrl:argument2 rdf:resource="#z"/>
+                        <swrl:propertyPredicate rdf:resource="#Vehicle_has_cameras"/>
+                      </swrl:IndividualPropertyAtom>
+                    </rdf:first>
                   </swrl:AtomList>
                 </rdf:rest>
               </swrl:AtomList>
             </rdf:rest>
             <rdf:first>
               <swrl:ClassAtom>
-                <swrl:argument1 rdf:resource="#y"/>
                 <swrl:classPredicate rdf:resource="#Object"/>
+                <swrl:argument1 rdf:resource="#y"/>
               </swrl:ClassAtom>
             </rdf:first>
           </swrl:AtomList>
         </rdf:rest>
-        <rdf:first>
-          <swrl:ClassAtom>
-            <swrl:argument1 rdf:resource="#x"/>
-            <swrl:classPredicate rdf:resource="#Vehicle_with_cameras"/>
-          </swrl:ClassAtom>
-        </rdf:first>
       </swrl:AtomList>
     </swrl:body>
   </swrl:Imp>
+  <owl:DataRange>
+    <owl:oneOf rdf:parseType="Resource">
+      <rdf:rest rdf:parseType="Resource">
+        <rdf:rest rdf:parseType="Resource">
+          <rdf:rest rdf:parseType="Resource">
+            <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+            >Cloudily</rdf:first>
+            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+          </rdf:rest>
+          <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+          >Windy</rdf:first>
+        </rdf:rest>
+        <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+        >Sunny</rdf:first>
+      </rdf:rest>
+      <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+      >Rainy</rdf:first>
+    </owl:oneOf>
+  </owl:DataRange>
   <Infrastructure rdf:ID="Infrastructure_4"/>
   <swrl:Imp rdf:ID="Close_objects">
     <swrla:isRuleEnabled rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean"
@@ -1283,9 +1287,9 @@
       <swrl:AtomList>
         <rdf:first>
           <swrl:IndividualPropertyAtom>
-            <swrl:argument2 rdf:resource="#y"/>
             <swrl:propertyPredicate rdf:resource="#Vehicle_has_close_objects"/>
             <swrl:argument1 rdf:resource="#x"/>
+            <swrl:argument2 rdf:resource="#y"/>
           </swrl:IndividualPropertyAtom>
         </rdf:first>
         <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
@@ -1297,6 +1301,13 @@
           <swrl:AtomList>
             <rdf:rest>
               <swrl:AtomList>
+                <rdf:first>
+                  <swrl:DatavaluedPropertyAtom>
+                    <swrl:propertyPredicate rdf:resource="#Object_has_distance"/>
+                    <swrl:argument1 rdf:resource="#y"/>
+                    <swrl:argument2 rdf:resource="#z"/>
+                  </swrl:DatavaluedPropertyAtom>
+                </rdf:first>
                 <rdf:rest>
                   <swrl:AtomList>
                     <rdf:rest>
@@ -1304,38 +1315,31 @@
                         <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
                         <rdf:first>
                           <swrl:BuiltinAtom>
-                            <swrl:builtin rdf:resource="http://www.w3.org/2003/11/swrlb#lessThanOrEqual"/>
                             <swrl:arguments>
                               <rdf:List>
+                                <rdf:first rdf:resource="#z"/>
                                 <rdf:rest>
                                   <rdf:List>
-                                    <rdf:first rdf:resource="#a"/>
                                     <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                                    <rdf:first rdf:resource="#a"/>
                                   </rdf:List>
                                 </rdf:rest>
-                                <rdf:first rdf:resource="#z"/>
                               </rdf:List>
                             </swrl:arguments>
+                            <swrl:builtin rdf:resource="http://www.w3.org/2003/11/swrlb#lessThanOrEqual"/>
                           </swrl:BuiltinAtom>
                         </rdf:first>
                       </swrl:AtomList>
                     </rdf:rest>
                     <rdf:first>
                       <swrl:DatavaluedPropertyAtom>
-                        <swrl:argument1 rdf:resource="#x"/>
-                        <swrl:argument2 rdf:resource="#a"/>
                         <swrl:propertyPredicate rdf:resource="#Distance_parameter"/>
+                        <swrl:argument2 rdf:resource="#a"/>
+                        <swrl:argument1 rdf:resource="#x"/>
                       </swrl:DatavaluedPropertyAtom>
                     </rdf:first>
                   </swrl:AtomList>
                 </rdf:rest>
-                <rdf:first>
-                  <swrl:DatavaluedPropertyAtom>
-                    <swrl:propertyPredicate rdf:resource="#Object_has_distance"/>
-                    <swrl:argument2 rdf:resource="#z"/>
-                    <swrl:argument1 rdf:resource="#y"/>
-                  </swrl:DatavaluedPropertyAtom>
-                </rdf:first>
               </swrl:AtomList>
             </rdf:rest>
             <rdf:first>
@@ -1348,8 +1352,8 @@
         </rdf:rest>
         <rdf:first>
           <swrl:ClassAtom>
-            <swrl:argument1 rdf:resource="#x"/>
             <swrl:classPredicate rdf:resource="#Vehicle_with_cameras"/>
+            <swrl:argument1 rdf:resource="#x"/>
           </swrl:ClassAtom>
         </rdf:first>
       </swrl:AtomList>
@@ -1371,6 +1375,12 @@
   <swrl:Imp rdf:ID="Distant_objects">
     <swrl:body>
       <swrl:AtomList>
+        <rdf:first>
+          <swrl:ClassAtom>
+            <swrl:argument1 rdf:resource="#x"/>
+            <swrl:classPredicate rdf:resource="#Vehicle_with_cameras"/>
+          </swrl:ClassAtom>
+        </rdf:first>
         <rdf:rest>
           <swrl:AtomList>
             <rdf:first>
@@ -1381,55 +1391,49 @@
             </rdf:first>
             <rdf:rest>
               <swrl:AtomList>
+                <rdf:first>
+                  <swrl:DatavaluedPropertyAtom>
+                    <swrl:argument1 rdf:resource="#y"/>
+                    <swrl:argument2 rdf:resource="#z"/>
+                    <swrl:propertyPredicate rdf:resource="#Object_has_distance"/>
+                  </swrl:DatavaluedPropertyAtom>
+                </rdf:first>
                 <rdf:rest>
                   <swrl:AtomList>
-                    <rdf:first>
-                      <swrl:DatavaluedPropertyAtom>
-                        <swrl:argument2 rdf:resource="#a"/>
-                        <swrl:argument1 rdf:resource="#x"/>
-                        <swrl:propertyPredicate rdf:resource="#Distance_parameter"/>
-                      </swrl:DatavaluedPropertyAtom>
-                    </rdf:first>
                     <rdf:rest>
                       <swrl:AtomList>
+                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
                         <rdf:first>
                           <swrl:BuiltinAtom>
+                            <swrl:builtin rdf:resource="http://www.w3.org/2003/11/swrlb#greaterThan"/>
                             <swrl:arguments>
                               <rdf:List>
                                 <rdf:rest>
                                   <rdf:List>
-                                    <rdf:first rdf:resource="#a"/>
                                     <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                                    <rdf:first rdf:resource="#a"/>
                                   </rdf:List>
                                 </rdf:rest>
                                 <rdf:first rdf:resource="#z"/>
                               </rdf:List>
                             </swrl:arguments>
-                            <swrl:builtin rdf:resource="http://www.w3.org/2003/11/swrlb#greaterThan"/>
                           </swrl:BuiltinAtom>
                         </rdf:first>
-                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
                       </swrl:AtomList>
                     </rdf:rest>
+                    <rdf:first>
+                      <swrl:DatavaluedPropertyAtom>
+                        <swrl:propertyPredicate rdf:resource="#Distance_parameter"/>
+                        <swrl:argument1 rdf:resource="#x"/>
+                        <swrl:argument2 rdf:resource="#a"/>
+                      </swrl:DatavaluedPropertyAtom>
+                    </rdf:first>
                   </swrl:AtomList>
                 </rdf:rest>
-                <rdf:first>
-                  <swrl:DatavaluedPropertyAtom>
-                    <swrl:propertyPredicate rdf:resource="#Object_has_distance"/>
-                    <swrl:argument1 rdf:resource="#y"/>
-                    <swrl:argument2 rdf:resource="#z"/>
-                  </swrl:DatavaluedPropertyAtom>
-                </rdf:first>
               </swrl:AtomList>
             </rdf:rest>
           </swrl:AtomList>
         </rdf:rest>
-        <rdf:first>
-          <swrl:ClassAtom>
-            <swrl:argument1 rdf:resource="#x"/>
-            <swrl:classPredicate rdf:resource="#Vehicle_with_cameras"/>
-          </swrl:ClassAtom>
-        </rdf:first>
       </swrl:AtomList>
     </swrl:body>
     <swrla:isRuleEnabled rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean"
@@ -1439,9 +1443,9 @@
         <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
         <rdf:first>
           <swrl:IndividualPropertyAtom>
-            <swrl:propertyPredicate rdf:resource="#Vehicle_has_distant_objects"/>
             <swrl:argument2 rdf:resource="#y"/>
             <swrl:argument1 rdf:resource="#x"/>
+            <swrl:propertyPredicate rdf:resource="#Vehicle_has_distant_objects"/>
           </swrl:IndividualPropertyAtom>
         </rdf:first>
       </swrl:AtomList>

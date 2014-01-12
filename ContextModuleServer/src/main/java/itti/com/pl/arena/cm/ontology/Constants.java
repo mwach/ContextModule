@@ -22,6 +22,7 @@ public class Constants {
 		Parking_has_infrastructure,
 		Parking_has_building,
 		Building,
+		Object_has_distance
 	}
 
 }

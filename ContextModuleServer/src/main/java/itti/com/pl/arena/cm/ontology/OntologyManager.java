@@ -346,12 +346,8 @@ public class OntologyManager implements Service {
 		    individual.getBrowserText());
 	} else {
 	    
-		// remove current value of the property
-		int propsCount = individual.getPropertyValueCount(property);
-		for(int i=0 ; i<propsCount ; i++){
-		    Object currentOntValue = individual.getPropertyValue(property);
-		    individual.removePropertyValue(property, currentOntValue);
-		}	    
+	    removePropertyValues(individual, property);
+
 	    // now, set property value
 	    for (String value : values) {
 		// find value as an instance
@@ -388,7 +384,7 @@ public class OntologyManager implements Service {
 	if (individual == null) {
 	    LogHelper.warning(OntologyManager.class, "getInstanceProperties", "Instance '%s' was not found in the ontology",
 		    instanceName);
-	    return properties;
+	    throw new OntologyException(ErrorMessages.ONTOLOGY_INSTANCE_NOT_FOUND, instanceName);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -449,6 +445,34 @@ public class OntologyManager implements Service {
 	instance.addPropertyValue(property, value);
     }
 
+    /**
+     * Updates value of the property for given instance. Before update, removes all existing values of that instance
+     * @param instanceName name of the instance
+     * @param propertyName name of the property
+     * @param propertyValue new value for the property
+     * @throws OntologyException could not update property value
+     */
+    public void updatePropertyValue(String instanceName, String propertyName, Object propertyValue) throws OntologyException {
+	OWLIndividual instance = getInstance(getInstanceClass(instanceName), instanceName);
+	RDFProperty property = model.getRDFProperty(propertyName);
+	removePropertyValues(instance, property);
+	setPropertyValue(instance, property, propertyValue);
+    }
+
+    /**
+     * Removes all values of the property for given instance
+     * @param individual instance
+     * @param property property
+     */
+    public void removePropertyValues(OWLIndividual individual, RDFProperty property){
+	// remove current value of the property
+	int propsCount = individual.getPropertyValueCount(property);
+	for(int i=0 ; i<propsCount ; i++){
+	    Object currentOntValue = individual.getPropertyValue(property);
+	    individual.removePropertyValue(property, currentOntValue);
+	}	    
+
+    }
     /**
      * Saves current ontology model to file
      * 

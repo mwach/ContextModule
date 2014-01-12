@@ -23,7 +23,7 @@ public enum ErrorMessages {
     ONTOLOGY_CLASS_DOESNT_EXIST(201, "Class '%s' not found in ontology"),
     ONTOLOGY_COULD_NOT_ADD_INSTANCE(202, "Could not add instance '%s' of class '%s' to the ontology"),
     ONTOLOGY_EMPTY_INSTANCE_NAME(203, "Empty instance name was provided"),
-    ONTOLOGY_INSTANCE_NOT_FOUND(204, "Base class for instance '%s' not found in the ontology"),
+    ONTOLOGY_INSTANCE_NOT_FOUND(204, "Instance '%s' not found in the ontology"),
     ONTOLOGY_EMPTY_LOCATION_OBJECT(205, "Null Location was provided"),
     ONTOLOGY_EMPTY_PARKING_ID_OBJECT(206, "Null parkingId was provided"),
     ONTOLOGY_INSTANCE_IS_NOT_A_PARKING(207, "Provided object '%s' does not represent a parking lot"),

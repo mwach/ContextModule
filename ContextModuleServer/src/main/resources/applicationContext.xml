@@ -67,7 +67,7 @@
 	<bean id="Ontology"
 		class="itti.com.pl.arena.cm.ontology.ContextModuleOntologyManager"
 		init-method="init">
-		<property name="ontologyLocation" value="Arena_update_v09b.owl" />
+		<property name="ontologyLocation" value="Arena_update_v09c.owl" />
 		<property name="ontologyNamespace"
 			value="http://www.owl-ontologies.com/Ontology1350654591.owl#" />
 	</bean>

@@ -96,4 +96,28 @@ public class NumbersHelper {
 	}
 	return intVal;
     }
+
+    /**
+     * Parses provided string into array of double values
+     * 
+     * @param valueString
+     *            input string containing one or more double values
+     * @param delimeter
+     *            double values delimiter
+     * @return array of double values
+     */
+    public static Double[] getDoublesFromString(String valueString, String delimiter) {
+	// first, check if not null array was provided
+	if (valueString == null) {
+	    return null;
+	}
+	// split string into array of tokens
+	String[] valuesArray = valueString.split(delimiter);
+	Double[] output = new Double[valuesArray.length];
+	// for each of tokens, try to parse into double
+	for (int i = 0; i < valuesArray.length; i++) {
+	    output[i] = getDoubleFromString(valuesArray[i]);
+	}
+	return output;
+    }
 }
