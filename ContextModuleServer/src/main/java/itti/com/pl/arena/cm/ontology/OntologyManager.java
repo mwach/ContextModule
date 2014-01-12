@@ -2,7 +2,7 @@ package itti.com.pl.arena.cm.ontology;
 
 import itti.com.pl.arena.cm.ErrorMessages;
 import itti.com.pl.arena.cm.Service;
-import itti.com.pl.arena.cm.ontology.Constants.ContextModuleConstants;
+import itti.com.pl.arena.cm.ontology.Constants.OntologyConstants;
 import itti.com.pl.arena.cm.utils.helpers.IOHelper;
 import itti.com.pl.arena.cm.utils.helpers.LogHelper;
 import itti.com.pl.arena.cm.utils.helpers.NumbersHelper;
@@ -126,7 +126,7 @@ public class OntologyManager implements Service {
      *            name of the class
      * @return list of instances names. If there are no instances, empty list will be returned
      */
-    public final List<String> getDirectInstances(ContextModuleConstants className) {
+    public final List<String> getDirectInstances(OntologyConstants className) {
 	return getDirectInstances(className.name());
     }
 

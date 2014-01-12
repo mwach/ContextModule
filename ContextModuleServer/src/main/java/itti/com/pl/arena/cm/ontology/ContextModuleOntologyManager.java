@@ -10,13 +10,12 @@ import itti.com.pl.arena.cm.dto.Platform;
 import itti.com.pl.arena.cm.dto.RelativePosition;
 import itti.com.pl.arena.cm.geoportal.gov.pl.GeoportalKeys;
 import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalResponse;
-import itti.com.pl.arena.cm.ontology.Constants.ContextModuleConstants;
+import itti.com.pl.arena.cm.ontology.Constants.OntologyConstants;
 import itti.com.pl.arena.cm.utils.helpers.LogHelper;
 import itti.com.pl.arena.cm.utils.helpers.NumbersHelper;
 import itti.com.pl.arena.cm.utils.helpers.StringHelper;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -59,7 +58,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 	Map<String, String[]> properties = getInstanceProperties(platformId);
 
 	// get information about cameras installed on platform
-	String[] cameras = properties.get(ContextModuleConstants.Vehicle_has_cameras.name());
+	String[] cameras = properties.get(OntologyConstants.Vehicle_has_cameras.name());
 	if (cameras != null) {
 	    for (String cameraId : cameras) {
 		Camera cameraInfo = getCameraInformation(cameraId);
@@ -74,9 +73,9 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
     }
 
     private Location prepareLastLocation(Map<String, String[]> properties) {
-	Double longitude = getDoubleProperty(properties, ContextModuleConstants.Platform_has_GPS_x);
-	Double latitude = getDoubleProperty(properties, ContextModuleConstants.Platform_has_GPS_y);
-	Integer bearing = getIntProperty(properties, ContextModuleConstants.Object_has_GPS_bearing);
+	Double longitude = getDoubleProperty(properties, OntologyConstants.Vehicle_has_GPS_x);
+	Double latitude = getDoubleProperty(properties, OntologyConstants.Vehicle_has_GPS_y);
+	Integer bearing = getIntProperty(properties, OntologyConstants.Object_has_GPS_bearing);
 	return new Location(longitude == null ? 0 : longitude.doubleValue(), latitude == null ? 0 : latitude.doubleValue(),
 	        bearing == null ? 0 : bearing.intValue());
     }
@@ -91,11 +90,11 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 
 	Map<String, String[]> properties = new HashMap<>();
 	if (platform.getLastLocation() != null) {
-	    properties.put(ContextModuleConstants.Platform_has_GPS_x.name(),
+	    properties.put(OntologyConstants.Vehicle_has_GPS_x.name(),
 		    new String[] { String.valueOf(platform.getLastLocation().getLongitude()) });
-	    properties.put(ContextModuleConstants.Platform_has_GPS_y.name(),
+	    properties.put(OntologyConstants.Vehicle_has_GPS_y.name(),
 		    new String[] { String.valueOf(platform.getLastLocation().getLatitude()) });
-	    properties.put(ContextModuleConstants.Object_has_GPS_bearing.name(),
+	    properties.put(OntologyConstants.Object_has_GPS_bearing.name(),
 		    new String[] { String.valueOf(platform.getLastLocation().getBearing()) });
 	}
 
@@ -107,7 +106,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 		updateCameraInformation(camera.getValue());
 		cameraIds[currentCamera++] = camera.getKey();
 	    }
-	    properties.put(ContextModuleConstants.Vehicle_has_cameras.name(), cameraIds);
+	    properties.put(OntologyConstants.Vehicle_has_cameras.name(), cameraIds);
 	}
 	// create instance in the ontology
 	createSimpleInstance(platform.getType().name(), platform.getId(), properties);
@@ -127,10 +126,10 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 
 	Map<String, String[]> cameraInstance = getInstanceProperties(cameraId);
 	if (!cameraInstance.isEmpty()) {
-	    String cameraType = getStringProperty(cameraInstance, ContextModuleConstants.Camera_has_type);
-	    Double angleXVal = getDoubleProperty(cameraInstance, ContextModuleConstants.Camera_has_angle_x);
-	    Double angleYVal = getDoubleProperty(cameraInstance, ContextModuleConstants.Camera_has_angle_y);
-	    RelativePosition position = getRelativePosition(cameraInstance, ContextModuleConstants.Camera_view);
+	    String cameraType = getStringProperty(cameraInstance, OntologyConstants.Camera_has_type);
+	    Double angleXVal = getDoubleProperty(cameraInstance, OntologyConstants.Camera_has_angle_x);
+	    Double angleYVal = getDoubleProperty(cameraInstance, OntologyConstants.Camera_has_angle_y);
+	    RelativePosition position = getRelativePosition(cameraInstance, OntologyConstants.Camera_view);
 
 	    cameraInfo = new Camera(cameraId, cameraType, angleXVal == null ? 0 : angleXVal.doubleValue(), angleYVal == null ? 0
 		    : angleYVal.doubleValue(), position);
@@ -141,11 +140,11 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
     private OWLIndividual updateCameraInformation(Camera camera) throws OntologyException {
 
 	Map<String, String[]> properties = new HashMap<>();
-	properties.put(ContextModuleConstants.Camera_has_type.name(), new String[] { camera.getType() });
-	properties.put(ContextModuleConstants.Camera_has_angle_x.name(), new String[] { String.valueOf(camera.getAngleX()) });
-	properties.put(ContextModuleConstants.Camera_has_angle_y.name(), new String[] { String.valueOf(camera.getAngleY()) });
-	properties.put(ContextModuleConstants.Camera_view.name(), new String[] { camera.getPosition().name() });
-	return createSimpleInstance(ContextModuleConstants.Camera.name(), camera.getId(), properties);
+	properties.put(OntologyConstants.Camera_has_type.name(), new String[] { camera.getType() });
+	properties.put(OntologyConstants.Camera_has_angle_x.name(), new String[] { String.valueOf(camera.getAngleX()) });
+	properties.put(OntologyConstants.Camera_has_angle_y.name(), new String[] { String.valueOf(camera.getAngleY()) });
+	properties.put(OntologyConstants.Camera_view.name(), new String[] { camera.getPosition().name() });
+	return createSimpleInstance(OntologyConstants.Camera.name(), camera.getId(), properties);
     }
 
     /*
@@ -158,7 +157,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 	Set<String> resultList = new HashSet<String>();
 
 	String queryPattern = QUERY_GET_PLATFORMS;
-	String query = String.format(queryPattern, getOntologyNamespace(), VAR, VAR, ContextModuleConstants.Vehicle.name(), VAR,
+	String query = String.format(queryPattern, getOntologyNamespace(), VAR, VAR, OntologyConstants.Vehicle.name(), VAR,
 	        x - radius, x + radius, y - radius, y + radius);
 
 	// execute the query
@@ -187,13 +186,13 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 	Parking information = new Parking();
 	information.setId(objectId);
 
-	String[] infrastructureList = properties.get(ContextModuleConstants.Parking_has_infrastructure.name());
+	String[] infrastructureList = properties.get(OntologyConstants.Parking_has_infrastructure.name());
 	if (infrastructureList != null) {
 	    for (String infrastrId : infrastructureList) {
 
 		Map<String, String[]> infrastrProperties = getInstanceProperties(infrastrId);
 		if (!infrastrProperties.isEmpty()) {
-		    String[] coordinates = infrastrProperties.get(ContextModuleConstants.Object_has_GPS_coordinates.name());
+		    String[] coordinates = infrastrProperties.get(OntologyConstants.Object_has_GPS_coordinates.name());
 		    GeoObject infrastructure = new Infrastructure();
 		    infrastructure.setId(infrastrId);
 		    infrastructure.setGpsCoordinates(coordinates);
@@ -235,7 +234,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 	// check, if parking is defined in the ontology
 	String parkingClass = getInstanceClass(parkingId);
 	// and it's member of valid class
-	if(!StringHelper.equals(ContextModuleConstants.Parking.name(), parkingClass)){
+	if(!StringHelper.equals(OntologyConstants.Parking.name(), parkingClass)){
 	    LogHelper.warning(ContextModuleOntologyManager.class, "getParkingLotObjects", "Provided object '%s' is not a member of Parking class", parkingId);
 	    throw new OntologyException(ErrorMessages.ONTOLOGY_INSTANCE_IS_NOT_A_PARKING, parkingId);	    
 	}
@@ -245,12 +244,12 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 	//prepare the response
 	Set<String> parkingObjects = new HashSet<>();
 	//add infrastructure objects
-	if(properties.containsKey(ContextModuleConstants.Parking_has_infrastructure.name())){
-	    parkingObjects.addAll(Arrays.asList(properties.get(ContextModuleConstants.Parking_has_infrastructure.name())));
+	if(properties.containsKey(OntologyConstants.Parking_has_infrastructure.name())){
+	    parkingObjects.addAll(Arrays.asList(properties.get(OntologyConstants.Parking_has_infrastructure.name())));
 	}
 	//add buildings objects
-	if(properties.containsKey(ContextModuleConstants.Parking_has_building.name())){
-	    parkingObjects.addAll(Arrays.asList(properties.get(ContextModuleConstants.Parking_has_building.name())));
+	if(properties.containsKey(OntologyConstants.Parking_has_building.name())){
+	    parkingObjects.addAll(Arrays.asList(properties.get(OntologyConstants.Parking_has_building.name())));
 	}
 	//apply filters (if defined)
 	if(classFilters != null && classFilters.length > 0){
@@ -280,7 +279,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
     public Set<String> getParkingLots(double x, double y, double radius) throws OntologyException {
 
 	String queryPattern = QUERY_PARKING_OBJECTS;
-	String query = String.format(queryPattern, getOntologyNamespace(), VAR, VAR, ContextModuleConstants.Parking.name(), VAR,
+	String query = String.format(queryPattern, getOntologyNamespace(), VAR, VAR, OntologyConstants.Parking.name(), VAR,
 	        VAR, x - radius, x + radius, y - radius, y + radius);
 
 	// execute the query
@@ -304,7 +303,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 		    String ontologyClass = GeoportalKeys.getOntlogyClass(layerName);
 		    if (StringHelper.hasContent(ontologyClass)) {
 			Map<String, String[]> properties = new HashMap<String, String[]>();
-			properties.put(Constants.ContextModuleConstants.Object_has_GPS_coordinates.name(),
+			properties.put(Constants.OntologyConstants.Object_has_GPS_coordinates.name(),
 			        new String[] { String.format("%f,%f", x, y) });
 			String instanceName = String.format("%s-%f-%f", ontologyClass, x, y);
 			try {
@@ -338,9 +337,13 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 		    "There are no parkings for platform %s in location %s and radius %f", platformId, platform.getLastLocation(),
 		    radius);
 	}
+	Set<String> buildings = getParkingLotInfrastructure("Parking_Reading", OntologyConstants.Building.name());
+	for (String buildingId : buildings) {
+	    
+        }
     }
 
-    private String getStringProperty(Map<String, String[]> properties, ContextModuleConstants propertyName) {
+    private String getStringProperty(Map<String, String[]> properties, OntologyConstants propertyName) {
 
 	if (properties == null || propertyName == null) {
 	    return null;
@@ -350,15 +353,15 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 	return stringValue;
     }
 
-    private Integer getIntProperty(Map<String, String[]> properties, ContextModuleConstants propertyName) {
+    private Integer getIntProperty(Map<String, String[]> properties, OntologyConstants propertyName) {
 	return NumbersHelper.getIntegerFromString(getStringProperty(properties, propertyName));
     }
 
-    private Double getDoubleProperty(Map<String, String[]> properties, ContextModuleConstants propertyName) {
+    private Double getDoubleProperty(Map<String, String[]> properties, OntologyConstants propertyName) {
 	return NumbersHelper.getDoubleFromString(getStringProperty(properties, propertyName));
     }
 
-    private RelativePosition getRelativePosition(Map<String, String[]> properties, ContextModuleConstants propertyName) {
+    private RelativePosition getRelativePosition(Map<String, String[]> properties, OntologyConstants propertyName) {
 	return RelativePosition.getPostion(getStringProperty(properties, propertyName));
     }
 }

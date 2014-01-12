@@ -66,8 +66,8 @@ public class OntologyManagerTest {
     public void testAddInstanceWithProperties() throws OntologyException{
 
 	//select existing class having at least one known property
-	String className = Constants.ContextModuleConstants.Parking.name();
-	String propertyName = Constants.ContextModuleConstants.Parking_has_GPS_x.name();
+	String className = Constants.OntologyConstants.Parking.name();
+	String propertyName = Constants.OntologyConstants.Parking_has_GPS_x.name();
 	String propertyValue = String.valueOf(123.456);
 	Map<String, String[]> properties = new HashMap<>();
 	properties.put(propertyName, new String[]{propertyValue});

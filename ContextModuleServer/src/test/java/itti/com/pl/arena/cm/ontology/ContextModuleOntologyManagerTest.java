@@ -18,7 +18,7 @@ import itti.com.pl.arena.cm.dto.Camera;
 import itti.com.pl.arena.cm.dto.Location;
 import itti.com.pl.arena.cm.dto.Platform;
 import itti.com.pl.arena.cm.dto.RelativePosition;
-import itti.com.pl.arena.cm.dto.Truck;
+import itti.com.pl.arena.cm.dto.VehicleWithCamaras;
 
 public class ContextModuleOntologyManagerTest {
 
@@ -41,7 +41,7 @@ public class ContextModuleOntologyManagerTest {
 
     @Test
     public void testGetInstances() throws OntologyException {
-	Platform information = cmOntologyManager.getPlatform("Truck_A1");
+	Platform information = cmOntologyManager.getPlatform("Vehicla_with_cameras_R1");
 	Assert.assertNotNull(information);
     }
 
@@ -54,7 +54,7 @@ public class ContextModuleOntologyManagerTest {
 	Camera cameraTwo = new Camera(UUID.randomUUID().toString(), "typeB", random.nextDouble(), random.nextDouble(), RelativePosition.Front);
 	cameras.add(cameraOne);
 	cameras.add(cameraTwo);
-	Platform information = new Truck("Truck_test1", new Location(random.nextDouble(), random.nextDouble(), random.nextInt(100)), cameras);
+	Platform information = new VehicleWithCamaras("Vehicle_test1", new Location(random.nextDouble(), random.nextDouble(), random.nextInt(100)), cameras);
 	cmOntologyManager.updatePlatform(information);
 	assertEquals(information, cmOntologyManager.getPlatform(information.getId()));
     }
@@ -64,7 +64,7 @@ public class ContextModuleOntologyManagerTest {
 	//checks, if location of the platform is correctly updated
 	Location initLocation = new Location(random.nextDouble(), random.nextDouble(), random.nextInt(100));
 	Location nextLocation = new Location(random.nextDouble(), random.nextDouble(), random.nextInt(100));
-	Platform information = new Truck("truck_m1", initLocation, null);
+	Platform information = new VehicleWithCamaras("vehicle_m1", initLocation, null);
 	cmOntologyManager.updatePlatform(information);
 	assertEquals(initLocation, cmOntologyManager.getPlatform(information.getId()).getLastLocation());
 	information.setLastPosition(nextLocation);

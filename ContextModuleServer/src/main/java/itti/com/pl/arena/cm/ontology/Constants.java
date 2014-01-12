@@ -2,7 +2,7 @@ package itti.com.pl.arena.cm.ontology;
 
 public class Constants {
 
-	public enum ContextModuleConstants{
+	public enum OntologyConstants{
 		Vehicle,
 		Parking,
 		Vehicle_has_cameras,
@@ -14,13 +14,14 @@ public class Constants {
 		Static_object,
 		Object_has_GPS_coordinates,
 		Object_has_GPS_bearing,
-		Platform_has_GPS_x,
-		Platform_has_GPS_y,
+		Vehicle_has_GPS_x,
+		Vehicle_has_GPS_y,
 
 		Parking_has_GPS_x,
 		Parking_has_GPS_y,
 		Parking_has_infrastructure,
 		Parking_has_building,
+		Building,
 	}
 
 }
