@@ -33,6 +33,9 @@ import edu.stanford.smi.protegex.owl.model.OWLIndividual;
  */
 public class ContextModuleOntologyManager extends OntologyManager implements Ontology {
 
+    //radius of Earth in meters (6371 km)
+    private static final double EARTH_RADIUS = 6371000;
+
     private static final String QUERY_GET_PLATFORMS = "PREFIX ns: <%s> " + "SELECT ?%s " + "WHERE " + "{ "
 	    + "?%s rdf:type ?subclass. " + "?subclass rdfs:subClassOf ns:%s. "
 	    + "?%s ns:Platform_has_GPS_coordinates ?coordinate. "
@@ -387,9 +390,10 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 
     /**
      * Calculates distance between two locations. One is stored as a string: 'xPos, yPos', the second one is stored as a {@link Location} object
+     * calculation was implemented based on instructions from: http://www.movable-type.co.uk/scripts/latlong.html
      * @param coordinateString first coordinate in string form 
      * @param referenceLocation second coordinate
-     * @return
+     * @return distance between two locations measured in meters
      */
     private Double calculateDistance(String coordinateString, Location referenceLocation) {
 	Double[] coordinates = NumbersHelper.getDoublesFromString(coordinateString, ",");
@@ -397,8 +401,17 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 	if(coordinates == null || coordinates.length != 2 || coordinates[0] == null || coordinates[1] == null){
 	    return null;
 	}
-	//TODO: how to calculate distance in meters between two geographical coordinates
-	return 0.0;
+	double deltaLongitude = Math.toRadians(coordinates[0] - referenceLocation.getLongitude());
+	double deltaLatitude = Math.toRadians(coordinates[1] - referenceLocation.getLatitude());
+
+	double firstLatitude = Math.toRadians(referenceLocation.getLatitude());
+	double secondLatitude = Math.toRadians(coordinates[1]);
+	
+	double a = Math.pow(Math.sin(deltaLatitude/2), 2.0) + 
+		Math.pow(Math.sin(deltaLongitude/2), 2.0) * Math.cos(firstLatitude) * Math.cos(secondLatitude);
+	double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+	double distance = EARTH_RADIUS * c;
+	return distance;
     }
 
     private String getStringProperty(Map<String, String[]> properties, OntologyConstants propertyName) {

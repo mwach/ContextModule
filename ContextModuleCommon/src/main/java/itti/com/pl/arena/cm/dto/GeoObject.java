@@ -20,10 +20,18 @@ public abstract class GeoObject implements Serializable{
 	private String[] gpsCoordinates;
 
 	public String[] getGpsCoordinates() {
-		return gpsCoordinates;
+	    if(gpsCoordinates != null){
+		return gpsCoordinates.clone();
+	    }else{
+		return new String[0];
+	    }
 	}
 	public void setGpsCoordinates(String[] gpsCoordinates) {
-		this.gpsCoordinates = gpsCoordinates;
+	    if(gpsCoordinates != null){
+		this.gpsCoordinates = gpsCoordinates.clone();
+	    }else{
+		this.gpsCoordinates = new String[0];
+	    }
 	}
 	public String getId() {
 		return id;

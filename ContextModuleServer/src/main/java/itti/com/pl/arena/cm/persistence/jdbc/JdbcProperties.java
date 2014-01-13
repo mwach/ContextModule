@@ -11,17 +11,17 @@ import org.springframework.beans.factory.annotation.Required;
 
 public final class JdbcProperties {
 
-    public static String PROPERTY_URL = "url";
-    public static String PROPERTY_DRIVER = "driver";
-    public static String PROPERTY_USER = "user";
-    public static String PROPERTY_PASSWORD = "password";
-    public static String PROPERTY_TIMESTAMP = "timestamp";
+    public static final String PROPERTY_URL = "url";
+    public static final String PROPERTY_DRIVER = "driver";
+    public static final String PROPERTY_USER = "user";
+    public static final String PROPERTY_PASSWORD = "password";
+    public static final String PROPERTY_TIMESTAMP = "timestamp";
 
-    public static String QUERY_LOCATION_CREATE = "LOCATION_CREATE";
-    public static String QUERY_LOCATION_INSERT = "LOCATION_INSERT";
-    public static String QUERY_LOCATION_READ_LAST = "LOCATION_READ_LAST";
-    public static String QUERY_LOCATION_READ = "LOCATION_READ";
-    public static String QUERY_LOCATION_DELETE = "LOCATION_DELETE";
+    public static final String QUERY_LOCATION_CREATE = "LOCATION_CREATE";
+    public static final String QUERY_LOCATION_INSERT = "LOCATION_INSERT";
+    public static final String QUERY_LOCATION_READ_LAST = "LOCATION_READ_LAST";
+    public static final String QUERY_LOCATION_READ = "LOCATION_READ";
+    public static final String QUERY_LOCATION_DELETE = "LOCATION_DELETE";
 
     @Required
     public void setPropertiesFile(String propertiesFile) {
