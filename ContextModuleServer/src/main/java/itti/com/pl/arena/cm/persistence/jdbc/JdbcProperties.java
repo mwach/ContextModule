@@ -17,12 +17,6 @@ public final class JdbcProperties {
     public static final String PROPERTY_PASSWORD = "password";
     public static final String PROPERTY_TIMESTAMP = "timestamp";
 
-    public static final String QUERY_LOCATION_CREATE = "LOCATION_CREATE";
-    public static final String QUERY_LOCATION_INSERT = "LOCATION_INSERT";
-    public static final String QUERY_LOCATION_READ_LAST = "LOCATION_READ_LAST";
-    public static final String QUERY_LOCATION_READ = "LOCATION_READ";
-    public static final String QUERY_LOCATION_DELETE = "LOCATION_DELETE";
-
     @Required
     public void setPropertiesFile(String propertiesFile) {
 	try {
@@ -32,23 +26,9 @@ public final class JdbcProperties {
 	}
     }
 
-    @Required
-    public void setSchemaFile(String schemaFile) {
-	try {
-	    this.queryProperties = SpringHelper.loadPropertiesFromResource(schemaFile);
-	} catch (IOHelperException e) {
-	    throw new BeanInitializationException(ErrorMessages.PERSISTENCE_CANNOT_LOAD_PROPERTIES.getMessage(), e);
-	}
-    }
-
     private Properties jdbcProperties = null;
-    private Properties queryProperties = null;
 
     public String getConnectionPropertyValue(String property) {
 	return jdbcProperties.getProperty(property);
-    }
-
-    public String getQueryPropertyValue(String property) {
-	return queryProperties.getProperty(property);
     }
 }

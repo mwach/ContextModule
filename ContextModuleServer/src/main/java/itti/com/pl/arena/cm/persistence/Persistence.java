@@ -35,10 +35,11 @@ public interface Persistence {
 
     /**
      * Purges outdated information about locations from the database
+     * @param platformId ID of the platform
      * @param oldestTimestamp threshold timestamp. All data older than this timestamp will be removed from database
      * @throws PersistenceException Could not delete old data from the database
      */
-    public void delete(long oldestTimestamp) throws PersistenceException;
+    public void delete(String platformId, long oldestTimestamp) throws PersistenceException;
 
     /**
      * Returns information about last know platorm position from the database

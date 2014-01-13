@@ -25,7 +25,6 @@ public class JdbcPersistenceTest {
 	persistence = new JdbcPersistence();
 	JdbcProperties properties = new JdbcProperties();
 	properties.setPropertiesFile("jdbc.test.properties");
-	properties.setSchemaFile("schema.test.properties");
 	persistence.setJdbcProperties(properties);
 	persistence.init();
     }
@@ -68,7 +67,7 @@ public class JdbcPersistenceTest {
 	assertEquals(locationOne, Locations.get(0));
 	assertEquals(locationTwo, Locations.get(1));
 
-	persistence.delete(timestamp);
+	persistence.delete(platformId, timestamp);
 	Locations = persistence.getHistory(platformId, timestamp);
 	assertEquals(1, Locations.size());
 	assertEquals(locationTwo, Locations.get(0));

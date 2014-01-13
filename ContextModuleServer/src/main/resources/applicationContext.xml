@@ -18,7 +18,6 @@
 	<bean id="JdbcProperties" class="itti.com.pl.arena.cm.persistence.jdbc.JdbcProperties"
 		init-method="init">
 		<property name="propertiesFile" value="jdbc.properties" />
-		<property name="schemaFile" value="schema.properties" />
 	</bean>
 
 	<!-- Servlet layer -->
