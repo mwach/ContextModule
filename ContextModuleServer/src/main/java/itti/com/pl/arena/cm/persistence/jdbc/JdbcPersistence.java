@@ -34,17 +34,19 @@ public class JdbcPersistence implements Persistence {
     private JdbcProperties properties = null;
 
     @Required
-    public void setJdbcProperties(JdbcProperties properties){
+    public void setJdbcProperties(JdbcProperties properties) {
 	this.properties = properties;
     }
-    private JdbcProperties getProperties(){
+
+    private JdbcProperties getProperties() {
 	return properties;
     }
 
-    private String getConnectionPropertyValue(String property){
+    private String getConnectionPropertyValue(String property) {
 	return getProperties().getConnectionPropertyValue(property);
     }
-    private String getQueryPropertyValue(String property){
+
+    private String getQueryPropertyValue(String property) {
 	return getProperties().getConnectionPropertyValue(property);
     }
 
@@ -53,6 +55,9 @@ public class JdbcPersistence implements Persistence {
     private Connection connection = null;
     private LocationRowProcessor locationRowProcessor = new LocationRowProcessor();
 
+    /* (non-Javadoc)
+     * @see itti.com.pl.arena.cm.persistence.Persistence#init()
+     */
     @Override
     public void init() throws PersistenceException {
 
@@ -60,8 +65,7 @@ public class JdbcPersistence implements Persistence {
 	try {
 	    Class.forName(getConnectionPropertyValue(JdbcProperties.PROPERTY_DRIVER));
 
-	    connection = DriverManager.getConnection(
-		    getConnectionPropertyValue(JdbcProperties.PROPERTY_URL),
+	    connection = DriverManager.getConnection(getConnectionPropertyValue(JdbcProperties.PROPERTY_URL),
 		    getConnectionPropertyValue(JdbcProperties.PROPERTY_USER),
 		    getConnectionPropertyValue(JdbcProperties.PROPERTY_PASSWORD));
 	    timestampFormat = getConnectionPropertyValue(JdbcProperties.PROPERTY_TIMESTAMP);
@@ -70,12 +74,9 @@ public class JdbcPersistence implements Persistence {
 	    initialized = true;
 
 	} catch (SQLException e) {
-	    throw new PersistenceException(e,
-		    ErrorMessages.PERSISTENCE_CANNOT_INITIALIZE,
-		    e.getLocalizedMessage());
+	    throw new PersistenceException(ErrorMessages.PERSISTENCE_CANNOT_INITIALIZE, e, e.getLocalizedMessage());
 	} catch (ClassNotFoundException e) {
-	    throw new PersistenceException(e,
-		    ErrorMessages.PERSISTENCE_CANNOT_LOAD_DRIVER, e.getLocalizedMessage());
+	    throw new PersistenceException(ErrorMessages.PERSISTENCE_CANNOT_LOAD_DRIVER, e, e.getLocalizedMessage());
 	} finally {
 	    if (!initialized) {
 		shutdown();
@@ -87,8 +88,7 @@ public class JdbcPersistence implements Persistence {
 	Statement statement = null;
 	try {
 	    statement = connection.createStatement();
-	    statement.execute(properties
-		    .getQueryPropertyValue(JdbcProperties.QUERY_LOCATION_CREATE));
+	    statement.execute(properties.getQueryPropertyValue(JdbcProperties.QUERY_LOCATION_CREATE));
 	} finally {
 	    if (statement != null) {
 		statement.close();
@@ -96,116 +96,108 @@ public class JdbcPersistence implements Persistence {
 	}
     }
 
+    /* (non-Javadoc)
+     * @see itti.com.pl.arena.cm.persistence.Persistence#shutdown()
+     */
     @Override
     public void shutdown() throws PersistenceException {
 	if (connection != null) {
 	    try {
 		connection.close();
 	    } catch (SQLException exc) {
-		throw new PersistenceException(exc,
-			ErrorMessages.PERSISTENCE_CANNOT_CLOSE_CONNECTION,
-			exc.getLocalizedMessage());
+		throw new PersistenceException(ErrorMessages.PERSISTENCE_CANNOT_CLOSE_CONNECTION, exc, exc.getLocalizedMessage());
 	    }
 	}
     }
 
+    /* (non-Javadoc)
+     * @see itti.com.pl.arena.cm.persistence.Persistence#create(java.lang.String, itti.com.pl.arena.cm.dto.Location)
+     */
     @Override
-    public void create(Location location) throws PersistenceException {
+    public void create(String platformId, Location location) throws PersistenceException {
 
 	QueryRunner runner = new QueryRunner();
 	try {
-	    String timestampString = DateTimeHelper.formatTime(location.getTime(),
-		    timestampFormat);
+	    String timestampString = DateTimeHelper.formatTime(location.getTime(), timestampFormat);
 
-	    runner.update(connection,
-		    getQueryPropertyValue(JdbcProperties.QUERY_LOCATION_INSERT), 1,
-		    location.getLongitude(), location.getLatitude(),
-		    location.getAltitude(), location.getBearing(),
-		    timestampString, location.getSpeed(),
+	    runner.update(connection, getQueryPropertyValue(JdbcProperties.QUERY_LOCATION_INSERT), platformId, location.getLongitude(),
+		    location.getLatitude(), location.getAltitude(), location.getBearing(), timestampString, location.getSpeed(),
 		    location.getAccuracy());
 	    connection.commit();
 	} catch (DateTimeHelperException exc) {
-		throw new PersistenceException(exc,
-			ErrorMessages.PERSISTENCE_CANNOT_PREPARE_TIMESTAMP,
-			location.getTime(),
-			exc.getLocalizedMessage());
-	} catch (SQLException exc) {
-	    throw new PersistenceException(
-		    exc,
-		    ErrorMessages.PERSISTENCE_CANNOT_CREATE_RECORD,
+	    throw new PersistenceException(ErrorMessages.PERSISTENCE_CANNOT_PREPARE_TIMESTAMP, exc, location.getTime(),
 		    exc.getLocalizedMessage());
+	} catch (SQLException exc) {
+	    throw new PersistenceException(ErrorMessages.PERSISTENCE_CANNOT_CREATE_RECORD, exc, exc.getLocalizedMessage());
 	}
     }
 
+    /* (non-Javadoc)
+     * @see itti.com.pl.arena.cm.persistence.Persistence#getLastPosition(java.lang.String)
+     */
     @Override
-    public Location readLastPosition() throws PersistenceException {
+    public Location getLastPosition(String platformId) throws PersistenceException {
 
 	Location Location = null;
 
 	QueryRunner runner = new QueryRunner();
-	ResultSetHandler<Location> rsHandler = new BeanHandler<>(
-		Location.class, locationRowProcessor);
+	ResultSetHandler<Location> rsHandler = new BeanHandler<>(Location.class, locationRowProcessor);
 	try {
-	    Location = runner.query(connection,
-		    getQueryPropertyValue(JdbcProperties.QUERY_LOCATION_READ_LAST),
-		    rsHandler);
+	    Location = runner.query(connection, getQueryPropertyValue(JdbcProperties.QUERY_LOCATION_READ_LAST), rsHandler, platformId);
 	} catch (SQLException exc) {
-	    throw new PersistenceException(
-		    exc,
-		    ErrorMessages.PERSISTENCE_CANNOT_READ_LAST_RECORD,
-		    exc.getLocalizedMessage());
+	    throw new PersistenceException(ErrorMessages.PERSISTENCE_CANNOT_READ_LAST_RECORD, exc, exc.getLocalizedMessage());
 	}
 	return Location;
     }
 
+    /* (non-Javadoc)
+     * @see itti.com.pl.arena.cm.persistence.Persistence#getHistory(java.lang.String, long)
+     */
     @Override
-    public List<Location> readHistory(long timestamp)
-	    throws PersistenceException {
+    public List<Location> getHistory(String platformId, long timestamp) throws PersistenceException {
 
 	List<Location> retList = null;
 	QueryRunner runner = new QueryRunner();
-	ResultSetHandler<List<Location>> rsHandler = new BeanListHandler<>(
-		Location.class, locationRowProcessor);
+	ResultSetHandler<List<Location>> rsHandler = new BeanListHandler<>(Location.class, locationRowProcessor);
 	try {
 
-	    String timestampString = DateTimeHelper.formatTime(timestamp,
-		    timestampFormat);
+	    String timestampString = DateTimeHelper.formatTime(timestamp, timestampFormat);
 
-	    retList = runner.query(connection,
-		    getQueryPropertyValue(JdbcProperties.QUERY_LOCATION_READ),
-		    rsHandler, timestampString);
+	    retList = runner.query(connection, getQueryPropertyValue(JdbcProperties.QUERY_LOCATION_READ), rsHandler,
+		    timestampString);
 	} catch (DateTimeHelperException exc) {
-	    throw new PersistenceException(exc, ErrorMessages.PERSISTENCE_CANNOT_PREPARE_TIMESTAMP, timestamp, exc.getLocalizedMessage());
-	} catch (SQLException exc) {
-	    throw new PersistenceException(
-		    exc,
-		    ErrorMessages.PERSISTENCE_CANNOT_READ_RECORDS,
+	    throw new PersistenceException(ErrorMessages.PERSISTENCE_CANNOT_PREPARE_TIMESTAMP, exc, timestamp,
 		    exc.getLocalizedMessage());
+	} catch (SQLException exc) {
+	    throw new PersistenceException(ErrorMessages.PERSISTENCE_CANNOT_READ_RECORDS, exc, exc.getLocalizedMessage());
 	}
 	return retList;
     }
 
+    /* (non-Javadoc)
+     * @see itti.com.pl.arena.cm.persistence.Persistence#delete(long)
+     */
     @Override
     public void delete(long timestamp) throws PersistenceException {
 
 	QueryRunner runner = new QueryRunner();
 	try {
-	    String timestampString = DateTimeHelper.formatTime(timestamp,
-		    timestampFormat);
+	    String timestampString = DateTimeHelper.formatTime(timestamp, timestampFormat);
 
-	    runner.update(connection,
-		    getQueryPropertyValue(JdbcProperties.QUERY_LOCATION_DELETE),
-		    timestampString);
+	    runner.update(connection, getQueryPropertyValue(JdbcProperties.QUERY_LOCATION_DELETE), timestampString);
 	} catch (DateTimeHelperException exc) {
-	    throw new PersistenceException(exc, ErrorMessages.PERSISTENCE_CANNOT_PREPARE_TIMESTAMP, timestamp, exc.getLocalizedMessage());
-	} catch (SQLException exc) {
-	    throw new PersistenceException(
-		    exc,
-		    ErrorMessages.PERSISTENCE_CANNOT_DELETE_RECORD,
+	    throw new PersistenceException(ErrorMessages.PERSISTENCE_CANNOT_PREPARE_TIMESTAMP, exc, timestamp,
 		    exc.getLocalizedMessage());
+	} catch (SQLException exc) {
+	    throw new PersistenceException(ErrorMessages.PERSISTENCE_CANNOT_DELETE_RECORD, exc, exc.getLocalizedMessage());
 	}
     }
 
+    /**
+     * Helper class used to parse DB results into {@link Location} objects
+     * @author cm-admin
+     *
+     */
     private static class LocationRowProcessor implements RowProcessor {
 
 	@Override
@@ -216,17 +208,13 @@ public class JdbcPersistence implements Persistence {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T toBean(ResultSet rs, Class<T> arg1) throws SQLException {
-	    Location Location = new Location(rs.getDouble("longitude"),
-		    rs.getDouble("latitude"), rs.getDouble("altitude"),
-		    rs.getInt("bearing"), rs.getDouble("speed"), rs
-			    .getTimestamp("period").getTime(),
-		    rs.getDouble("accuracy"));
+	    Location Location = new Location(rs.getDouble("longitude"), rs.getDouble("latitude"), rs.getDouble("altitude"),
+		    rs.getInt("bearing"), rs.getDouble("speed"), rs.getTimestamp("period").getTime(), rs.getDouble("accuracy"));
 	    return (T) Location;
 	}
 
 	@Override
-	public <T> List<T> toBeanList(ResultSet rs, Class<T> clazz)
-		throws SQLException {
+	public <T> List<T> toBeanList(ResultSet rs, Class<T> clazz) throws SQLException {
 
 	    List<T> list = null;
 	    while (rs.next()) {

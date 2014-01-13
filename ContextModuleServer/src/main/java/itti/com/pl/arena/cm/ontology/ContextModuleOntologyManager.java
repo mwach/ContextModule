@@ -10,7 +10,7 @@ import itti.com.pl.arena.cm.dto.Platform;
 import itti.com.pl.arena.cm.dto.RelativePosition;
 import itti.com.pl.arena.cm.geoportal.gov.pl.GeoportalKeys;
 import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalResponse;
-import itti.com.pl.arena.cm.ontology.Constants.OntologyConstants;
+import itti.com.pl.arena.cm.ontology.OntologyConstants;
 import itti.com.pl.arena.cm.utils.helpers.LogHelper;
 import itti.com.pl.arena.cm.utils.helpers.NumbersHelper;
 import itti.com.pl.arena.cm.utils.helpers.StringHelper;
@@ -307,7 +307,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 		    String ontologyClass = GeoportalKeys.getOntlogyClass(layerName);
 		    if (StringHelper.hasContent(ontologyClass)) {
 			Map<String, String[]> properties = new HashMap<String, String[]>();
-			properties.put(Constants.OntologyConstants.Object_has_GPS_coordinates.name(),
+			properties.put(OntologyConstants.Object_has_GPS_coordinates.name(),
 			        new String[] { String.format("%f,%f", x, y) });
 			String instanceName = String.format("%s-%f-%f", ontologyClass, x, y);
 			try {

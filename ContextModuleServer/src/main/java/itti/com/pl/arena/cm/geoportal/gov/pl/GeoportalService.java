@@ -86,7 +86,7 @@ public final class GeoportalService implements Geoportal{
 		}catch(IOException | IOHelperException | RuntimeException exc){
 			LogHelper.exception(GeoportalService.class, "getGeoportalData", "Could not retrieve Geoportal data", exc);
 
-			throw new GeoportalException(exc, ErrorMessages.GEOPORTAL_REQUEST_FAILED);
+			throw new GeoportalException(ErrorMessages.GEOPORTAL_REQUEST_FAILED, exc);
 		}finally{
 			IOHelper.closeConnection(connection);
 		}

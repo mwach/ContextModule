@@ -8,6 +8,7 @@ import itti.com.pl.arena.cm.utils.helpers.IOHelperException;
 
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -38,11 +39,12 @@ public class JdbcPersistenceTest {
     public void testInsertPosition() throws PersistenceException {
 
 	long timestamp = System.currentTimeMillis();
+	String platformId = UUID.randomUUID().toString();
 
 	Location location = createDummyLocation(timestamp);
 
-	persistence.create(location);
-	Location lastLocation = persistence.readLastPosition();
+	persistence.create(platformId, location);
+	Location lastLocation = persistence.getLastPosition(platformId);
 
 	assertEquals(location, lastLocation);
     }
@@ -51,22 +53,23 @@ public class JdbcPersistenceTest {
     public void testMultiInsertPosition() throws PersistenceException {
 
 	long timestamp = System.currentTimeMillis();
+	String platformId = UUID.randomUUID().toString();
 
 	Location locationOne = createDummyLocation(timestamp);
 	Location locationTwo = createDummyLocation(timestamp + 1);
 
-	persistence.create(locationOne);
-	persistence.create(locationTwo);
-	Location lastLocation = persistence.readLastPosition();
+	persistence.create(platformId, locationOne);
+	persistence.create(platformId, locationTwo);
+	Location lastLocation = persistence.getLastPosition(platformId);
 	assertEquals(locationTwo, lastLocation);
 
-	List<Location> Locations = persistence.readHistory(timestamp);
+	List<Location> Locations = persistence.getHistory(platformId, timestamp);
 	assertEquals(2, Locations.size());
 	assertEquals(locationOne, Locations.get(0));
 	assertEquals(locationTwo, Locations.get(1));
 
 	persistence.delete(timestamp);
-	Locations = persistence.readHistory(timestamp);
+	Locations = persistence.getHistory(platformId, timestamp);
 	assertEquals(1, Locations.size());
 	assertEquals(locationTwo, Locations.get(0));
 

@@ -20,7 +20,7 @@ public class GeoportalException extends ContextModuleException {
 	super(message.getMessage(), args);
     }
 
-    public GeoportalException(Throwable throwables, ErrorMessages message,
+    public GeoportalException(ErrorMessages message, Throwable throwables, 
 	    Object... args) {
 	super(message.getMessage(), throwables, args);
     }

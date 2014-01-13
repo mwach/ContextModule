@@ -75,10 +75,10 @@ public class DefaultArenaTracker implements ContextManagerService, LocationListe
 		return locationDelta;
 	}
 
-	public Location getLastPosition(){
+	public Location getLastPosition(String platformId){
 		Location lastPos = null;
 		try {
-			lastPos = getPersistence().readLastPosition();
+			lastPos = getPersistence().getLastPosition(platformId);
 		} catch (PersistenceException e) {
 			e.printStackTrace();
 		}
@@ -98,7 +98,7 @@ public class DefaultArenaTracker implements ContextManagerService, LocationListe
 
 		//first, try to persist latest location in the database
 		try {
-			getPersistence().create(newLocation);
+			getPersistence().create(newLocation.getId(), newLocation);
 		} catch (PersistenceException e) {
 			LogHelper.debug(DefaultArenaTracker.class, "onLocationChange", "Could not persist location data");
 		}

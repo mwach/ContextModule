@@ -31,7 +31,7 @@ public class OntologyException extends ContextModuleException {
      * @param message message
      * @param args optional message arguments
      */
-    public OntologyException(Throwable throwable, ErrorMessages message, Object... args) {
+    public OntologyException(ErrorMessages message, Throwable throwable, Object... args) {
 	super(message.getMessage(), throwable, args);
     }
 }

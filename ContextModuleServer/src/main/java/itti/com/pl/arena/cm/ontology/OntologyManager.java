@@ -2,7 +2,7 @@ package itti.com.pl.arena.cm.ontology;
 
 import itti.com.pl.arena.cm.ErrorMessages;
 import itti.com.pl.arena.cm.Service;
-import itti.com.pl.arena.cm.ontology.Constants.OntologyConstants;
+import itti.com.pl.arena.cm.ontology.OntologyConstants;
 import itti.com.pl.arena.cm.utils.helpers.IOHelper;
 import itti.com.pl.arena.cm.utils.helpers.LogHelper;
 import itti.com.pl.arena.cm.utils.helpers.NumbersHelper;
@@ -47,10 +47,16 @@ import edu.stanford.smi.protegex.owl.swrl.parser.SWRLParseException;
  */
 public class OntologyManager implements Service {
 
+    private static final String QUERY_GET_DIRECT_INSTANCES = "PREFIX ns: <%s> SELECT ?%s WHERE { ?%s rdf:type ns:%s }";
+    private static final String QUERY_GET_INSTANCES = "PREFIX ns: <%s> SELECT ?%s WHERE { ?%s rdf:type ?subclass. ?subclass rdfs:subClassOf ns:%s }";
+    private static final String QUERY_GET_INSTANCE_CLASS = "PREFIX ns:<%s> SELECT ?%s WHERE { ns:%s rdf:type ?%s }";
+    private static final String QUERY_GET_INSTANCE_GRAND_CLASS = "PREFIX ns:<%s> SELECT ?%s WHERE { ns:%s rdf:type ?directParent. ?directParent rdfs:subClassOf ?%s }";
+ 
+    
     // in-memory ontology model
     private JenaOWLModel model = null;
 
-    protected final JenaOWLModel getModel() {
+    protected synchronized final JenaOWLModel getModel() {
 	return model;
     }
 
@@ -114,8 +120,8 @@ public class OntologyManager implements Service {
      */
     @Override
     public void shutdown() {
-	if (model != null) {
-	    model.close();
+	if (getModel() != null) {
+	    getModel().close();
 	}
     }
 
@@ -144,9 +150,7 @@ public class OntologyManager implements Service {
 	if (!StringHelper.hasContent(className)) {
 	    return new ArrayList<>();
 	}
-
-	String queryPattern = "PREFIX ns: <%s> SELECT ?%s WHERE { ?%s rdf:type ns:%s }";
-	String query = String.format(queryPattern, getOntologyNamespace(), VAR, VAR, className);
+	String query = String.format(QUERY_GET_DIRECT_INSTANCES, getOntologyNamespace(), VAR, VAR, className);
 	return executeSparqlQuery(query, VAR);
     }
 
@@ -163,9 +167,7 @@ public class OntologyManager implements Service {
 	if (!StringHelper.hasContent(className)) {
 	    return new ArrayList<>();
 	}
-
-	String queryPattern = "PREFIX ns: <%s> SELECT ?%s WHERE { ?%s rdf:type ?subclass. ?subclass rdfs:subClassOf ns:%s }";
-	String query = String.format(queryPattern, getOntologyNamespace(), VAR, VAR, className);
+	String query = String.format(QUERY_GET_INSTANCES, getOntologyNamespace(), VAR, VAR, className);
 
 	return (executeSparqlQuery(query, VAR));
     }
@@ -186,8 +188,7 @@ public class OntologyManager implements Service {
 	    LogHelper.warning(OntologyManager.class, "getInstanceClass", "Null instance name provided");
 	    throw new OntologyException(ErrorMessages.ONTOLOGY_EMPTY_INSTANCE_NAME);
 	}
-	String queryPattern = "PREFIX ns:<%s> SELECT ?%s WHERE { ns:%s rdf:type ?%s }";
-	String query = String.format(queryPattern, getOntologyNamespace(), VAR, instanceName, VAR);
+	String query = String.format(QUERY_GET_INSTANCE_CLASS, getOntologyNamespace(), VAR, instanceName, VAR);
 	List<String> results = executeSparqlQuery(query, VAR);
 	if(results.isEmpty()){
 	    LogHelper.warning(OntologyManager.class, "getInstanceClass", "No results were found for instance '%s'", instanceName);
@@ -212,8 +213,7 @@ public class OntologyManager implements Service {
 	    LogHelper.warning(OntologyManager.class, "getInstanceGrandClass", "Null instance name provided");
 	    throw new OntologyException(ErrorMessages.ONTOLOGY_EMPTY_INSTANCE_NAME);
 	}
-	String queryPattern = "PREFIX ns:<%s> SELECT ?%s WHERE { ns:%s rdf:type ?directParent. ?directParent rdfs:subClassOf ?%s }";
-	String query = String.format(queryPattern, getOntologyNamespace(), VAR, instanceName, VAR);
+	String query = String.format(QUERY_GET_INSTANCE_GRAND_CLASS, getOntologyNamespace(), VAR, instanceName, VAR);
 	List<String> results = executeSparqlQuery(query, VAR);
 	if(results.isEmpty()){
 	    LogHelper.warning(OntologyManager.class, "getInstanceGrandClass", "No results were found for instance '%s'", instanceName);
@@ -237,7 +237,7 @@ public class OntologyManager implements Service {
 
 	List<String> resultList = new ArrayList<String>();
 	try {
-	    QueryResults results = model.executeSPARQLQuery(query);
+	    QueryResults results = getModel().executeSPARQLQuery(query);
 	    while (results.hasNext()) {
 		Object value = results.next().get(variable);
 		String result = null;
@@ -305,18 +305,18 @@ public class OntologyManager implements Service {
     public OWLIndividual getInstance(String className, String instanceName) throws OntologyException {
 
 	LogHelper.debug(OntologyManager.class, "getInstance", "Searching for instance '%s' of class '%s'", instanceName, className);
-	OWLNamedClass parentClass = model.getOWLNamedClass(className);
+	OWLNamedClass parentClass = getModel().getOWLNamedClass(className);
 	if (parentClass == null) {
 	    LogHelper
 		    .warning(OntologyManager.class, "getInstance", "Base class '%s' not found in the ontology", className);
 	    throw new OntologyException(ErrorMessages.ONTOLOGY_CLASS_DOESNT_EXIST, className);
 	}
-	return model.getOWLIndividual(instanceName);
+	return getModel().getOWLIndividual(instanceName);
     }
 
     private OWLIndividual createInstanceOnly(String className, String instanceName) throws OntologyException {
 
-	OWLNamedClass parentClass = model.getOWLNamedClass(className);
+	OWLNamedClass parentClass = getModel().getOWLNamedClass(className);
 	OWLIndividual individual = null;
 	if (parentClass == null) {
 	    LogHelper
@@ -340,7 +340,7 @@ public class OntologyManager implements Service {
 	        individual.getName());
 
 	// get the property
-	RDFProperty property = model.getRDFProperty(propertyName);
+	RDFProperty property = getModel().getRDFProperty(propertyName);
 	if (property == null) {
 	    LogHelper.warning(OntologyManager.class, "createSimpleInstance", "Property '%s' not found for type %s", propertyName,
 		    individual.getBrowserText());
@@ -351,7 +351,7 @@ public class OntologyManager implements Service {
 	    // now, set property value
 	    for (String value : values) {
 		// find value as an instance
-		OWLIndividual valueInd = model.getOWLIndividual(value);
+		OWLIndividual valueInd = getModel().getOWLIndividual(value);
 		if (valueInd != null) {
 		    setPropertyValue(individual, property, valueInd);
 		    // not an instance - try number
@@ -422,9 +422,9 @@ public class OntologyManager implements Service {
 	LogHelper.debug(OntologyManager.class, "createOwlClass", "Creating class '%s'", className);
 
 	// check, if class existed in the ontology
-	if (model.getOWLIndividual(className) == null) {
+	if (getModel().getOWLIndividual(className) == null) {
 	    // if not, try to create it
-	    OWLNamedClass individual = model.createOWLNamedClass(className);
+	    OWLNamedClass individual = getModel().createOWLNamedClass(className);
 	    return individual != null;
 	}
 	return true;
@@ -454,7 +454,7 @@ public class OntologyManager implements Service {
      */
     public void updatePropertyValue(String instanceName, String propertyName, Object propertyValue) throws OntologyException {
 	OWLIndividual instance = getInstance(getInstanceClass(instanceName), instanceName);
-	RDFProperty property = model.getRDFProperty(propertyName);
+	RDFProperty property = getModel().getRDFProperty(propertyName);
 	removePropertyValues(instance, property);
 	setPropertyValue(instance, property, propertyValue);
     }
@@ -558,7 +558,7 @@ public class OntologyManager implements Service {
 	    model = ProtegeOWL.createJenaOWLModelFromInputStream(ontologyInputStream);
 	} catch (Exception exc) {
 	    LogHelper.exception(OntologyManager.class, "loadModel", "Cannot load ontlogy using given location", exc);
-	    throw new OntologyException(exc, ErrorMessages.ONTOLOGY_CANNOT_LOAD, ontologyLocation, exc.getLocalizedMessage());
+	    throw new OntologyException(ErrorMessages.ONTOLOGY_CANNOT_LOAD, exc, ontologyLocation, exc.getLocalizedMessage());
 	} finally {
 	    IOHelper.closeStream(ontologyInputStream);
 	}

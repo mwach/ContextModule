@@ -85,8 +85,8 @@ public final class GeoportalHelper {
 							String.format(
 									"Could not deserialize object into JSON. Object: '%s'",
 									jsonRequestObject), exc);
-			throw new GeoportalException(exc,
-				ErrorMessages.GEOPORTAL_DESERIALIZE_INVALID_JSON_PROVIDED);
+			throw new GeoportalException(
+				ErrorMessages.GEOPORTAL_DESERIALIZE_INVALID_JSON_PROVIDED, exc);
 		}
 		return object;
 	}
@@ -122,7 +122,7 @@ public final class GeoportalHelper {
 		    		requestObject.isReturnGeometry(), requestObject.getTolerance(),
 		    		requestObject.getLayers(), requestObject.getFormat());
 		} catch (StringHelperException exc) {
-		    throw new GeoportalException(exc, ErrorMessages.GEOPORTAL_CANNOT_PREPARE_REQUEST_URL, exc.getLocalizedMessage());
+		    throw new GeoportalException(ErrorMessages.GEOPORTAL_CANNOT_PREPARE_REQUEST_URL, exc, exc.getLocalizedMessage());
 		}
 		return requestUrl;
 	}

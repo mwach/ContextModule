@@ -17,11 +17,11 @@ public class PersistenceException extends ContextModuleException{
 
 	/**
 	 * Persistence exception
-	 * @param reason exception
 	 * @param message exception details
+	 * @param reason exception
 	 * @param params additional parameters used to construct message
 	 */
-	public PersistenceException(Throwable reason, ErrorMessages message, Object...params) {
+	public PersistenceException(ErrorMessages message, Throwable reason, Object...params) {
 		super(message.getMessage(), reason, params);
 	}
 }
