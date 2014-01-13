@@ -40,7 +40,18 @@ public interface Ontology {
      * @return list of platforms IDs
      * @throws OntologyException could not retrieve information from the ontology
      */
-    public Set<String> getPlatforms(double x, double y, double radius)
+    public Set<String> getPlatformNames(double x, double y, double radius)
+	    throws OntologyException;
+
+    /**
+     * Returns list of platform objects found near given location
+     * @param x latitude
+     * @param y longitude
+     * @param radius radius
+     * @return list of platforms objects
+     * @throws OntologyException could not retrieve information from the ontology
+     */
+    public Set<Platform> getPlatforms(double x, double y, double radius)
 	    throws OntologyException;
 
     /**
@@ -79,6 +90,17 @@ public interface Ontology {
      * @throws OntologyException could not retrieve information from the ontology
      */
     public GeoObject getGISObject(String id) throws OntologyException;
+
+    /**
+     * Returns list of GIS objects found near given location
+     * @param x latitude
+     * @param y longitude
+     * @param radius radius
+     * @return list of GIS objects
+     * @throws OntologyException could not retrieve information from the ontology
+     */
+    public Set<GeoObject> getGISObjects(double x, double y, double radius)
+	    throws OntologyException;
 
     /**
      * Adds information about new GIS object to the ontology

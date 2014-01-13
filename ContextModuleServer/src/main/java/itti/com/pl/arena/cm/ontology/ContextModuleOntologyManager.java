@@ -11,6 +11,7 @@ import itti.com.pl.arena.cm.dto.RelativePosition;
 import itti.com.pl.arena.cm.geoportal.gov.pl.GeoportalKeys;
 import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalResponse;
 import itti.com.pl.arena.cm.ontology.OntologyConstants;
+import itti.com.pl.arena.cm.service.PlatformTracker;
 import itti.com.pl.arena.cm.utils.helpers.LogHelper;
 import itti.com.pl.arena.cm.utils.helpers.NumbersHelper;
 import itti.com.pl.arena.cm.utils.helpers.StringHelper;
@@ -33,7 +34,7 @@ import edu.stanford.smi.protegex.owl.model.OWLIndividual;
  */
 public class ContextModuleOntologyManager extends OntologyManager implements Ontology {
 
-    //radius of Earth in meters (6371 km)
+    // radius of Earth in meters (6371 km)
     private static final double EARTH_RADIUS = 6371000;
 
     private static final String QUERY_GET_PLATFORMS = "PREFIX ns: <%s> " + "SELECT ?%s " + "WHERE " + "{ "
@@ -42,10 +43,8 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 	    + "FILTER ( (?coordinate >= %f && ?coordinate <= %f) || (?coordinate >= %f && ?coordinate <= %f)) " + "}";
 
     private static final String QUERY_PARKING_OBJECTS = "PREFIX ns: <%s> " + "SELECT ?%s " + "WHERE " + "{ "
-	    + "?%s rdf:type ns:%s. " + 
-	    "?%s ns:Parking_has_GPS_x ?coordinate_x. " +
-	    "?%s ns:Parking_has_GPS_y ?coordinate_y. " + 
-	    "FILTER ( (?coordinate_x >= %f && ?coordinate_x <= %f) || (?coordinate_y >= %f && ?coordinate_y <= %f)) " + "}";
+	    + "?%s rdf:type ns:%s. " + "?%s ns:Parking_has_GPS_x ?coordinate_x. " + "?%s ns:Parking_has_GPS_y ?coordinate_y. "
+	    + "FILTER ( (?coordinate_x >= %f && ?coordinate_x <= %f) || (?coordinate_y >= %f && ?coordinate_y <= %f)) " + "}";
 
     /*
      * (non-Javadoc)
@@ -157,7 +156,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
      * 
      * @see itti.com.pl.arena.cm.ontology.Ontology#getPlatforms(double, double, double)
      */
-    public Set<String> getPlatforms(double x, double y, double radius) throws OntologyException {
+    public Set<String> getPlatformNames(double x, double y, double radius) throws OntologyException {
 
 	Set<String> resultList = new HashSet<String>();
 
@@ -176,6 +175,25 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 	    }
 	}
 	return resultList;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see itti.com.pl.arena.cm.ontology.Ontology#getPlatforms(double, double, double)
+     */
+    @Override
+    public Set<Platform> getPlatforms(double x, double y, double radius) throws OntologyException {
+	Set<Platform> platformsInformation = new HashSet<>();
+	try {
+	    Set<String> platformNames = getPlatformNames(x, y, radius);
+	    for (String platformId : platformNames) {
+		platformsInformation.add(getPlatform(platformId));
+	    }
+	} catch (OntologyException e) {
+	    LogHelper.exception(PlatformTracker.class, "getPlatformsData", e.getLocalizedMessage(), e);
+	}
+	return platformsInformation;
     }
 
     /*
@@ -207,6 +225,20 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 	}
 
 	return information;
+    }
+
+    public Set<GeoObject> getGISObjects(double x, double y, double radius) throws OntologyException {
+	Set<GeoObject> gisInformation = new HashSet<>();
+	try {
+	    Set<String> platformNames = getParkingLots(x, y, radius);
+	    for (String gisObjectId : platformNames) {
+		gisInformation.add(getGISObject(gisObjectId));
+	    }
+	} catch (RuntimeException e) {
+	    LogHelper.exception(PlatformTracker.class, "getGISObjects", e.getLocalizedMessage(), e);
+	}
+	return gisInformation;
+
     }
 
     /*
@@ -342,7 +374,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 		    radius);
 	    return;
 	}
-	//use first parking as a default one
+	// use first parking as a default one
 	Set<String> buildings = getParkingLotInfrastructure(parkingLots.iterator().next());
 	for (String buildingId : buildings) {
 	    calculateDistanceForObject(buildingId, platform.getLastLocation());
@@ -356,7 +388,8 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
      *            ID of the object, for which distance should be calculated
      * @param referenceLocation
      *            reference location (distance will be calculated between object position and that location)
-     * @throws OntologyException could not calculate location
+     * @throws OntologyException
+     *             could not calculate location
      */
     private void calculateDistanceForObject(String objectId, Location referenceLocation) throws OntologyException {
 
@@ -367,38 +400,42 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 	    LogHelper.warning(ContextModuleOntologyManager.class, "calculateDistanceForObject", "ObjectId was not provided");
 	    throw new OntologyException(ErrorMessages.ONTOLOGY_EMPTY_INSTANCE_NAME);
 	}
-	if(referenceLocation == null){
+	if (referenceLocation == null) {
 	    LogHelper.warning(ContextModuleOntologyManager.class, "calculateDistanceForObject", "Location was not provided");
-	    throw new OntologyException(ErrorMessages.ONTOLOGY_EMPTY_LOCATION_OBJECT);	    
+	    throw new OntologyException(ErrorMessages.ONTOLOGY_EMPTY_LOCATION_OBJECT);
 	}
 	Map<String, String[]> objectProperties = getInstanceProperties(objectId);
 	String[] objectCoordinates = objectProperties.get(OntologyConstants.Object_has_GPS_coordinates.name());
-	if(objectCoordinates != null)
-	{
+	if (objectCoordinates != null) {
 	    Double maxDistance = null;
 	    for (String coordinate : objectCoordinates) {
 		Double distance = calculateDistance(coordinate, referenceLocation);
-		if(distance != null && (maxDistance == null || maxDistance < distance)){
+		if (distance != null && (maxDistance == null || maxDistance < distance)) {
 		    maxDistance = distance;
 		}
-            }
+	    }
 	    updatePropertyValue(objectId, OntologyConstants.Object_has_distance.name(), maxDistance.toString());
-	}else{
-		LogHelper.info(ContextModuleOntologyManager.class, "calculateDistanceForObject", "No GPS coordinates found for instance: '%s'", objectId);	    
+	} else {
+	    LogHelper.info(ContextModuleOntologyManager.class, "calculateDistanceForObject",
+		    "No GPS coordinates found for instance: '%s'", objectId);
 	}
     }
 
     /**
-     * Calculates distance between two locations. One is stored as a string: 'xPos, yPos', the second one is stored as a {@link Location} object
-     * calculation was implemented based on instructions from: http://www.movable-type.co.uk/scripts/latlong.html
-     * @param coordinateString first coordinate in string form 
-     * @param referenceLocation second coordinate
+     * Calculates distance between two locations. One is stored as a string: 'xPos, yPos', the second one is stored as a
+     * {@link Location} object calculation was implemented based on instructions from:
+     * http://www.movable-type.co.uk/scripts/latlong.html
+     * 
+     * @param coordinateString
+     *            first coordinate in string form
+     * @param referenceLocation
+     *            second coordinate
      * @return distance between two locations measured in meters
      */
     private Double calculateDistance(String coordinateString, Location referenceLocation) {
 	Double[] coordinates = NumbersHelper.getDoublesFromString(coordinateString, ",");
-	//invalid coordinates, ignore
-	if(coordinates == null || coordinates.length != 2 || coordinates[0] == null || coordinates[1] == null){
+	// invalid coordinates, ignore
+	if (coordinates == null || coordinates.length != 2 || coordinates[0] == null || coordinates[1] == null) {
 	    return null;
 	}
 	double deltaLongitude = Math.toRadians(coordinates[0] - referenceLocation.getLongitude());
@@ -406,10 +443,10 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 
 	double firstLatitude = Math.toRadians(referenceLocation.getLatitude());
 	double secondLatitude = Math.toRadians(coordinates[1]);
-	
-	double a = Math.pow(Math.sin(deltaLatitude/2), 2.0) + 
-		Math.pow(Math.sin(deltaLongitude/2), 2.0) * Math.cos(firstLatitude) * Math.cos(secondLatitude);
-	double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+	double a = Math.pow(Math.sin(deltaLatitude / 2), 2.0) + Math.pow(Math.sin(deltaLongitude / 2), 2.0)
+	        * Math.cos(firstLatitude) * Math.cos(secondLatitude);
+	double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 	double distance = EARTH_RADIUS * c;
 	return distance;
     }
