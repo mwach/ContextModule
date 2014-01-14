@@ -1,6 +1,6 @@
 package itti.com.pl.arena.cm.location;
 
-import itti.com.pl.arena.cm.dto.PlatformLocation;
+import itti.com.pl.arena.cm.dto.Location;
 
 /**
  * Interface used by all modules interested in the location changes
@@ -16,7 +16,7 @@ public interface LocationListener {
      * 
      * @param newLocation current location of the platform
      */
-    void onLocationChange(PlatformLocation newLocation);
+    void onLocationChange(Location newLocation);
 
     /**
      * Returns unique ID of the listener

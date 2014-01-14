@@ -1,9 +1,6 @@
 package itti.com.pl.arena.cm.utils;
 
-import java.util.UUID;
-
 import itti.com.pl.arena.cm.dto.Location;
-import itti.com.pl.arena.cm.dto.PlatformLocation;
 
 import org.junit.Assert;
 import org.junit.Rule;
@@ -33,7 +30,7 @@ public class GpsMockTest {
 
 		int noOfSteps = 100;
 		//create custom, valid object
-		PlatformLocation startLocation = new PlatformLocation(UUID.randomUUID().toString(), 1, 1, 1, 0, 0, 0, 0);
+		Location startLocation = new Location(1, 1, 1, 0, 0, 0, 0);
 		Location endLocation = new Location(2, 2, 2, 0, 0, 0, 0);
 		GpsListenerMock mockDefault = new GpsListenerMock();
 		mockDefault.setStart(startLocation);

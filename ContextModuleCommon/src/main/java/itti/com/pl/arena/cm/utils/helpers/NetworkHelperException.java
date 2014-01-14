@@ -18,11 +18,11 @@ public class NetworkHelperException extends ContextModuleException{
 
 	/**
 	 * Exception thrown by the {@link NetworkHelper} utility class methods
-	 * @param reason exception
 	 * @param errorMsg exception details
+	 * @param reason exception
 	 * @param params additional parameters used to construct errorMsg
 	 */
-	public NetworkHelperException(Throwable reason, ErrorMessages errorMsg, Object...params) {
+	public NetworkHelperException(ErrorMessages errorMsg, Throwable reason, Object...params) {
 		super(String.format(errorMsg.getMessage(), params), reason);
 	}
 }

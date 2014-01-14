@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Required;
 
 import itti.com.pl.arena.cm.ErrorMessages;
 import itti.com.pl.arena.cm.dto.Location;
-import itti.com.pl.arena.cm.dto.PlatformLocation;
 import itti.com.pl.arena.cm.geoportal.GeoportalException;
 import itti.com.pl.arena.cm.location.LocationListener;
 import itti.com.pl.arena.cm.location.LocationPublisher;
@@ -37,8 +36,6 @@ public class GpsListenerMock implements LocationPublisher {
 
     // Current step.
     private int currentStep = 0;
-    // ID of the mocked object
-    private String id;
     // Total number of steps
     private int steps;
     // Initial location
@@ -47,19 +44,10 @@ public class GpsListenerMock implements LocationPublisher {
     private Location destination = null;
     // delta between consecutive steps, each call, (until destination will be
     // reached) result will be incremented using this delta
-    private PlatformLocation deltaLocation = null;
+    private Location deltaLocation = null;
 
     // GPS location listeners
     private Map<String, LocationListener> locationListeners = new HashMap<>();
-
-    private String getId() {
-	return id;
-    }
-
-    @Required
-    public void setId(String id) {
-	this.id = id;
-    }
 
     private int getSteps() {
 	return steps;
@@ -141,7 +129,7 @@ public class GpsListenerMock implements LocationPublisher {
 	double latitude = (getDestination().getLatitude() - getStart().getLatitude()) / steps;
 	double longitude = (getDestination().getLongitude() - getStart().getLongitude()) / steps;
 
-	this.deltaLocation = new PlatformLocation(getId(), longitude, latitude, altitude, 0, 0, 0, 0);
+	this.deltaLocation = new Location(longitude, latitude, altitude, 0, 0, 0, 0);
     }
 
     @Override
@@ -152,7 +140,7 @@ public class GpsListenerMock implements LocationPublisher {
      * Returns 'current' object location When object reach destination (steps counter will reach defined number of total
      * steps) location will stop changing
      */
-    public PlatformLocation updateLocation() {
+    public Location updateLocation() {
 
 	// prepare return object
 	// add deltas depending on current step
@@ -169,7 +157,7 @@ public class GpsListenerMock implements LocationPublisher {
 	    currentStep++;
 	}
 
-	PlatformLocation returnLocation = new PlatformLocation(getId(), longitude, latitude, altitude,
+	Location returnLocation = new Location(longitude, latitude, altitude,
 	        DEFAULT_BEARING, speed, time, DEFAULT_ACCURACY);
 
 	for (LocationListener listener : getLocationListeners().values()) {

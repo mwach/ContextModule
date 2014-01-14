@@ -1,11 +1,13 @@
 package itti.com.pl.arena.cm.service;
 
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Required;
 
 import itti.com.pl.arena.cm.Service;
-import itti.com.pl.arena.cm.dto.PlatformLocation;
+import itti.com.pl.arena.cm.dto.GeoObject;
+import itti.com.pl.arena.cm.dto.Location;
 import itti.com.pl.arena.cm.geoportal.GeoportalException;
 import itti.com.pl.arena.cm.geoportal.gov.pl.GeoportalService;
 import itti.com.pl.arena.cm.location.LocationListener;
@@ -88,27 +90,34 @@ public class PlatformTracker implements Service, LocationListener {
     }
 
     @Override
-    public void onLocationChange(PlatformLocation location) {
+    public void onLocationChange(Location location) {
+
+	LogHelper.debug(PlatformTracker.class, "onLocationChange", "New platform location received: %s", location);
 
 	// first, try to persist latest location in the database
 	try {
-	    getPersistence().create(location.getId(), location);
+	    getPersistence().create(getId(), location);
 	} catch (PersistenceException e) {
-	    LogHelper.debug(PlatformTracker.class, "onLocationChange", "Could not persist location data");
+	    LogHelper.warning(PlatformTracker.class, "onLocationChange", "Could not persist location data: %s", e.getLocalizedMessage());
 	}
 
 	// if object is no moving, get info from the ontology
 	if (location.getSpeed() == 0) {
 	    try {
-	        getGeoportal().getGeoportalData("");
-            } catch (GeoportalException e) {
+		double radius = 0.0;
+		Set<GeoObject> ontoData = getOntology().getGISObjects(location, radius);
+		if(ontoData.isEmpty()){
+		    Set<GeoObject> geoportalData = getGeoportal().getGeoportalData(location, radius);
+		    getOntology().addGeoportalData(location, geoportalData);
+		}
+            } catch (OntologyException | GeoportalException e) {
 	        // TODO Auto-generated catch block
 	        e.printStackTrace();
             }
 	    //
 	}
 	try {
-	    getOntology().getPlatform(location.getId());
+	    getOntology().getPlatform(getId());
 	} catch (OntologyException e) {
 	    LogHelper.exception(PlatformTracker.class, "onLocationChange", e.getLocalizedMessage(), e);
 	}

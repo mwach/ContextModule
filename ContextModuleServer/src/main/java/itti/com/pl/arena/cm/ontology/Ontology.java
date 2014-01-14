@@ -5,7 +5,6 @@ import java.util.Set;
 import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.dto.Location;
 import itti.com.pl.arena.cm.dto.Platform;
-import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalResponse;
 
 /**
  * Interface defining Arena-specific ontology operations
@@ -93,24 +92,23 @@ public interface Ontology {
 
     /**
      * Returns list of GIS objects found near given location
-     * @param x latitude
-     * @param y longitude
+     * @param location location (information about longitude and latitude)
      * @param radius radius
      * @return list of GIS objects
      * @throws OntologyException could not retrieve information from the ontology
      */
-    public Set<GeoObject> getGISObjects(double x, double y, double radius)
+    public Set<GeoObject> getGISObjects(Location location, double radius)
 	    throws OntologyException;
 
     /**
      * Adds information about new GIS object to the ontology
      * @param x latitude
      * @param y longitude
-     * @param geoportalData information about GIS object
+     * @param geoportalData information about GIS objects
      * @throws OntologyException could not retrieve information from the ontology
      */
-    public void addGeoportalData(double x, double y,
-	    GeoportalResponse geoportalData) throws OntologyException;
+    public void addGeoportalData(Location location,
+	    Set<GeoObject> geoportalData) throws OntologyException;
 
     /**
      * Calculates distance between platform, and objects localized on given parking lot

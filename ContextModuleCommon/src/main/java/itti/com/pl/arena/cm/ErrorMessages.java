@@ -21,6 +21,7 @@ public enum ErrorMessages {
 	IO_HELPER_NO_OUTPUT_DATA_PROVIDED("No data to be saved in '%s' was provided"),
 	IO_HELPER_COULD_NOT_WRITE_DATA_TO_FILE("Could not write data to file: %s. Details: %s"), 
 	NETWORK_HELPER_CANNOT_OBTAIN_IP("Could not determine IP address of the host: %s"), 
+	NETWORK_HELPER_CANNOT_DO_HTTP_REQUEST("Http request failed for URL: '%s'. Method: '%s. Details: %s"), 
 	PROPERTIES_HELPER_NO_FILE_PROVIDED("Empty properties file name provided"), 
 	PROPERTIES_HELPER_COULD_NOT_PARSE("Failed to load properties file '%s' Details: '%s'"), 
 	STRING_HELPER_CANNOT_ENCODE("Could not encode string '%s' using default charsed. Details: %s"), 

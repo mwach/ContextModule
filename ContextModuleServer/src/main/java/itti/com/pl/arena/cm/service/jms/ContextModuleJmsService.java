@@ -11,13 +11,8 @@ import itti.com.pl.arena.cm.Service;
 import itti.com.pl.arena.cm.dto.Camera;
 import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.dto.Platform;
+import itti.com.pl.arena.cm.geoportal.Geoportal;
 import itti.com.pl.arena.cm.geoportal.GeoportalException;
-import itti.com.pl.arena.cm.geoportal.gov.pl.GeoportalHelper;
-import itti.com.pl.arena.cm.geoportal.gov.pl.GeoportalKeys;
-import itti.com.pl.arena.cm.geoportal.gov.pl.GeoportalService;
-import itti.com.pl.arena.cm.geoportal.gov.pl.GeoportalUrls;
-import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalRequestDataObject;
-import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalResponse;
 import itti.com.pl.arena.cm.ontology.Ontology;
 import itti.com.pl.arena.cm.ontology.OntologyException;
 import itti.com.pl.arena.cm.service.Constants.ContextModuleRequestProperties;
@@ -51,16 +46,16 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
     private String connectionPort;
 
     private Ontology ontology = null;
-    private GeoportalService geoportal = null;
+    private Geoportal geoportal = null;
 
     private Ontology getOntology() {
 	return ontology;
     }
     @Required
-    public void setGeoportal(GeoportalService geoportal) {
+    public void setGeoportal(Geoportal geoportal) {
 	this.geoportal = geoportal;
     }
-    private GeoportalService getGeoportal() {
+    private Geoportal getGeoportal() {
 	return geoportal;
     }
 
@@ -255,7 +250,7 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
 
 	Set<GeoObject> geographicalInformation = null;
         try {
-	    geographicalInformation = getOntology().getGISObjects(location.getX(), location.getY(), 1);
+	    geographicalInformation = getOntology().getGISObjects(new itti.com.pl.arena.cm.dto.Location(location.getX(), location.getY()), 1.0);
         } catch (OntologyException e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
@@ -276,21 +271,19 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
 
 	Situation response = factory.createSituation();
 
-	Set<GeoObject> geoportalInformation = null;
+	Set<GeoObject> geoData = null;
 	try{
-	    String geoportalData = getGeoportal().getGeoportalData(GeoportalUrls.TOPOGRAPHIC_DATA_SERVICE,
-		    new GeoportalRequestDataObject(location.getX(), location.getY()));
-	    GeoportalResponse rresponse = GeoportalHelper.fromResponse(geoportalData, GeoportalKeys.getTopographyKeys());
-	    getOntology().addGeoportalData(location.getX(), location.getY(), rresponse);
-	    geoportalInformation = getOntology().getGISObjects(location.getX(), location.getY(), 1);
+	    itti.com.pl.arena.cm.dto.Location cmLocation = new itti.com.pl.arena.cm.dto.Location(location.getX(), location.getY());
+	    geoData = getGeoportal().getGeoportalData(cmLocation, 1.0);
+	    getOntology().addGeoportalData(cmLocation, geoData);
 	}catch(OntologyException | GeoportalException exc){
 	    
 	}
 
-	if (geoportalInformation != null) {
+	if (geoData != null) {
 	    FeatureVector fv = new FeatureVector();
 
-	    for (GeoObject geoObject : geoportalInformation) {
+	    for (GeoObject geoObject : geoData) {
 		fv.getFeature().add(createSimpleNamedValue(geoObject.getId(), JsonHelper.toJson(geoObject)));
 	    }
 	    response.setGlobalSceneProperty(fv);

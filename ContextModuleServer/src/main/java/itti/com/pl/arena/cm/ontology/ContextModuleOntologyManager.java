@@ -8,8 +8,6 @@ import itti.com.pl.arena.cm.dto.Location;
 import itti.com.pl.arena.cm.dto.Parking;
 import itti.com.pl.arena.cm.dto.Platform;
 import itti.com.pl.arena.cm.dto.RelativePosition;
-import itti.com.pl.arena.cm.geoportal.gov.pl.GeoportalKeys;
-import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalResponse;
 import itti.com.pl.arena.cm.ontology.OntologyConstants;
 import itti.com.pl.arena.cm.service.PlatformTracker;
 import itti.com.pl.arena.cm.utils.helpers.LogHelper;
@@ -227,10 +225,11 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 	return information;
     }
 
-    public Set<GeoObject> getGISObjects(double x, double y, double radius) throws OntologyException {
+    @Override
+    public Set<GeoObject> getGISObjects(Location location, double radius) throws OntologyException {
 	Set<GeoObject> gisInformation = new HashSet<>();
 	try {
-	    Set<String> platformNames = getParkingLots(x, y, radius);
+	    Set<String> platformNames = getParkingLots(location, radius);
 	    for (String gisObjectId : platformNames) {
 		gisInformation.add(getGISObject(gisObjectId));
 	    }
@@ -249,7 +248,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
     @Override
     public Set<String> getParkingLots(Location location, double radius) throws OntologyException {
 	if (location == null) {
-	    LogHelper.warning(ContextModuleOntologyManager.class, "getGISObjects", "Null location provided");
+	    LogHelper.warning(ContextModuleOntologyManager.class, "getParkingLots", "Null location provided");
 	    throw new OntologyException(ErrorMessages.ONTOLOGY_EMPTY_LOCATION_OBJECT);
 	}
 	return getParkingLots(location.getLongitude(), location.getLatitude(), radius);
@@ -263,17 +262,17 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
     @Override
     public Set<String> getParkingLotInfrastructure(String parkingId, String... classFilters) throws OntologyException {
 
-	LogHelper.debug(ContextModuleOntologyManager.class, "getParkingLotObjects", "get parking objects for '%s'",
+	LogHelper.debug(ContextModuleOntologyManager.class, "getParkingLotInfrastructure", "get parking objects for '%s'",
 	        String.valueOf(parkingId));
 	if (!StringHelper.hasContent(parkingId)) {
-	    LogHelper.warning(ContextModuleOntologyManager.class, "getParkingLotObjects", "Null parkingId provided");
+	    LogHelper.warning(ContextModuleOntologyManager.class, "getParkingLotInfrastructure", "Null parkingId provided");
 	    throw new OntologyException(ErrorMessages.ONTOLOGY_EMPTY_PARKING_ID_OBJECT);
 	}
 	// check, if parking is defined in the ontology
 	String parkingClass = getInstanceClass(parkingId);
 	// and it's member of valid class
 	if (!StringHelper.equals(OntologyConstants.Parking.name(), parkingClass)) {
-	    LogHelper.warning(ContextModuleOntologyManager.class, "getParkingLotObjects",
+	    LogHelper.warning(ContextModuleOntologyManager.class, "getParkingLotInfrastructure",
 		    "Provided object '%s' is not a member of Parking class", parkingId);
 	    throw new OntologyException(ErrorMessages.ONTOLOGY_INSTANCE_IS_NOT_A_PARKING, parkingId);
 	}
@@ -301,7 +300,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 	    }
 	    parkingObjects = filteredParkingObjects;
 	}
-	LogHelper.debug(ContextModuleOntologyManager.class, "getParkingLotObjects", "returning %d objects: %s",
+	LogHelper.debug(ContextModuleOntologyManager.class, "getParkingLotInfrastructure", "returning %d objects: %s",
 	        parkingObjects.size(), parkingObjects);
 	return parkingObjects;
     }
@@ -326,32 +325,30 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
     /*
      * (non-Javadoc)
      * 
-     * @see itti.com.pl.arena.cm.ontology.Ontology#addGeoportalData(double, double,
-     * itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalResponse)
+     * @see itti.com.pl.arena.cm.ontology.Ontology#addGeoportalData(itti.com.pl.arena.cm.dto.Location, java.util.Set)
      */
     @Override
-    public void addGeoportalData(double x, double y, GeoportalResponse geoportalData) {
-
+    public void addGeoportalData(Location location, Set<GeoObject> geoportalData) throws OntologyException {
 	if (geoportalData != null) {
-	    for (String layerId : geoportalData.getLayersIds()) {
-		for (int itemId = 0; itemId < geoportalData.getLayerElements(layerId); itemId++) {
-		    String layerName = geoportalData.getValue(layerId, itemId, GeoportalKeys.LayerName);
-		    String ontologyClass = GeoportalKeys.getOntlogyClass(layerName);
-		    if (StringHelper.hasContent(ontologyClass)) {
-			Map<String, String[]> properties = new HashMap<String, String[]>();
-			properties.put(OntologyConstants.Object_has_GPS_coordinates.name(),
-			        new String[] { String.format("%f,%f", x, y) });
-			String instanceName = String.format("%s-%f-%f", ontologyClass, x, y);
-			try {
-			    createSimpleInstance(ontologyClass, instanceName, properties);
-			} catch (OntologyException exc) {
-			    LogHelper.warning(ContextModuleOntologyManager.class, "addGeoportalData",
-				    "Could not add geoportal data for %s", instanceName);
-			}
+	    // TODO: need to be implemented properly
+	    for (GeoObject geoObject : geoportalData) {
+		String ontologyClass = getInstanceClass(geoObject.getId());
+		if (StringHelper.hasContent(ontologyClass)) {
+		    Map<String, String[]> properties = new HashMap<String, String[]>();
+		    properties.put(OntologyConstants.Object_has_GPS_coordinates.name(),
+			    new String[] { String.format("%f,%f", location.getLongitude(), location.getLatitude()) });
+		    String instanceName = String.format("%s-%f-%f", ontologyClass, location.getLongitude(),
+			    location.getLatitude());
+		    try {
+			createSimpleInstance(ontologyClass, instanceName, properties);
+		    } catch (OntologyException exc) {
+			LogHelper.warning(ContextModuleOntologyManager.class, "addGeoportalData",
+			        "Could not add geoportal data for %s", instanceName);
 		    }
 		}
 	    }
 	}
+
     }
 
     /*
