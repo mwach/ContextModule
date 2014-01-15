@@ -17,25 +17,25 @@ public class GeoportalRequestObjectTest {
     @Test
     public void tetsGeoportalRequestObjectBasic() {
 
-	double longitude = random.nextFloat();
-	double latitude = random.nextFloat();
-	GeoportalRequestObject requestObject = new GeoportalRequestDataObject(longitude, latitude);
+        double longitude = random.nextFloat();
+        double latitude = random.nextFloat();
+        GeoportalRequestObject requestObject = new GeoportalRequestDataObject(longitude, latitude);
 
-	assertEquals(longitude, requestObject.getLongitude(), MAX_DOUBLE_DELTA);
-	assertEquals(latitude, requestObject.getLatitude(), MAX_DOUBLE_DELTA);
+        assertEquals(longitude, requestObject.getLongitude(), MAX_DOUBLE_DELTA);
+        assertEquals(latitude, requestObject.getLatitude(), MAX_DOUBLE_DELTA);
     }
 
     @Test
     public void tetsGeoportalRequestObjectExt() {
 
-	double longitude = random.nextFloat();
-	double latitude = random.nextFloat();
-	Wkid wkid = Wkid.W_2180;
-	GeoportalRequestObject requestObject = new GeoportalRequestDataObject(longitude, latitude, wkid);
+        double longitude = random.nextFloat();
+        double latitude = random.nextFloat();
+        Wkid wkid = Wkid.W_2180;
+        GeoportalRequestObject requestObject = new GeoportalRequestDataObject(longitude, latitude, wkid);
 
-	assertEquals(longitude, requestObject.getLongitude(), MAX_DOUBLE_DELTA);
-	assertEquals(latitude, requestObject.getLatitude(), MAX_DOUBLE_DELTA);
-	assertEquals(String.valueOf(wkid.getValue()), requestObject.getWkid());
+        assertEquals(longitude, requestObject.getLongitude(), MAX_DOUBLE_DELTA);
+        assertEquals(latitude, requestObject.getLatitude(), MAX_DOUBLE_DELTA);
+        assertEquals(String.valueOf(wkid.getValue()), requestObject.getWkid());
     }
 
 }

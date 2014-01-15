@@ -17,12 +17,11 @@ public class GeoportalException extends ContextModuleException {
     private static final long serialVersionUID = 1L;
 
     public GeoportalException(ErrorMessages message, Object... args) {
-	super(message.getMessage(), args);
+        super(message.getMessage(), args);
     }
 
-    public GeoportalException(ErrorMessages message, Throwable throwables, 
-	    Object... args) {
-	super(message.getMessage(), throwables, args);
+    public GeoportalException(ErrorMessages message, Throwable throwables, Object... args) {
+        super(message.getMessage(), throwables, args);
     }
 
 }

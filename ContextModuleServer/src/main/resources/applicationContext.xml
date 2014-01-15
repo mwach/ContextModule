@@ -12,11 +12,10 @@
 	<!-- DAL layer -->
 	<bean id="Persistance" class="itti.com.pl.arena.cm.persistence.jdbc.JdbcPersistence"
 		init-method="init">
-		<property name="jdbcProperties" ref="jdbcProperties" />
+		<property name="jdbcProperties" ref="JdbcProperties" />
 	</bean>
 
-	<bean id="JdbcProperties" class="itti.com.pl.arena.cm.persistence.jdbc.JdbcProperties"
-		init-method="init">
+	<bean id="JdbcProperties" class="itti.com.pl.arena.cm.persistence.jdbc.JdbcProperties">
 		<property name="propertiesFile" value="jdbc.properties" />
 	</bean>
 
@@ -25,7 +24,7 @@
 		init-method="init" destroy-method="shutdown">
 		<property name="listeners">
 			<array>
-				<ref bean="arenaTracker" />
+				<ref bean="PlatformTracker" />
 			</array>
 		</property>
 	</bean>
@@ -36,10 +35,9 @@
 		init-method="init" destroy-method="shutdown">
 		<property name="listeners">
 			<array>
-				<ref bean="arenaTracker" />
+				<ref bean="PlatformTracker" />
 			</array>
 		</property>
-		<property name="id" ref="dummyPlatform" />
 		<property name="start" ref="dummyStartLocation" />
 		<property name="destination" ref="dummyEndLocation" />
 		<property name="steps" value="10000" />
@@ -47,12 +45,10 @@
 	<bean id="dummyStartLocation" class="itti.com.pl.arena.cm.dto.Location">
 		<constructor-arg name="longitude" value="53.17654" />
 		<constructor-arg name="latitude" value="17.34342" />
-		<constructor-arg name="altitude" value="120.324" />
 	</bean>
 	<bean id="dummyEndLocation" class="itti.com.pl.arena.cm.dto.Location">
 		<constructor-arg name="longitude" value="53.37654" />
 		<constructor-arg name="latitude" value="17.14342" />
-		<constructor-arg name="altitude" value="20.124" />
 	</bean>
 
 	<task:scheduled-tasks scheduler="GpsMockScheduler">
@@ -72,26 +68,35 @@
 	</bean>
 
 	<!-- Geoportal bean -->
-	<bean id="Geoportal" class="itti.com.pl.arena.cm.geoportal.govpl.GeoportalGovPl" />
+	<bean id="Geoportal" class="itti.com.pl.arena.cm.geoportal.gov.pl.GeoportalService" />
 
 	<!-- Service layer -->
-	<bean id="arenaTracker" class="itti.com.pl.arena.cm.service.DefaultArenaTracker">
+	<bean id="PlatformTracker" class="itti.com.pl.arena.cm.service.PlatformTracker">
+		<property name="platformId" value="arenaTruck1" />
 		<property name="persistence" ref="Persistance" />
 		<property name="ontology" ref="Ontology" />
 		<property name="geoportal" ref="Geoportal" />
-		<property name="locationDelta" value="5.02" />
+		<property name="radius" value="1.0" />
 	</bean>
 
 	<!-- Communication layer -->
-	<bean id="contextModuleJmsService"
-		class="itti.com.pl.arena.cm.service.jms.ContextModuleZeroMqService"
+	<bean id="ContextModuleJmsService"
+		class="itti.com.pl.arena.cm.service.jms.ContextModuleJmsService"
 		init-method="init" destroy-method="shutdown">
 
-		<property name="contextManager" ref="arenaTracker" />
+		<property name="ontology" ref="Ontology" />
+		<property name="geoportal" ref="Geoportal" />
 		<property name="brokerUrl" value="127.0.0.1" />
 		<!-- current IP address by default -->
 		<!-- <property name="localIpAddress" value="localhost"/> -->
 		<!-- random port, can be changed using any other value -->
 		<property name="connectionPort" value="45444" />
 	</bean>
+
+	<task:scheduled-tasks scheduler="CmScheduler">
+		<task:scheduled ref="PlatformTracker" method="checkIfMoving"
+			fixed-delay="60000" />
+	</task:scheduled-tasks>
+
+	<task:scheduler id="CmScheduler" pool-size="5" />
 </beans>

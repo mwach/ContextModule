@@ -11,16 +11,16 @@ import itti.com.pl.arena.cm.dto.Location;
 public interface LocationListener {
 
     /**
-     * Method invoked by the {@link LocationPublisher} when change of the
-     * location o the platform will be detected
+     * Method invoked by the {@link LocationPublisher} when change of the location o the platform will be detected
      * 
-     * @param newLocation current location of the platform
+     * @param newLocation
+     *            current location of the platform
      */
     void onLocationChange(Location newLocation);
 
     /**
-     * Returns unique ID of the listener
-     * Used for registering and deregistering it from the {@link LocationPublisher}
+     * Returns unique ID of the listener Used for registering and deregistering it from the {@link LocationPublisher}
+     * 
      * @return
      */
     public String getId();

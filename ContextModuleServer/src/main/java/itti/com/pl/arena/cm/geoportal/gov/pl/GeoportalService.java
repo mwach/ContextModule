@@ -8,10 +8,10 @@ import itti.com.pl.arena.cm.geoportal.GeoportalException;
 import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalRequestDataObject;
 import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalRequestObject;
 import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalResponse;
-import itti.com.pl.arena.cm.utils.helpers.LogHelper;
-import itti.com.pl.arena.cm.utils.helpers.NetworkHelper;
-import itti.com.pl.arena.cm.utils.helpers.NetworkHelperException;
-import itti.com.pl.arena.cm.utils.helpers.StringHelper;
+import itti.com.pl.arena.cm.utils.helper.LogHelper;
+import itti.com.pl.arena.cm.utils.helper.NetworkHelper;
+import itti.com.pl.arena.cm.utils.helper.NetworkHelperException;
+import itti.com.pl.arena.cm.utils.helper.StringHelper;
 
 import java.util.Set;
 
@@ -28,17 +28,17 @@ public final class GeoportalService implements Geoportal {
     @Override
     public Set<GeoObject> getGeoportalData(Location location, double radius) throws GeoportalException {
 
-	LogHelper.debug(GeoportalService.class, "getGeoportalData", "get data for location: %s", location);
+        LogHelper.debug(GeoportalService.class, "getGeoportalData", "get data for location: %s", location);
 
-	String geoportalDataStr = getGeoportalData(GeoportalUrls.TOPOGRAPHIC_DATA_SERVICE, new GeoportalRequestDataObject(
-	        location.getLongitude(), location.getLatitude()));
-	LogHelper.debug(GeoportalService.class, "getGeoportalData", "geoportal data received: %s", geoportalDataStr);
+        String geoportalDataStr = getGeoportalData(GeoportalUrls.TOPOGRAPHIC_DATA_SERVICE, new GeoportalRequestDataObject(
+                location.getLongitude(), location.getLatitude()));
+        LogHelper.debug(GeoportalService.class, "getGeoportalData", "geoportal data received: %s", geoportalDataStr);
 
-	GeoportalResponse geoportalData = GeoportalHelper.fromResponse(geoportalDataStr, Constants.getTopographyKeys());
+        GeoportalResponse geoportalData = GeoportalHelper.fromResponse(geoportalDataStr, Constants.getTopographyKeys());
 
-	Set<GeoObject> geoObjects = GeoportalHelper.parseResponseIntoObjects(geoportalData);
+        Set<GeoObject> geoObjects = GeoportalHelper.parseResponseIntoObjects(geoportalData, location);
 
-	return geoObjects;
+        return geoObjects;
     }
 
     /**
@@ -54,24 +54,24 @@ public final class GeoportalService implements Geoportal {
      */
     public String getGeoportalData(GeoportalUrls service, GeoportalRequestObject requestObject) throws GeoportalException {
 
-	LogHelper.debug(GeoportalService.class, "getGeoportalStringData", "init");
-	// validate request parameters
-	validateRequest(service, requestObject);
+        LogHelper.debug(GeoportalService.class, "getGeoportalStringData", "init");
+        // validate request parameters
+        validateRequest(service, requestObject);
 
-	// prepare URL
-	String requestUrl = prepareRequestUrl(service, requestObject);
-	byte[] serviceSesponse = null;
-	try {
-	    serviceSesponse = NetworkHelper.doHttpRequestData(requestUrl, REQUEST_METHOD);
-	} catch (NetworkHelperException e) {
-	    LogHelper.exception(GeoportalService.class, "getGeoportalData", "Could not retrieve geoportal data", e);
-	    throw new GeoportalException(ErrorMessages.GEOPORTAL_REQUEST_FAILED);
-	}
-	return StringHelper.toUtf8String(serviceSesponse);
+        // prepare URL
+        String requestUrl = prepareRequestUrl(service, requestObject);
+        byte[] serviceSesponse = null;
+        try {
+            serviceSesponse = NetworkHelper.doHttpRequestData(requestUrl, REQUEST_METHOD);
+        } catch (NetworkHelperException e) {
+            LogHelper.exception(GeoportalService.class, "getGeoportalData", "Could not retrieve geoportal data", e);
+            throw new GeoportalException(ErrorMessages.GEOPORTAL_REQUEST_FAILED);
+        }
+        return StringHelper.toUtf8String(serviceSesponse);
     }
 
     private String prepareRequestUrl(GeoportalUrls service, GeoportalRequestObject requestObject) throws GeoportalException {
-	return String.format("%s%s", service.getServiceURL(), GeoportalHelper.toRequest(requestObject));
+        return String.format("%s%s", service.getServiceURL(), GeoportalHelper.toRequest(requestObject));
     }
 
     /**
@@ -86,26 +86,26 @@ public final class GeoportalService implements Geoportal {
      */
     private void validateRequest(GeoportalUrls service, GeoportalRequestObject requestObject) throws GeoportalException {
 
-	if (service == null) {
-	    LogHelper.error(GeoportalService.class, "validateRequest", "validation failed: service is null");
+        if (service == null) {
+            LogHelper.error(GeoportalService.class, "validateRequest", "validation failed: service is null");
 
-	    throw new GeoportalException(ErrorMessages.GEOPORTAL_SERVICE_NOT_PROVIDED);
-	}
+            throw new GeoportalException(ErrorMessages.GEOPORTAL_SERVICE_NOT_PROVIDED);
+        }
 
-	if (requestObject == null) {
-	    LogHelper.error(GeoportalService.class, "validateRequest", "validation failed: request data not provided");
+        if (requestObject == null) {
+            LogHelper.error(GeoportalService.class, "validateRequest", "validation failed: request data not provided");
 
-	    throw new GeoportalException(ErrorMessages.GEOPORTAL_REQUEST_DATA_NOT_PROVIDED);
-	}
+            throw new GeoportalException(ErrorMessages.GEOPORTAL_REQUEST_DATA_NOT_PROVIDED);
+        }
     }
 
     @Override
     public void init() {
-	// nothing to be done here for that implementation
+        // nothing to be done here for that implementation
     }
 
     @Override
     public void shutdown() {
-	// nothing to be done here for that implementation
+        // nothing to be done here for that implementation
     }
 }

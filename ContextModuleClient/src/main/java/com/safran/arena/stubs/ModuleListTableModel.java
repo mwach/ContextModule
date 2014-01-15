@@ -24,333 +24,315 @@ import eu.arena_fp7._1.Module;
 import eu.arena_fp7._1.ThreatHandler;
 
 /**
- * Example of table model for a list of modules. This implements the ConfigurationManagerInterface to be
- * registered as a submodule of a ModuleImpl. 
+ * Example of table model for a list of modules. This implements the ConfigurationManagerInterface to be registered as a
+ * submodule of a ModuleImpl.
  * 
  * @author F270116
  * 
  */
-public class ModuleListTableModel extends AbstractTableModel implements
-		ConfigurationManagerInterface {
+public class ModuleListTableModel extends AbstractTableModel implements ConfigurationManagerInterface {
 
-	/**
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
-	private Client _client;
-	private ModuleImpl _module;
+    private static final long serialVersionUID = 1L;
+    private Client _client;
+    private ModuleImpl _module;
 
-	private static enum Columns {
-		Name, ConfigurationManager, DataConsumer, DataProducer, DataRepository, ThreatHandler
-	}
+    private static enum Columns {
+        Name, ConfigurationManager, DataConsumer, DataProducer, DataRepository, ThreatHandler
+    }
 
-	static final int nbColumns = Columns.values().length;
+    static final int nbColumns = Columns.values().length;
 
-	/**
-	 * Small structure to record the properties of each module. 
-	 * @author F270116
-	 *
-	 */
-	private static class Row {
-		String _name;
-		boolean _moduleTypes[] = { false, false, false, false, false, false,
-				false };
-	}
+    /**
+     * Small structure to record the properties of each module.
+     * 
+     * @author F270116
+     * 
+     */
+    private static class Row {
+        String _name;
+        boolean _moduleTypes[] = { false, false, false, false, false, false, false };
+    }
 
-	private final Map<String, Row> _rows = new HashMap<String, ModuleListTableModel.Row>();
+    private final Map<String, Row> _rows = new HashMap<String, ModuleListTableModel.Row>();
 
-	public ModuleListTableModel(Client client, ModuleImpl module) {
-		super();
-		_client = client;
-		_module = module;
-		_module.addConfigurationManagerListener(this);
-		List<Module> modules = _client.getModuleList(getModuleName());
-		for (Module registeredModule : modules) {
-			
-			if (registeredModule instanceof DataProducer) {
-				this.onDataProducerRegistered((DataProducer)registeredModule);
-			} else if (registeredModule instanceof DataConsumer) {
-				this.onConsumerRegistered((DataConsumer) registeredModule);
-			} else if (registeredModule instanceof ThreatHandler){
-				// absent ??
-			} else if (registeredModule instanceof DataRepository) {
-				this.onDataRepositoryRegistered((DataRepository)registeredModule);
-			}
-		}
-	}
+    public ModuleListTableModel(Client client, ModuleImpl module) {
+        super();
+        _client = client;
+        _module = module;
+        _module.addConfigurationManagerListener(this);
+        List<Module> modules = _client.getModuleList(getModuleName());
+        for (Module registeredModule : modules) {
 
-	@Override
-	public int getColumnCount() {
+            if (registeredModule instanceof DataProducer) {
+                this.onDataProducerRegistered((DataProducer) registeredModule);
+            } else if (registeredModule instanceof DataConsumer) {
+                this.onConsumerRegistered((DataConsumer) registeredModule);
+            } else if (registeredModule instanceof ThreatHandler) {
+                // absent ??
+            } else if (registeredModule instanceof DataRepository) {
+                this.onDataRepositoryRegistered((DataRepository) registeredModule);
+            }
+        }
+    }
 
-		return nbColumns;
-	}
+    @Override
+    public int getColumnCount() {
 
-	@Override
-	public int getRowCount() {
-		int c = 0;
-		synchronized (_rows) {
-			c = _rows.size();
-		}
-		return c;
-	}
+        return nbColumns;
+    }
 
-	@Override
-	public Object getValueAt(int rowId, int colId) {
-		Row row = null;
-		synchronized (_rows) {
-			row = (Row) _rows.values().toArray()[rowId];
-		}
-		if (colId == 0) {
-			return row._name;
-		}
-		return row._moduleTypes[colId];
-	}
+    @Override
+    public int getRowCount() {
+        int c = 0;
+        synchronized (_rows) {
+            c = _rows.size();
+        }
+        return c;
+    }
 
-	@Override
-	public String getColumnName(int column) {
+    @Override
+    public Object getValueAt(int rowId, int colId) {
+        Row row = null;
+        synchronized (_rows) {
+            row = (Row) _rows.values().toArray()[rowId];
+        }
+        if (colId == 0) {
+            return row._name;
+        }
+        return row._moduleTypes[colId];
+    }
 
-		return Columns.values()[column].name();
-	}
+    @Override
+    public String getColumnName(int column) {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.safran.arena.ModuleInterface#getConfiguration()
-	 */
-	@Override
-	public Configuration getConfiguration() {
-		return null;
-	}
+        return Columns.values()[column].name();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.safran.arena.ModuleInterface#setConfiguration(eu.arena_fp7._1.
-	 * Configuration)
-	 */
-	@Override
-	public ConfigurationResult setConfiguration(Configuration configuration) {
-		return null;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.safran.arena.ModuleInterface#getConfiguration()
+     */
+    @Override
+    public Configuration getConfiguration() {
+        return null;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.safran.arena.ModuleInterface#getModuleName()
-	 */
-	@Override
-	public String getModuleName() {
-		return _module.getModuleName();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.safran.arena.ModuleInterface#setConfiguration(eu.arena_fp7._1. Configuration)
+     */
+    @Override
+    public ConfigurationResult setConfiguration(Configuration configuration) {
+        return null;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.safran.arena.ConfigurationManagerInterface#onConsumerSubscribed(eu
-	 * .arena_fp7._1.DataConsumer, eu.arena_fp7._1.DataFilters)
-	 */
-	@Override
-	public void onConsumerSubscribed(DataConsumer consumer, DataFilters filters) {
-		Row row = null;
-		synchronized (_rows) {
-			row = _rows.get(consumer.getId());
-			if (row == null) {
-				row = new Row();
-				row._name = consumer.getId();
-				_rows.put(row._name, row);
-			}
-		}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.safran.arena.ModuleInterface#getModuleName()
+     */
+    @Override
+    public String getModuleName() {
+        return _module.getModuleName();
+    }
 
-		row._moduleTypes[Columns.DataConsumer.ordinal()] = true;
-		updateAsABeaf();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.safran.arena.ConfigurationManagerInterface#onConsumerSubscribed(eu .arena_fp7._1.DataConsumer,
+     * eu.arena_fp7._1.DataFilters)
+     */
+    @Override
+    public void onConsumerSubscribed(DataConsumer consumer, DataFilters filters) {
+        Row row = null;
+        synchronized (_rows) {
+            row = _rows.get(consumer.getId());
+            if (row == null) {
+                row = new Row();
+                row._name = consumer.getId();
+                _rows.put(row._name, row);
+            }
+        }
 
-	/**
-	 * Simple way to update the table. This is not a good, efficient, way to
-	 * code an IHM! This has been done because this stub is just what it is: a
-	 * quick and dirty example of Integration Platform usage, not an example of
-	 * good practices in IHM implementation.
-	 */
-	private void updateAsABeaf() {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					fireTableDataChanged();
+        row._moduleTypes[Columns.DataConsumer.ordinal()] = true;
+        updateAsABeaf();
+    }
 
-				} catch (Throwable t) {
-					t.printStackTrace();
-				}
-			}
-		});
+    /**
+     * Simple way to update the table. This is not a good, efficient, way to code an IHM! This has been done because
+     * this stub is just what it is: a quick and dirty example of Integration Platform usage, not an example of good
+     * practices in IHM implementation.
+     */
+    private void updateAsABeaf() {
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    fireTableDataChanged();
 
-	}
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                }
+            }
+        });
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.safran.arena.ConfigurationManagerInterface#onConsumerUnsubscribed
-	 * (eu.arena_fp7._1.DataConsumer, eu.arena_fp7._1.DataFilters)
-	 */
-	@Override
-	public void onConsumerUnsubscribed(DataConsumer consumer,
-			DataFilters filters) {
-		// TODO
+    }
 
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.safran.arena.ConfigurationManagerInterface#onConsumerUnsubscribed (eu.arena_fp7._1.DataConsumer,
+     * eu.arena_fp7._1.DataFilters)
+     */
+    @Override
+    public void onConsumerUnsubscribed(DataConsumer consumer, DataFilters filters) {
+        // TODO
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.safran.arena.ConfigurationManagerInterface#onConsumerRegistered(eu
-	 * .arena_fp7._1.DataConsumer)
-	 */
-	@Override
-	public void onConsumerRegistered(DataConsumer consumer) {
-		Row row = null;
-		synchronized (_rows) {
-			row = _rows.get(consumer.getId());
-			if (row == null) {
-				row = new Row();
-				row._name = consumer.getId();
-				_rows.put(row._name, row);
-			}
-		}
+    }
 
-		row._moduleTypes[Columns.DataConsumer.ordinal()] = true;
-		updateAsABeaf();
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.safran.arena.ConfigurationManagerInterface#onConsumerRegistered(eu .arena_fp7._1.DataConsumer)
+     */
+    @Override
+    public void onConsumerRegistered(DataConsumer consumer) {
+        Row row = null;
+        synchronized (_rows) {
+            row = _rows.get(consumer.getId());
+            if (row == null) {
+                row = new Row();
+                row._name = consumer.getId();
+                _rows.put(row._name, row);
+            }
+        }
 
-	}
+        row._moduleTypes[Columns.DataConsumer.ordinal()] = true;
+        updateAsABeaf();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.safran.arena.ConfigurationManagerInterface#onConsumerUnregistered
-	 * (eu.arena_fp7._1.DataConsumer)
-	 */
-	@Override
-	public void onConsumerUnregistered(DataConsumer consumer) {
-		Row row = null;
-		synchronized (_rows) {
-			row = _rows.get(consumer.getId());
-			if (row != null) {
-				row._moduleTypes[Columns.DataConsumer.ordinal()] = false;
-			}
-		}
+    }
 
-		updateAsABeaf();
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.safran.arena.ConfigurationManagerInterface#onConsumerUnregistered (eu.arena_fp7._1.DataConsumer)
+     */
+    @Override
+    public void onConsumerUnregistered(DataConsumer consumer) {
+        Row row = null;
+        synchronized (_rows) {
+            row = _rows.get(consumer.getId());
+            if (row != null) {
+                row._moduleTypes[Columns.DataConsumer.ordinal()] = false;
+            }
+        }
 
-	}
+        updateAsABeaf();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.safran.arena.ConfigurationManagerInterface#onDataProducerRegistered
-	 * (eu.arena_fp7._1.DataProducer)
-	 */
-	@Override
-	public void onDataProducerRegistered(DataProducer producer) {
-		Row row = null;
-		synchronized (_rows) {
-			row = _rows.get(producer.getId());
-			if (row == null) {
-				row = new Row();
-				row._name = producer.getId();
-				_rows.put(row._name, row);
-			}
-		}
+    }
 
-		//DataProducerInterface producerProxy = _client.geProducerProxy(producer
-		//		.getId());
-		// this line is particularly USELESS here; it has been added for testing purpose only
-		//Configuration configuration = producerProxy.getConfiguration();
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.safran.arena.ConfigurationManagerInterface#onDataProducerRegistered (eu.arena_fp7._1.DataProducer)
+     */
+    @Override
+    public void onDataProducerRegistered(DataProducer producer) {
+        Row row = null;
+        synchronized (_rows) {
+            row = _rows.get(producer.getId());
+            if (row == null) {
+                row = new Row();
+                row._name = producer.getId();
+                _rows.put(row._name, row);
+            }
+        }
 
-		row._moduleTypes[Columns.DataProducer.ordinal()] = true;
-		updateAsABeaf();
+        // DataProducerInterface producerProxy = _client.geProducerProxy(producer
+        // .getId());
+        // this line is particularly USELESS here; it has been added for testing purpose only
+        // Configuration configuration = producerProxy.getConfiguration();
 
-	}
+        row._moduleTypes[Columns.DataProducer.ordinal()] = true;
+        updateAsABeaf();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.safran.arena.ConfigurationManagerInterface#onDataProducerUnregistered
-	 * (eu.arena_fp7._1.DataProducer)
-	 */
-	@Override
-	public void onDataProducerUnregistered(DataProducer producer) {
-		Row row = null;
-		synchronized (_rows) {
-			row = _rows.get(producer.getId());
-			if (row != null) {
-				row._moduleTypes[Columns.DataProducer.ordinal()] = false;
-			}
-		}
+    }
 
-		updateAsABeaf();
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.safran.arena.ConfigurationManagerInterface#onDataProducerUnregistered (eu.arena_fp7._1.DataProducer)
+     */
+    @Override
+    public void onDataProducerUnregistered(DataProducer producer) {
+        Row row = null;
+        synchronized (_rows) {
+            row = _rows.get(producer.getId());
+            if (row != null) {
+                row._moduleTypes[Columns.DataProducer.ordinal()] = false;
+            }
+        }
 
-	}
+        updateAsABeaf();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.safran.arena.ConfigurationManagerInterface#onDataRepositoryRegistered
-	 * (eu.arena_fp7._1.DataRepository)
-	 */
-	@Override
-	public void onDataRepositoryRegistered(DataRepository dataRepository) {
-		Row row = null;
-		synchronized (_rows) {
-			row = _rows.get(dataRepository.getId());
-			if (row == null) {
-				row = new Row();
-				row._name = dataRepository.getId();
-				_rows.put(row._name, row);
-			}
-		}
+    }
 
-		row._moduleTypes[Columns.DataRepository.ordinal()] = true;
-		updateAsABeaf();
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.safran.arena.ConfigurationManagerInterface#onDataRepositoryRegistered (eu.arena_fp7._1.DataRepository)
+     */
+    @Override
+    public void onDataRepositoryRegistered(DataRepository dataRepository) {
+        Row row = null;
+        synchronized (_rows) {
+            row = _rows.get(dataRepository.getId());
+            if (row == null) {
+                row = new Row();
+                row._name = dataRepository.getId();
+                _rows.put(row._name, row);
+            }
+        }
 
-	}
+        row._moduleTypes[Columns.DataRepository.ordinal()] = true;
+        updateAsABeaf();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.safran.arena.ConfigurationManagerInterface#onDataRepositoryUnregistered
-	 * (eu.arena_fp7._1.DataRepository)
-	 */
-	@Override
-	public void onDataRepositoryUnregistered(DataRepository dataRepository) {
-		Row row = null;
-		synchronized (_rows) {
-			row = _rows.get(dataRepository.getId());
-			if (row != null) {
-				row._moduleTypes[Columns.DataRepository.ordinal()] = false;
-			}
-		}
+    }
 
-		updateAsABeaf();
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.safran.arena.ConfigurationManagerInterface#onDataRepositoryUnregistered (eu.arena_fp7._1.DataRepository)
+     */
+    @Override
+    public void onDataRepositoryUnregistered(DataRepository dataRepository) {
+        Row row = null;
+        synchronized (_rows) {
+            row = _rows.get(dataRepository.getId());
+            if (row != null) {
+                row._moduleTypes[Columns.DataRepository.ordinal()] = false;
+            }
+        }
 
-	}
+        updateAsABeaf();
 
-	@Override
-	public void onModuleUnregistered(Module module) {
-		Row row = null;
-		synchronized (_rows) {
-			row = _rows.get(module.getId());
-			if (row != null) {
-				_rows.remove(module.getId());
-			}
-		}
+    }
 
-		updateAsABeaf();
-	}
+    @Override
+    public void onModuleUnregistered(Module module) {
+        Row row = null;
+        synchronized (_rows) {
+            row = _rows.get(module.getId());
+            if (row != null) {
+                _rows.remove(module.getId());
+            }
+        }
+
+        updateAsABeaf();
+    }
 
 }

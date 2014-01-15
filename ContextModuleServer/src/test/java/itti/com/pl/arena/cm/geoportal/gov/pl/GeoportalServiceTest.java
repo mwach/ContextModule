@@ -19,73 +19,73 @@ public class GeoportalServiceTest {
 
     private GeoportalService geoportal = new GeoportalService();
 
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings(value="NP", justification="NULL passed for testing purposes only")
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "NP", justification = "NULL passed for testing purposes only")
     @Test
     public void testGeoportalAPINullParams() throws GeoportalException {
 
-	expectedException.expect(GeoportalException.class);
-	expectedException.expectMessage(ErrorMessages.GEOPORTAL_SERVICE_NOT_PROVIDED.getMessage());
+        expectedException.expect(GeoportalException.class);
+        expectedException.expectMessage(ErrorMessages.GEOPORTAL_SERVICE_NOT_PROVIDED.getMessage());
 
-	geoportal.getGeoportalData(null, null);
+        geoportal.getGeoportalData(null, null);
     }
 
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings(value="NP", justification="NULL passed for testing purposes only")
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "NP", justification = "NULL passed for testing purposes only")
     @Test
     public void testGeoportalAPINullUrl() throws GeoportalException {
 
-	expectedException.expect(GeoportalException.class);
-	expectedException.expectMessage(ErrorMessages.GEOPORTAL_SERVICE_NOT_PROVIDED.getMessage());
+        expectedException.expect(GeoportalException.class);
+        expectedException.expectMessage(ErrorMessages.GEOPORTAL_SERVICE_NOT_PROVIDED.getMessage());
 
-	geoportal.getGeoportalData(null, new GeoportalRequestDataObject(1, 1));
+        geoportal.getGeoportalData(null, new GeoportalRequestDataObject(1, 1));
     }
 
     @Test
     public void testGeoportalAPINullRequest() throws GeoportalException {
 
-	expectedException.expect(GeoportalException.class);
-	expectedException.expectMessage(ErrorMessages.GEOPORTAL_REQUEST_DATA_NOT_PROVIDED.getMessage());
+        expectedException.expect(GeoportalException.class);
+        expectedException.expectMessage(ErrorMessages.GEOPORTAL_REQUEST_DATA_NOT_PROVIDED.getMessage());
 
-	geoportal.getGeoportalData(GeoportalUrls.CATASTRAL_DATA_SERVICE, null);
+        geoportal.getGeoportalData(GeoportalUrls.CATASTRAL_DATA_SERVICE, null);
     }
 
     @Test
     public void testGeoportalAPIDummyRequest() throws GeoportalException {
 
-	// invalid coordinates in the request data - Geoportal should process the request and return empty data set
-	GeoportalRequestObject requestObject = new GeoportalRequestDataObject(-1, -1);
+        // invalid coordinates in the request data - Geoportal should process the request and return empty data set
+        GeoportalRequestObject requestObject = new GeoportalRequestDataObject(-1, -1);
 
-	geoportal.getGeoportalData(GeoportalUrls.BOUNDARIES_REGISTRY_DATA_SERVICE, requestObject);
+        geoportal.getGeoportalData(GeoportalUrls.BOUNDARIES_REGISTRY_DATA_SERVICE, requestObject);
     }
 
     @Test
     public void testGeoportalAPIValidCatastralRequest() throws GeoportalException {
 
-	GeoportalRequestObject requestObject = new GeoportalRequestDataObject(17.972946559166793, 53.124318916278824);
-	String response = geoportal.getGeoportalData(GeoportalUrls.CATASTRAL_DATA_SERVICE, requestObject);
-	assertNotNull(response);
+        GeoportalRequestObject requestObject = new GeoportalRequestDataObject(17.972946559166793, 53.124318916278824);
+        String response = geoportal.getGeoportalData(GeoportalUrls.CATASTRAL_DATA_SERVICE, requestObject);
+        assertNotNull(response);
     }
 
     @Test
     public void testGeoportalAPIValidBoundariesRequest() throws GeoportalException {
 
-	GeoportalRequestObject requestObject = new GeoportalRequestDataObject(17.972946559166793, 53.124318916278824);
-	String response = geoportal.getGeoportalData(GeoportalUrls.BOUNDARIES_REGISTRY_DATA_SERVICE, requestObject);
-	assertNotNull(response);
+        GeoportalRequestObject requestObject = new GeoportalRequestDataObject(17.972946559166793, 53.124318916278824);
+        String response = geoportal.getGeoportalData(GeoportalUrls.BOUNDARIES_REGISTRY_DATA_SERVICE, requestObject);
+        assertNotNull(response);
     }
 
     @Test
     public void testGeoportalAPIValidVmapl2Request() throws GeoportalException {
 
-	GeoportalRequestObject requestObject = new GeoportalRequestDataObject(17.972946559166793, 53.124318916278824);
-	String response = geoportal.getGeoportalData(GeoportalUrls.TOPOGRAPHIC_VMAPL2_DATA_SERVICE, requestObject);
-	assertNotNull(response);
+        GeoportalRequestObject requestObject = new GeoportalRequestDataObject(17.972946559166793, 53.124318916278824);
+        String response = geoportal.getGeoportalData(GeoportalUrls.TOPOGRAPHIC_VMAPL2_DATA_SERVICE, requestObject);
+        assertNotNull(response);
     }
 
     @Test
     public void testGeoportalAPIValidTopographicRequest() throws GeoportalException {
 
-	GeoportalRequestObject requestObject = new GeoportalRequestDataObject(17.972946559166793, 53.124318916278824);
-	String response = geoportal.getGeoportalData(GeoportalUrls.TOPOGRAPHIC_DATA_SERVICE, requestObject);
-	assertNotNull(response);
+        GeoportalRequestObject requestObject = new GeoportalRequestDataObject(17.972946559166793, 53.124318916278824);
+        String response = geoportal.getGeoportalData(GeoportalUrls.TOPOGRAPHIC_DATA_SERVICE, requestObject);
+        assertNotNull(response);
     }
 }

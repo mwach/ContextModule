@@ -2,8 +2,9 @@ package itti.com.pl.arena.cm.dto;
 
 /**
  * Available platform types supported by the ContextModule
+ * 
  * @author cm-admin
- *
+ * 
  */
 public enum PlatformType {
 

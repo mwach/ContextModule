@@ -8,13 +8,12 @@ package itti.com.pl.arena.cm;
  */
 public final class Constants {
 
-	/**
-	 * Name of this component in the ARENA system used for communication with
-	 * other components
-	 */
-	public static final String MODULE_NAME = "ContextModule";
-	/**
-	 * Encoding used when working with streams
-	 */
-	public static final String ENCODING = "UTF-8";
+    /**
+     * Name of this component in the ARENA system used for communication with other components
+     */
+    public static final String MODULE_NAME = "ContextModule";
+    /**
+     * Encoding used when working with streams
+     */
+    public static final String ENCODING = "UTF-8";
 }

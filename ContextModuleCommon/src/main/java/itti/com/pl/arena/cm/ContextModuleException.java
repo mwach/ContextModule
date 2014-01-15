@@ -1,8 +1,7 @@
 package itti.com.pl.arena.cm;
 
 /**
- * Default exception thrown by the ContextModule All ContextModule exceptions
- * should extend this one
+ * Default exception thrown by the ContextModule All ContextModule exceptions should extend this one
  * 
  * @author mawa
  * 
@@ -24,10 +23,8 @@ public abstract class ContextModuleException extends Exception {
      * @param args
      *            list of message parameters
      */
-    public ContextModuleException(String message, Throwable throwable,
-	    Object... args) {
-	super(message == null ? ContextModuleException.class.getSimpleName()
-		: String.format(message, args), throwable);
+    public ContextModuleException(String message, Throwable throwable, Object... args) {
+        super(message == null ? ContextModuleException.class.getSimpleName() : String.format(message, args), throwable);
     }
 
     /**
@@ -39,8 +36,7 @@ public abstract class ContextModuleException extends Exception {
      *            list of message parameters
      */
     public ContextModuleException(String message, Object... args) {
-	super(message == null ? ContextModuleException.class.getSimpleName()
-		: String.format(message, args));
+        super(message == null ? ContextModuleException.class.getSimpleName() : String.format(message, args));
     }
 
     /**
@@ -50,6 +46,6 @@ public abstract class ContextModuleException extends Exception {
      *            exception
      */
     public ContextModuleException(Throwable throwable) {
-	super(throwable);
+        super(throwable);
     }
 }

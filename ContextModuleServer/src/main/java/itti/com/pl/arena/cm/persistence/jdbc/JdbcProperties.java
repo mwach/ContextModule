@@ -1,7 +1,7 @@
 package itti.com.pl.arena.cm.persistence.jdbc;
 
 import itti.com.pl.arena.cm.ErrorMessages;
-import itti.com.pl.arena.cm.utils.helpers.IOHelperException;
+import itti.com.pl.arena.cm.utils.helper.IOHelperException;
 import itti.com.pl.arena.cm.utils.helpers.SpringHelper;
 
 import java.util.Properties;
@@ -19,16 +19,16 @@ public final class JdbcProperties {
 
     @Required
     public void setPropertiesFile(String propertiesFile) {
-	try {
-	    this.jdbcProperties = SpringHelper.loadPropertiesFromResource(propertiesFile);
-	} catch (IOHelperException e) {
-	    throw new BeanInitializationException(ErrorMessages.PERSISTENCE_CANNOT_LOAD_PROPERTIES.getMessage(), e);
-	}
+        try {
+            this.jdbcProperties = SpringHelper.loadPropertiesFromResource(propertiesFile);
+        } catch (IOHelperException e) {
+            throw new BeanInitializationException(ErrorMessages.PERSISTENCE_CANNOT_LOAD_PROPERTIES.getMessage(), e);
+        }
     }
 
     private Properties jdbcProperties = null;
 
     public String getConnectionPropertyValue(String property) {
-	return jdbcProperties.getProperty(property);
+        return jdbcProperties.getProperty(property);
     }
 }

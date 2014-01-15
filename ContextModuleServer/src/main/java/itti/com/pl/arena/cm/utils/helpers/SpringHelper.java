@@ -1,6 +1,9 @@
 package itti.com.pl.arena.cm.utils.helpers;
 
 import itti.com.pl.arena.cm.ErrorMessages;
+import itti.com.pl.arena.cm.utils.helper.IOHelper;
+import itti.com.pl.arena.cm.utils.helper.IOHelperException;
+import itti.com.pl.arena.cm.utils.helper.StringHelper;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,26 +28,24 @@ public class SpringHelper {
      * @throws IOHelperException
      *             could not find or read properties from given location
      */
-    public static final Properties loadPropertiesFromResource(
-	    String resourceLocation) throws IOHelperException {
+    public static final Properties loadPropertiesFromResource(String resourceLocation) throws IOHelperException {
 
-	Properties props = null;
-	InputStream propsInputStream = null;
-	try {
-	    // open data stream from given resource
-	    propsInputStream = getResourceInputStream(resourceLocation);
-	    props = new Properties();
-	    // load properties from stream
-	    props.load(propsInputStream);
-	} catch (IOException exc) {
-	    throw new IOHelperException(exc,
-		    ErrorMessages.SPRING_HELPER_COULD_NOT_READ_RESOURCE,
-		    resourceLocation, exc.getLocalizedMessage());
-	} finally {
-	    // always try to close the stream
-	    IOHelper.closeStream(propsInputStream);
-	}
-	return props;
+        Properties props = null;
+        InputStream propsInputStream = null;
+        try {
+            // open data stream from given resource
+            propsInputStream = getResourceInputStream(resourceLocation);
+            props = new Properties();
+            // load properties from stream
+            props.load(propsInputStream);
+        } catch (IOException exc) {
+            throw new IOHelperException(exc, ErrorMessages.SPRING_HELPER_COULD_NOT_READ_RESOURCE, resourceLocation,
+                    exc.getLocalizedMessage());
+        } finally {
+            // always try to close the stream
+            IOHelper.closeStream(propsInputStream);
+        }
+        return props;
     }
 
     /**
@@ -56,25 +57,22 @@ public class SpringHelper {
      * @throws IOHelperException
      *             could not find or open given resource
      */
-    public static InputStream getResourceInputStream(String resourceLocation)
-	    throws IOHelperException {
+    public static InputStream getResourceInputStream(String resourceLocation) throws IOHelperException {
 
-	// check, if path to the resource was provided
-	if (!StringHelper.hasContent(resourceLocation)) {
-	    throw new IOHelperException(
-		    ErrorMessages.SPRING_HELPER_EMPTY_RESOURCE_LOCATION);
-	}
+        // check, if path to the resource was provided
+        if (!StringHelper.hasContent(resourceLocation)) {
+            throw new IOHelperException(ErrorMessages.SPRING_HELPER_EMPTY_RESOURCE_LOCATION);
+        }
 
-	// try to open the stream using spring utility classes
-	InputStream stream = null;
-	try {
-	    stream = new ClassPathResource(resourceLocation).getInputStream();
-	} catch (IOException exc) {
-	    throw new IOHelperException(exc,
-		    ErrorMessages.SPRING_HELPER_COULD_NOT_OPEN_RESOURCE,
-		    resourceLocation, exc.getLocalizedMessage());
-	}
-	return stream;
+        // try to open the stream using spring utility classes
+        InputStream stream = null;
+        try {
+            stream = new ClassPathResource(resourceLocation).getInputStream();
+        } catch (IOException exc) {
+            throw new IOHelperException(exc, ErrorMessages.SPRING_HELPER_COULD_NOT_OPEN_RESOURCE, resourceLocation,
+                    exc.getLocalizedMessage());
+        }
+        return stream;
     }
 
 }

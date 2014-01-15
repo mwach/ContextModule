@@ -25,6 +25,6 @@ public class JmsException extends ContextModuleException {
      *            optional message parameters
      */
     public JmsException(ErrorMessages message, Object... args) {
-	super(message.getMessage(), args);
+        super(message.getMessage(), args);
     }
 }
