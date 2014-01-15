@@ -35,6 +35,8 @@ public class PlatformTracker implements Service, LocationListener {
     private GeoportalService geoportal = null;
     // radius used for geoportal search purposes
     private double radius = 0.0;
+    // maximum break/parking time. After that time, CM will assume, that platform is on the parking
+    private long maxBreakTime = 30;
 
     /*
      * ID of the listener (if not provided, random UUID generated during initialization)
@@ -83,6 +85,15 @@ public class PlatformTracker implements Service, LocationListener {
     @Required
     public void setRadius(double radius) {
         this.radius = radius;
+    }
+
+    private long getMaxBreakTime() {
+        return maxBreakTime;
+    }
+
+    @Required
+    public void setMaxBreakTime(long maxBreakTime) {
+        this.maxBreakTime = maxBreakTime;
     }
 
     /*
@@ -134,13 +145,25 @@ public class PlatformTracker implements Service, LocationListener {
             // check if object is moving
             if (lastLocation != null && lastLocation.getSpeed() < 0.01) {
                 // if not - check, when it was moving for the last time
-                // trigger is set to 30 minutes
-                if(DateTimeHelper.delta(System.currentTimeMillis(), lastLocation.getTime(), DateTimeHelper.MINUTE) > 30){
+                LogHelper.debug(PlatformTracker.class, "checkIfMoving", "platform %s is not moving for last timestamp: %d", getPlatformId(), lastLocation.getTime());
+
+                // check, for how long platform is not moving
+                long pauseTime = DateTimeHelper.delta(System.currentTimeMillis(), lastLocation.getTime(), DateTimeHelper.MINUTE);
+
+                //if MaxBreakTime will be reached, assume that parking was reached
+                // note double condition here - it's here to avoid calling geoportal service every function call
+                if( pauseTime > getMaxBreakTime() && pauseTime < (getMaxBreakTime() + 1)){
+
+                    LogHelper.debug(PlatformTracker.class, "checkIfMoving", "platform %s is not moving for last %d minutes", getPlatformId(), getMaxBreakTime());
+
+                    // check, if there is data in ontology collected for given location
                     Set<GeoObject> ontoData = getOntology().getGISObjects(lastLocation, getRadius());
+
+                    // if there is no data, try to download it from geoportal
                     if (ontoData.isEmpty()) {
                         Set<GeoObject> geoportalData = getGeoportal().getGeoportalData(lastLocation, getRadius());
+                        //store downloaded data into ontology
                         getOntology().addGeoportalData(lastLocation, geoportalData);
-                        ontoData = geoportalData;
                     }
                 }
             }

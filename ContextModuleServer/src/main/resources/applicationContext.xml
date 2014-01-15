@@ -15,13 +15,15 @@
 		<property name="jdbcProperties" ref="JdbcProperties" />
 	</bean>
 
+	<!-- Database properties -->
 	<bean id="JdbcProperties" class="itti.com.pl.arena.cm.persistence.jdbc.JdbcProperties">
 		<property name="propertiesFile" value="jdbc.properties" />
 	</bean>
 
-	<!-- Servlet layer -->
+	<!-- Servlet layer: listens for Location data from GPS device (smartphone) -->
 	<bean id="GpsListener" class="itti.com.pl.arena.cm.web.servlet.GpsListener"
 		init-method="init" destroy-method="shutdown">
+		<!-- location listeners, will be notified, when new position info will be received -->
 		<property name="listeners">
 			<array>
 				<ref bean="PlatformTracker" />
@@ -40,43 +42,46 @@
 		</property>
 		<property name="start" ref="dummyStartLocation" />
 		<property name="destination" ref="dummyEndLocation" />
+		<!-- how many 'hops' is between start and destination -->
 		<property name="steps" value="10000" />
 	</bean>
+	<!-- initial location of the dummy platform -->
 	<bean id="dummyStartLocation" class="itti.com.pl.arena.cm.dto.Location">
 		<constructor-arg name="longitude" value="53.17654" />
 		<constructor-arg name="latitude" value="17.34342" />
 	</bean>
+	<!-- destination  of the dummy platform -->
 	<bean id="dummyEndLocation" class="itti.com.pl.arena.cm.dto.Location">
 		<constructor-arg name="longitude" value="53.37654" />
 		<constructor-arg name="latitude" value="17.14342" />
 	</bean>
 
-	<task:scheduled-tasks scheduler="GpsMockScheduler">
-		<task:scheduled ref="GpsListenerMock" method="updateLocation"
-			fixed-delay="5000" />
-	</task:scheduled-tasks>
-
-	<task:scheduler id="GpsMockScheduler" pool-size="10" />
-
 	<!-- Ontology bean -->
 	<bean id="Ontology"
 		class="itti.com.pl.arena.cm.ontology.ContextModuleOntologyManager"
 		init-method="init">
+		<!-- properties: ontology location and namespace -->
 		<property name="ontologyLocation" value="Arena_update_v09c.owl" />
 		<property name="ontologyNamespace"
 			value="http://www.owl-ontologies.com/Ontology1350654591.owl#" />
 	</bean>
 
 	<!-- Geoportal bean -->
-	<bean id="Geoportal" class="itti.com.pl.arena.cm.geoportal.gov.pl.GeoportalService" />
+	<bean id="Geoportal" class="itti.com.pl.arena.cm.geoportal.gov.pl.GeoportalService"
+			init-method="init" destroy-method="shutdown" />
 
 	<!-- Service layer -->
-	<bean id="PlatformTracker" class="itti.com.pl.arena.cm.service.PlatformTracker">
-		<property name="platformId" value="arenaTruck1" />
+	<bean id="PlatformTracker" class="itti.com.pl.arena.cm.service.PlatformTracker"
+		init-method="init" destroy-method="shutdown">
 		<property name="persistence" ref="Persistance" />
 		<property name="ontology" ref="Ontology" />
 		<property name="geoportal" ref="Geoportal" />
+		<!-- name of the platform -->
+		<property name="platformId" value="arenaTruck1" />
+		<!-- radius (in kilometers) - defines search area -->
 		<property name="radius" value="1.0" />
+		<!-- if platform is not moving for that time (in minutes) CM will assume that parking lot was reached -->
+		<property name="maxBreakTime" value="30" />
 	</bean>
 
 	<!-- Communication layer -->
@@ -93,10 +98,17 @@
 		<property name="connectionPort" value="45444" />
 	</bean>
 
+	<!-- periodical tasks -->
 	<task:scheduled-tasks scheduler="CmScheduler">
+		<!-- once a minute check, if platform is still moving -->
 		<task:scheduled ref="PlatformTracker" method="checkIfMoving"
 			fixed-delay="60000" />
+		<!-- once per five seconds update GPS location of the mock GPS device -->
+		<task:scheduled ref="GpsListenerMock" method="updateLocation"
+			fixed-delay="5000" />
 	</task:scheduled-tasks>
 
 	<task:scheduler id="CmScheduler" pool-size="5" />
+
+
 </beans>
