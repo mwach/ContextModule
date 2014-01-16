@@ -270,11 +270,11 @@ public class ContextModuleFacade extends ModuleImpl implements Service, ContextM
             getRequestsMap().remove(requestId);
             LogHelper.debug(ContextModuleFacade.class, "submitData", "returning response data with ID: %s", requestId);
         } catch (RuntimeException exc) {
-            LogHelper.exception(
+            LogHelper.error(
                     ContextModuleFacade.class,
                     "submitData",
-                    String.format("Could not retrieve data from %s. Reason: '%s'", Constants.MODULE_NAME,
-                            exc.getLocalizedMessage()), exc);
+                    "Could not retrieve data from %s. Reason: '%s'", Constants.MODULE_NAME,
+                            exc.getLocalizedMessage());
 
         }
         return response;

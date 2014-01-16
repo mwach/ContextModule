@@ -16,27 +16,26 @@ public abstract class GeoObject implements Serializable {
 
     private String id;
     private Location location;
+
+    /*
+     * administrative data section
+     */
     private String country;
     private String town;
     private String street;
     private int streetNumber;
-    private String cadastralId;
 
-    private String[] gpsCoordinates;
+    private Location[] boundaries = new Location[0];
 
-    public String[] getGpsCoordinates() {
-        if (gpsCoordinates != null) {
-            return gpsCoordinates.clone();
-        } else {
-            return new String[0];
-        }
+    public Location[] getBoundaries() {
+        return boundaries.clone();
     }
 
-    public void setGpsCoordinates(String[] gpsCoordinates) {
-        if (gpsCoordinates != null) {
-            this.gpsCoordinates = gpsCoordinates.clone();
+    public void setBoundaries(Location[] boundaries) {
+        if (boundaries != null) {
+            this.boundaries = boundaries.clone();
         } else {
-            this.gpsCoordinates = new String[0];
+            this.boundaries = new Location[0];
         }
     }
 
@@ -88,17 +87,9 @@ public abstract class GeoObject implements Serializable {
         this.streetNumber = streetNumber;
     }
 
-    public String getCadastralId() {
-        return cadastralId;
-    }
-
-    public void setCadastralId(String cadastralId) {
-        this.cadastralId = cadastralId;
-    }
-
     @Override
     public String toString() {
         return "GeoObject [objectId=" + id + ", location=" + location + ", country=" + country + ", town=" + town + ", street="
-                + street + ", streetNumber=" + streetNumber + ", cadastralId=" + cadastralId + "]";
+                + street + ", streetNumber=" + streetNumber + "]";
     }
 }

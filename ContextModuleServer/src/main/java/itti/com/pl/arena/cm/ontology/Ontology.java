@@ -4,7 +4,7 @@ import java.util.Set;
 
 import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.dto.Location;
-import itti.com.pl.arena.cm.dto.Platform;
+import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
 
 /**
  * Interface defining Arena-specific ontology operations

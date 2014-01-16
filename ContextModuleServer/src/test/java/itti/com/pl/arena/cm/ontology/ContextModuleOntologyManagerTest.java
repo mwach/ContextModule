@@ -14,11 +14,11 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import itti.com.pl.arena.cm.ErrorMessages;
-import itti.com.pl.arena.cm.dto.Camera;
 import itti.com.pl.arena.cm.dto.Location;
-import itti.com.pl.arena.cm.dto.Platform;
-import itti.com.pl.arena.cm.dto.RelativePosition;
-import itti.com.pl.arena.cm.dto.VehicleWithCamaras;
+import itti.com.pl.arena.cm.dto.dynamicobj.Camera;
+import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
+import itti.com.pl.arena.cm.dto.dynamicobj.Platform.Type;
+import itti.com.pl.arena.cm.dto.dynamicobj.RelativePosition;
 
 public class ContextModuleOntologyManagerTest {
 
@@ -56,8 +56,8 @@ public class ContextModuleOntologyManagerTest {
                 RelativePosition.Front);
         cameras.add(cameraOne);
         cameras.add(cameraTwo);
-        Platform information = new VehicleWithCamaras("Vehicle_test1", new Location(random.nextDouble(), random.nextDouble(),
-                random.nextInt(100)), cameras);
+        Platform information = new Platform("Vehicle_test1", new Location(random.nextDouble(), random.nextDouble(),
+                random.nextInt(100)), Type.Vehicle_with_cameras, cameras);
         cmOntologyManager.updatePlatform(information);
         assertEquals(information, cmOntologyManager.getPlatform(information.getId()));
     }
@@ -67,7 +67,7 @@ public class ContextModuleOntologyManagerTest {
         // checks, if location of the platform is correctly updated
         Location initLocation = new Location(random.nextDouble(), random.nextDouble(), random.nextInt(100));
         Location nextLocation = new Location(random.nextDouble(), random.nextDouble(), random.nextInt(100));
-        Platform information = new VehicleWithCamaras("vehicle_m1", initLocation, null);
+        Platform information = new Platform("vehicle_m1", initLocation, Type.Vehicle_with_cameras, null);
         cmOntologyManager.updatePlatform(information);
         assertEquals(initLocation, cmOntologyManager.getPlatform(information.getId()).getLastLocation());
         information.setLastPosition(nextLocation);

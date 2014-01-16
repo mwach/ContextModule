@@ -1,13 +1,14 @@
 package itti.com.pl.arena.cm.ontology;
 
 import itti.com.pl.arena.cm.ErrorMessages;
-import itti.com.pl.arena.cm.dto.Camera;
 import itti.com.pl.arena.cm.dto.GeoObject;
-import itti.com.pl.arena.cm.dto.Infrastructure;
 import itti.com.pl.arena.cm.dto.Location;
-import itti.com.pl.arena.cm.dto.Parking;
-import itti.com.pl.arena.cm.dto.Platform;
-import itti.com.pl.arena.cm.dto.RelativePosition;
+import itti.com.pl.arena.cm.dto.dynamicobj.Camera;
+import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
+import itti.com.pl.arena.cm.dto.dynamicobj.Platform.Type;
+import itti.com.pl.arena.cm.dto.dynamicobj.RelativePosition;
+import itti.com.pl.arena.cm.dto.staticobj.Infrastructure;
+import itti.com.pl.arena.cm.dto.staticobj.Parking;
 import itti.com.pl.arena.cm.ontology.OntologyConstants;
 import itti.com.pl.arena.cm.service.PlatformTracker;
 import itti.com.pl.arena.cm.utils.helper.LogHelper;
@@ -54,7 +55,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 
         // prepare data object
         String platformType = getInstanceClass(platformId);
-        Platform information = PlatformFactory.getPlatform(platformType, platformId);
+        Platform platform = new Platform(platformId, null, Type.valueOf(platformType), null);
 
         // get information about the platform from ontology
         Map<String, String[]> properties = getInstanceProperties(platformId);
@@ -64,14 +65,14 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         if (cameras != null) {
             for (String cameraId : cameras) {
                 Camera cameraInfo = getCameraInformation(cameraId);
-                information.addCamera(cameraInfo);
+                platform.addCamera(cameraInfo);
 
             }
         }
         Location lastLocation = prepareLastLocation(properties);
-        information.setLastPosition(lastLocation);
+        platform.setLastPosition(lastLocation);
 
-        return information;
+        return platform;
     }
 
     private Location prepareLastLocation(Map<String, String[]> properties) {
@@ -213,11 +214,14 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 
                 Map<String, String[]> infrastrProperties = getInstanceProperties(infrastrId);
                 if (!infrastrProperties.isEmpty()) {
-                    String[] coordinates = infrastrProperties.get(OntologyConstants.Object_has_GPS_coordinates.name());
-                    GeoObject infrastructure = new Infrastructure();
+
+                    //TODO
+                    Location[] coordinates = null;
+//                    infrastrProperties.get(OntologyConstants.Object_has_GPS_coordinates.name());
+                    Infrastructure infrastructure = new Infrastructure();
                     infrastructure.setId(infrastrId);
-                    infrastructure.setGpsCoordinates(coordinates);
-                    information.addStaticObject(infrastructure);
+                    infrastructure.setBoundaries(coordinates);
+                    information.addIntrastructure(infrastructure);
                 }
             }
         }

@@ -2,6 +2,11 @@ package itti.com.pl.arena.cm.dto;
 
 import java.io.Serializable;
 
+/**
+ * Location object used by the ContextModule
+ * @author cm-admin
+ *
+ */
 public class Location implements Serializable {
 
     /**
