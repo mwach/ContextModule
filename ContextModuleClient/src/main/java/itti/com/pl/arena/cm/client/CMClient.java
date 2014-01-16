@@ -57,7 +57,7 @@ public class CMClient {
             parseGetGISDataServiceResponse(client.getGISDataService(0.1, 51.0));
             parseGetGeoportalDataServiceResponse(client.getGeoportalDataService(17.974734282593246, 53.12344164937794));
         } catch (ContextModuleClientException | RuntimeException exc) {
-            LogHelper.error(CMClient.class, "main", "Could not perform opertation. Details: %s", exc.getMessage());
+            LogHelper.error(CMClient.class, "main", "Could not perform operation. Details: %s", exc.getMessage());
             printUsage();
         } finally {
             client.shutdown();
@@ -162,7 +162,7 @@ public class CMClient {
         SimpleNamedValue objectId = createSimpleNamedValue(platformId);
         objectId.setHref(ContextModuleRequests.getPlatform.name());
         Object data = contextModule.getPlatform(objectId);
-        LogHelper.info(CMClient.class, "getPlatformsService", "Server response received:\n%s", String.valueOf(data));
+        LogHelper.debug(CMClient.class, "getPlatformsService", "Server response received:\n%s", String.valueOf(data));
         return data;
     }
 
@@ -190,7 +190,7 @@ public class CMClient {
         Location objectLocation = createLocation(x, y);
         objectLocation.setHref(ContextModuleRequests.getGISData.name());
         Situation data = contextModule.getPlatforms(objectLocation);
-        LogHelper.info(CMClient.class, "getGISDataService", "Server response received:\n%s", String.valueOf(data));
+        LogHelper.info(CMClient.class, "getGISDataService", "Server response received: %s", String.valueOf(data));
         return data;
     }
 
@@ -289,9 +289,12 @@ public class CMClient {
      * Shutdowns the client
      */
     public void shutdown() {
+
+        // try to shutdown the client
         if (contextModule != null && contextModule instanceof ContextModuleFacade) {
             ((ContextModuleFacade) contextModule).shutdown();
-        }else{
+        //unrecognized client class
+        }else if(contextModule != null){
             LogHelper.warning(CMClient.class, "shutdown", String.format("Could not shutdown module. "
                     + "Unrecognized client class module: %s", contextModule));
         }

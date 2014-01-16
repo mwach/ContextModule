@@ -83,7 +83,7 @@ public final class PropertiesHelper {
      */
     public static String getPropertyAsString(Properties properties, String propertyName, String defaultValue) {
         // check, if property with given name was found in provided properties
-        if (properties == null || propertyName == null || !properties.contains(propertyName)) {
+        if (properties == null || propertyName == null || !properties.containsKey(propertyName)) {
             return defaultValue;
         }
         // get the property value
