@@ -2,6 +2,11 @@ package itti.com.pl.arena.cm.client.service;
 
 import itti.com.pl.arena.cm.ContextModuleException;
 
+/**
+ * Client-side exception
+ * @author cm-admin
+ *
+ */
 public class ContextModuleClientException extends ContextModuleException {
 
     /**
