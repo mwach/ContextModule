@@ -233,8 +233,8 @@ public class JdbcPersistence implements Persistence {
         @SuppressWarnings("unchecked")
         @Override
         public <T> T toBean(ResultSet rs, Class<T> arg1) throws SQLException {
-            Location location = new Location(rs.getDouble("longitude"), rs.getDouble("latitude"), rs.getDouble("altitude"),
-                    rs.getInt("bearing"), rs.getDouble("speed"), rs.getTimestamp("period").getTime(), rs.getDouble("accuracy"));
+            Location location = new Location(rs.getDouble("longitude"), rs.getDouble("latitude"),
+                    rs.getInt("bearing"), rs.getDouble("altitude"), rs.getDouble("accuracy"), rs.getDouble("speed"), rs.getTimestamp("period").getTime());
             return (T) location;
         }
 

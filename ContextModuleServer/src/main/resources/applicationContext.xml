@@ -9,6 +9,8 @@
         http://www.springframework.org/schema/task
         http://www.springframework.org/schema/task/spring-task-3.0.xsd">
 
+	<!--  value of the radius property measured in degrees. 
+	One degree is about 110km. Value of 0.01 is about one kilometer. -->
 	<bean id="radius" class="java.lang.Double">
 		<constructor-arg value="1.0" />
 	</bean>

@@ -129,7 +129,7 @@ public class GpsListenerMock implements LocationPublisher {
         double latitude = (getDestination().getLatitude() - getStart().getLatitude()) / steps;
         double longitude = (getDestination().getLongitude() - getStart().getLongitude()) / steps;
 
-        this.deltaLocation = new Location(longitude, latitude, altitude, 0, 0, 0, 0);
+        this.deltaLocation = new Location(longitude, latitude, 0, altitude, 0.0, 0, 0);
     }
 
     @Override
@@ -157,7 +157,7 @@ public class GpsListenerMock implements LocationPublisher {
             currentStep++;
         }
 
-        Location returnLocation = new Location(longitude, latitude, altitude, DEFAULT_BEARING, speed, time, DEFAULT_ACCURACY);
+        Location returnLocation = new Location(longitude, latitude, DEFAULT_BEARING, altitude, DEFAULT_ACCURACY, speed, time);
 
         for (LocationListener listener : getLocationListeners().values()) {
             listener.onLocationChange(returnLocation);

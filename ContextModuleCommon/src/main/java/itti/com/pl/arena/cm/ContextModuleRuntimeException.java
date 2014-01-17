@@ -18,13 +18,13 @@ public class ContextModuleRuntimeException extends RuntimeException {
      * 
      * @param message
      *            message
-     * @param exc
-     *            exception
+     * @param throwable
+     *            throwable
      * @param args
      *            list of message parameters
      */
-    public ContextModuleRuntimeException(String message, RuntimeException exc, Object... args) {
-        super(String.format(message, args), exc);
+    public ContextModuleRuntimeException(String message, RuntimeException throwable, Object... args) {
+        super(message == null ? ContextModuleRuntimeException.class.getSimpleName() : String.format(message, args), throwable);
     }
 
     /**
@@ -36,6 +36,6 @@ public class ContextModuleRuntimeException extends RuntimeException {
      *            list of message parameters
      */
     public ContextModuleRuntimeException(String message, Object... args) {
-        super(String.format(message, args));
+        super(message == null ? ContextModuleRuntimeException.class.getSimpleName() : String.format(message, args));
     }
 }

@@ -77,11 +77,11 @@ public class JdbcPersistenceTest {
     public static Location createDummyLocation(long timestamp) {
         Location dummyLocation = new Location(random.nextDouble() * 100, // longitude
                 random.nextDouble() * 100, // latitude
-                random.nextDouble() * 100, // altitude
                 random.nextInt(180), // bearing
+                random.nextDouble() * 100, // altitude
+                random.nextDouble() * 100, // accuracy
                 random.nextDouble() * 100, // speed
-                timestamp, // time
-                random.nextDouble() * 100 // accuracy
+                timestamp // time
         );
         return dummyLocation;
     }

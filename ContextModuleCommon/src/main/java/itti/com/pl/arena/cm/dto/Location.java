@@ -36,7 +36,7 @@ public class Location implements Serializable {
         this.bearing = bearing;
     }
 
-    public Location(double longitude, double latitude, double altitude, int bearing, double speed, long time, double accuracy) {
+    public Location(double longitude, double latitude, int bearing, double altitude, double accuracy, double speed, long time) {
         this(longitude, latitude, bearing);
         this.altitude = altitude;
         this.speed = speed;
