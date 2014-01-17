@@ -9,6 +9,10 @@
         http://www.springframework.org/schema/task
         http://www.springframework.org/schema/task/spring-task-3.0.xsd">
 
+	<bean id="radius" class="java.lang.Double">
+		<constructor-arg value="1.0" />
+	</bean>
+
 	<!-- DAL layer -->
 	<bean id="Persistance" class="itti.com.pl.arena.cm.persistence.jdbc.JdbcPersistence"
 		init-method="init">
@@ -23,7 +27,8 @@
 	<!-- Servlet layer: listens for Location data from GPS device (smartphone) -->
 	<bean id="GpsListener" class="itti.com.pl.arena.cm.web.servlet.GpsListener"
 		init-method="init" destroy-method="shutdown">
-		<!-- location listeners, will be notified, when new position info will be received -->
+		<!-- location listeners, will be notified, when new position info will 
+			be received -->
 		<property name="listeners">
 			<array>
 				<ref bean="PlatformTracker" />
@@ -50,7 +55,7 @@
 		<constructor-arg name="longitude" value="53.17654" />
 		<constructor-arg name="latitude" value="17.34342" />
 	</bean>
-	<!-- destination  of the dummy platform -->
+	<!-- destination of the dummy platform -->
 	<bean id="dummyEndLocation" class="itti.com.pl.arena.cm.dto.Location">
 		<constructor-arg name="longitude" value="53.37654" />
 		<constructor-arg name="latitude" value="17.14342" />
@@ -68,7 +73,7 @@
 
 	<!-- Geoportal bean -->
 	<bean id="Geoportal" class="itti.com.pl.arena.cm.geoportal.gov.pl.GeoportalService"
-			init-method="init" destroy-method="shutdown" />
+		init-method="init" destroy-method="shutdown" />
 
 	<!-- Service layer -->
 	<bean id="PlatformTracker" class="itti.com.pl.arena.cm.service.PlatformTracker"
@@ -79,8 +84,9 @@
 		<!-- name of the platform -->
 		<property name="platformId" value="arenaTruck1" />
 		<!-- radius (in kilometers) - defines search area -->
-		<property name="radius" value="1.0" />
-		<!-- if platform is not moving for that time (in minutes) CM will assume that parking lot was reached -->
+		<property name="radius" ref="radius" />
+		<!-- if platform is not moving for that time (in minutes) CM will assume 
+			that parking lot was reached -->
 		<property name="maxBreakTime" value="30" />
 	</bean>
 
@@ -96,6 +102,8 @@
 		<!-- <property name="localIpAddress" value="localhost"/> -->
 		<!-- random port, can be changed using any other value -->
 		<property name="connectionPort" value="45444" />
+		<!-- radius used for that service -->
+		<property name="radius" ref="radius" />
 	</bean>
 
 	<!-- periodical tasks -->

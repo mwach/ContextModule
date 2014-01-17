@@ -48,6 +48,13 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
     private Ontology ontology = null;
     private Geoportal geoportal = null;
 
+    private double radius;
+
+    @Required
+    public void setOntology(Ontology ontology) {
+        this.ontology = ontology;
+    }
+
     private Ontology getOntology() {
         return ontology;
     }
@@ -59,11 +66,6 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
 
     private Geoportal getGeoportal() {
         return geoportal;
-    }
-
-    @Required
-    public void setOntology(Ontology ontology) {
-        this.ontology = ontology;
     }
 
     private String getLocalIpAddress() {
@@ -90,6 +92,15 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
     @Required
     public void setConnectionPort(String connectionPort) {
         this.connectionPort = connectionPort;
+    }
+
+    private double getRadius() {
+        return radius;
+    }
+
+    @Required
+    public void setRadius(double radius) {
+        this.radius = radius;
     }
 
     public ContextModuleJmsService() {
@@ -222,7 +233,6 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
         return response;
     }
 
-    // TODO: radius
     @Override
     public Situation getPlatforms(Location location) {
 
@@ -230,7 +240,7 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
 
         Set<Platform> platformsInformation = null;
         try {
-            platformsInformation = getOntology().getPlatforms(location.getX(), location.getY(), 1);
+            platformsInformation = getOntology().getPlatforms(location.getX(), location.getY(), getRadius());
         } catch (OntologyException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -254,7 +264,7 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
         Set<GeoObject> geographicalInformation = null;
         try {
             geographicalInformation = getOntology().getGISObjects(
-                    new itti.com.pl.arena.cm.dto.Location(location.getX(), location.getY()), 1.0);
+                    new itti.com.pl.arena.cm.dto.Location(location.getX(), location.getY()), getRadius());
         } catch (OntologyException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -278,7 +288,7 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
         Set<GeoObject> geoData = null;
         try {
             itti.com.pl.arena.cm.dto.Location cmLocation = new itti.com.pl.arena.cm.dto.Location(location.getX(), location.getY());
-            geoData = getGeoportal().getGeoportalData(cmLocation, 1.0);
+            geoData = getGeoportal().getGeoportalData(cmLocation, getRadius());
             getOntology().addGeoportalData(cmLocation, geoData);
         } catch (OntologyException | GeoportalException exc) {
 

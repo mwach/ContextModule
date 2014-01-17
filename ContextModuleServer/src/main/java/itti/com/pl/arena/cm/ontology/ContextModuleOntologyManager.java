@@ -36,11 +36,17 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
     // radius of Earth in meters (6371 km)
     private static final double EARTH_RADIUS = 6371000;
 
-    private static final String QUERY_GET_PLATFORMS = "PREFIX ns: <%s> " + "SELECT ?%s " + "WHERE " + "{ "
-            + "?%s rdf:type ?subclass. " + "?subclass rdfs:subClassOf ns:%s. "
-            + "?%s ns:Platform_has_GPS_coordinates ?coordinate. "
-            + "FILTER ( (?coordinate >= %f && ?coordinate <= %f) || (?coordinate >= %f && ?coordinate <= %f)) " + "}";
+//    private static final String QUERY_GET_PLATFORMS = "PREFIX ns: <%s> " + "SELECT ?%s " + "WHERE " + "{ "
+//            + "?%s rdf:type ?subclass. " + "?subclass rdfs:subClassOf ns:%s. "
+//            + "?%s ns:Platform_has_GPS_coordinates ?coordinate. "
+//            + "FILTER ( (?coordinate >= %f && ?coordinate <= %f) || (?coordinate >= %f && ?coordinate <= %f)) " + "}";
 
+    private static final String QUERY_GET_PLATFORMS = "PREFIX ns: <%s> " + "SELECT ?%s " + "WHERE " + "{ "
+            + "?%s rdf:type ns:%s. "
+            + "?%s ns:Vehicle_has_GPS_x ?coordinate_x. "
+            + "?%s ns:Vehicle_has_GPS_y ?coordinate_y. "
+            + "FILTER ( (?coordinate_x >= %f && ?coordinate_x <= %f) && (?coordinate_y >= %f && ?coordinate_y <= %f)) " + "}";
+    
     private static final String QUERY_PARKING_OBJECTS = "PREFIX ns: <%s> " + "SELECT ?%s " + "WHERE " + "{ "
             + "?%s rdf:type ns:%s. " + "?%s ns:Parking_has_GPS_x ?coordinate_x. " + "?%s ns:Parking_has_GPS_y ?coordinate_y. "
             + "FILTER ( (?coordinate_x >= %f && ?coordinate_x <= %f) || (?coordinate_y >= %f && ?coordinate_y <= %f)) " + "}";
@@ -160,19 +166,12 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         Set<String> resultList = new HashSet<String>();
 
         String queryPattern = QUERY_GET_PLATFORMS;
-        String query = String.format(queryPattern, getOntologyNamespace(), VAR, VAR, OntologyConstants.Vehicle.name(), VAR, x
+        String query = String.format(queryPattern, getOntologyNamespace(), VAR, VAR, OntologyConstants.Vehicle_with_cameras.name(), VAR, VAR, x
                 - radius, x + radius, y - radius, y + radius);
 
         // execute the query
         List<String> matches = executeSparqlQuery(query, VAR);
-        // filter query results: only doubles should be returned (x and y match)
-        for (int i = 0; i < matches.size(); i++) {
-            String match = matches.get(i);
-            // if last occurrence != current one add to the results list (if not added so far)
-            if (matches.lastIndexOf(match) != i && !resultList.contains(match)) {
-                resultList.add(match);
-            }
-        }
+        resultList.addAll(matches);
         return resultList;
     }
 

@@ -103,7 +103,8 @@ public final class PropertiesHelper {
      */
     public static int getPropertyAsInteger(Properties properties, String propertyName, int defaultValue) {
         // check, if property with given name was found in provided properties
-        if (properties == null || propertyName == null || !properties.contains(propertyName)) {
+        String propertyValue = getPropertyAsString(properties, propertyName, null);
+        if (propertyValue == null) {
             return defaultValue;
         }
         // get the property value
@@ -129,7 +130,8 @@ public final class PropertiesHelper {
      */
     public static boolean getPropertyAsBoolean(Properties properties, String propertyName, boolean defaultValue) {
         // check, if property with given name was found in provided properties
-        if (properties == null || propertyName == null || !properties.contains(propertyName)) {
+        String propertyValue = getPropertyAsString(properties, propertyName, null);
+        if (propertyValue == null) {
             return defaultValue;
         }
         // get the property value

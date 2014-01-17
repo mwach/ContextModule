@@ -1,7 +1,7 @@
 package itti.com.pl.arena.cm.ontology;
 
 public enum OntologyConstants {
-    Vehicle,
+    Vehicle_with_cameras,
     Parking,
     Vehicle_has_cameras,
     Camera,

@@ -13,6 +13,7 @@ import itti.com.pl.arena.cm.utils.helper.LogHelper;
 import itti.com.pl.arena.cm.utils.helper.PropertiesHelper;
 import itti.com.pl.arena.cm.utils.helper.StringHelper;
 import eu.arena_fp7._1.AbstractDataFusionType;
+import eu.arena_fp7._1.FeatureVector;
 import eu.arena_fp7._1.Location;
 import eu.arena_fp7._1.Object;
 import eu.arena_fp7._1.ObjectFactory;
@@ -30,47 +31,53 @@ public class CMClient {
     // name of the client: used for logging purposes
     private static final String CLIENT_MODULE_NAME = CMClient.class.getSimpleName();
 
-    //client properties
+    // client properties
     private static Properties properties = new Properties();
 
-    //Arena bus wrapper
+    // Arena bus wrapper
     private ContextModule contextModule = null;
     private ObjectFactory objectFactory = null;
 
     /**
      * client main class
+     * 
      * @param args
      */
     public static void main(String[] args) {
 
-        //initialize the client
+        // initialize the client
         CMClient client = new CMClient();
         try {
-            //parse properties
+            // parse properties
             String propertiesFileName = getPropertiesFileName(args);
             client.loadProperties(propertiesFileName);
-            //initialize the client
+            // initialize the client
             client.init();
-            //call all available CM public services
-            parseGetPlatformServiceResponse(client.getPlatformService("Truck_A1"));
-            parseGetPlatformsServiceResponse(client.getPlatformsService(0.12, 51.1));
-            parseGetGISDataServiceResponse(client.getGISDataService(0.1, 51.0));
-            parseGetGeoportalDataServiceResponse(client.getGeoportalDataService(17.974734282593246, 53.12344164937794));
-        } catch (ContextModuleClientException | RuntimeException exc) {
+            // call all available CM public services
+            parseGetPlatformServiceResponse(client.getPlatformService("Vehicla_with_cameras_R1"));
+            parseGetPlatformsServiceResponse(client.getPlatformsService(-0.94, 51.43));
+            parseGetGISDataServiceResponse(client.getGISDataService(-0.94, 51.43));
+            parseGetGeoportalDataServiceResponse(client.getGeoportalDataService(17.972946559166793, 53.124318916278824));
+        } catch (ContextModuleClientException exc) {
             LogHelper.error(CMClient.class, "main", "Could not perform operation. Details: %s", exc.getMessage());
             printUsage();
+        } catch (RuntimeException exc) {
+            LogHelper.error(CMClient.class, "main", "Could not perform operation. Details: %s", exc.getMessage());
         } finally {
             client.shutdown();
         }
-        //call 'exit' to interrupt the client listener thread
+        // call 'exit' to interrupt the client listener thread
         System.exit(0);
     }
 
     /**
      * Returns name of the properties file, (the first passed argument)
-     * @param args command arguments
+     * 
+     * @param args
+     *            command arguments
      * @return name of the property file (first argument)
-     * @throws ContextModuleClientException could not parse arguments
+     * @throws ContextModuleClientException
+     *             could not parse arguments
      */
     private static String getPropertiesFileName(String[] args) throws ContextModuleClientException {
         if (args == null || args.length != 1) {
@@ -81,61 +88,81 @@ public class CMClient {
 
     /**
      * Parses response received from getPlatform service
-     * @param platform information about truck
+     * 
+     * @param platform
+     *            information about truck
      */
     private static void parseGetPlatformServiceResponse(Object platform) {
         if (platform != null) {
-            for (AbstractDataFusionType feature : platform.getFeatureVector().getFeature()) {
-                LogHelper.info(CMClient.class, "parseGetPlatformServiceResponse", 
-                        "%s: %s", feature.getId(), ((SimpleNamedValue) feature).getValue());
-            }
+            parseFeatureVector(platform.getFeatureVector());
         }
     }
 
     /**
      * Parses response received from getPlatforms service
-     * @param platforms information about trucks
+     * 
+     * @param platforms
+     *            information about trucks
      */
     private static void parseGetPlatformsServiceResponse(Situation platforms) {
-        if (platforms != null && platforms.getGlobalSceneProperty() != null) {
-            for (AbstractDataFusionType feature : platforms.getGlobalSceneProperty().getFeature()) {
-                LogHelper.info(CMClient.class, "parseGetPlatformsServiceResponse", 
-                        "%s: %s", feature.getId(), ((SimpleNamedValue) feature).getValue());
-
-            }
+        if (platforms != null) {
+            parseFeatureVector(platforms.getGlobalSceneProperty());
         }
     }
 
     /**
      * Parses response received from getGISData service
-     * @param gisData information about GIS objects
+     * 
+     * @param gisData
+     *            information about GIS objects
      */
     private static void parseGetGISDataServiceResponse(Situation gisData) {
-        if (gisData != null && gisData.getGlobalSceneProperty() != null) {
-            for (AbstractDataFusionType feature : gisData.getGlobalSceneProperty().getFeature()) {
-                LogHelper.info(CMClient.class, "parseGetGISDataServiceResponse", 
-                        "%s: %s", feature.getId(), ((SimpleNamedValue) feature).getValue());
-            }
+        if (gisData != null) {
+            parseFeatureVector(gisData.getGlobalSceneProperty());
         }
     }
 
     /**
      * Parses response received from getGeoportalData service
-     * @param geoportalData information retrieved from geoportal
+     * 
+     * @param geoportalData
+     *            information retrieved from geoportal
      */
     private static void parseGetGeoportalDataServiceResponse(Situation geoportalData) {
-        if (geoportalData != null && geoportalData.getGlobalSceneProperty() != null) {
-            for (AbstractDataFusionType feature : geoportalData.getGlobalSceneProperty().getFeature()) {
-                LogHelper.info(CMClient.class, "parseGetgeoportalDataServiceResponse", 
-                        "%s: %s", feature.getId(), ((SimpleNamedValue) feature).getValue());
-            }
+        if (geoportalData != null) {
+            parseFeatureVector(geoportalData.getGlobalSceneProperty());
         }
     }
 
     /**
-     * Loads properties from given file
-     * Also performs some basic validation
-     * @param propertiesFile location of the properties file
+     * Parses response received from getGeoportalData service
+     * 
+     * @param geoportalData
+     *            information retrieved from geoportal
+     */
+    private static void parseFeatureVector(FeatureVector featureVector) {
+        if (featureVector != null) {
+            StringBuilder output = new StringBuilder();
+            output.append("\n");
+            for (AbstractDataFusionType feature : featureVector.getFeature()) {
+                if (feature instanceof Location) {
+                    output.append(String.format("       %s: %f, %f", feature.getId(), ((Location) feature).getX(),
+                            ((Location) feature).getY()));
+                } else {
+                    output.append(String.format("       %s: %s", feature.getId(), ((SimpleNamedValue) feature).getValue()));
+                }
+                output.append("\n");
+            }
+            LogHelper.info(CMClient.class, "parseFeatureList", output.toString());
+
+        }
+    }
+
+    /**
+     * Loads properties from given file Also performs some basic validation
+     * 
+     * @param propertiesFile
+     *            location of the properties file
      * @throws ContextModuleClientException
      */
     private void loadProperties(String propertiesFile) throws ContextModuleClientException {
@@ -155,35 +182,43 @@ public class CMClient {
 
     /**
      * Returns information about platform
-     * @param platformId ID of the platform
+     * 
+     * @param platformId
+     *            ID of the platform
      * @return Object containing information retrieved from ContextModule
      */
     public Object getPlatformService(String platformId) {
         SimpleNamedValue objectId = createSimpleNamedValue(platformId);
         objectId.setHref(ContextModuleRequests.getPlatform.name());
         Object data = contextModule.getPlatform(objectId);
-        LogHelper.debug(CMClient.class, "getPlatformsService", "Server response received:\n%s", String.valueOf(data));
+        LogHelper.debug(CMClient.class, "getPlatformsService", "Server response received: %s", String.valueOf(data));
         return data;
     }
 
     /**
      * Returns information about platforms
-     * @param x longitude
-     * @param y latitude
+     * 
+     * @param x
+     *            longitude
+     * @param y
+     *            latitude
      * @return Object containing information retrieved from ContextModule
      */
     public Situation getPlatformsService(double x, double y) {
         Location objectLocation = createLocation(x, y);
         objectLocation.setHref(ContextModuleRequests.getPlatforms.name());
         Situation data = contextModule.getPlatforms(objectLocation);
-        LogHelper.info(CMClient.class, "getPlatformsService", "Server response received:\n%s", String.valueOf(data));
+        LogHelper.info(CMClient.class, "getPlatformsService", "Server response received: %s", String.valueOf(data));
         return data;
     }
 
     /**
      * Returns information about GIS data
-     * @param x longitude
-     * @param y latitude
+     * 
+     * @param x
+     *            longitude
+     * @param y
+     *            latitude
      * @return Object containing information retrieved from ContextModule
      */
     public Situation getGISDataService(double x, double y) {
@@ -196,15 +231,18 @@ public class CMClient {
 
     /**
      * Returns information about GIS data
-     * @param x longitude
-     * @param y latitude
+     * 
+     * @param x
+     *            longitude
+     * @param y
+     *            latitude
      * @return Object containing information retrieved from external Geoportal service
      */
     public Situation getGeoportalDataService(double x, double y) {
         Location objectLocation = createLocation(x, y);
         objectLocation.setHref(ContextModuleRequests.getGeoportalData.name());
         Situation data = contextModule.getGeoportalData(objectLocation);
-        LogHelper.info(CMClient.class, "getGeoportalDataService", "Server response received:\n%s", String.valueOf(data));
+        LogHelper.info(CMClient.class, "getGeoportalDataService", "Server response received: %s", String.valueOf(data));
         return data;
     }
 
@@ -220,15 +258,15 @@ public class CMClient {
      */
     public void init() {
 
-        //URL of the arena bus
+        // URL of the arena bus
         String brokerUrl = PropertiesHelper.getPropertyAsString(properties, ClientPropertyNames.brokerUrl.name(), null);
 
-        //client's port
+        // client's port
         int clientPort = PropertiesHelper.getPropertyAsInteger(properties, ClientPropertyNames.clientPort.name(), -1);
 
-        //optional - client run in the debug mode
+        // optional - client run in the debug mode
         boolean debugMode = PropertiesHelper.getPropertyAsBoolean(properties, ClientPropertyNames.debugMode.name(), false);
-        //optional - maximum client waiting time (waiting for the response from CM)
+        // optional - maximum client waiting time (waiting for the response from CM)
         int responseWaitingTime = PropertiesHelper.getPropertyAsInteger(properties,
                 ClientPropertyNames.responseWaitingTime.name(), 5000);
 
@@ -238,11 +276,11 @@ public class CMClient {
 
         if (clientPort > 0 && clientPort < 65500) {
             cmFacade.setClientPort(clientPort);
-        }else{
+        } else {
             LogHelper.info(CMClient.class, "init", String.format("Client port out of range: %d", clientPort));
         }
 
-        //initialize the client (tries to connect to the Arena bus)
+        // initialize the client (tries to connect to the Arena bus)
         cmFacade.init();
 
         this.contextModule = cmFacade;
@@ -251,7 +289,9 @@ public class CMClient {
 
     /**
      * Creates simple request object
-     * @param value String value to be send to the CM
+     * 
+     * @param value
+     *            String value to be send to the CM
      * @return created request object
      */
     private SimpleNamedValue createSimpleNamedValue(String value) {
@@ -264,8 +304,11 @@ public class CMClient {
 
     /**
      * Creates simple location object
-     * @param x longitude
-     * @param y latitude
+     * 
+     * @param x
+     *            longitude
+     * @param y
+     *            latitude
      * @return created request object
      */
     private Location createLocation(double x, double y) {
@@ -279,6 +322,7 @@ public class CMClient {
 
     /**
      * Returns random, unique message ID
+     * 
      * @return message ID
      */
     private String getObjectId() {
@@ -293,8 +337,8 @@ public class CMClient {
         // try to shutdown the client
         if (contextModule != null && contextModule instanceof ContextModuleFacade) {
             ((ContextModuleFacade) contextModule).shutdown();
-        //unrecognized client class
-        }else if(contextModule != null){
+            // unrecognized client class
+        } else if (contextModule != null) {
             LogHelper.warning(CMClient.class, "shutdown", String.format("Could not shutdown module. "
                     + "Unrecognized client class module: %s", contextModule));
         }

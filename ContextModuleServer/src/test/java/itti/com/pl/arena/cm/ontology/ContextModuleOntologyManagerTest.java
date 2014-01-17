@@ -7,7 +7,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -40,9 +39,15 @@ public class ContextModuleOntologyManagerTest {
     }
 
     @Test
-    public void testGetInstances() throws OntologyException {
+    public void testGetPlatform() throws OntologyException {
         Platform information = cmOntologyManager.getPlatform("Vehicla_with_cameras_R1");
-        Assert.assertNotNull(information);
+        assertNotNull(information);
+    }
+
+    @Test
+    public void testGetPlatforms() throws OntologyException {
+        Set<Platform> platforms = cmOntologyManager.getPlatforms(-0.94, 51.43, 1.0);
+        assertFalse(platforms.isEmpty());
     }
 
     @Test
@@ -78,7 +83,7 @@ public class ContextModuleOntologyManagerTest {
     @Test
     public void testGetParkingLots() throws OntologyException {
         // corrects args - at least one parking expected
-        Set<String> gisObjects = cmOntologyManager.getParkingLots(1, 1, 100);
+        Set<String> gisObjects = cmOntologyManager.getParkingLots(-0.94, 51.40, 1);
         assertFalse(gisObjects.isEmpty());
 
         // incorrect args - no parking lots expected

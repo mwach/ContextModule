@@ -188,7 +188,7 @@ public class ContextModuleFacade extends ModuleImpl implements Service, ContextM
     public void onDataChanged(Class<? extends AbstractDataFusionType> dataType, String dataSourceId, AbstractDataFusionType data) {
 
         // check, if data should be processed by current module
-        if (dataSourceId.equals(getModuleName())) {
+        if (dataSourceId.equals(getModuleName()) && getRequestsMap().containsKey(data.getId())) {
             // add response to valid request
             getRequestsMap().put(data.getId(), data);
         }
@@ -253,10 +253,11 @@ public class ContextModuleFacade extends ModuleImpl implements Service, ContextM
      */
     private AbstractDataFusionType submitData(AbstractDataFusionType requestData) {
 
+        // get the request ID
+        String requestId = requestData.getId();
+
         AbstractDataFusionType response = null;
         try {
-            // get the request ID
-            String requestId = requestData.getId();
             LogHelper.debug(ContextModuleFacade.class, "submitData", "trying to submit data with ID: %s", requestId);
 
             // put it to the requests map
@@ -267,7 +268,6 @@ public class ContextModuleFacade extends ModuleImpl implements Service, ContextM
             waitForResponse(requestId);
             // get the response and return it to the service
             response = getRequestsMap().get(requestId);
-            getRequestsMap().remove(requestId);
             LogHelper.debug(ContextModuleFacade.class, "submitData", "returning response data with ID: %s", requestId);
         } catch (RuntimeException exc) {
             LogHelper.error(
@@ -276,6 +276,9 @@ public class ContextModuleFacade extends ModuleImpl implements Service, ContextM
                     "Could not retrieve data from %s. Reason: '%s'", Constants.MODULE_NAME,
                             exc.getLocalizedMessage());
 
+        } finally{
+            //remove requestId from the map
+            getRequestsMap().remove(requestId);            
         }
         return response;
     }
