@@ -11,7 +11,7 @@ public class Platform {
     public enum Type {
 
         /**
-         * Vehicle with cameras installed on it - default Platform Type used by the ContextModule
+         * Vehicle with cameras installed on it - default (and currently the only one) Platform Type used by the ContextModule
          */
         Vehicle_with_cameras,
     }
