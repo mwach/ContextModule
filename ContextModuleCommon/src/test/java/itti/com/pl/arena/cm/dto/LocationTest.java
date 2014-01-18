@@ -37,12 +37,12 @@ public class LocationTest {
         double longitude = random.nextDouble();
         double latitude = random.nextDouble();
         int bearing = random.nextInt(100);
-        double accuracy = random.nextDouble();
         double altitude = random.nextDouble();
+        double accuracy = random.nextDouble();
         long speed = random.nextLong();
         long time = random.nextLong();
 
-        Location location = new Location(longitude, latitude, bearing, accuracy, altitude, speed, time);
+        Location location = new Location(longitude, latitude, bearing, altitude, accuracy, speed, time);
         compareAllLocationParams(location, longitude, latitude, bearing, accuracy, altitude, speed, time);
     }
 
