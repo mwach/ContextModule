@@ -6,9 +6,9 @@ import itti.com.pl.arena.cm.utils.helper.StringHelper;
 
 public final class GeoObjectFactory {
 
-    public static GeoObject getGeoObject(String ontologyLayerName) {
+    public static GeoObject getGeoObject(String ontologyLayerName, String objectId) {
         if (StringHelper.equalsIgnoreCase(Constants.LAYER_BUILDING, ontologyLayerName)) {
-            return new Building();
+            return new Building(objectId);
         }
         return null;
     }

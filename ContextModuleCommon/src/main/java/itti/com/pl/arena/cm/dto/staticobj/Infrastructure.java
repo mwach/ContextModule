@@ -3,7 +3,7 @@ package itti.com.pl.arena.cm.dto.staticobj;
 import itti.com.pl.arena.cm.dto.GeoObject;
 
 /**
- * Implementation of the {@link GeoObject} representing building
+ * Implementation of the {@link GeoObject} representing infrastructure object
  * 
  * @author cm-admin
  *
@@ -37,14 +37,32 @@ public class Infrastructure extends GeoObject {
 	 */
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Constructor of that class
+     * @param id ID of the object
+     */
+    public Infrastructure(String id){
+        super(id);
+    }
+
+    /*
+     * type of the infrastructure
+     */
     private Type type;
 
+    /**
+     * returns type of the infrastructure
+     * @return 
+     */
     public Type getType() {
         return type;
     }
 
+    /**
+     * updates type of the infrastructure
+     * @param type
+     */
     public void setType(Type type) {
         this.type = type;
     }
-
 }

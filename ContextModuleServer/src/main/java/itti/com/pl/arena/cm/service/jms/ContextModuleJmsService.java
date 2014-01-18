@@ -215,13 +215,13 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
             vector.setDataSourceId(Constants.MODULE_NAME);
             vector.getFeature()
                     .add(createSimpleNamedValue(ContextModuleRequestProperties.Id.name(), platformInformation.getId()));
-            if (platformInformation.getLastLocation() != null) {
+            if (platformInformation.getLocation() != null) {
                 vector.getFeature().add(
-                        createLocation(ContextModuleRequestProperties.Location.name(), platformInformation.getLastLocation()
-                                .getLatitude(), platformInformation.getLastLocation().getLongitude()));
+                        createLocation(ContextModuleRequestProperties.Location.name(), platformInformation.getLocation()
+                                .getLatitude(), platformInformation.getLocation().getLongitude()));
                 vector.getFeature().add(
                         createSimpleNamedValue(ContextModuleRequestProperties.Bearing.name(), platformInformation
-                                .getLastLocation().getBearing()));
+                                .getLocation().getBearing()));
             }
             if (platformInformation.getCameras() != null) {
                 for (Camera camera : platformInformation.getCameras().values()) {
@@ -308,7 +308,7 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
     private void collectCameraInformation(FeatureVector vector, Camera camera) {
         vector.getFeature().add(createSimpleNamedValue(ContextModuleRequestProperties.CameraId.name(), camera.getId()));
         vector.getFeature().add(
-                createSimpleNamedValue(ContextModuleRequestProperties.CameraPosition.name(), camera.getPosition().name()));
+                createSimpleNamedValue(ContextModuleRequestProperties.CameraPosition.name(), camera.getOnPPlatformPosition().name()));
         vector.getFeature().add(createSimpleNamedValue(ContextModuleRequestProperties.CameraType.name(), camera.getType()));
         vector.getFeature().add(createSimpleNamedValue(ContextModuleRequestProperties.CameraAngleX.name(), camera.getAngleX()));
         vector.getFeature().add(createSimpleNamedValue(ContextModuleRequestProperties.CameraAngleY.name(), camera.getAngleY()));

@@ -74,10 +74,10 @@ public class ContextModuleOntologyManagerTest {
         Location nextLocation = new Location(random.nextDouble(), random.nextDouble(), random.nextInt(100));
         Platform information = new Platform("vehicle_m1", initLocation, Type.Vehicle_with_cameras, null);
         cmOntologyManager.updatePlatform(information);
-        assertEquals(initLocation, cmOntologyManager.getPlatform(information.getId()).getLastLocation());
-        information.setLastPosition(nextLocation);
+        assertEquals(initLocation, cmOntologyManager.getPlatform(information.getId()).getLocation());
+        information.setLocation(nextLocation);
         cmOntologyManager.updatePlatform(information);
-        assertEquals(nextLocation, cmOntologyManager.getPlatform(information.getId()).getLastLocation());
+        assertEquals(nextLocation, cmOntologyManager.getPlatform(information.getId()).getLocation());
     }
 
     @Test

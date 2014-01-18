@@ -4,8 +4,9 @@ import java.io.Serializable;
 
 /**
  * Location object used by the ContextModule
+ * 
  * @author cm-admin
- *
+ * 
  */
 public class Location implements Serializable {
 
@@ -22,20 +23,63 @@ public class Location implements Serializable {
     private long time;
     private double accuracy;
 
+    /**
+     * Constructor for basic location object containing no location information
+     */
     public Location() {
     }
 
+    /**
+     * Constructor for basic location object containing information about longitude and latitude only This is a location
+     * object used by ContenxtModule when interacting with other Arena modules It can be easy mapped to other Location
+     * objects (like Location use by Arena)
+     * 
+     * @param longitude
+     *            longitude
+     * @param latitude
+     *            latitude
+     */
     public Location(double longitude, double latitude) {
         this();
         this.longitude = longitude;
         this.latitude = latitude;
     }
 
+    /**
+     * Constructor for basic location object containing information about longitude, latitude and bearing This is a
+     * basic location object used by ContenxtModule managed platforms like Trucks or Vehicles
+     * 
+     * @param longitude
+     *            longitude
+     * @param latitude
+     *            latitude
+     * @param bearing
+     *            bearing
+     */
     public Location(double longitude, double latitude, int bearing) {
         this(longitude, latitude);
         this.bearing = bearing;
     }
 
+    /**
+     * Creates a complete location object Used by ContextModule listeners (contains GPS data collected from external
+     * device/module about last platform location)
+     * 
+     * @param longitude
+     *            longitude
+     * @param latitude
+     *            latitude
+     * @param bearing
+     *            bearing
+     * @param altitude
+     *            altitude
+     * @param accuracy
+     *            accuracy
+     * @param speed
+     *            speed
+     * @param time
+     *            time
+     */
     public Location(double longitude, double latitude, int bearing, double altitude, double accuracy, double speed, long time) {
         this(longitude, latitude, bearing);
         this.altitude = altitude;
@@ -44,30 +88,58 @@ public class Location implements Serializable {
         this.accuracy = accuracy;
     }
 
+    /**
+     * returns value of the longitude
+     * @return
+     */
     public double getLongitude() {
         return longitude;
     }
 
+    /**
+     * returns value of the latitude
+     * @return
+     */
     public double getLatitude() {
         return latitude;
     }
 
+    /**
+     * returns value of the altitude
+     * @return
+     */
     public double getAltitude() {
         return altitude;
     }
 
+    /**
+     * returns value of the bearing
+     * @return
+     */
     public int getBearing() {
         return bearing;
     }
 
+    /**
+     * returns value of the speed
+     * @return
+     */
     public double getSpeed() {
         return speed;
     }
 
+    /**
+     * returns value of the time
+     * @return
+     */
     public long getTime() {
         return time;
     }
 
+    /**
+     * returns value of the accuracy
+     * @return
+     */
     public double getAccuracy() {
         return accuracy;
     }

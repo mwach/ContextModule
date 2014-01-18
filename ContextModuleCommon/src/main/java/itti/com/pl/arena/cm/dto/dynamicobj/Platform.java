@@ -2,12 +2,28 @@ package itti.com.pl.arena.cm.dto.dynamicobj;
 
 import itti.com.pl.arena.cm.dto.Location;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class Platform {
+/**
+ * Class representing ContextModule platform (like Truck or Vehicle)
+ * @author cm-admin
+ *
+ */
+public class Platform implements Serializable{
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * Supported types of platforms
+     * @author cm-admin
+     *
+     */
     public enum Type {
 
         /**
@@ -16,56 +32,120 @@ public class Platform {
         Vehicle_with_cameras,
     }
 
+    /*
+     * Unique (per ContextModule) ID of the platform
+     */
     private String id;
+    /*
+     * Last known location of the platform)
+     */
     private Location location;
+    /*
+     * Type of the platform
+     */
     private Type type;
+    /*
+     * List of cameras installed on platform
+     */
     private Map<String, Camera> cameras = new HashMap<>();
 
-    public Platform(String id, Location location, Type platformType, Set<Camera> cameras) {
+    /**
+     * Creates a new basic platform object
+     * @param id ID of the platform
+     */
+    public Platform(String id) {
         this.id = id;
+    }
+
+    /**
+     * Creates a new complete platform object
+     * @param id ID of the platform
+     * @param location last known location of the platform
+     * @param platformType type of the platform
+     * @param cameras list of cameras installed on the platform
+     */
+    public Platform(String id, Location location, Type platformType, Set<Camera> cameras) {
+        this(id);
         this.type = platformType;
         this.location = location;
         if (cameras != null) {
+            this.cameras.clear();
             for (Camera camera : cameras) {
-                this.cameras.put(camera.getId(), camera);
+                addCamera(camera);
             }
         }
     }
 
-    public Type getType(){
-        return type;
-    }
-
-    public void setLastPosition(Location location) {
-        this.location = location;
-    }
-
-    public void addCamera(Camera camera) {
-        if (camera != null) {
-            cameras.put(camera.getId(), camera);
-        }
-    }
-
+    /**
+     * Returns ID of the platform
+     * @return
+     */
     public String getId() {
         return id;
     }
 
-    public Location getLastLocation() {
+    /**
+     * Return last know location of the platform 
+     * @return
+     */
+    public Location getLocation() {
         return location;
     }
-
-    public Map<String, Camera> getCameras() {
-        return cameras;
+    /**
+     * Updates last know location of the platform 
+     * @param location
+     */
+    public void setLocation(Location location) {
+        this.location = location;
     }
 
-    public Camera getCamera(String cameraId) {
-        return cameras.get(cameraId);
+    /**
+     * Returns type of the platform
+     * @return
+     */
+    public Type getType(){
+        return type;
+    }
+    /**
+     * Updates type of the platform
+     * @param type
+     */
+    public void setType(Type type){
+        this.type = type;
+    }
+
+    /**
+     * Returns list of cameras installed on the platform
+     * @return
+     */
+    public Map<String, Camera> getCameras() {
+        return new HashMap<>(cameras);
+    }
+
+    /**
+     * Adds a new camera to the platform
+     * @param camera
+     */
+    public void addCamera(Camera camera) {
+        if(camera != null){
+            cameras.put(camera.getId(), camera);
+        }
+    }
+
+    /**
+     * Removes camera from the platform
+     * @param cameraId
+     */
+    public void removeCamera(String cameraId) {
+        if(cameraId != null){
+            cameras.remove(cameraId);
+        }
     }
 
     @Override
     public String toString() {
         return String.format("%s [id=%s, lastLocation=%s, cameras=%s]", Platform.class.getSimpleName(), getId(),
-                getLastLocation(), getCameras());
+                String.valueOf(getLocation()), getCameras());
     }
 
     @Override

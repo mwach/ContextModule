@@ -8,7 +8,7 @@ import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform.Type;
 import itti.com.pl.arena.cm.dto.dynamicobj.RelativePosition;
 import itti.com.pl.arena.cm.dto.staticobj.Infrastructure;
-import itti.com.pl.arena.cm.dto.staticobj.Parking;
+import itti.com.pl.arena.cm.dto.staticobj.ParkingLot;
 import itti.com.pl.arena.cm.ontology.OntologyConstants;
 import itti.com.pl.arena.cm.service.PlatformTracker;
 import itti.com.pl.arena.cm.utils.helper.LogHelper;
@@ -76,7 +76,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
             }
         }
         Location lastLocation = prepareLastLocation(properties);
-        platform.setLastPosition(lastLocation);
+        platform.setLocation(lastLocation);
 
         return platform;
     }
@@ -98,13 +98,13 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
     public void updatePlatform(Platform platform) throws OntologyException {
 
         Map<String, String[]> properties = new HashMap<>();
-        if (platform.getLastLocation() != null) {
+        if (platform.getLocation() != null) {
             properties.put(OntologyConstants.Vehicle_has_GPS_x.name(),
-                    new String[] { String.valueOf(platform.getLastLocation().getLongitude()) });
+                    new String[] { String.valueOf(platform.getLocation().getLongitude()) });
             properties.put(OntologyConstants.Vehicle_has_GPS_y.name(),
-                    new String[] { String.valueOf(platform.getLastLocation().getLatitude()) });
+                    new String[] { String.valueOf(platform.getLocation().getLatitude()) });
             properties.put(OntologyConstants.Object_has_GPS_bearing.name(),
-                    new String[] { String.valueOf(platform.getLastLocation().getBearing()) });
+                    new String[] { String.valueOf(platform.getLocation().getBearing()) });
         }
 
         // process cameras
@@ -152,7 +152,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         properties.put(OntologyConstants.Camera_has_type.name(), new String[] { camera.getType() });
         properties.put(OntologyConstants.Camera_has_angle_x.name(), new String[] { String.valueOf(camera.getAngleX()) });
         properties.put(OntologyConstants.Camera_has_angle_y.name(), new String[] { String.valueOf(camera.getAngleY()) });
-        properties.put(OntologyConstants.Camera_view.name(), new String[] { camera.getPosition().name() });
+        properties.put(OntologyConstants.Camera_view.name(), new String[] { camera.getOnPPlatformPosition().name() });
         return createSimpleInstance(OntologyConstants.Camera.name(), camera.getId(), properties);
     }
 
@@ -204,8 +204,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 
         Map<String, String[]> properties = getInstanceProperties(objectId);
 
-        Parking information = new Parking();
-        information.setId(objectId);
+        ParkingLot information = new ParkingLot(objectId);
 
         String[] infrastructureList = properties.get(OntologyConstants.Parking_has_infrastructure.name());
         if (infrastructureList != null) {
@@ -217,8 +216,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
                     //TODO
                     Location[] coordinates = null;
 //                    infrastrProperties.get(OntologyConstants.Object_has_GPS_coordinates.name());
-                    Infrastructure infrastructure = new Infrastructure();
-                    infrastructure.setId(infrastrId);
+                    Infrastructure infrastructure = new Infrastructure(infrastrId);
                     infrastructure.setBoundaries(coordinates);
                     information.addIntrastructure(infrastructure);
                 }
@@ -367,17 +365,17 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 
         // get the platform data from ontology
         Platform platform = getPlatform(platformId);
-        Set<String> parkingLots = getParkingLots(platform.getLastLocation(), radius);
+        Set<String> parkingLots = getParkingLots(platform.getLocation(), radius);
         if (parkingLots.isEmpty()) {
             LogHelper.warning(ContextModuleOntologyManager.class, "calculateDistancesForPlatform",
-                    "There are no parkings for platform %s in location %s and radius %f", platformId, platform.getLastLocation(),
+                    "There are no parkings for platform %s in location %s and radius %f", platformId, platform.getLocation(),
                     radius);
             return;
         }
         // use first parking as a default one
         Set<String> buildings = getParkingLotInfrastructure(parkingLots.iterator().next());
         for (String buildingId : buildings) {
-            calculateDistanceForObject(buildingId, platform.getLastLocation());
+            calculateDistanceForObject(buildingId, platform.getLocation());
         }
     }
 
