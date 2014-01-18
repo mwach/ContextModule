@@ -571,7 +571,7 @@ public class OntologyManager implements Service {
             ontologyInputStream = SpringHelper.getResourceInputStream(ontologyLocation);
             model = ProtegeOWL.createJenaOWLModelFromInputStream(ontologyInputStream);
         } catch (Exception exc) {
-            LogHelper.exception(OntologyManager.class, "loadModel", "Cannot load ontlogy using given location", exc);
+            LogHelper.error(OntologyManager.class, "loadModel", "Cannot load ontlogy using given location. Details: %s", exc.getLocalizedMessage());
             throw new OntologyException(ErrorMessages.ONTOLOGY_CANNOT_LOAD, exc, ontologyLocation, exc.getLocalizedMessage());
         } finally {
             IOHelper.closeStream(ontologyInputStream);
