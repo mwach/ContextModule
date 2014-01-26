@@ -36,11 +36,6 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
     // radius of Earth in meters (6371 km)
     private static final double EARTH_RADIUS = 6371000;
 
-//    private static final String QUERY_GET_PLATFORMS = "PREFIX ns: <%s> " + "SELECT ?%s " + "WHERE " + "{ "
-//            + "?%s rdf:type ?subclass. " + "?subclass rdfs:subClassOf ns:%s. "
-//            + "?%s ns:Platform_has_GPS_coordinates ?coordinate. "
-//            + "FILTER ( (?coordinate >= %f && ?coordinate <= %f) || (?coordinate >= %f && ?coordinate <= %f)) " + "}";
-
     private static final String QUERY_GET_PLATFORMS = "PREFIX ns: <%s> " + "SELECT ?%s " + "WHERE " + "{ "
             + "?%s rdf:type ns:%s. "
             + "?%s ns:Vehicle_has_GPS_x ?coordinate_x. "
@@ -281,6 +276,20 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
             LogHelper.exception(PlatformTracker.class, "getGISObjects", e.getLocalizedMessage(), e);
         }
         return gisInformation;
+    }
+
+    @Override
+    public Set<GeoObject> getGISObjects(Location location, double radius, String gisObjectClass) throws OntologyException {
+        //get list of all available objects
+        Set<GeoObject> gisInformation = getGISObjects(location, radius);
+        Set<GeoObject> responseSet = new HashSet<>();
+        //check if object class matches given criteria
+        for (GeoObject geoObject : gisInformation) {
+            if(getInstanceClass(geoObject.getId()).equalsIgnoreCase(gisObjectClass)){
+                responseSet.add(geoObject);
+            }
+        }
+        return responseSet;
 
     }
 

@@ -99,7 +99,7 @@ public final class JsonHelper {
             throw new JsonHelperException(ErrorMessages.JSON_HELPER_CANNOT_GET_PROPERTY_VALUE_NULL_INPUT,
                     String.valueOf(jsonString));
         }
-        if (!!StringHelper.hasContent(jsonProperty)) {
+        if (!StringHelper.hasContent(jsonProperty)) {
             throw new JsonHelperException(ErrorMessages.JSON_HELPER_CANNOT_GET_PROPERTY_VALUE_NULL_PROP,
                     String.valueOf(jsonProperty));
         }

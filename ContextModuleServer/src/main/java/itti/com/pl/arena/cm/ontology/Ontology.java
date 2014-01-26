@@ -131,6 +131,21 @@ public interface Ontology {
     public Set<GeoObject> getGISObjects(Location location, double radius) throws OntologyException;
 
     /**
+     * Returns list of specific GIS objects found near given location
+     * 
+     * @param location
+     *            location (information about longitude and latitude)
+     * @param radius
+     *            radius
+     * @param gisObjectClass
+     *            class of the GIS objects found in given area. Only instances of that class will be returned
+     * @return list of GIS objects
+     * @throws OntologyException
+     *             could not retrieve information from the ontology
+     */
+    public Set<GeoObject> getGISObjects(Location location, double radius, String gisObjectClass) throws OntologyException;
+
+    /**
      * Adds information about new GIS object to the ontology
      * 
      * @param x

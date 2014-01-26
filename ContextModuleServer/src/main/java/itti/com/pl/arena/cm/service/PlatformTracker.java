@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Required;
 
+import arq.remote;
 import itti.com.pl.arena.cm.Service;
 import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.dto.Location;
@@ -12,6 +13,7 @@ import itti.com.pl.arena.cm.geoportal.GeoportalException;
 import itti.com.pl.arena.cm.geoportal.gov.pl.GeoportalService;
 import itti.com.pl.arena.cm.location.LocationListener;
 import itti.com.pl.arena.cm.ontology.Ontology;
+import itti.com.pl.arena.cm.ontology.OntologyConstants;
 import itti.com.pl.arena.cm.ontology.OntologyException;
 import itti.com.pl.arena.cm.persistence.Persistence;
 import itti.com.pl.arena.cm.persistence.PersistenceException;
@@ -26,6 +28,38 @@ import itti.com.pl.arena.cm.utils.helper.StringHelper;
  * 
  */
 public class PlatformTracker implements Service, LocationListener {
+
+    /**
+     * Used to convert degrees into kilometers parameter 'rangeInKms' defines fraction of the one degree occupied by
+     * given distance One degree is about 110km
+     * 
+     * @author cm-admin
+     * 
+     */
+    private enum Range {
+
+        /**
+         * One hundred meters
+         */
+        Km01(0.00091),
+        /**
+         * One kilometer
+         */
+        Km1(0.0091),
+        /**
+         * ten kilometers
+         */
+        Km10(0.091);
+        private double rangeInKms = 0;
+
+        private Range(double rangeInKms) {
+            this.rangeInKms = rangeInKms;
+        }
+
+        public double getRangeInKms() {
+            return rangeInKms;
+        }
+    }
 
     // persistence module used to store information about platform
     private Persistence persistence = null;
@@ -134,6 +168,13 @@ public class PlatformTracker implements Service, LocationListener {
             LogHelper.warning(PlatformTracker.class, "onLocationChange",
                     "Could not persist location data: for platform %s. Details: %s", getPlatformId(), e.getLocalizedMessage());
         }
+        try {
+            boolean parkingLotClose = !ontology.getGISObjects(location, Range.Km10.getRangeInKms(),
+                    OntologyConstants.Parking.name()).isEmpty();
+        } catch (OntologyException exc) {
+            LogHelper.warning(PlatformTracker.class, "onLocationChange",
+                    "Could not find parking lots in the given area. Details: %s", exc.getLocalizedMessage());
+        }
     }
 
     public void checkIfMoving() {
@@ -145,16 +186,18 @@ public class PlatformTracker implements Service, LocationListener {
             // check if object is moving
             if (lastLocation != null && lastLocation.getSpeed() < 0.01) {
                 // if not - check, when it was moving for the last time
-                LogHelper.debug(PlatformTracker.class, "checkIfMoving", "platform %s is not moving for last timestamp: %d", getPlatformId(), lastLocation.getTime());
+                LogHelper.debug(PlatformTracker.class, "checkIfMoving", "platform %s is not moving for last timestamp: %d",
+                        getPlatformId(), lastLocation.getTime());
 
                 // check, for how long platform is not moving
                 long pauseTime = DateTimeHelper.delta(System.currentTimeMillis(), lastLocation.getTime(), DateTimeHelper.MINUTE);
 
-                //if MaxBreakTime will be reached, assume that parking was reached
+                // if MaxBreakTime will be reached, assume that parking was reached
                 // note double condition here - it's here to avoid calling geoportal service every function call
-                if( pauseTime > getMaxBreakTime() && pauseTime < (getMaxBreakTime() + 1)){
+                if (pauseTime > getMaxBreakTime() && pauseTime < (getMaxBreakTime() + 1)) {
 
-                    LogHelper.debug(PlatformTracker.class, "checkIfMoving", "platform %s is not moving for last %d minutes", getPlatformId(), getMaxBreakTime());
+                    LogHelper.debug(PlatformTracker.class, "checkIfMoving", "platform %s is not moving for last %d minutes",
+                            getPlatformId(), getMaxBreakTime());
 
                     // check, if there is data in ontology collected for given location
                     Set<GeoObject> ontoData = getOntology().getGISObjects(lastLocation, getRadius());
@@ -162,7 +205,7 @@ public class PlatformTracker implements Service, LocationListener {
                     // if there is no data, try to download it from geoportal
                     if (ontoData.isEmpty()) {
                         Set<GeoObject> geoportalData = getGeoportal().getGeoportalData(lastLocation, getRadius());
-                        //store downloaded data into ontology
+                        // store downloaded data into ontology
                         getOntology().addGeoportalData(lastLocation, geoportalData);
                     }
                 }
