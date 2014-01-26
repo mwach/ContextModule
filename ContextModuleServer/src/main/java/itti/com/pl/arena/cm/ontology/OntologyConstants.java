@@ -15,6 +15,10 @@ public enum OntologyConstants {
     Vehicle_has_GPS_x,
     Vehicle_has_GPS_y,
 
+    Object_has_width,
+    Object_has_height,
+    Object_has_length,
+
     Parking_has_GPS_x,
     Parking_has_GPS_y,
     Parking_has_infrastructure,

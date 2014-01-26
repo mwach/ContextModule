@@ -48,7 +48,19 @@ public class Platform implements Serializable{
      * List of cameras installed on platform
      */
     private Map<String, Camera> cameras = new HashMap<>();
-
+    /*
+     * Width of the platform
+     */
+    private double width;
+    /*
+     * Height of the platform
+     */
+    private double height;
+    /*
+     * Length of the platform
+     */
+    private double length;
+    
     /**
      * Creates a new basic platform object
      * @param id ID of the platform
@@ -140,6 +152,54 @@ public class Platform implements Serializable{
         if(cameraId != null){
             cameras.remove(cameraId);
         }
+    }
+    
+    /**
+     * Returns width of the platform
+     * @return
+     */
+    public double getWidth() {
+        return width;
+    }
+
+    /**
+     * Sets width of the platform
+     * @return
+     */
+    public void setWidth(double width) {
+        this.width = width;
+    }
+
+    /**
+     * Returns height of the platform
+     * @return
+     */
+    public double getHeight() {
+        return height;
+    }
+
+    /**
+     * Sets height of the platform
+     * @return
+     */
+    public void setHeight(double height) {
+        this.height = height;
+    }
+
+    /**
+     * Returns length of the platform
+     * @return
+     */
+    public double getLength() {
+        return length;
+    }
+
+    /**
+     * Sets length of the platform
+     * @return
+     */
+    public void setLength(double length) {
+        this.length = length;
     }
 
     @Override

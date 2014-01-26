@@ -224,7 +224,7 @@ public class CMClient {
     public Situation getGISDataService(double x, double y) {
         Location objectLocation = createLocation(x, y);
         objectLocation.setHref(ContextModuleRequests.getGISData.name());
-        Situation data = contextModule.getPlatforms(objectLocation);
+        Situation data = contextModule.getGISData(objectLocation);
         LogHelper.info(CMClient.class, "getGISDataService", "Server response received: %s", String.valueOf(data));
         return data;
     }

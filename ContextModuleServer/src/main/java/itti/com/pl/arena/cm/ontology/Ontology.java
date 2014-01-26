@@ -28,12 +28,12 @@ public interface Ontology {
     /**
      * Updates (or create new if not found) ontology object representing platform
      * 
-     * @param platformInformation
+     * @param platform
      *            information about platform
      * @throws OntologyException
      *             could not update information about platform
      */
-    public void updatePlatform(Platform platformInformation) throws OntologyException;
+    public void updatePlatform(Platform platform) throws OntologyException;
 
     /**
      * Returns IDs of platforms found near given location

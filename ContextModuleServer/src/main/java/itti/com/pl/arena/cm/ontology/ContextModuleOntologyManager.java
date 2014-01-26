@@ -75,17 +75,51 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 
             }
         }
+        // set location of the platform
         Location lastLocation = prepareLastLocation(properties);
         platform.setLocation(lastLocation);
-
+        // set size of the platform
+        setPlatformSizes(platform,
+                getDoubleProperty(properties, OntologyConstants.Object_has_width),
+                getDoubleProperty(properties, OntologyConstants.Object_has_height),
+                getDoubleProperty(properties, OntologyConstants.Object_has_length)
+        );
         return platform;
     }
 
+    /**
+     * Sets dimensions of the platform object
+     * @param platform platform to be updated
+     * @param width width of the platform
+     * @param height height of the platform
+     * @param length length of the platform
+     */
+    private void setPlatformSizes(Platform platform, Double width, Double height, Double length) {
+        if(platform != null){
+            if(width != null){
+                platform.setWidth(width);
+            }
+            if(height != null){
+                platform.setHeight(height);
+            }
+            if(length != null){
+                platform.setLength(length);
+            }
+        }
+    }
+
+    /**
+     * Creates {@link Location} object using ontology-retrieved values
+     * @param properties values found in the ontology
+     * @return location object
+     */
     private Location prepareLastLocation(Map<String, String[]> properties) {
         Double longitude = getDoubleProperty(properties, OntologyConstants.Vehicle_has_GPS_x);
         Double latitude = getDoubleProperty(properties, OntologyConstants.Vehicle_has_GPS_y);
         Integer bearing = getIntProperty(properties, OntologyConstants.Object_has_GPS_bearing);
-        return new Location(longitude == null ? 0 : longitude.doubleValue(), latitude == null ? 0 : latitude.doubleValue(),
+        return new Location(
+                longitude == null ? 0 : longitude.doubleValue(), 
+                latitude == null ? 0 : latitude.doubleValue(),
                 bearing == null ? 0 : bearing.intValue());
     }
 
@@ -98,6 +132,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
     public void updatePlatform(Platform platform) throws OntologyException {
 
         Map<String, String[]> properties = new HashMap<>();
+        //prepare location info
         if (platform.getLocation() != null) {
             properties.put(OntologyConstants.Vehicle_has_GPS_x.name(),
                     new String[] { String.valueOf(platform.getLocation().getLongitude()) });
@@ -106,6 +141,14 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
             properties.put(OntologyConstants.Object_has_GPS_bearing.name(),
                     new String[] { String.valueOf(platform.getLocation().getBearing()) });
         }
+
+        //prepare platform size info
+        properties.put(OntologyConstants.Object_has_width.name(),
+                new String[] { String.valueOf(platform.getWidth())});
+        properties.put(OntologyConstants.Object_has_height.name(),
+                new String[] { String.valueOf(platform.getHeight())});
+        properties.put(OntologyConstants.Object_has_length.name(),
+                new String[] { String.valueOf(platform.getLength())});
 
         // process cameras
         if (platform.getCameras() != null) {
