@@ -17,8 +17,10 @@ import itti.com.pl.arena.cm.ontology.Ontology;
 import itti.com.pl.arena.cm.ontology.OntologyException;
 import itti.com.pl.arena.cm.service.Constants.ContextModuleRequestProperties;
 import itti.com.pl.arena.cm.service.Constants.ContextModuleRequests;
+import itti.com.pl.arena.cm.service.Constants.ContextModuleResponseProperties;
 import itti.com.pl.arena.cm.service.ContextModule;
 import itti.com.pl.arena.cm.utils.helper.JsonHelper;
+import itti.com.pl.arena.cm.utils.helper.JsonHelperException;
 import itti.com.pl.arena.cm.utils.helper.LogHelper;
 import itti.com.pl.arena.cm.utils.helper.NetworkHelper;
 import itti.com.pl.arena.cm.utils.helper.NetworkHelperException;
@@ -29,6 +31,7 @@ import com.safran.arena.impl.ModuleImpl;
 
 import eu.arena_fp7._1.AbstractDataFusionType;
 import eu.arena_fp7._1.AbstractNamedValue;
+import eu.arena_fp7._1.BooleanNamedValue;
 import eu.arena_fp7._1.FeatureVector;
 import eu.arena_fp7._1.Location;
 import eu.arena_fp7._1.Object;
@@ -36,18 +39,39 @@ import eu.arena_fp7._1.ObjectFactory;
 import eu.arena_fp7._1.SimpleNamedValue;
 import eu.arena_fp7._1.Situation;
 
+/**
+ * Implementation of the {@link ContextModule} interface
+ * 
+ * @author cm-admin
+ * 
+ */
 public class ContextModuleJmsService extends ModuleImpl implements ContextModule, Service {
 
+    /*
+     * Objects used to communicate via Arena Bus
+     */
     private Client client = null;
     private ObjectFactory factory = null;
 
+    /*
+     * Connection properties
+     */
     private String brokerUrl;
     private String localIpAddress;
     private String connectionPort;
 
+    /*
+     * Reference to the Ontology module
+     */
     private Ontology ontology = null;
+    /*
+     * Reference to the Geoportal module
+     */
     private Geoportal geoportal = null;
 
+    /*
+     * radius used for search data in ontology module
+     */
     private double radius;
 
     @Required
@@ -107,17 +131,26 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
         super(Constants.MODULE_NAME);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see itti.com.pl.arena.cm.Service#init()
+     */
     @Override
     public void init() {
 
         try {
+            // get the IP address of the host
             setLocalIpAddress(NetworkHelper.getIpAddress());
 
+            // validate input params
             validateParams(getBrokerUrl(), getLocalIpAddress(), getConnectionPort());
 
+            // connect to the Arena Bus
             client = new Client(getBrokerUrl(), getLocalIpAddress(), getConnectionPort());
             client.connectToServer();
 
+            // and register CM module
             client.registerModule(this);
             client.registerModuleAsDataProvider(this);
             client.registerModuleAsDataConsumer(this);
@@ -136,6 +169,9 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
         }
     }
 
+    /**
+     * Validates, if all parameters required by the ContextModule service were provided
+     */
     private void validateParams(String serverIpAddress, String clientIpAddress, String clientPort) throws JmsException {
 
         if (!StringHelper.hasContent(serverIpAddress)) {
@@ -151,6 +187,11 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see itti.com.pl.arena.cm.Service#shutdown()
+     */
     @Override
     public void shutdown() {
         try {
@@ -163,15 +204,20 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
     @Override
     public void onDataChanged(Class<? extends AbstractDataFusionType> dataType, String dataSourceId, AbstractDataFusionType data) {
 
+        // Arena Bus request detected
         try {
             // process responses from the Ontology Server only
             if (StringHelper.equalsIgnoreCase(Constants.MODULE_NAME, dataSourceId)) {
 
                 AbstractDataFusionType response = null;
 
+                // try to determine, if any of the ContextModule services was called
                 if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getPlatform.name(), data.getHref())
                         && (data instanceof SimpleNamedValue)) {
                     response = getPlatform((SimpleNamedValue) data);
+                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.updatePlatform.name(), data.getHref())
+                        && (data instanceof SimpleNamedValue)) {
+                    response = updatePlatform((SimpleNamedValue) data);
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getPlatforms.name(), data.getHref())
                         && (data instanceof Location)) {
                     response = getPlatforms((Location) data);
@@ -181,11 +227,16 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getGeoportalData.name(), data.getHref())
                         && (data instanceof Location)) {
                     response = getGeoportalData((Location) data);
+                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.updatePlatform.name(), data.getHref())
+                        && (data instanceof SimpleNamedValue)) {
+                    response = updateGISData((SimpleNamedValue) data);
                 } else {
+                    // invalid service name provided
                     LogHelper.info(ContextModuleJmsService.class, "onDataChanged", "Invalid method requested: '%s'",
                             data.getHref());
                 }
 
+                // prepare valid response object
                 if (response != null) {
                     response.setId(data.getId());
                     response.setDataSourceId(Constants.MODULE_NAME);
@@ -193,139 +244,244 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
                 }
             }
         } catch (RuntimeException exc) {
-            exc.printStackTrace();
+            LogHelper.info(ContextModuleJmsService.class, "onDataChanged", "Runtime exception catched: %s",
+                    exc.getLocalizedMessage());
         }
     }
 
     @Override
     public Object getPlatform(SimpleNamedValue objectId) {
 
+        // prepare response object
         Object response = factory.createObject();
+        FeatureVector vector = factory.createFeatureVector();
+        vector.setDataSourceId(Constants.MODULE_NAME);
 
         String platformId = objectId.getValue();
-        Platform platformInformation = null;
+        Platform platform = null;
+        // try to retrieve data from ontology
         try {
-            platformInformation = getOntology().getPlatform(platformId);
+            platform = getOntology().getPlatform(platformId);
         } catch (OntologyException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LogHelper.exception(ContextModuleJmsService.class, "getPlatform", "Could not retrieve data from ontology", e);
         }
-        if (platformInformation != null) {
-            FeatureVector vector = factory.createFeatureVector();
-            vector.setDataSourceId(Constants.MODULE_NAME);
-            vector.getFeature()
-                    .add(createSimpleNamedValue(ContextModuleRequestProperties.Id.name(), platformInformation.getId()));
-            if (platformInformation.getLocation() != null) {
+        // data retrieved -try to process it
+        if (platform != null) {
+            // ID of the object
+            vector.getFeature().add(createSimpleNamedValue(ContextModuleRequestProperties.Id.name(), platform.getId()));
+
+            // size of the object
+            vector.getFeature().add(createSimpleNamedValue(ContextModuleRequestProperties.Width.name(), platform.getWidth()));
+            vector.getFeature().add(createSimpleNamedValue(ContextModuleRequestProperties.Height.name(), platform.getHeight()));
+            vector.getFeature().add(createSimpleNamedValue(ContextModuleRequestProperties.Length.name(), platform.getLength()));
+
+            // information about location
+            if (platform.getLocation() != null) {
                 vector.getFeature().add(
-                        createLocation(ContextModuleRequestProperties.Location.name(), platformInformation.getLocation()
-                                .getLatitude(), platformInformation.getLocation().getLongitude()));
-                vector.getFeature().add(
-                        createSimpleNamedValue(ContextModuleRequestProperties.Bearing.name(), platformInformation
-                                .getLocation().getBearing()));
+                        createLocation(ContextModuleRequestProperties.Location.name(), platform.getLocation().getLatitude(),
+                                platform.getLocation().getLongitude()));
+                vector.getFeature()
+                        .add(createSimpleNamedValue(ContextModuleRequestProperties.Bearing.name(), platform.getLocation()
+                                .getBearing()));
             }
-            if (platformInformation.getCameras() != null) {
-                for (Camera camera : platformInformation.getCameras().values()) {
+            // information about cameras
+            if (platform.getCameras() != null) {
+                for (Camera camera : platform.getCameras().values()) {
                     collectCameraInformation(vector, camera);
                 }
             }
-            response.setFeatureVector(vector);
+        }
+        response.setFeatureVector(vector);
+        return response;
+    }
+
+    @Override
+    public BooleanNamedValue updatePlatform(SimpleNamedValue platformObject) {
+
+        Platform platform = null;
+        // prepare response object
+        BooleanNamedValue response = factory.createBooleanNamedValue();
+        response.setFeatureName(ContextModuleResponseProperties.Status.name());
+
+        try {
+            // try to parse JSON into object
+            platform = JsonHelper.fromJson(platformObject.getValue(), Platform.class);
+            // update ontology with provided data
+            ontology.updatePlatform(platform);
+            response.setFeatureValue(true);
+
+        } catch (JsonHelperException | OntologyException exc) {
+            // could not update data
+            LogHelper.exception(ContextModuleJmsService.class, "updatePlatform", "Could not update platform", exc);
+            response.setFeatureValue(false);
         }
         return response;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see itti.com.pl.arena.cm.service.ContextModule#getPlatforms(eu.arena_fp7._1.Location)
+     */
     @Override
     public Situation getPlatforms(Location location) {
 
+        // prepare response object
         Situation response = factory.createSituation();
+        FeatureVector responseVector = new FeatureVector();
 
+        // try to get data from the ontology
         Set<Platform> platformsInformation = null;
         try {
             platformsInformation = getOntology().getPlatforms(location.getX(), location.getY(), getRadius());
-        } catch (OntologyException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (OntologyException exc) {
+            LogHelper.exception(ContextModuleJmsService.class, "getPlatforms", "Could not retrieve ontology data", exc);
+            ;
         }
+        // add list of ontology objects to the response
         if (platformsInformation != null) {
-            FeatureVector fv = new FeatureVector();
 
             for (Platform platformInformation : platformsInformation) {
-                fv.getFeature().add(createSimpleNamedValue(platformInformation.getId(), JsonHelper.toJson(platformInformation)));
+                try {
+                    responseVector.getFeature().add(
+                            createSimpleNamedValue(platformInformation.getId(), JsonHelper.toJson(platformInformation)));
+                } catch (JsonHelperException exc) {
+                    LogHelper.warning(ContextModuleJmsService.class, "getPlatforms",
+                            "Could not add given object to the response: '%s'. Details: %s", platformInformation,
+                            exc.getLocalizedMessage());
+                }
             }
-            response.setGlobalSceneProperty(fv);
         }
+        response.setGlobalSceneProperty(responseVector);
         return response;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see itti.com.pl.arena.cm.service.ContextModule#getGISData(eu.arena_fp7._1.Location)
+     */
     @Override
     public Situation getGISData(Location location) {
 
+        //prepare response object
         Situation response = factory.createSituation();
+        FeatureVector responseVector = new FeatureVector();
 
         Set<GeoObject> geographicalInformation = null;
         try {
             geographicalInformation = getOntology().getGISObjects(
                     new itti.com.pl.arena.cm.dto.Location(location.getX(), location.getY()), getRadius());
-        } catch (OntologyException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (OntologyException exc) {
+            LogHelper.exception(ContextModuleJmsService.class, "getGISData", "Could not retrieve ontology data", exc);
         }
+        //parse ontology data into service response
         if (geographicalInformation != null) {
-            FeatureVector fv = new FeatureVector();
 
             for (GeoObject geoObject : geographicalInformation) {
-                fv.getFeature().add(createSimpleNamedValue(geoObject.getId(), JsonHelper.toJson(geoObject)));
+                try {
+                    responseVector.getFeature().add(createSimpleNamedValue(geoObject.getId(), JsonHelper.toJson(geoObject)));
+                } catch (JsonHelperException exc) {
+                    LogHelper.warning(ContextModuleJmsService.class, "getGISData",
+                            "Could not add given object to the response: '%s'. Details: %s", geoObject,
+                            exc.getLocalizedMessage());
+                }
             }
-            response.setGlobalSceneProperty(fv);
+        }
+        //add results to the response
+        response.setGlobalSceneProperty(responseVector);
+        return response;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see itti.com.pl.arena.cm.service.ContextModule#getGeoportalData(eu.arena_fp7._1.Location)
+     */
+    @Override
+    public Situation getGeoportalData(Location location) {
+
+        //prepare response data
+        Situation response = factory.createSituation();
+        FeatureVector responseVector = new FeatureVector();
+
+        Set<GeoObject> geoData = null;
+        try {
+            //create CM location from Arena location
+            itti.com.pl.arena.cm.dto.Location cmLocation = new itti.com.pl.arena.cm.dto.Location(location.getX(), location.getY());
+            //call geoportal service to retrieve all available data
+            geoData = getGeoportal().getGeoportalData(cmLocation, getRadius());
+            //update ontology with the geoportal data
+            getOntology().addGeoportalData(cmLocation, geoData);
+        } catch (OntologyException exc) {
+            LogHelper.exception(ContextModuleJmsService.class, "getGeoportalData", "Could not add data to the ontology ", exc);
+        }catch ( GeoportalException exc) {
+            LogHelper.exception(ContextModuleJmsService.class, "getGeoportalData", "Could not retrieve data from the geoportal", exc);
+        }
+
+        //fill response with the data
+        if (geoData != null) {
+
+            for (GeoObject geoObject : geoData) {
+                try {
+                    responseVector.getFeature().add(createSimpleNamedValue(geoObject.getId(), JsonHelper.toJson(geoObject)));
+                } catch (JsonHelperException exc) {
+                    LogHelper.warning(ContextModuleJmsService.class, "getGeoportalData",
+                            "Could not add given object to the response: '%s'. Details: %s", geoObject,
+                            exc.getLocalizedMessage());
+                }
+            }
+            response.setGlobalSceneProperty(responseVector);
         }
         return response;
     }
 
     @Override
-    public Situation getGeoportalData(Location location) {
-
-        Situation response = factory.createSituation();
-
-        Set<GeoObject> geoData = null;
-        try {
-            itti.com.pl.arena.cm.dto.Location cmLocation = new itti.com.pl.arena.cm.dto.Location(location.getX(), location.getY());
-            geoData = getGeoportal().getGeoportalData(cmLocation, getRadius());
-            getOntology().addGeoportalData(cmLocation, geoData);
-        } catch (OntologyException | GeoportalException exc) {
-
-        }
-
-        if (geoData != null) {
-            FeatureVector fv = new FeatureVector();
-
-            for (GeoObject geoObject : geoData) {
-                fv.getFeature().add(createSimpleNamedValue(geoObject.getId(), JsonHelper.toJson(geoObject)));
-            }
-            response.setGlobalSceneProperty(fv);
-        }
-        return response;
+    public BooleanNamedValue updateGISData(SimpleNamedValue gisData) {
+//TODO: to be implemented
+        return factory.createBooleanNamedValue();
     }
 
+    /**
+     * Prepare list of features containing information about single camera installed on platform
+     * @param vector feature vector
+     * @param camera instance of the on-truck camera
+     */
     private void collectCameraInformation(FeatureVector vector, Camera camera) {
         vector.getFeature().add(createSimpleNamedValue(ContextModuleRequestProperties.CameraId.name(), camera.getId()));
         vector.getFeature().add(
-                createSimpleNamedValue(ContextModuleRequestProperties.CameraPosition.name(), camera.getOnPPlatformPosition().name()));
+                createSimpleNamedValue(ContextModuleRequestProperties.CameraPosition.name(), camera.getOnPPlatformPosition()
+                        .name()));
         vector.getFeature().add(createSimpleNamedValue(ContextModuleRequestProperties.CameraType.name(), camera.getType()));
         vector.getFeature().add(createSimpleNamedValue(ContextModuleRequestProperties.CameraAngleX.name(), camera.getAngleX()));
         vector.getFeature().add(createSimpleNamedValue(ContextModuleRequestProperties.CameraAngleY.name(), camera.getAngleY()));
     }
 
-    private AbstractNamedValue createSimpleNamedValue(String key, java.lang.Object value) {
+    /**
+     * Prepares instance of the {@link AbstractNamedValue} class
+     * @param id ID of the object
+     * @param value value of the object
+     * @return object containing provided values
+     */
+    private AbstractNamedValue createSimpleNamedValue(String id, java.lang.Object value) {
         SimpleNamedValue snv = factory.createSimpleNamedValue();
         snv.setDataSourceId(Constants.MODULE_NAME);
-        snv.setId(key);
+        snv.setId(id);
         snv.setValue(String.valueOf(value));
         return snv;
     }
 
-    private AbstractNamedValue createLocation(String key, double x, double y) {
+    /**
+     * Prepares Location as instance of the {@link Location} class
+     * @param id ID of the object
+     * @param x longitude
+     * @param y latitude
+     * @return object containing location attributes
+     */
+    private AbstractNamedValue createLocation(String id, double x, double y) {
         Location location = factory.createLocation();
         location.setDataSourceId(Constants.MODULE_NAME);
-        location.setId(key);
+        location.setId(id);
         location.setX(x);
         location.setX(y);
         return location;

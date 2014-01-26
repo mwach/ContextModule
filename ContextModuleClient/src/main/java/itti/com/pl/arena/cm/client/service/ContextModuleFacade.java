@@ -7,6 +7,7 @@ import com.safran.arena.impl.Client;
 import com.safran.arena.impl.ModuleImpl;
 
 import eu.arena_fp7._1.AbstractDataFusionType;
+import eu.arena_fp7._1.BooleanNamedValue;
 import eu.arena_fp7._1.Location;
 import eu.arena_fp7._1.Object;
 import eu.arena_fp7._1.SimpleNamedValue;
@@ -214,6 +215,14 @@ public class ContextModuleFacade extends ModuleImpl implements Service, ContextM
         return (Object) submitData(object);
     }
 
+    /* (non-Javadoc)
+     * @see itti.com.pl.arena.cm.service.ContextModule#updatePlatform(eu.arena_fp7._1.SimpleNamedValue)
+     */
+    @Override
+    public BooleanNamedValue updatePlatform(SimpleNamedValue platform) {
+        return (BooleanNamedValue)submitData(platform);
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -242,6 +251,14 @@ public class ContextModuleFacade extends ModuleImpl implements Service, ContextM
     @Override
     public Situation getGeoportalData(Location location) {
         return (Situation) submitData(location);
+    }
+
+    /* (non-Javadoc)
+     * @see itti.com.pl.arena.cm.service.ContextModule#updateGISData(eu.arena_fp7._1.SimpleNamedValue)
+     */
+    @Override
+    public BooleanNamedValue updateGISData(SimpleNamedValue gisData) {
+        return (BooleanNamedValue)submitData(gisData);
     }
 
     /**
@@ -319,5 +336,4 @@ public class ContextModuleFacade extends ModuleImpl implements Service, ContextM
         // response received
         LogHelper.debug(ContextModuleFacade.class, "waitForResponse", "Response received for message with ID: %s", id);
     }
-
 }

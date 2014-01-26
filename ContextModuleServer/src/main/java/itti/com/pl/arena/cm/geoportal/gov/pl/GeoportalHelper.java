@@ -14,6 +14,7 @@ import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalRequestImageObject;
 import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalRequestObject;
 import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalResponse;
 import itti.com.pl.arena.cm.utils.helper.JsonHelper;
+import itti.com.pl.arena.cm.utils.helper.JsonHelperException;
 import itti.com.pl.arena.cm.utils.helper.LogHelper;
 import itti.com.pl.arena.cm.utils.helper.StringHelper;
 import itti.com.pl.arena.cm.utils.helper.StringHelperException;
@@ -39,51 +40,6 @@ public final class GeoportalHelper {
     "dpi=%s&" + "transparent=%s&" + "format=%s&" + "layers=%s" + "bbox=%s&" + "bboxSR=%s&" + "imageSR=%s&" + "size=%s&" + "f=%s";
 
     /**
-     * Serializes {@link GeoportalRequestObject} into string
-     * 
-     * @param requestObject
-     *            object to serialize
-     * @return serialized object
-     * @throws GeoportalException
-     *             could not serialize object
-     */
-    public static String toJson(GeoportalRequestObject requestObject) throws GeoportalException {
-        // check, if provided object is not null
-        if (requestObject == null) {
-            throw new GeoportalException(ErrorMessages.GEOPORTAL_SERIALIZE_NULL_OBJECT_PROVIDED);
-        }
-        return JsonHelper.toJson(requestObject);
-    }
-
-    /**
-     * Deserializes JSON string into {@link GeoportalRequestObject}
-     * 
-     * @param <T>
-     * 
-     * @param jsonRequestObject
-     *            JSON string
-     * @return instance of {@link GeoportalRequestObject}
-     * @throws GeoportalException
-     *             could not construct instance of {@link GeoportalRequestObject}
-     */
-    public static <T> T fromJson(String jsonRequestObject, Class<T> clazz) throws GeoportalException {
-        // check, if provided string contains data
-        if (!StringHelper.hasContent(jsonRequestObject)) {
-            throw new GeoportalException(ErrorMessages.GEOPORTAL_DESERIALIZE_NULL_JSON_PROVIDED);
-        }
-        T object = null;
-        // try to deserialize string into object
-        try {
-            object = JsonHelper.fromJson(jsonRequestObject, clazz);
-        } catch (RuntimeException exc) {
-            LogHelper.exception(GeoportalHelper.class, "fromJson",
-                    String.format("Could not deserialize object into JSON. Object: '%s'", jsonRequestObject), exc);
-            throw new GeoportalException(ErrorMessages.GEOPORTAL_DESERIALIZE_INVALID_JSON_PROVIDED, exc);
-        }
-        return object;
-    }
-
-    /**
      * Prepares request URL parameters using {@link GeoportalRequestObject}
      * 
      * @param requestObject
@@ -99,8 +55,14 @@ public final class GeoportalHelper {
             throw new GeoportalException(ErrorMessages.GEOPORTAL_REQUEST_NULL_OBJECT_PROVIDED);
         }
         // prepare some request chunks as JSON strings
-        String geometry = JsonHelper.toJson(requestObject.getGeometry());
-        String mapExtent = JsonHelper.toJson(requestObject.getMapExtent());
+        String geometry = null;
+        String mapExtent = null;
+        try {
+            geometry = JsonHelper.toJson(requestObject.getGeometry());
+            mapExtent = JsonHelper.toJson(requestObject.getMapExtent());
+        } catch (JsonHelperException exc) {
+            throw new GeoportalException(ErrorMessages.GEOPORTAL_CANNOT_PREPARE_REQUEST_URL, exc.getLocalizedMessage());
+        }
         // prepare request data using object data
         String requestUrl = null;
         try {
@@ -147,11 +109,18 @@ public final class GeoportalHelper {
             List<String> layers = splitResponseIntoLayers(jsonResponse, "layerId");
 
             for (String layerData : layers) {
-                String layerId = JsonHelper.getJsonValue(layerData, "layerId");
-                response.startNewLayer(layerId);
-                for (String key : keys) {
-                    response.addValue(layerId, key, JsonHelper.getJsonValue(layerData, key));
+                try {
+                    String layerId = JsonHelper.getJsonValue(layerData, "layerId");
+                    response.startNewLayer(layerId);
+                    for (String key : keys) {
+                        response.addValue(layerId, key, JsonHelper.getJsonValue(layerData, key));
+                    }
+                } catch (JsonHelperException exc) {
+                    LogHelper.warning(GeoportalHelper.class, "fromResponse",
+                            "Could not parse data retrieved from the geoportal: '%s'. Details: %s", jsonResponse,
+                            exc.getLocalizedMessage());
                 }
+
             }
         }
         return response;
@@ -175,8 +144,8 @@ public final class GeoportalHelper {
         for (String layerId : geoportalData.getLayersIds()) {
             for (int itemId = 0; itemId < geoportalData.getLayerElementsCount(layerId); itemId++) {
                 String layerName = geoportalData.getValue(layerId, itemId, Constants.LAYER_NAME);
-                //TODO: don't have to be a building
-                String objectId = String.format("Building_%f_%f_%d", location.getLongitude(), location.getLatitude(), itemId); 
+                // TODO: don't have to be a building
+                String objectId = String.format("Building_%f_%f_%d", location.getLongitude(), location.getLatitude(), itemId);
                 GeoObject object = GeoObjectFactory.getGeoObject(layerName, objectId);
                 if (object != null) {
                     geoData.add(object);

@@ -5,7 +5,6 @@ import static org.junit.Assert.*;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
-import java.util.UUID;
 
 import itti.com.pl.arena.cm.ErrorMessages;
 import itti.com.pl.arena.cm.dto.GeoObject;
@@ -20,6 +19,8 @@ import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalResponse;
 import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalRequestObject.Wkid;
 import itti.com.pl.arena.cm.utils.helper.IOHelper;
 import itti.com.pl.arena.cm.utils.helper.IOHelperException;
+import itti.com.pl.arena.cm.utils.helper.JsonHelper;
+import itti.com.pl.arena.cm.utils.helper.JsonHelperException;
 import itti.com.pl.arena.cm.utils.helper.StringHelperException;
 
 import org.junit.Ignore;
@@ -34,59 +35,24 @@ public class GeoportalHelperTest {
 
     private Random random = new Random();
 
-    @Test
-    public void testToJsonObjectNull() throws GeoportalException {
-
-        expectedException.expect(GeoportalException.class);
-        expectedException.expectMessage(ErrorMessages.GEOPORTAL_SERIALIZE_NULL_OBJECT_PROVIDED.getMessage());
-
-        GeoportalHelper.toJson(null);
-    }
 
     @Test
-    public void testFromJsonStringNull() throws GeoportalException {
-
-        expectedException.expect(GeoportalException.class);
-        expectedException.expectMessage(ErrorMessages.GEOPORTAL_DESERIALIZE_NULL_JSON_PROVIDED.getMessage());
-
-        GeoportalHelper.fromJson(null, GeoportalRequestObject.class);
-    }
-
-    @Test
-    public void testFromJsonStringEmpty() throws GeoportalException {
-
-        expectedException.expect(GeoportalException.class);
-        expectedException.expectMessage(ErrorMessages.GEOPORTAL_DESERIALIZE_NULL_JSON_PROVIDED.getMessage());
-
-        GeoportalHelper.fromJson("", GeoportalRequestObject.class);
-    }
-
-    @Test
-    public void testFromJsonStringInvalid() throws GeoportalException {
-
-        expectedException.expect(GeoportalException.class);
-        expectedException.expectMessage(ErrorMessages.GEOPORTAL_DESERIALIZE_INVALID_JSON_PROVIDED.getMessage());
-
-        GeoportalHelper.fromJson(UUID.randomUUID().toString(), GeoportalRequestObject.class);
-    }
-
-    @Test
-    public void testToFromObjectValid() throws GeoportalException {
+    public void testToFromObjectValid() throws GeoportalException, JsonHelperException {
 
         GeoportalRequestObject requestObject = new GeoportalRequestDataObject(random.nextDouble(), random.nextDouble());
-        String jsonObject = GeoportalHelper.toJson(requestObject);
+        String jsonObject = JsonHelper.toJson(requestObject);
         assertNotNull(jsonObject);
-        GeoportalRequestObject restoredObject = GeoportalHelper.fromJson(jsonObject, GeoportalRequestDataObject.class);
+        GeoportalRequestObject restoredObject = JsonHelper.fromJson(jsonObject, GeoportalRequestDataObject.class);
         assertEquals(requestObject, restoredObject);
     }
 
     @Test
-    public void testToFromObjectinvalid() throws GeoportalException {
+    public void testToFromObjectinvalid() throws GeoportalException, JsonHelperException {
 
         // some values were changed
 
         GeoportalRequestObject requestObject = new GeoportalRequestDataObject(random.nextDouble(), random.nextDouble());
-        String jsonObject = GeoportalHelper.toJson(requestObject);
+        String jsonObject = JsonHelper.toJson(requestObject);
         assertNotNull(jsonObject);
 
         for (int i = 0; i < 9; i++) {
@@ -95,7 +61,7 @@ public class GeoportalHelperTest {
                 break;
             }
         }
-        GeoportalRequestObject restoredObject = GeoportalHelper.fromJson(jsonObject, GeoportalRequestDataObject.class);
+        GeoportalRequestObject restoredObject = JsonHelper.fromJson(jsonObject, GeoportalRequestDataObject.class);
         assertFalse(requestObject.equals(restoredObject));
     }
 

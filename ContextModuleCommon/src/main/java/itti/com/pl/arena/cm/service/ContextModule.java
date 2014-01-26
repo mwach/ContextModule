@@ -1,5 +1,8 @@
 package itti.com.pl.arena.cm.service;
 
+import itti.com.pl.arena.cm.dto.GeoObject;
+import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
+import eu.arena_fp7._1.BooleanNamedValue;
 import eu.arena_fp7._1.Location;
 import eu.arena_fp7._1.Object;
 import eu.arena_fp7._1.SimpleNamedValue;
@@ -25,6 +28,16 @@ public interface ContextModule {
     Object getPlatform(SimpleNamedValue objectId);
 
     /**
+     * This method allows to update existing or create new platform in the ContextModule
+     * 
+     * @param platform
+     *            new or updated Platform object. Attribute 'value' of the {@link SimpleNamedValue} should contain
+     *            serialized {@link Platform} object
+     * @return update status
+     */
+    BooleanNamedValue updatePlatform(SimpleNamedValue platform);
+
+    /**
      * This method allows retrieval of data about platforms found near the given location (i.e. returned Situation class
      * will contain Object classes describing each platform).
      * 
@@ -46,6 +59,17 @@ public interface ContextModule {
      * @return available GIS data for specified location
      */
     Situation getGISData(Location location);
+
+    /**
+     * This method allows to update existing or create new geo-object (instance of the {@link GeoObject} interface) in
+     * the ContextModule
+     * 
+     * @param gisData
+     *            new or updated geo-object. Attribute 'value' of the {@link SimpleNamedValue} should contain
+     *            serialized {@link GeoObject} object
+     * @return update status
+     */
+    BooleanNamedValue updateGISData(SimpleNamedValue gisData);
 
     /**
      * Retrieves data from the Geoportal service

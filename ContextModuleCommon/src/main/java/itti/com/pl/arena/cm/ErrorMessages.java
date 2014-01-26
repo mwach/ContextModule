@@ -25,7 +25,15 @@ public enum ErrorMessages {
     NETWORK_HELPER_CANNOT_DO_HTTP_REQUEST("Http request failed for URL: '%s'. Method: '%s. Details: %s"),
     PROPERTIES_HELPER_NO_FILE_PROVIDED("Empty properties file name provided"),
     PROPERTIES_HELPER_COULD_NOT_PARSE("Failed to load properties file '%s' Details: '%s'"),
-    STRING_HELPER_CANNOT_ENCODE("Could not encode string '%s' using default charsed. Details: %s"), ;
+    STRING_HELPER_CANNOT_ENCODE("Could not encode string '%s' using default charsed. Details: %s"),
+
+    JSON_HELPER_CANNOT_SERIALIZE("Cannot serialize given object: %s into object. Details: %s"), 
+    JSON_HELPER_CANNOT_DESERIALIZE("Cannot deserialize given string: %s into object. Details: %s"), 
+    JSON_HELPER_CANNOT_GET_PROPERTY_VALUE_NULL_INPUT("Could not retrieve property value. Null or empty input string provided: %s"), 
+    JSON_HELPER_CANNOT_GET_PROPERTY_VALUE_NULL_PROP("Could not retrieve property value. Null or empty property name provided: %s"), 
+    
+    
+    ;
 
     /*
      * Descriptive error description

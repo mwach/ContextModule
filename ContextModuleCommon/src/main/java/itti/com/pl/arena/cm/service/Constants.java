@@ -1,5 +1,7 @@
 package itti.com.pl.arena.cm.service;
 
+import eu.arena_fp7._1.BooleanNamedValue;
+
 /**
  * Constants used by the ContextModule service Contains names of all parameters used during communication with other
  * modules
@@ -14,6 +16,10 @@ public final class Constants {
          * Service name used by the {@link ContextModule} 'getPlatform' method
          */
         getPlatform,
+        /**
+         * Service name used by the {@link ContextModule} 'updatePlatform' method
+         */
+        updatePlatform,
 
         /**
          * Service name used by the {@link ContextModule} 'getPlatforms' method
@@ -24,6 +30,10 @@ public final class Constants {
          * Service name used by the {@link ContextModule} 'getGISData' method
          */
         getGISData,
+        /**
+         * Service name used by the {@link ContextModule} 'updateGISData' method
+         */
+        updateGISData,
         /**
          * Service name used by the {@link ContextModule} 'getGeoportalData' method
          */
@@ -42,8 +52,20 @@ public final class Constants {
         Location,
 
         /**
+         * Platform size
+         */
+        Width, Height, Length,
+
+        /**
          * Properties of the Camera node
          */
         CameraId, CameraPosition, CameraType, CameraAngleX, CameraAngleY, Bearing, ;
+    }
+
+    public enum ContextModuleResponseProperties{
+        /**
+         * name of the status property in the {@link BooleanNamedValue} response
+         */
+        Status
     }
 }

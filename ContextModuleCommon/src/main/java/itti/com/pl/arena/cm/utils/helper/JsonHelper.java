@@ -1,5 +1,7 @@
 package itti.com.pl.arena.cm.utils.helper;
 
+import itti.com.pl.arena.cm.ErrorMessages;
+
 import com.google.gson.Gson;
 
 /**
@@ -26,9 +28,18 @@ public final class JsonHelper {
      * @param object
      *            input object
      * @return JSON representation of provided object
+     * @throws JsonHelperException
+     *             could not serialize object
      */
-    public static String toJson(Object object) {
-        return getJsonParser().toJson(object);
+    public static String toJson(Object object) throws JsonHelperException {
+        String response = null;
+        try {
+            response = getJsonParser().toJson(object);
+        } catch (RuntimeException exc) {
+            throw new JsonHelperException(ErrorMessages.JSON_HELPER_CANNOT_SERIALIZE, String.valueOf(object),
+                    exc.getLocalizedMessage());
+        }
+        return response;
     }
 
     /**
@@ -39,9 +50,18 @@ public final class JsonHelper {
      * @param objectClass
      *            base class
      * @return object created from provided JSON string
+     * @throws JsonHelperException
+     *             could not deserialize object
      */
-    public static <T> T fromJson(String jsonSerializedObject, Class<T> objectClass) {
-        return getJsonParser().fromJson(jsonSerializedObject, objectClass);
+    public static <T> T fromJson(String jsonSerializedObject, Class<T> objectClass) throws JsonHelperException {
+        T response = null;
+        try {
+            response = getJsonParser().fromJson(jsonSerializedObject, objectClass);
+        } catch (RuntimeException exc) {
+            throw new JsonHelperException(ErrorMessages.JSON_HELPER_CANNOT_DESERIALIZE, String.valueOf(jsonSerializedObject),
+                    exc.getLocalizedMessage());
+        }
+        return response;
     }
 
     /**
@@ -52,8 +72,10 @@ public final class JsonHelper {
      * @param jsonProperty
      *            name of the property
      * @return value of the property
+     * @throws JsonHelperException
+     *             could not retrieve property value
      */
-    public static String getJsonValue(String jsonString, String jsonProperty) {
+    public static String getJsonValue(String jsonString, String jsonProperty) throws JsonHelperException {
         return getJsonValue(jsonString, jsonProperty, true);
     }
 
@@ -67,12 +89,19 @@ public final class JsonHelper {
      * @param caseSensitive
      *            true, if case-sensitivity should not be ignored, false otherwise
      * @return value of the property
+     * @throws JsonHelperException
+     *             could not retrieve property value
      */
-    public static String getJsonValue(String jsonString, String jsonProperty, boolean caseSensitive) {
+    public static String getJsonValue(String jsonString, String jsonProperty, boolean caseSensitive) throws JsonHelperException {
 
         // check if provided values have content
-        if (!StringHelper.hasContent(jsonString) || !StringHelper.hasContent(jsonProperty)) {
-            return null;
+        if (!StringHelper.hasContent(jsonString)) {
+            throw new JsonHelperException(ErrorMessages.JSON_HELPER_CANNOT_GET_PROPERTY_VALUE_NULL_INPUT,
+                    String.valueOf(jsonString));
+        }
+        if (!!StringHelper.hasContent(jsonProperty)) {
+            throw new JsonHelperException(ErrorMessages.JSON_HELPER_CANNOT_GET_PROPERTY_VALUE_NULL_PROP,
+                    String.valueOf(jsonProperty));
         }
 
         // add quotation chars - don't want to find some 'in-the-middle' string
@@ -99,6 +128,6 @@ public final class JsonHelper {
                 return jsonValue;
             }
         }
-        return null;
+        return "";
     }
 }
