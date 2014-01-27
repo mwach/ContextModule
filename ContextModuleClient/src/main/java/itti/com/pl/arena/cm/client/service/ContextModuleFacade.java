@@ -215,6 +215,16 @@ public class ContextModuleFacade extends ModuleImpl implements Service, ContextM
         return (Object) submitData(object);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see itti.com.pl.arena.cm.service.ContextModule#getPlatform(eu.arena_fp7._1.SimpleNamedValue)
+     */
+    @Override
+    public eu.arena_fp7._1.Object getPlatformNeighborhoodData(SimpleNamedValue objectId) {
+        return (Object) submitData(objectId);
+    }
+
     /* (non-Javadoc)
      * @see itti.com.pl.arena.cm.service.ContextModule#updatePlatform(eu.arena_fp7._1.SimpleNamedValue)
      */

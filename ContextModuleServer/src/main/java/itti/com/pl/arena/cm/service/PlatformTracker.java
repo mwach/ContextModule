@@ -5,13 +5,13 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Required;
 
-import arq.remote;
 import itti.com.pl.arena.cm.Service;
 import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.dto.Location;
 import itti.com.pl.arena.cm.geoportal.GeoportalException;
 import itti.com.pl.arena.cm.geoportal.gov.pl.GeoportalService;
 import itti.com.pl.arena.cm.location.LocationListener;
+import itti.com.pl.arena.cm.location.Range;
 import itti.com.pl.arena.cm.ontology.Ontology;
 import itti.com.pl.arena.cm.ontology.OntologyConstants;
 import itti.com.pl.arena.cm.ontology.OntologyException;
@@ -28,38 +28,6 @@ import itti.com.pl.arena.cm.utils.helper.StringHelper;
  * 
  */
 public class PlatformTracker implements Service, LocationListener {
-
-    /**
-     * Used to convert degrees into kilometers parameter 'rangeInKms' defines fraction of the one degree occupied by
-     * given distance One degree is about 110km
-     * 
-     * @author cm-admin
-     * 
-     */
-    private enum Range {
-
-        /**
-         * One hundred meters
-         */
-        Km01(0.00091),
-        /**
-         * One kilometer
-         */
-        Km1(0.0091),
-        /**
-         * ten kilometers
-         */
-        Km10(0.091);
-        private double rangeInKms = 0;
-
-        private Range(double rangeInKms) {
-            this.rangeInKms = rangeInKms;
-        }
-
-        public double getRangeInKms() {
-            return rangeInKms;
-        }
-    }
 
     // persistence module used to store information about platform
     private Persistence persistence = null;
@@ -169,8 +137,22 @@ public class PlatformTracker implements Service, LocationListener {
                     "Could not persist location data: for platform %s. Details: %s", getPlatformId(), e.getLocalizedMessage());
         }
         try {
-            boolean parkingLotClose = !ontology.getGISObjects(location, Range.Km10.getRangeInKms(),
-                    OntologyConstants.Parking.name()).isEmpty();
+            Set<GeoObject> parkingLots = ontology.getGISObjects(location, Range.Km10.getRangeInKms(),
+                    OntologyConstants.Parking.name());
+
+            //TODO: what exactly should happen here (truck is getting closer to the destination)
+            if (!parkingLots.isEmpty()) {
+                LogHelper.debug(PlatformTracker.class, "onLocationChange",
+                        "Found parking lot defined in the CM. Parking details: %s", parkingLots);
+
+                Set<GeoObject> closerParkingLots = ontology.getGISObjects(location, Range.Km1.getRangeInKms(),
+                        OntologyConstants.Parking.name());
+                if (!closerParkingLots.isEmpty()) {
+                    LogHelper.debug(PlatformTracker.class, "onLocationChange",
+                            "Found closer parking lot defined in the CM. Parking details: %s", parkingLots);
+                }
+            }
+
         } catch (OntologyException exc) {
             LogHelper.warning(PlatformTracker.class, "onLocationChange",
                     "Could not find parking lots in the given area. Details: %s", exc.getLocalizedMessage());

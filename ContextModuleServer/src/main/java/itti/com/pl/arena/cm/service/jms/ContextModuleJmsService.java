@@ -13,6 +13,7 @@ import itti.com.pl.arena.cm.dto.dynamicobj.Camera;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
 import itti.com.pl.arena.cm.geoportal.Geoportal;
 import itti.com.pl.arena.cm.geoportal.GeoportalException;
+import itti.com.pl.arena.cm.location.Range;
 import itti.com.pl.arena.cm.ontology.Ontology;
 import itti.com.pl.arena.cm.ontology.OntologyException;
 import itti.com.pl.arena.cm.service.Constants.ContextModuleRequestProperties;
@@ -293,6 +294,38 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
         }
         response.setFeatureVector(vector);
         return response;
+    }
+
+    @Override
+    public Object getPlatformNeighborhoodData(SimpleNamedValue objectId) {
+        // prepare response object
+        Object response = factory.createObject();
+        FeatureVector vector = factory.createFeatureVector();
+        vector.setDataSourceId(Constants.MODULE_NAME);
+
+        String platformId = objectId.getValue();
+        Platform platform = null;
+        // try to retrieve data from ontology
+        try {
+            platform = getOntology().getPlatform(platformId);
+        } catch (OntologyException e) {
+            LogHelper.exception(ContextModuleJmsService.class, "getPlatform", "Could not retrieve data from ontology", e);
+        }
+        // data retrieved -try to process it
+        if (platform != null) {
+            Set<String> parkingLots = null;
+            try {
+                parkingLots = ontology.getParkingLots(platform.getLocation(), Range.Km01.getRangeInKms());
+            } catch (OntologyException exc) {
+                LogHelper.exception(ContextModuleJmsService.class, "getPlatformNeighborhoodData", "Could not retrieve information about parking", exc);
+            }
+            //at least one parking lot found
+            if(!parkingLots.isEmpty()){
+                //TODO: add all the logic related to visible stuff
+            }
+        }
+        response.setFeatureVector(vector);
+        return response;    
     }
 
     @Override

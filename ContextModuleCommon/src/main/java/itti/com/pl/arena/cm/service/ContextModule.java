@@ -18,14 +18,26 @@ import eu.arena_fp7._1.Situation;
 public interface ContextModule {
 
     /**
-     * This method allows retrieval of current information about current position of the platform (e.g. location,
-     * velocity and travel direction).
+     * This method allows retrieval of information about the platform (cameras installed on platform, its dimensions) as
+     * well as current position of the platform (e.g. location, velocity and travel direction).
      * 
      * @param objectId
      *            ID of the object
      * @return information about platform with Kinematics and Location classes stored in Object’s featureVector
      */
     Object getPlatform(SimpleNamedValue objectId);
+
+    /**
+     * This method returns information about platform neighborhood. This method requires platform to be parked on
+     * parking lot, or any other defined area (Geo-data information about close platform area must be stored in
+     * Ontology). Expected result is: complete information about platform, all the objects around, and information which
+     * objects are monitored by each of the platform camera
+     * 
+     * @param platformId
+     *            ID of the object
+     * @return complete information about parking area, where platform is parked 
+     */
+    Object getPlatformNeighborhoodData(SimpleNamedValue platformId);
 
     /**
      * This method allows to update existing or create new platform in the ContextModule
@@ -65,8 +77,8 @@ public interface ContextModule {
      * the ContextModule
      * 
      * @param gisData
-     *            new or updated geo-object. Attribute 'value' of the {@link SimpleNamedValue} should contain
-     *            serialized {@link GeoObject} object
+     *            new or updated geo-object. Attribute 'value' of the {@link SimpleNamedValue} should contain serialized
+     *            {@link GeoObject} object
      * @return update status
      */
     BooleanNamedValue updateGISData(SimpleNamedValue gisData);
