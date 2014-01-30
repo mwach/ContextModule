@@ -31,6 +31,10 @@ public final class Constants {
          */
         getGISData,
         /**
+         * Service name used by the {@link ContextModule} extended 'getGISData' method
+         */
+        getGISDataExt,
+        /**
          * Service name used by the {@link ContextModule} 'updateGISData' method
          */
         updateGISData,

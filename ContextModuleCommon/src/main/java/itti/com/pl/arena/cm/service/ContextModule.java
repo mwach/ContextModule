@@ -28,16 +28,15 @@ public interface ContextModule {
     Object getPlatform(SimpleNamedValue objectId);
 
     /**
-     * This method returns information about platform neighborhood. This method requires platform to be parked on
+     * This method returns information about camera field of view. This method requires platform to be parked on
      * parking lot, or any other defined area (Geo-data information about close platform area must be stored in
-     * Ontology). Expected result is: complete information about platform, all the objects around, and information which
-     * objects are monitored by each of the platform camera
-     * 
+     * Ontology). Expected result is: complete information objects, which are suposed to be in camera field of view
+     * TODO: return list of points (coordinates) of the building
      * @param platformId
      *            ID of the object
      * @return complete information about parking area, where platform is parked 
      */
-    Object getPlatformNeighborhoodData(SimpleNamedValue platformId);
+    Object getCameraFieldOfView(SimpleNamedValue cameraId);
 
     /**
      * This method allows to update existing or create new platform in the ContextModule
@@ -71,6 +70,25 @@ public interface ContextModule {
      * @return available GIS data for specified location
      */
     Situation getGISData(Location location);
+
+    /**
+     * This method allows retrieval of available GIS data for specified location (i.e. creates Situation class with
+     * Objects having capabilities stored in their featureVectors) Situation class contains Object classes describing
+     * GIS features (e.g. buildings, roads, etc.) with appropriate featureVectors (e.g. number of lanes for roads or
+     * height for buildings). The type of that data depends on GIS data source capabilities
+     * 
+     * @param parameters complex object containing parameters:
+     *          - location information about searched location (instance of the {@link Location}
+     *          - radius (instance of the double object), measured in kilometers
+     *          - filters (instance of the String[] object) array containing names of the ontology classes
+     *                  which should be used to filter results
+     * All parameters are stored as {@link Location} and {@link SimpleNamedValue} objects inside {@link Situation} vector
+     * @return available GIS data for specified location
+     */
+    Situation getGISData(Situation parameters);
+
+//TODO: mail z CMClient output
+//TODO: licencja bibliotek
 
     /**
      * This method allows to update existing or create new geo-object (instance of the {@link GeoObject} interface) in

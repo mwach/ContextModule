@@ -1,5 +1,6 @@
 package itti.com.pl.arena.cm.client;
 
+import java.util.Arrays;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -9,10 +10,13 @@ import itti.com.pl.arena.cm.client.service.ContextModuleFacade;
 import itti.com.pl.arena.cm.service.ContextModule;
 import itti.com.pl.arena.cm.service.Constants.ContextModuleRequests;
 import itti.com.pl.arena.cm.utils.helper.IOHelperException;
+import itti.com.pl.arena.cm.utils.helper.JsonHelper;
+import itti.com.pl.arena.cm.utils.helper.JsonHelperException;
 import itti.com.pl.arena.cm.utils.helper.LogHelper;
 import itti.com.pl.arena.cm.utils.helper.PropertiesHelper;
 import itti.com.pl.arena.cm.utils.helper.StringHelper;
 import eu.arena_fp7._1.AbstractDataFusionType;
+import eu.arena_fp7._1.AbstractNamedValue;
 import eu.arena_fp7._1.FeatureVector;
 import eu.arena_fp7._1.Location;
 import eu.arena_fp7._1.Object;
@@ -57,11 +61,12 @@ public class CMClient {
             parseGetPlatformServiceResponse(client.getPlatformService("Vehicla_with_cameras_R1"));
             parseGetPlatformsServiceResponse(client.getPlatformsService(-0.94, 51.43));
             parseGetGISDataServiceResponse(client.getGISDataService(-0.94, 51.43));
+            parseGetGISDataServiceResponse(client.getGISDataService(-0.94, 51.43, 1.0, "Parking"));
             parseGetGeoportalDataServiceResponse(client.getGeoportalDataService(17.972946559166793, 53.124318916278824));
         } catch (ContextModuleClientException exc) {
             LogHelper.error(CMClient.class, "main", "Could not perform operation. Details: %s", exc.getMessage());
             printUsage();
-        } catch (RuntimeException exc) {
+        } catch (RuntimeException | JsonHelperException exc) {
             LogHelper.error(CMClient.class, "main", "Could not perform operation. Details: %s", exc.getMessage());
         } finally {
             client.shutdown();
@@ -236,6 +241,39 @@ public class CMClient {
      *            longitude
      * @param y
      *            latitude
+     * @param radius radius (in meters)
+     * @param classes list of object types, which should be returned by the service
+     * @return Object containing information retrieved from ContextModule
+     * @throws JsonHelperException  could not create request object
+     */
+    public Situation getGISDataService(double x, double y, Double radius, String...classes) throws JsonHelperException {
+
+        Location locationObject = createLocation(x, y);
+
+        SimpleNamedValue radiusObject = createSimpleNamedValue(radius != null ? String.valueOf(radius) : 
+            String.valueOf(Constants.UNDEFINED_VALUE));
+
+        SimpleNamedValue classesObject = createSimpleNamedValue(JsonHelper.toJson(classes));
+
+        Situation situation = createSituation(locationObject, radiusObject, classesObject);
+        situation.setHref(ContextModuleRequests.getGISDataExt.name());
+
+        Situation data = contextModule.getGISData(situation);
+
+
+
+
+        LogHelper.info(CMClient.class, "getGISDataService", "Server response received: %s", String.valueOf(data));
+        return data;
+    }
+
+    /**
+     * Returns information about GIS data
+     * 
+     * @param x
+     *            longitude
+     * @param y
+     *            latitude
      * @return Object containing information retrieved from external Geoportal service
      */
     public Situation getGeoportalDataService(double x, double y) {
@@ -317,6 +355,23 @@ public class CMClient {
         object.setDataSourceId(CLIENT_MODULE_NAME);
         object.setX(x);
         object.setY(y);
+        return object;
+    }
+
+    /**
+     * Creates simple location object
+     * 
+     * @param x
+     *            longitude
+     * @param y
+     *            latitude
+     * @return created request object
+     */
+    private Situation createSituation(AbstractNamedValue... params) {
+        Situation object = objectFactory.createSituation();
+        object.setId(getObjectId());
+        object.setDataSourceId(CLIENT_MODULE_NAME);
+        object.getGlobalSceneProperty().getFeature().addAll(Arrays.asList(params));
         return object;
     }
 

@@ -16,4 +16,10 @@ public final class Constants {
      * Encoding used when working with streams
      */
     public static final String ENCODING = "UTF-8";
+
+    /**
+     * Not specified value
+     */
+    public static final int UNDEFINED_VALUE = -1;
+
 }

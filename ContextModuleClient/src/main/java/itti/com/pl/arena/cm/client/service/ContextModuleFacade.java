@@ -221,7 +221,7 @@ public class ContextModuleFacade extends ModuleImpl implements Service, ContextM
      * @see itti.com.pl.arena.cm.service.ContextModule#getPlatform(eu.arena_fp7._1.SimpleNamedValue)
      */
     @Override
-    public eu.arena_fp7._1.Object getPlatformNeighborhoodData(SimpleNamedValue objectId) {
+    public eu.arena_fp7._1.Object getCameraFieldOfView(SimpleNamedValue objectId) {
         return (Object) submitData(objectId);
     }
 
@@ -251,6 +251,16 @@ public class ContextModuleFacade extends ModuleImpl implements Service, ContextM
     @Override
     public Situation getGISData(Location location) {
         return (Situation) submitData(location);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see itti.com.pl.arena.cm.service.ContextModule#getGISData(eu.arena_fp7._1.Situation)
+     */
+    @Override
+    public Situation getGISData(Situation parameters) {
+        return (Situation) submitData(parameters);
     }
 
     /*

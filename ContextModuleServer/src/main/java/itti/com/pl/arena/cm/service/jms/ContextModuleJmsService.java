@@ -297,12 +297,12 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
     }
 
     @Override
-    public Object getPlatformNeighborhoodData(SimpleNamedValue objectId) {
+    public Object getCameraFieldOfView(SimpleNamedValue objectId) {
         // prepare response object
         Object response = factory.createObject();
         FeatureVector vector = factory.createFeatureVector();
         vector.setDataSourceId(Constants.MODULE_NAME);
-
+//TODO: return camera data, like list of visible objects and their coordinates
         String platformId = objectId.getValue();
         Platform platform = null;
         // try to retrieve data from ontology
@@ -408,6 +408,43 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
         } catch (OntologyException exc) {
             LogHelper.exception(ContextModuleJmsService.class, "getGISData", "Could not retrieve ontology data", exc);
         }
+        //parse ontology data into service response
+        if (geographicalInformation != null) {
+
+            for (GeoObject geoObject : geographicalInformation) {
+                try {
+                    responseVector.getFeature().add(createSimpleNamedValue(geoObject.getId(), JsonHelper.toJson(geoObject)));
+                } catch (JsonHelperException exc) {
+                    LogHelper.warning(ContextModuleJmsService.class, "getGISData",
+                            "Could not add given object to the response: '%s'. Details: %s", geoObject,
+                            exc.getLocalizedMessage());
+                }
+            }
+        }
+        //add results to the response
+        response.setGlobalSceneProperty(responseVector);
+        return response;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see itti.com.pl.arena.cm.service.ContextModule#getGISData(eu.arena_fp7._1.Situation)
+     */
+    @Override
+    public Situation getGISData(Situation parameters) {
+
+        //prepare response object
+        Situation response = factory.createSituation();
+        FeatureVector responseVector = new FeatureVector();
+//TODO: implement that service
+        Set<GeoObject> geographicalInformation = null;
+//        try {
+//            geographicalInformation = getOntology().getGISObjects(
+////                    new itti.com.pl.arena.cm.dto.Location(location.getX(), location.getY()), getRadius());
+//        } catch (OntologyException exc) {
+//            LogHelper.exception(ContextModuleJmsService.class, "getGISData", "Could not retrieve ontology data", exc);
+//        }
         //parse ontology data into service response
         if (geographicalInformation != null) {
 
