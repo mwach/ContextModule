@@ -279,15 +279,24 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
     }
 
     @Override
-    public Set<GeoObject> getGISObjects(Location location, double radius, String gisObjectClass) throws OntologyException {
+    public Set<GeoObject> getGISObjects(Location location, double radius, String... gisObjectClasses) throws OntologyException {
         //get list of all available objects
         Set<GeoObject> gisInformation = getGISObjects(location, radius);
-        Set<GeoObject> responseSet = new HashSet<>();
-        //check if object class matches given criteria
-        for (GeoObject geoObject : gisInformation) {
-            if(getInstanceClass(geoObject.getId()).equalsIgnoreCase(gisObjectClass)){
-                responseSet.add(geoObject);
+        Set<GeoObject> responseSet = null;
+
+        //check if filter should be applied
+        if(gisObjectClasses != null && gisObjectClasses.length > 0){
+            responseSet = new HashSet<>();
+            //check if object class matches given criteria
+            for (String gisClass : gisObjectClasses) {
+                for (GeoObject geoObject : gisInformation) {
+                    if(getInstanceClass(geoObject.getId()).equalsIgnoreCase(gisClass)){
+                        responseSet.add(geoObject);
+                    }
+                }
             }
+        }else{
+            responseSet = gisInformation;
         }
         return responseSet;
 
