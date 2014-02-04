@@ -10,17 +10,19 @@ package itti.com.pl.arena.cm.location;
 public enum Range {
 
     /**
-     * One hundred meters
+     * ten kilometers
      */
-    Km01(0.00091),
+    Km10(0.091),
     /**
      * One kilometer
      */
     Km1(0.0091),
     /**
-     * ten kilometers
+     * One hundred meters
      */
-    Km10(0.091);
+    Km01(0.00091),
+    ;
+
     private double rangeInKms = 0;
 
     private Range(double rangeInKms) {
@@ -29,5 +31,9 @@ public enum Range {
 
     public double getRangeInKms() {
         return rangeInKms;
+    }
+
+    public static Range getClosestRange(){
+        return Km01;
     }
 }

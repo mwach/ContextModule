@@ -137,19 +137,24 @@ public class PlatformTracker implements Service, LocationListener {
                     "Could not persist location data: for platform %s. Details: %s", getPlatformId(), e.getLocalizedMessage());
         }
         try {
-            Set<GeoObject> parkingLots = ontology.getGISObjects(location, Range.Km10.getRangeInKms(),
-                    OntologyConstants.Parking.name());
+            //check all the ranges, from the widest one to the closest
+            for (Range range : Range.values()) {
 
-            //TODO: what exactly should happen here (truck is getting closer to the destination)
-            if (!parkingLots.isEmpty()) {
-                LogHelper.debug(PlatformTracker.class, "onLocationChange",
-                        "Found parking lot defined in the CM. Parking details: %s", parkingLots);
-
-                Set<GeoObject> closerParkingLots = ontology.getGISObjects(location, Range.Km1.getRangeInKms(),
+                //get parking lots for given range
+                Set<GeoObject> parkingLots = ontology.getGISObjects(location, range.getRangeInKms(),
                         OntologyConstants.Parking.name());
-                if (!closerParkingLots.isEmpty()) {
+
+                if (!parkingLots.isEmpty()) {
                     LogHelper.debug(PlatformTracker.class, "onLocationChange",
-                            "Found closer parking lot defined in the CM. Parking details: %s", parkingLots);
+                            "Found parking lot in the close range: %f. Parking details: %s", range.getRangeInKms(), parkingLots);
+
+                    //we are on the parking
+                    if(range == Range.getClosestRange()){
+                        //TODO: do we want to do something with that?
+                    }
+                }else{
+                    //no parking lots in the given area, break the loop
+                    break;
                 }
             }
 
