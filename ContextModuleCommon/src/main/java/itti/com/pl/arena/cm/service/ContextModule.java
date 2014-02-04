@@ -30,10 +30,10 @@ public interface ContextModule {
     /**
      * This method returns information about camera field of view. This method requires platform to be parked on
      * parking lot, or any other defined area (Geo-data information about close platform area must be stored in
-     * Ontology). Expected result is: complete information objects, which are suposed to be in camera field of view
+     * Ontology). Expected result is: complete information objects, which are supposed to be in camera field of view
      * TODO: return list of points (coordinates) of the building
-     * @param platformId
-     *            ID of the object
+     * @param cameraId
+     *            ID of the camera
      * @return complete information about parking area, where platform is parked 
      */
     Object getCameraFieldOfView(SimpleNamedValue cameraId);
@@ -86,9 +86,6 @@ public interface ContextModule {
      * @return available GIS data for specified location
      */
     Situation getGISData(Situation parameters);
-
-//TODO: mail z CMClient output
-//TODO: licencja bibliotek
 
     /**
      * This method allows to update existing or create new geo-object (instance of the {@link GeoObject} interface) in

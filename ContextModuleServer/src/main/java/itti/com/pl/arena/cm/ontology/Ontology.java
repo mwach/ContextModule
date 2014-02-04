@@ -148,10 +148,7 @@ public interface Ontology {
     /**
      * Adds information about new GIS object to the ontology
      * 
-     * @param x
-     *            latitude
-     * @param y
-     *            longitude
+     * @param location location 
      * @param geoportalData
      *            information about GIS objects
      * @throws OntologyException

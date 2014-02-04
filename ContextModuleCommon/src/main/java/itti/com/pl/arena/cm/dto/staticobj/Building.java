@@ -48,7 +48,7 @@ public class Building extends GeoObject {
 
     /**
      * returns type of the building
-     * @return 
+     * @return type of the building
      */
     public Type getType() {
         return type;

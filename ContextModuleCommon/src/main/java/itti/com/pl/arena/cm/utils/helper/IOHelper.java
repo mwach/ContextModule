@@ -167,7 +167,7 @@ public final class IOHelper {
     /**
      * Writes text data to file specified by its name using 'UTF-8' encoding
      * 
-     * @return content of the file
+     * @param content content of the file
      * @param outputFileName
      *            name of the file to write text data to
      * @throws IOHelperException

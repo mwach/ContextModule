@@ -38,9 +38,8 @@ public class ParkingLot extends GeoObject {
     }
 
     /**
-     * Returns list of infrastructure objects located on given parking
-     * 
-     * @return
+     * Returns list of infrastructure objects located on given parking lot
+     * @return list of the infrastructure objects detected on the parking lot
      */
     public Map<String, Infrastructure> getInfrastructure() {
         return new HashMap<>(infrastructures);
@@ -48,8 +47,7 @@ public class ParkingLot extends GeoObject {
 
     /**
      * Adds a new infrastructure object located on given parking
-     * 
-     * @param infrastructure
+     * @param infrastructure adds a new infrastructure object to the parking lot object
      */
     public void addIntrastructure(Infrastructure infrastructure) {
         this.infrastructures.put(infrastructure.getId(), infrastructure);
@@ -67,7 +65,7 @@ public class ParkingLot extends GeoObject {
     /**
      * Returns list of buildings located on given parking
      * 
-     * @return
+     * @return list of buildings
      */
     public Map<String, Building> getBuildings() {
         return new HashMap<>(buildings);
@@ -76,7 +74,7 @@ public class ParkingLot extends GeoObject {
     /**
      * Adds a new building object located on given parking
      * 
-     * @param building
+     * @param building building
      */
     public void addBuilding(Building building) {
         this.buildings.put(building.getId(), building);

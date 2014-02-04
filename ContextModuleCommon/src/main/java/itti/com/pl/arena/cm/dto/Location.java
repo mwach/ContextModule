@@ -90,7 +90,7 @@ public class Location implements Serializable {
 
     /**
      * returns value of the longitude
-     * @return
+     * @return longitude
      */
     public double getLongitude() {
         return longitude;
@@ -98,7 +98,7 @@ public class Location implements Serializable {
 
     /**
      * returns value of the latitude
-     * @return
+     * @return latitude
      */
     public double getLatitude() {
         return latitude;
@@ -106,7 +106,7 @@ public class Location implements Serializable {
 
     /**
      * returns value of the altitude
-     * @return
+     * @return altitude
      */
     public double getAltitude() {
         return altitude;
@@ -114,7 +114,7 @@ public class Location implements Serializable {
 
     /**
      * returns value of the bearing
-     * @return
+     * @return bearing
      */
     public int getBearing() {
         return bearing;
@@ -122,15 +122,15 @@ public class Location implements Serializable {
 
     /**
      * returns value of the speed
-     * @return
+     * @return speed
      */
     public double getSpeed() {
         return speed;
     }
 
     /**
-     * returns value of the time
-     * @return
+     * returns value of the location update timestamp
+     * @return time
      */
     public long getTime() {
         return time;
@@ -138,7 +138,7 @@ public class Location implements Serializable {
 
     /**
      * returns value of the accuracy
-     * @return
+     * @return accuracy
      */
     public double getAccuracy() {
         return accuracy;
@@ -146,8 +146,9 @@ public class Location implements Serializable {
 
     @Override
     public String toString() {
-        return "Location [longitude=" + longitude + ", latitude=" + latitude + ", altitude=" + altitude + ", bearing=" + bearing
-                + ", speed=" + speed + ", time=" + time + ", accuracy=" + accuracy + "]";
+        return String.format("Location [longitude=%f, latitude=%f, altitude=%f, "
+                + "bearing=%d, speed=%f, time=%d, accuracy=%f]", getLongitude(), getLatitude(), getAltitude(),
+                getBearing(), getSpeed(), getTime(), getAccuracy());
     }
 
     @Override

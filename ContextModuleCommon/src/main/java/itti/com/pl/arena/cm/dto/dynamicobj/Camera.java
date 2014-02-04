@@ -30,6 +30,19 @@ public class Camera implements Serializable {
      */
     private RelativePosition onPlatformPosition;
 
+    /**
+     * Default camera object constructor
+     * 
+     * @param id
+     *            ID of the camera
+     * @param type
+     *            type of the camera (any string accepted but should be some common, easy to recognize value like
+     *            infrared, fisheye)
+     *            TODO: should we create an enum to keep acceptable values
+     * @param angleX camera horizontal angle 
+     * @param angleY camera vertical angle
+     * @param position position of the camera on truck
+     */
     public Camera(String id, String type, double angleX, double angleY, RelativePosition position) {
         this.id = id;
         this.type = type;
@@ -41,7 +54,7 @@ public class Camera implements Serializable {
     /**
      * Returns ID of the camera
      * 
-     * @return
+     * @return ID
      */
     public String getId() {
         return id;
@@ -50,7 +63,7 @@ public class Camera implements Serializable {
     /**
      * Returns type of the camera
      * 
-     * @return
+     * @return type
      */
     public String getType() {
         return type;
@@ -68,7 +81,7 @@ public class Camera implements Serializable {
     /**
      * Returns horizontal angle of the camera (area of view in X axis)
      * 
-     * @return
+     * @return horizontal angle
      */
     public double getAngleX() {
         return angleX;
@@ -77,7 +90,7 @@ public class Camera implements Serializable {
     /**
      * Updates horizontal angle of the camera (area of view in X axis)
      * 
-     * @param angleX
+     * @param angleX vertical angle
      */
     public void setAngleX(double angleX) {
         this.angleX = angleX;
@@ -86,7 +99,7 @@ public class Camera implements Serializable {
     /**
      * Returns vertical angle of the camera (area of view in Y axis)
      * 
-     * @return
+     * @return vertical angle
      */
     public double getAngleY() {
         return angleY;
@@ -95,7 +108,7 @@ public class Camera implements Serializable {
     /**
      * Updates vertical angle of the camera (area of view in Y axis)
      * 
-     * @param angleY
+     * @param angleY vertical angle
      */
     public void setAngleY(double angleY) {
         this.angleY = angleY;
@@ -104,7 +117,7 @@ public class Camera implements Serializable {
     /**
      * Returns position of the camera on platform
      * 
-     * @return
+     * @return position on platform
      */
     public RelativePosition getOnPPlatformPosition() {
         return onPlatformPosition;
@@ -113,7 +126,7 @@ public class Camera implements Serializable {
     /**
      * Updates position of the camera on platform
      * 
-     * @param onPlatformPosition
+     * @param onPlatformPosition position on platform
      */
     public void setOnPlatformPosition(RelativePosition onPlatformPosition) {
         this.onPlatformPosition = onPlatformPosition;
@@ -167,5 +180,4 @@ public class Camera implements Serializable {
             return false;
         return true;
     }
-
 }

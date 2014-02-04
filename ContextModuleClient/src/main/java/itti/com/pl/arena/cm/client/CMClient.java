@@ -14,7 +14,6 @@ import itti.com.pl.arena.cm.utils.helper.JsonHelper;
 import itti.com.pl.arena.cm.utils.helper.JsonHelperException;
 import itti.com.pl.arena.cm.utils.helper.LogHelper;
 import itti.com.pl.arena.cm.utils.helper.PropertiesHelper;
-import itti.com.pl.arena.cm.utils.helper.StringHelper;
 import eu.arena_fp7._1.AbstractDataFusionType;
 import eu.arena_fp7._1.AbstractNamedValue;
 import eu.arena_fp7._1.FeatureVector;
@@ -40,6 +39,7 @@ public class CMClient {
 
     // Arena bus wrapper
     private ContextModule contextModule = null;
+    // factory used to create Arena bus objects
     private ObjectFactory objectFactory = null;
 
     /**
@@ -58,17 +58,27 @@ public class CMClient {
             // initialize the client
             client.init();
             // call all available CM public services
+            //get the platform info
             parseGetPlatformServiceResponse(client.getPlatformService("Vehicla_with_cameras_R1"));
+            //get all the platforms from given location
             parseGetPlatformsServiceResponse(client.getPlatformsService(-0.94, 51.43));
+            //get GIS data from the ontology
             parseGetGISDataServiceResponse(client.getGISDataService(-0.94, 51.43));
+            //get GIS data from the ontology using additional filters
             parseGetGISDataServiceResponse(client.getGISDataService(-0.94, 51.43, 1.0, "Parking"));
+            //retrieve data from the external service (geoportal) and add it to ontology
             parseGetGeoportalDataServiceResponse(client.getGeoportalDataService(17.972946559166793, 53.124318916278824));
+            //retrieve info about camera field of view
+            parseGetCameraFieldOfViewResponse(client.getCameraFieldOfView("Cameras_5"));
         } catch (ContextModuleClientException exc) {
+            //CM exception e.g. properties file parsing
             LogHelper.error(CMClient.class, "main", "Could not perform operation. Details: %s", exc.getMessage());
             printUsage();
         } catch (RuntimeException | JsonHelperException exc) {
+            //other exception e.g. response parsing error
             LogHelper.error(CMClient.class, "main", "Could not perform operation. Details: %s", exc.getMessage());
         } finally {
+            //shutdown the client
             client.shutdown();
         }
         // call 'exit' to interrupt the client listener thread
@@ -140,6 +150,18 @@ public class CMClient {
     }
 
     /**
+     * Parses response received from getCameraFieldOfView service
+     * 
+     * @param cameraData
+     *            information retrieved from the ontology about camera
+     */
+    private static void parseGetCameraFieldOfViewResponse(Object cameraData) {
+        if (cameraData != null) {
+            parseFeatureVector(cameraData.getFeatureVector());
+        }
+    }
+
+    /**
      * Parses response received from getGeoportalData service
      * 
      * @param geoportalData
@@ -173,13 +195,13 @@ public class CMClient {
     private void loadProperties(String propertiesFile) throws ContextModuleClientException {
 
         try {
-            properties.putAll(PropertiesHelper.loadPropertiesAsMap(propertiesFile));
+            properties.putAll(PropertiesHelper.loadProperties(propertiesFile));
         } catch (IOHelperException e) {
             throw new ContextModuleClientException(String.format("Could not load properties file. Details: '%s'",
                     e.getLocalizedMessage()));
         }
-        if (!StringHelper
-                .hasContent(PropertiesHelper.getPropertyAsString(properties, ClientPropertyNames.brokerUrl.name(), null))) {
+        //check, if all required properties were defined in the file
+        if(!PropertiesHelper.hasProperty(properties, ClientPropertyNames.brokerUrl.name())){
             throw new ContextModuleClientException(String.format("Required property '%s' not found",
                     ClientPropertyNames.brokerUrl.name()));
         }
@@ -241,17 +263,20 @@ public class CMClient {
      *            longitude
      * @param y
      *            latitude
-     * @param radius radius (in meters)
-     * @param classes list of object types, which should be returned by the service
+     * @param radius
+     *            radius (in meters)
+     * @param classes
+     *            list of object types, which should be returned by the service
      * @return Object containing information retrieved from ContextModule
-     * @throws JsonHelperException  could not create request object
+     * @throws JsonHelperException
+     *             could not create request object
      */
-    public Situation getGISDataService(double x, double y, Double radius, String...classes) throws JsonHelperException {
+    public Situation getGISDataService(double x, double y, Double radius, String... classes) throws JsonHelperException {
 
         Location locationObject = createLocation(x, y);
 
-        SimpleNamedValue radiusObject = createSimpleNamedValue(radius != null ? String.valueOf(radius) : 
-            String.valueOf(Constants.UNDEFINED_VALUE));
+        SimpleNamedValue radiusObject = createSimpleNamedValue(radius != null ? String.valueOf(radius) : String
+                .valueOf(Constants.UNDEFINED_VALUE));
 
         SimpleNamedValue classesObject = createSimpleNamedValue(JsonHelper.toJson(classes));
 
@@ -259,9 +284,6 @@ public class CMClient {
         situation.setHref(ContextModuleRequests.getGISDataExt.name());
 
         Situation data = contextModule.getGISData(situation);
-
-
-
 
         LogHelper.info(CMClient.class, "getGISDataService", "Server response received: %s", String.valueOf(data));
         return data;
@@ -285,6 +307,19 @@ public class CMClient {
     }
 
     /**
+     * Returns information about objects in the camera field of view
+     * @param cameraId ID of the camera
+     * @return Object containing information about camera field of view (ontology data)
+     */
+    public Object getCameraFieldOfView(String cameraId) {
+        SimpleNamedValue cameraObject = createSimpleNamedValue(cameraId);
+        cameraObject.setHref(ContextModuleRequests.getCameraFieldOfView.name());
+        Object data = contextModule.getCameraFieldOfView(cameraObject);
+        LogHelper.info(CMClient.class, "getCameraFieldOfView", "Server response received: %s", String.valueOf(data));
+        return data;
+    }
+
+    /**
      * Prints command usage
      */
     public static void printUsage() {
@@ -300,23 +335,19 @@ public class CMClient {
         String brokerUrl = PropertiesHelper.getPropertyAsString(properties, ClientPropertyNames.brokerUrl.name(), null);
 
         // client's port
-        int clientPort = PropertiesHelper.getPropertyAsInteger(properties, ClientPropertyNames.clientPort.name(), -1);
+        int clientPort = PropertiesHelper.getPropertyAsInteger(properties, ClientPropertyNames.clientPort.name(), ClientDefaults.DEFAULT_CLIENT_PORT);
 
-        // optional - client run in the debug mode
-        boolean debugMode = PropertiesHelper.getPropertyAsBoolean(properties, ClientPropertyNames.debugMode.name(), false);
-        // optional - maximum client waiting time (waiting for the response from CM)
-        int responseWaitingTime = PropertiesHelper.getPropertyAsInteger(properties,
-                ClientPropertyNames.responseWaitingTime.name(), 5000);
+        // debug mode state
+        boolean debugMode = PropertiesHelper.getPropertyAsBoolean(properties, ClientPropertyNames.debugMode.name(), ClientDefaults.DEFAULT_DEBUG_MODE);
 
+        // maximum client waiting time
+        int responseWaitingTime = PropertiesHelper.getPropertyAsInteger(properties, ClientPropertyNames.responseWaitingTime.name(), ClientDefaults.DEFAULT_WAITING_TIME);
+
+        //create CM facade object
         ContextModuleFacade cmFacade = new ContextModuleFacade(CLIENT_MODULE_NAME, brokerUrl);
         cmFacade.setDebug(debugMode);
         cmFacade.setResponseWaitingTime(responseWaitingTime);
-
-        if (clientPort > 0 && clientPort < 65500) {
-            cmFacade.setClientPort(clientPort);
-        } else {
-            LogHelper.info(CMClient.class, "init", String.format("Client port out of range: %d", clientPort));
-        }
+        cmFacade.setClientPort(clientPort);
 
         // initialize the client (tries to connect to the Arena bus)
         cmFacade.init();

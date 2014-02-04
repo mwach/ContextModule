@@ -90,7 +90,7 @@ public class Platform implements Serializable{
 
     /**
      * Returns ID of the platform
-     * @return
+     * @return ID
      */
     public String getId() {
         return id;
@@ -98,7 +98,7 @@ public class Platform implements Serializable{
 
     /**
      * Return last know location of the platform 
-     * @return
+     * @return location
      */
     public Location getLocation() {
         return location;
@@ -113,7 +113,7 @@ public class Platform implements Serializable{
 
     /**
      * Returns type of the platform
-     * @return
+     * @return type
      */
     public Type getType(){
         return type;
@@ -128,7 +128,7 @@ public class Platform implements Serializable{
 
     /**
      * Returns list of cameras installed on the platform
-     * @return
+     * @return list of cameras
      */
     public Map<String, Camera> getCameras() {
         return new HashMap<>(cameras);
@@ -146,7 +146,7 @@ public class Platform implements Serializable{
 
     /**
      * Removes camera from the platform
-     * @param cameraId
+     * @param cameraId ID of the camera
      */
     public void removeCamera(String cameraId) {
         if(cameraId != null){
@@ -156,7 +156,7 @@ public class Platform implements Serializable{
     
     /**
      * Returns width of the platform
-     * @return
+     * @return width width
      */
     public double getWidth() {
         return width;
@@ -164,7 +164,7 @@ public class Platform implements Serializable{
 
     /**
      * Sets width of the platform
-     * @return
+     * @param width
      */
     public void setWidth(double width) {
         this.width = width;
@@ -172,7 +172,7 @@ public class Platform implements Serializable{
 
     /**
      * Returns height of the platform
-     * @return
+     * @return height height
      */
     public double getHeight() {
         return height;
@@ -180,7 +180,7 @@ public class Platform implements Serializable{
 
     /**
      * Sets height of the platform
-     * @return
+     * @param height
      */
     public void setHeight(double height) {
         this.height = height;
@@ -188,7 +188,7 @@ public class Platform implements Serializable{
 
     /**
      * Returns length of the platform
-     * @return
+     * @return length
      */
     public double getLength() {
         return length;
@@ -196,7 +196,7 @@ public class Platform implements Serializable{
 
     /**
      * Sets length of the platform
-     * @return
+     * @param length
      */
     public void setLength(double length) {
         this.length = length;

@@ -21,7 +21,7 @@ public interface LocationListener {
     /**
      * Returns unique ID of the listener Used for registering and deregistering it from the {@link LocationPublisher}
      * 
-     * @return
+     * @return ID of the listener
      */
     public String getId();
 }

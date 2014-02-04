@@ -10,7 +10,7 @@ public interface Service {
 
     /**
      * Method called during bean initialization If module cannot be initialized (e.g. service cannot connect to the DB)
-     * an {@link BeanInitializationException} will be thrown
+     * an runtime initialization exception will be thrown
      */
     public void init();
 

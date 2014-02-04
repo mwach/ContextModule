@@ -45,10 +45,18 @@ public abstract class GeoObject implements Serializable {
     }
     /**
      * Returns information about object boundaries
-     * @return
+     * @return list of the object boundaries
      */
     public Location[] getBoundaries() {
         return boundaries.clone();
+    }
+
+    /**
+     * Returns number of boundary objects
+     * @return number (count) of the object boundaries
+     */
+    private int getBoundariesLength(){
+        return boundaries.length;
     }
 
     /**
@@ -65,7 +73,7 @@ public abstract class GeoObject implements Serializable {
 
     /**
      * Returns information about ID of the object
-     * @return
+     * @return ID of the object
      */
     public String getId() {
         return id;
@@ -73,7 +81,7 @@ public abstract class GeoObject implements Serializable {
 
     /**
      * Returns information about object location of the object
-     * @return
+     * @return location of the object
      */
     public Location getLocation() {
         return location;
@@ -81,7 +89,7 @@ public abstract class GeoObject implements Serializable {
 
     /**
      * Updates information about object location of the object
-     * @param location
+     * @param location location of the object
      */
     public void setLocation(Location location) {
         this.location = location;
@@ -89,7 +97,7 @@ public abstract class GeoObject implements Serializable {
 
     /**
      * Returns administrative information about the object (country)
-     * @return
+     * @return country name
      */
     public String getCountry() {
         return country;
@@ -97,7 +105,7 @@ public abstract class GeoObject implements Serializable {
 
     /**
      * Updates administrative information about the object (country)
-     * @param country
+     * @param country name
      */
     public void setCountry(String country) {
         this.country = country;
@@ -105,7 +113,7 @@ public abstract class GeoObject implements Serializable {
 
     /**
      * Returns administrative information about the object (town/city)
-     * @return
+     * @return town name
      */
     public String getTown() {
         return town;
@@ -113,7 +121,7 @@ public abstract class GeoObject implements Serializable {
 
     /**
      * Updates administrative information about the object (town/city)
-     * @param town
+     * @param town town name
      */
     public void setTown(String town) {
         this.town = town;
@@ -121,7 +129,7 @@ public abstract class GeoObject implements Serializable {
 
     /**
      * Returns administrative information about the object (street)
-     * @return
+     * @return street name
      */
     public String getStreet() {
         return street;
@@ -129,7 +137,7 @@ public abstract class GeoObject implements Serializable {
 
     /**
      * Updates administrative information about the object (street)
-     * @param street
+     * @param street street name
      */
     public void setStreet(String street) {
         this.street = street;
@@ -137,7 +145,7 @@ public abstract class GeoObject implements Serializable {
 
     /**
      * Returns administrative information about the object (number)
-     * @return
+     * @return street number
      */
     public int getStreetNumber() {
         return streetNumber;
@@ -145,7 +153,7 @@ public abstract class GeoObject implements Serializable {
 
     /**
      * Updates administrative information about the object (number)
-     * @param streetNumber
+     * @param streetNumber street number
      */
     public void setStreetNumber(int streetNumber) {
         this.streetNumber = streetNumber;
@@ -153,6 +161,6 @@ public abstract class GeoObject implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("GeoObject [objectId=%s, location=%s, boundaries=%s]", getId(), getLocation(), getBoundaries());
+        return String.format("GeoObject [objectId=%s, location=%s, boundaries size=%d]", getId(), getLocation(), getBoundariesLength());
     }
 }

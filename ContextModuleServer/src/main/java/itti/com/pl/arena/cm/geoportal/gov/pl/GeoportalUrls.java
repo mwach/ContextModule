@@ -81,7 +81,7 @@ public enum GeoportalUrls {
     /**
      * Returns URL of given Geoportal service
      * 
-     * @return
+     * @return URL of the service
      */
     public String getServiceURL() {
         return serviceUrl;

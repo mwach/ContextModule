@@ -102,7 +102,7 @@ public class NumbersHelper {
      * 
      * @param valueString
      *            input string containing one or more double values
-     * @param delimeter
+     * @param delimiter
      *            double values delimiter
      * @return array of double values
      */

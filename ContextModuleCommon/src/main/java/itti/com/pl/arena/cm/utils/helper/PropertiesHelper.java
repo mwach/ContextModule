@@ -52,7 +52,7 @@ public final class PropertiesHelper {
     /**
      * Loads properties from file into Java {@link Map} object
      * 
-     * @param fileName
+     * @param propertiesFileName
      *            name of the file with properties
      * @return {@link Map} object
      * @throws IOHelperException
@@ -143,5 +143,10 @@ public final class PropertiesHelper {
             return false;
         }
         return defaultValue;
+    }
+
+    public static boolean hasProperty(Properties properties, String propertyName) {
+        return StringHelper.hasContent(
+                PropertiesHelper.getPropertyAsString(properties, propertyName, null));
     }
 }

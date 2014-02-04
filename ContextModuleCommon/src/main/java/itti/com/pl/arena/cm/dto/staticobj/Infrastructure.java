@@ -52,7 +52,7 @@ public class Infrastructure extends GeoObject {
 
     /**
      * returns type of the infrastructure
-     * @return 
+     * @return type of the infrastructure
      */
     public Type getType() {
         return type;

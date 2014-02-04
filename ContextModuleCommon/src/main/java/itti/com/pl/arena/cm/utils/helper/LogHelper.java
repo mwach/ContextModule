@@ -73,7 +73,7 @@ public final class LogHelper {
      *            class throwing an exception
      * @param method
      *            name of the method throwing an exception
-     * @param message
+     * @param msg
      *            message to be logged
      * @param args
      *            optional message arguments
@@ -89,7 +89,7 @@ public final class LogHelper {
      *            class throwing an exception
      * @param method
      *            name of the method throwing an exception
-     * @param message
+     * @param msg
      *            message to be logged
      * @param args
      *            optional message arguments
@@ -105,7 +105,7 @@ public final class LogHelper {
      *            class throwing an exception
      * @param method
      *            name of the method throwing an exception
-     * @param message
+     * @param msg
      *            message to be logged
      * @param args
      *            optional message arguments

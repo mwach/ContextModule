@@ -33,7 +33,7 @@ public enum RelativePosition {
 
     /**
      * Returns value of the {@link RelativePosition} in human-readable form
-     * @return
+     * @return position
      */
     public String getPosition() {
         return position;

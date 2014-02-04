@@ -44,9 +44,9 @@ public final class GeoportalService implements Geoportal {
     /**
      * Calls selected Geoportal service and returns returned data
      * 
-     * @param serviceUrl
+     * @param service
      *            URL to the Geoportal service
-     * @param requestData
+     * @param requestObject
      *            data to be sent in the request
      * @return data returned from the Geoportal service
      * @throws GeoportalException

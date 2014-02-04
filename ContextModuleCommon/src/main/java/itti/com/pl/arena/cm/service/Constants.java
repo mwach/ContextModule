@@ -41,7 +41,14 @@ public final class Constants {
         /**
          * Service name used by the {@link ContextModule} 'getGeoportalData' method
          */
-        getGeoportalData;
+        getGeoportalData,
+        
+        /**
+         * Service name used by the {@link ContextModule} 'getCameraFieldOfView' method
+         */
+        getCameraFieldOfView,
+
+        ;
     }
 
     public enum ContextModuleRequestProperties {

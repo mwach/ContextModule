@@ -1,5 +1,6 @@
 package itti.com.pl.arena.cm.service.jms;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.beans.factory.BeanInitializationException;
@@ -299,6 +300,8 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
 
     @Override
     public Object getCameraFieldOfView(SimpleNamedValue objectId) {
+
+        //TODO: temporary
         // prepare response object
         Object response = factory.createObject();
         FeatureVector vector = factory.createFeatureVector();
@@ -314,9 +317,10 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
         }
         // data retrieved -try to process it
         if (platform != null) {
-            Set<String> parkingLots = null;
+            Set<String> parkingLots = new HashSet<>();
             try {
-                parkingLots = ontology.getParkingLots(platform.getLocation(), Range.Km01.getRangeInKms());
+                parkingLots.addAll(
+                        ontology.getParkingLots(platform.getLocation(), Range.Km01.getRangeInKms()));
             } catch (OntologyException exc) {
                 LogHelper.exception(ContextModuleJmsService.class, "getPlatformNeighborhoodData",
                         "Could not retrieve information about parking", exc);
@@ -411,8 +415,8 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
     public Situation getGISData(Situation parameters) {
 
         Location requestLocation = null;
-        double requestRange = Constants.UNDEFINED_VALUE;
-        String[] requestClasses = null;
+        double requestRange = getRadius();
+        String[] requestClasses = new String[]{null};
         // try to parse request object into parameters
         try {
             for (AbstractNamedValue parameter : parameters.getGlobalSceneProperty().getFeature()) {
@@ -432,7 +436,8 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
             LogHelper.exception(ContextModuleJmsService.class, "getGISData", "Could not parse request data", exc);
         }
 
-        return getGeoObjects(requestLocation, requestRange != Constants.UNDEFINED_VALUE ? requestRange : getRadius(),
+        return getGeoObjects(requestLocation, 
+                requestRange,
                 requestClasses);
     }
 
@@ -443,7 +448,10 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
         FeatureVector responseVector = new FeatureVector();
 
         Set<GeoObject> geographicalInformation = null;
-        itti.com.pl.arena.cm.dto.Location cmLocation = new itti.com.pl.arena.cm.dto.Location(location.getX(), location.getY());
+        itti.com.pl.arena.cm.dto.Location cmLocation = null;
+        if(location != null){
+            cmLocation = new itti.com.pl.arena.cm.dto.Location(location.getX(), location.getY());
+        }
         try {
             geographicalInformation = getOntology().getGISObjects(cmLocation, radius, classes);
         } catch (OntologyException exc) {
