@@ -24,12 +24,14 @@ import eu.arena_fp7._1.DataProducer;
 import eu.arena_fp7._1.DataRepository;
 import eu.arena_fp7._1.Module;
 import eu.arena_fp7._1.SensorManager;
+import eu.arena_fp7._1.ThreatHandler;
 import eu.arena_fp7._1.TimeSteppedModule;
 
 /**
- * This model feeds a ComboBox with the known modules' list. This implements the
- * ConfigurationManagerInterface to get the module registering events. But, this
- * is not a Module. It is a listener for events dispatched by ModuleImpl. <br>
+ * This model feeds a ComboBox with the known SensorManagers' list. This
+ * implements the ConfigurationManagerInterface to get the module registering
+ * events. But, this is not a Module. It is a listener for events dispatched by
+ * ModuleImpl. <br>
  * BUG: will not display a data producer which has been registered before its
  * initialization but has not distributed data before this module's query to the
  * repository.
@@ -37,15 +39,15 @@ import eu.arena_fp7._1.TimeSteppedModule;
  * @author F270116
  * 
  */
-public class ModuleListComboboxModel extends AbstractListModel
-		implements ComboBoxModel, ConfigurationManagerInterface {
+public class SensorManagerListComboboxModel extends AbstractListModel implements
+		ComboBoxModel, ConfigurationManagerInterface {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private TreeSet<String> dataProducerNames = new TreeSet<String>();
-	private ArrayList<String> _dataProducerNamesList = new ArrayList<String>();
+	private TreeSet<String> sensorManagersNames = new TreeSet<String>();
+	private ArrayList<String> _sensorManagerNamesList = new ArrayList<String>();
 
 	private Client _client;
 	private ModuleImpl _module;
@@ -56,32 +58,25 @@ public class ModuleListComboboxModel extends AbstractListModel
 	 * @param client
 	 * @param module
 	 */
-	public ModuleListComboboxModel(Client client, ModuleImpl module) {
+	public SensorManagerListComboboxModel(Client client, ModuleImpl module) {
 		super();
 		_client = client;
 		_module = module;
-		dataProducerNames.add("");
+	
+		synchronized (sensorManagersNames) {
+			_module.addConfigurationManagerListener(this);
 
-		// For the sake of the demonstration, we look for the first repository
-		// to give an answer.
-		// A real application could do that, or concatenate the results, or,
-		// better, perform a join.
-		List<String> repositories = _client.getRepositoriesNames();
-		Iterator<String> it = repositories.iterator();
-		List<DataProducer> producers = null;
-		while (it.hasNext() && (producers == null)) {
-			DataRepositoryProxy proxy = _client.getDataRepositoryProxy(it
-					.next());
-			if (proxy != null) {
-				producers = proxy.getDataProducers();
-				for (DataProducer producer : producers) {
-					dataProducerNames.add(producer.getId());
+			sensorManagersNames.add("");
+			List<Module> modules = _client.getModuleList(getModuleName());
+			for (Module registeredModule : modules) {
+
+				if (registeredModule instanceof SensorManager) {
+					sensorManagersNames.add(registeredModule.getId());
 				}
 			}
+			_sensorManagerNamesList.addAll(sensorManagersNames);
 		}
 
-		_dataProducerNamesList.addAll(dataProducerNames);
-		_module.addConfigurationManagerListener(this);
 
 	}
 
@@ -179,13 +174,6 @@ public class ModuleListComboboxModel extends AbstractListModel
 	@Override
 	public void onDataProducerRegistered(DataProducer producer) {
 
-		synchronized (dataProducerNames) {
-			dataProducerNames.add(producer.getId());
-			_dataProducerNamesList.clear();
-			_dataProducerNamesList.addAll(dataProducerNames);
-			fireContentsChanged(this, 0, dataProducerNames.size());
-		}
-
 	}
 
 	/*
@@ -239,34 +227,46 @@ public class ModuleListComboboxModel extends AbstractListModel
 
 	}
 
-	
-	
-	/* (non-Javadoc)
-	 * @see com.safran.arena.ConfigurationManagerInterface#onSensorManagerRegistered(eu.arena_fp7._1.SensorManager)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.safran.arena.ConfigurationManagerInterface#onSensorManagerRegistered
+	 * (eu.arena_fp7._1.SensorManager)
 	 */
 	@Override
 	public void onSensorManagerRegistered(SensorManager sensorManager) {
-		// TODO Auto-generated method stub
-		
+		synchronized (sensorManagersNames) {
+			sensorManagersNames.add(sensorManager.getId());
+			_sensorManagerNamesList.clear();
+			_sensorManagerNamesList.addAll(sensorManagersNames);
+			fireContentsChanged(this, 0, sensorManagersNames.size());
+		}
+
 	}
 
-	/* (non-Javadoc)
-	 * @see com.safran.arena.ConfigurationManagerInterface#onSensorManagerUnregistered(eu.arena_fp7._1.SensorManager)
+	/**
+	 * Add a sensorManager created in local.
+	 * 
+	 * @param name
 	 */
-	@Override
-	public void onSensorManagerUnregistered(SensorManager sensorManager) {
-		// TODO Auto-generated method stub
-		
+	public void onTestSensorManagerRegistered(String name) {
+		synchronized (sensorManagersNames) {
+			sensorManagersNames.add(name);
+			_sensorManagerNamesList.clear();
+			_sensorManagerNamesList.addAll(sensorManagersNames);
+			fireContentsChanged(this, 0, sensorManagersNames.size());
+		}
 	}
-	
-	
 
+	
+	
 	/* (non-Javadoc)
 	 * @see com.safran.arena.ConfigurationManagerInterface#onTimeSteppedModuleRegistered(eu.arena_fp7._1.TimeSteppedModule)
 	 */
 	@Override
 	public void onTimeSteppedModuleRegistered(TimeSteppedModule module) {
-		// TODO Auto-generated method stub
+		// nothing
 		
 	}
 
@@ -275,8 +275,26 @@ public class ModuleListComboboxModel extends AbstractListModel
 	 */
 	@Override
 	public void onTimeSteppedModuleUnregistered(TimeSteppedModule module) {
-		// TODO Auto-generated method stub
+		// nothing
 		
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.safran.arena.ConfigurationManagerInterface#onSensorManagerUnregistered
+	 * (eu.arena_fp7._1.SensorManager)
+	 */
+	@Override
+	public void onSensorManagerUnregistered(SensorManager sensorManager) {
+		synchronized (sensorManagersNames) {
+			sensorManagersNames.remove(sensorManager.getId());
+			_sensorManagerNamesList.clear();
+			_sensorManagerNamesList.addAll(sensorManagersNames);
+			fireContentsChanged(this, 0, sensorManagersNames.size());
+		}
+
 	}
 
 	/*
@@ -286,8 +304,8 @@ public class ModuleListComboboxModel extends AbstractListModel
 	 */
 	@Override
 	public String getElementAt(int arg0) {
-		synchronized (dataProducerNames) {
-			return _dataProducerNamesList.get(arg0);
+		synchronized (sensorManagersNames) {
+			return _sensorManagerNamesList.get(arg0);
 		}
 
 	}
@@ -299,8 +317,8 @@ public class ModuleListComboboxModel extends AbstractListModel
 	 */
 	@Override
 	public int getSize() {
-		synchronized (dataProducerNames) {
-			return _dataProducerNamesList.size();
+		synchronized (sensorManagersNames) {
+			return _sensorManagerNamesList.size();
 		}
 	}
 

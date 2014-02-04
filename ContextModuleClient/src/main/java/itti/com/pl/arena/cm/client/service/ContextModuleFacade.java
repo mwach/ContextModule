@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import com.safran.arena.impl.Client;
 import com.safran.arena.impl.ModuleImpl;
+import com.safran.arena.impl.SimpleMessageFilter;
 
 import eu.arena_fp7._1.AbstractDataFusionType;
 import eu.arena_fp7._1.BooleanNamedValue;
@@ -170,7 +171,7 @@ public class ContextModuleFacade extends ModuleImpl implements Service, ContextM
             // register current module in server
             client.registerModule(this);
             client.registerModuleAsDataProvider(this);
-            client.registerModuleAsDataConsumer(this);
+            client.registerModuleAsDataConsumer(this, new SimpleMessageFilter(true));
         } catch (RuntimeException exc) {
             LogHelper.error(ContextModuleFacade.class, "init", "Could not initialize client object. Reason: '%s'",
                     exc.getLocalizedMessage());

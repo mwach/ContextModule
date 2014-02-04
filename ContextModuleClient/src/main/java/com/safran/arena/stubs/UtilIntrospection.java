@@ -12,129 +12,125 @@ import java.util.jar.JarFile;
 
 /**
  * This is a utilities class, not very usefull to understand.
- * 
  * @author F270116
- * 
+ *
  */
 public class UtilIntrospection {
 
-    public UtilIntrospection() {
-        // TODO Auto-generated constructor stub
-    }
+	public UtilIntrospection() {
+		// TODO Auto-generated constructor stub
+	}
 
-    /**
-     * Cette mï¿½thode permet de lister toutes les classes d'un package donnï¿½. This method lists all classes from a given
-     * package. source :
-     * http://www.developpez.net/forums/d168275/java/general-java/recuperer-liste-classes-package-resolu/
-     * 
-     * @param pckgname
-     *            Le nom du package ï¿½ lister
-     * @return La liste des classes
-     */
-    @SuppressWarnings("rawtypes")
-    public static List<Class> getClasses(String pckgname) throws ClassNotFoundException, IOException {
-        // Crï¿½ation de la liste qui sera retournï¿½e
-        ArrayList<Class> classes = new ArrayList<Class>();
-
-        // On rï¿½cupï¿½re toutes les entrï¿½es du CLASSPATH
-        String[] entries = System.getProperty("java.class.path").split(System.getProperty("path.separator"));
-
-        // Pour toutes ces entrï¿½es, on verifie si elles contiennent
-        // un rï¿½pertoire ou un jar
-        for (int i = 0; i < entries.length; i++) {
-
-            if (entries[i].endsWith(".jar")) {
-                classes.addAll(traitementJar(entries[i], pckgname));
-            } else {
-                classes.addAll(traitementRepertoire(entries[i], pckgname));
-            }
-
-        }
-
-        return classes;
-    }
-
-    /**
-     * Cette mï¿½thode retourne la liste des classes prï¿½sentes dans un rï¿½pertoire du classpath et dans un package donnï¿½
-     * 
-     * @param repertoire
-     *            Le rï¿½pertoire oï¿½ chercher les classes
-     * @param pckgname
-     *            Le nom du package
-     * @return La liste des classes
-     */
-    @SuppressWarnings("rawtypes")
-    private static Collection<Class> traitementRepertoire(String repertoire, String pckgname) throws ClassNotFoundException {
-        ArrayList<Class> classes = new ArrayList<Class>();
-
-        // On gï¿½nï¿½re le chemin absolu du package
-        StringBuffer sb = new StringBuffer(repertoire);
-        String[] repsPkg = pckgname.split("\\.");
-        for (int i = 0; i < repsPkg.length; i++) {
-            sb.append(System.getProperty("file.separator") + repsPkg[i]);
-        }
-        File rep = new File(sb.toString());
-
-        // Si le chemin existe, et que c'est un dossier, alors, on le liste
-        if (rep.exists() && rep.isDirectory()) {
-            // On filtre les entrï¿½es du rï¿½pertoire
-            FilenameFilter filter = new DotClassFilter();
-            File[] liste = rep.listFiles(filter);
-
-            // Pour chaque classe prï¿½sente dans le package, on l'ajoute ï¿½ la liste
-            for (int i = 0; i < liste.length; i++) {
-                classes.add(Class.forName(pckgname + "." + liste[i].getName().split("\\.")[0]));
-            }
-        }
-
-        return classes;
-    }
-
-    /**
-     * Cette mï¿½thode retourne la liste des classes prï¿½sentes dans un jar du classpath et dans un package donnï¿½
-     * 
-     * @param repertoire
-     *            Le jar oï¿½ chercher les classes
-     * @param pckgname
-     *            Le nom du package
-     * @return La liste des classes
-     * @throws IOException
-     * @throws ClassNotFoundException
-     */
-    @SuppressWarnings("rawtypes")
-    private static Collection<Class> traitementJar(String jar, String pckgname) throws IOException, ClassNotFoundException {
-        ArrayList<Class> classes = new ArrayList<Class>();
-
-        JarFile jfile = new JarFile(jar);
-        String pkgpath = pckgname.replace(".", "/");
-
-        // Pour chaque entrï¿½e du Jar
-        for (Enumeration<JarEntry> entries = jfile.entries(); entries.hasMoreElements();) {
-            JarEntry element = entries.nextElement();
-
-            // Si le nom de l'entrï¿½e commence par le chemin du package et finit par .class
-            if (element.getName().startsWith(pkgpath) && element.getName().endsWith(".class")) {
-
-                String nomFichier = element.getName().substring(pckgname.length() + 1);
-
-                classes.add(Class.forName(pckgname + "." + nomFichier.split("\\.")[0]));
-
-            }
-
-        }
-        jfile.close();
-
-        return classes;
-    }
-
-    /**
-     * Cette classe permet de filtrer les fichiers d'un rï¿½pertoire. Il n'accepte que les fichiers .class.
-     */
-    private static class DotClassFilter implements FilenameFilter {
-
-        public boolean accept(File arg0, String arg1) {
-            return arg1.endsWith(".class");
-        }
-
-    }
+	 
+	/**
+	 * Cette méthode permet de lister toutes les classes d'un package donné.
+	 * This method lists all classes from a given package.
+	 * source : http://www.developpez.net/forums/d168275/java/general-java/recuperer-liste-classes-package-resolu/
+	 * 
+	 * @param pckgname Le nom du package à lister
+	 * @return La liste des classes
+	 */
+	public static List<Class> getClasses(String pckgname)	throws ClassNotFoundException, IOException {
+		// Création de la liste qui sera retournée
+		ArrayList<Class> classes = new ArrayList<Class>();
+	 
+		// On récupère toutes les entrées du CLASSPATH
+		String [] entries = System.getProperty("java.class.path")
+						.split(System.getProperty("path.separator"));
+	 
+		// Pour toutes ces entrées, on verifie si elles contiennent
+		// un répertoire ou un jar
+		for (int i = 0; i < entries.length; i++) {
+	 
+			if(entries[i].endsWith(".jar")){
+				classes.addAll(traitementJar(entries[i], pckgname));
+			}else{
+				classes.addAll(traitementRepertoire(entries[i], pckgname));
+			}
+	 
+		}
+	 
+		return classes;
+	}
+	 
+	/**
+	 * Cette méthode retourne la liste des classes présentes
+	 * dans un répertoire du classpath et dans un package donné
+	 * 
+	 * @param repertoire Le répertoire où chercher les classes
+	 * @param pckgname Le nom du package
+	 * @return La liste des classes
+	 */
+	private static Collection<Class> traitementRepertoire(String repertoire, String pckgname) throws ClassNotFoundException {
+		ArrayList<Class> classes = new ArrayList<Class>();
+	 
+		// On génère le chemin absolu du package
+		StringBuffer sb = new StringBuffer(repertoire);
+		String[] repsPkg = pckgname.split("\\.");
+		for (int i = 0; i < repsPkg.length; i++) {
+			sb.append(System.getProperty("file.separator") + repsPkg[i]);
+		}
+		File rep = new File(sb.toString());
+	 
+		// Si le chemin existe, et que c'est un dossier, alors, on le liste
+		if(rep.exists() && rep.isDirectory()){
+			// On filtre les entrées du répertoire
+			FilenameFilter filter = new DotClassFilter();
+			File[] liste = rep.listFiles(filter );
+	 
+			// Pour chaque classe présente dans le package, on l'ajoute à la liste
+			for (int i = 0; i < liste.length; i++) {
+				classes.add(Class.forName(pckgname + "." + liste[i].getName().split("\\.")[0]));
+			}
+		}
+	 
+		return classes;
+	}
+	 
+	/**
+	 * Cette méthode retourne la liste des classes présentes dans un jar du classpath et dans un package donné
+	 *
+	 * @param repertoire Le jar où chercher les classes
+	 * @param pckgname Le nom du package
+	 * @return La liste des classes
+	 * @throws IOException 
+	 * @throws ClassNotFoundException 
+	 */
+	private static Collection<Class> traitementJar(String jar, String pckgname) throws IOException, ClassNotFoundException {
+		ArrayList<Class> classes = new ArrayList<Class>();
+	 
+		JarFile jfile = new JarFile(jar);
+		String pkgpath = pckgname.replace(".", "/");
+	 
+	 
+		// Pour chaque entrée du Jar
+		for (Enumeration<JarEntry> entries = jfile.entries(); entries.hasMoreElements();) {
+			JarEntry element = entries.nextElement();
+	 
+			// Si le nom de l'entrée commence par le chemin du package et finit par .class
+			if(element.getName().startsWith(pkgpath)
+				&& element.getName().endsWith(".class")){
+	 
+				String nomFichier = element.getName().substring(pckgname.length() + 1);
+	 
+				classes.add(Class.forName(pckgname + "." + nomFichier.split("\\.")[0]));
+	 
+			}
+	 
+		}
+	 
+		return classes;
+	}
+	 
+	/**
+	 * Cette classe permet de filtrer les fichiers d'un répertoire. Il n'accepte que les fichiers .class.
+	 */
+	private static class DotClassFilter implements FilenameFilter{
+	 
+		public boolean accept(File arg0, String arg1) {
+			return arg1.endsWith(".class");
+		}
+	 
+	 
+	}
 }
