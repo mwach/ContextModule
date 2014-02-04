@@ -37,17 +37,30 @@
 			<version>1.9.5</version>
 			<scope>test</scope>
 		</dependency>
-
+<!-- 
 		<dependency>
 			<groupId>com.safran</groupId>
 			<artifactId>arena</artifactId>
 			<version>1.1</version>
 		</dependency>
-
+-->
 		<dependency>
+			<groupId>com.safran</groupId>
+			<artifactId>arenaIp</artifactId>
+			<version>1.2</version>
+		</dependency>
+
+<!--
+ 		<dependency>
 			<groupId>org.arena</groupId>
 			<artifactId>ServicePlatformInterfaceJava</artifactId>
 			<version>1.0-SNAPSHOT</version>
+		</dependency>
+ -->
+ 		<dependency>
+			<groupId>eu.arena</groupId>
+			<artifactId>ServicePlatformInterfaceJava</artifactId>
+			<version>1.2</version>
 		</dependency>
 
 		<dependency>

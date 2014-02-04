@@ -8,8 +8,10 @@ mvn install:install-file -Dfile=libs/jess.jar -DgroupId=jessrules.com -Dartifact
 
 mvn install:install-file -Dfile=libs/swrl-jess-bridge.jar -DgroupId=edu.stanford.smi.protege -DartifactId=swrl-jess-bridge -Dversion=3.4.8 -Dpackaging=jar
 
-mvn install:install-file -Dfile=libs/arena.jar -DgroupId=com.safran -DartifactId=arena -Dversion=1.1 -Dpackaging=jar
+#mvn install:install-file -Dfile=libs/arena.jar -DgroupId=com.safran -DartifactId=arena -Dversion=1.1 -Dpackaging=jar
+#mvn install:install-file -Dfile=libs/fp.jar -DgroupId=eu.arena -DartifactId=fp -Dversion=7.1 -Dpackaging=jar
+#mvn install:install-file -Dfile=libs/ServicePlatformInterface.jar -DgroupId=org.arena -DartifactId=ServicePlatformInterfaceJava -Dversion=1.0-SNAPSHOT -Dpackaging=jar
 
-mvn install:install-file -Dfile=libs/fp.jar -DgroupId=eu.arena -DartifactId=fp -Dversion=7.1 -Dpackaging=jar
-
-mvn install:install-file -Dfile=libs/ServicePlatformInterface.jar -DgroupId=org.arena -DartifactId=ServicePlatformInterfaceJava -Dversion=1.0-SNAPSHOT -Dpackaging=jar
+#updated versions of the arena jars (Jan 2014)
+mvn install:install-file -Dfile=libs/arenaIP_2014.jar -DgroupId=com.safran -DartifactId=arenaIp -Dversion=1.2 -Dpackaging=jar
+mvn install:install-file -Dfile=libs/ServicePlatformInterface_2014.jar -DgroupId=eu.arena -DartifactId=ServicePlatformInterfaceJava -Dversion=1.2 -Dpackaging=jar

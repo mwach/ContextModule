@@ -156,7 +156,7 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
             // and register CM module
             client.registerModule(this);
             client.registerModuleAsDataProvider(this);
-            client.registerModuleAsDataConsumer(this);
+            client.registerModuleAsDataConsumer(this, new ContextModuleFilter());
 
             factory = new ObjectFactory();
 
