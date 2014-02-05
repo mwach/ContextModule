@@ -25,6 +25,17 @@ public interface Ontology {
     public void updatePlatform(Platform platform) throws OntologyException;
 
     /**
+     * Adds information about new GIS object to the ontology
+     * 
+     * @param location location 
+     * @param geoportalData
+     *            information about GIS objects
+     * @throws OntologyException
+     *             could not retrieve information from the ontology
+     */
+    public void updateGeoportalData(double x, double y, Set<GeoObject> geoportalData) throws OntologyException;
+
+    /**
      * Returns IDs of platforms found near given location
      * 
      * @param x
@@ -67,17 +78,6 @@ public interface Ontology {
 
     /**
      * Returns information about GIS object identified by its ID
-     * 
-     * @param id
-     *            ID of the object
-     * @return information about the object
-     * @throws OntologyException
-     *             could not retrieve information from the ontology
-     */
-    public GeoObject getGISObject(String id) throws OntologyException;
-
-    /**
-     * Returns information about GIS object identified by its ID
      * @param id
      *            ID of the object
      * @param <T> class of the requested {@link OntologyObject}
@@ -102,16 +102,6 @@ public interface Ontology {
      */
     public Set<GeoObject> getGISObjects(double x, double y, double radius, String... gisObjectClasses) throws OntologyException;
 
-    /**
-     * Adds information about new GIS object to the ontology
-     * 
-     * @param location location 
-     * @param geoportalData
-     *            information about GIS objects
-     * @throws OntologyException
-     *             could not retrieve information from the ontology
-     */
-    public void addGeoportalData(double x, double y, Set<GeoObject> geoportalData) throws OntologyException;
 
     /**
      * Calculates distance between platform, and objects localized on given parking lot

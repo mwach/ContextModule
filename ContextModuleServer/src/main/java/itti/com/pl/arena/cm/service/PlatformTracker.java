@@ -193,7 +193,7 @@ public class PlatformTracker implements Service, LocationListener {
                     if (ontoData.isEmpty()) {
                         Set<GeoObject> geoportalData = getGeoportal().getGeoportalData(lastLocation, getRadius());
                         // store downloaded data into ontology
-                        getOntology().addGeoportalData(lastLocation.getLongitude(), lastLocation.getLatitude(), geoportalData);
+                        getOntology().updateGeoportalData(lastLocation.getLongitude(), lastLocation.getLatitude(), geoportalData);
                     }
                 }
             }

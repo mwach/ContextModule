@@ -19,6 +19,7 @@ import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform.Type;
 import itti.com.pl.arena.cm.dto.dynamicobj.RelativePosition;
 import itti.com.pl.arena.cm.dto.staticobj.ParkingLot;
+import itti.com.pl.arena.cm.location.Range;
 
 public class ContextModuleOntologyManagerTest {
 
@@ -118,7 +119,20 @@ public class ContextModuleOntologyManagerTest {
     @Test
     public void testCalculateDistance() throws OntologyException {
         // create parking lot and add truck to it
-        String parkingId = "Vehicle_with_cameras_R1";
-        cmOntologyManager.calculateDistancesForPlatform(parkingId, 5);
+        String truckId = "Vehicle_with_cameras_R1";
+        cmOntologyManager.calculateDistancesForPlatform(truckId, 5);
+    }
+
+    // test for complex functionality for retrieving cameras field of view
+    @Test
+    public void testGetTruckWorld() throws OntologyException {
+        String truckId = "Vehicle_with_cameras_R1";
+        Platform platformWithCameras = cmOntologyManager.getOntologyObject(truckId, Platform.class);
+        Location location = platformWithCameras.getLocation();
+        Set<String> availableParkings = cmOntologyManager.getInstanceNames(location.getLongitude(), location.getLatitude(),
+                Range.Km10.getRangeInKms(), ParkingLot.class);
+        String firstParking = availableParkings.iterator().next();
+        ParkingLot parkingLot = cmOntologyManager.getOntologyObject(firstParking, ParkingLot.class);
+        assertNotNull(parkingLot);
     }
 }

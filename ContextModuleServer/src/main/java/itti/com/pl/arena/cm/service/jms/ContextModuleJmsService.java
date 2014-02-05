@@ -480,7 +480,7 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
             geoData = getGeoportal().getGeoportalData(
                     new itti.com.pl.arena.cm.dto.Location(location.getX(), location.getY()), getRadius());
             // update ontology with the geoportal data
-            getOntology().addGeoportalData(location.getX(), location.getY(), geoData);
+            getOntology().updateGeoportalData(location.getX(), location.getY(), geoData);
         } catch (OntologyException exc) {
             LogHelper.exception(ContextModuleJmsService.class, "getGeoportalData", "Could not add data to the ontology ", exc);
         } catch (GeoportalException exc) {

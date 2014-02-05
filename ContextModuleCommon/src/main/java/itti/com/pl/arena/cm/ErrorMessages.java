@@ -32,7 +32,8 @@ public enum ErrorMessages {
     JSON_HELPER_CANNOT_GET_PROPERTY_VALUE_NULL_INPUT("Could not retrieve property value. Null or empty input string provided: %s"), 
     JSON_HELPER_CANNOT_GET_PROPERTY_VALUE_NULL_PROP("Could not retrieve property value. Null or empty property name provided: %s"), 
     
-    
+    LOCATION_HELPER_NULL_LOCATION("Null or empty location string provided"),
+    LOCATION_HELPER_INVALID_FORMAT("invalid format of location string: '%s'. Should be: 'longitude,latitude'"),
     ;
 
     /*
