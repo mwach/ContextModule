@@ -2,7 +2,7 @@ package itti.com.pl.arena.cm;
 
 import java.io.Serializable;
 
-public class OntologyObject implements Serializable{
+public abstract class OntologyObject implements Serializable{
 
     /**
      * 

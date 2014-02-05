@@ -18,6 +18,7 @@ import itti.com.pl.arena.cm.dto.dynamicobj.Camera;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform.Type;
 import itti.com.pl.arena.cm.dto.dynamicobj.RelativePosition;
+import itti.com.pl.arena.cm.dto.staticobj.ParkingLot;
 
 public class ContextModuleOntologyManagerTest {
 
@@ -86,11 +87,11 @@ public class ContextModuleOntologyManagerTest {
     @Test
     public void testGetParkingLots() throws OntologyException {
         // corrects args - at least one parking expected
-        Set<String> gisObjects = cmOntologyManager.getParkingLots(-0.94, 51.40, 1);
+        Set<String> gisObjects = cmOntologyManager.getInstanceNames(-0.94, 51.40, 1, ParkingLot.class);
         assertFalse(gisObjects.isEmpty());
 
         // incorrect args - no parking lots expected
-        gisObjects = cmOntologyManager.getParkingLots(1, 1, 0);
+        gisObjects = cmOntologyManager.getInstanceNames(1, 1, 0, ParkingLot.class);
         assertTrue(gisObjects.isEmpty());
     }
 

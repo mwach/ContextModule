@@ -164,18 +164,25 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
      * 
      * @see itti.com.pl.arena.cm.ontology.Ontology#getPlatforms(double, double, double)
      */
-    public Set<String> getPlatformNames(double x, double y, double radius) throws OntologyException {
+    public Set<String> getInstanceNames(double x, double y, double radius, Class<? extends OntologyObject> ontologyClassName) throws OntologyException {
 
         Set<String> resultList = new HashSet<String>();
 
+        if(ontologyClassName == Platform.class){
+            resultList.addAll(getPlatformNames(x, y, radius));
+        }else if(ontologyClassName == ParkingLot.class){
+            resultList.addAll(getParkingLots(x, y, radius));
+        }
+        return resultList;
+    }
+    
+    private Set<String> getPlatformNames(double x, double y, double radius){
         String queryPattern = QUERY_GET_PLATFORMS;
         String query = String.format(queryPattern, getOntologyNamespace(), VAR, VAR, OntologyConstants.Vehicle_with_cameras.name(), VAR, VAR, x
                 - radius, x + radius, y - radius, y + radius);
 
         // execute the query
-        List<String> matches = executeSparqlQuery(query, VAR);
-        resultList.addAll(matches);
-        return resultList;
+        return new HashSet<String>(executeSparqlQuery(query, VAR));
     }
 
     /*
@@ -275,23 +282,9 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
     }
 
     @Override
-    public Set<GeoObject> getGISObjects(Location location, double radius) throws OntologyException {
-        Set<GeoObject> gisInformation = new HashSet<>();
-        try {
-            Set<String> platformNames = getParkingLots(location, radius);
-            for (String gisObjectId : platformNames) {
-                gisInformation.add(getGISObject(gisObjectId));
-            }
-        } catch (RuntimeException e) {
-            LogHelper.exception(PlatformTracker.class, "getGISObjects", e.getLocalizedMessage(), e);
-        }
-        return gisInformation;
-    }
-
-    @Override
-    public Set<GeoObject> getGISObjects(Location location, double radius, String... gisObjectClasses) throws OntologyException {
+    public Set<GeoObject> getGISObjects(double x, double y, double radius, String... gisObjectClasses) throws OntologyException {
         //get list of all available objects
-        Set<GeoObject> gisInformation = getGISObjects(location, radius);
+        Set<GeoObject> gisInformation = getGISObjects(x, y, radius);
         Set<GeoObject> responseSet = null;
 
         //check if filter should be applied
@@ -310,20 +303,6 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         }
         return responseSet;
 
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see itti.com.pl.arena.cm.ontology.Ontology#getGISObjects(Location, double)
-     */
-    @Override
-    public Set<String> getParkingLots(Location location, double radius) throws OntologyException {
-        if (location == null) {
-            LogHelper.warning(ContextModuleOntologyManager.class, "getParkingLots", "Null location provided");
-            throw new OntologyException(ErrorMessages.ONTOLOGY_EMPTY_LOCATION_OBJECT);
-        }
-        return getParkingLots(location.getLongitude(), location.getLatitude(), radius);
     }
 
     /*
@@ -382,8 +361,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
      * 
      * @see itti.com.pl.arena.cm.ontology.Ontology#getGISObjects(double, double, double)
      */
-    @Override
-    public Set<String> getParkingLots(double x, double y, double radius) throws OntologyException {
+    private Set<String> getParkingLots(double x, double y, double radius) throws OntologyException {
 
         String queryPattern = QUERY_PARKING_OBJECTS;
         String query = String.format(queryPattern, getOntologyNamespace(), VAR, VAR, OntologyConstants.Parking.name(), VAR, VAR,
@@ -400,7 +378,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
      * @see itti.com.pl.arena.cm.ontology.Ontology#addGeoportalData(itti.com.pl.arena.cm.dto.Location, java.util.Set)
      */
     @Override
-    public void addGeoportalData(Location location, Set<GeoObject> geoportalData) throws OntologyException {
+    public void addGeoportalData(double x, double y, Set<GeoObject> geoportalData) throws OntologyException {
         if (geoportalData != null) {
             // TODO: need to be implemented properly
             for (GeoObject geoObject : geoportalData) {
@@ -408,9 +386,8 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
                 if (StringHelper.hasContent(ontologyClass)) {
                     Map<String, String[]> properties = new HashMap<String, String[]>();
                     properties.put(OntologyConstants.Object_has_GPS_coordinates.name(),
-                            new String[] { String.format("%f,%f", location.getLongitude(), location.getLatitude()) });
-                    String instanceName = String.format("%s-%f-%f", ontologyClass, location.getLongitude(),
-                            location.getLatitude());
+                            new String[] { String.format("%f,%f", x, y) });
+                    String instanceName = String.format("%s-%f-%f", ontologyClass, x, y);
                     try {
                         createSimpleInstance(ontologyClass, instanceName, properties);
                     } catch (OntologyException exc) {
@@ -436,7 +413,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 
         // get the platform data from ontology
         Platform platform = getPlatform(platformId);
-        Set<String> parkingLots = getParkingLots(platform.getLocation(), radius);
+        Set<String> parkingLots = getParkingLots(platform.getLocation().getLongitude(), platform.getLocation().getLatitude(), radius);
         if (parkingLots.isEmpty()) {
             LogHelper.warning(ContextModuleOntologyManager.class, "calculateDistancesForPlatform",
                     "There are no parkings for platform %s in location %s and radius %f", platformId, platform.getLocation(),

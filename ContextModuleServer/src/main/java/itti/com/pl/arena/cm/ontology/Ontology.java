@@ -4,7 +4,6 @@ import java.util.Set;
 
 import itti.com.pl.arena.cm.OntologyObject;
 import itti.com.pl.arena.cm.dto.GeoObject;
-import itti.com.pl.arena.cm.dto.Location;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
 
 /**
@@ -38,15 +37,13 @@ public interface Ontology {
      * @throws OntologyException
      *             could not retrieve information from the ontology
      */
-    public Set<String> getPlatformNames(double x, double y, double radius) throws OntologyException;
+    public Set<String> getInstanceNames(double x, double y, double radius, Class<? extends OntologyObject> ontologyClass) throws OntologyException;
 
     /**
      * Returns list of platform objects found near given location
      * 
-     * @param x
-     *            latitude
-     * @param y
-     *            longitude
+     * @param location
+     *            location
      * @param radius
      *            radius
      * @return list of platforms objects
@@ -54,34 +51,6 @@ public interface Ontology {
      *             could not retrieve information from the ontology
      */
     public Set<Platform> getPlatforms(double x, double y, double radius) throws OntologyException;
-
-    /**
-     * Returns IDs parking lots found near given location
-     * 
-     * @param location
-     *            location
-     * @param radius
-     *            radius of the search area
-     * @return list of GIS object IDs
-     * @throws OntologyException
-     *             could not retrieve information from the ontology
-     */
-    public Set<String> getParkingLots(Location location, double radius) throws OntologyException;
-
-    /**
-     * Returns IDs of parking lots found near given location
-     * 
-     * @param x
-     *            latitude
-     * @param y
-     *            longitude
-     * @param radius
-     *            radius of the search area
-     * @return list of GIS object IDs
-     * @throws OntologyException
-     *             could not retrieve information from the ontology
-     */
-    public Set<String> getParkingLots(double x, double y, double radius) throws OntologyException;
 
     /**
      * Returns IDs of all GIS objects (like buildings, fences, trees) found on given parking lot
@@ -119,19 +88,6 @@ public interface Ontology {
     public <T extends OntologyObject> T getOntologyObject(String id, Class<T> objectclass) throws OntologyException;
 
     /**
-     * Returns list of GIS objects found near given location
-     * 
-     * @param location
-     *            location (information about longitude and latitude)
-     * @param radius
-     *            radius
-     * @return list of GIS objects
-     * @throws OntologyException
-     *             could not retrieve information from the ontology
-     */
-    public Set<GeoObject> getGISObjects(Location location, double radius) throws OntologyException;
-
-    /**
      * Returns list of specific GIS objects found near given location
      * 
      * @param location
@@ -144,7 +100,7 @@ public interface Ontology {
      * @throws OntologyException
      *             could not retrieve information from the ontology
      */
-    public Set<GeoObject> getGISObjects(Location location, double radius, String... gisObjectClasses) throws OntologyException;
+    public Set<GeoObject> getGISObjects(double x, double y, double radius, String... gisObjectClasses) throws OntologyException;
 
     /**
      * Adds information about new GIS object to the ontology
@@ -155,7 +111,7 @@ public interface Ontology {
      * @throws OntologyException
      *             could not retrieve information from the ontology
      */
-    public void addGeoportalData(Location location, Set<GeoObject> geoportalData) throws OntologyException;
+    public void addGeoportalData(double x, double y, Set<GeoObject> geoportalData) throws OntologyException;
 
     /**
      * Calculates distance between platform, and objects localized on given parking lot

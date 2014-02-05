@@ -141,7 +141,7 @@ public class PlatformTracker implements Service, LocationListener {
             for (Range range : Range.values()) {
 
                 //get parking lots for given range
-                Set<GeoObject> parkingLots = ontology.getGISObjects(location, range.getRangeInKms(),
+                Set<GeoObject> parkingLots = ontology.getGISObjects(location.getLongitude(), location.getLatitude(), range.getRangeInKms(),
                         OntologyConstants.Parking.name());
 
                 if (!parkingLots.isEmpty()) {
@@ -187,13 +187,13 @@ public class PlatformTracker implements Service, LocationListener {
                             getPlatformId(), getMaxBreakTime());
 
                     // check, if there is data in ontology collected for given location
-                    Set<GeoObject> ontoData = getOntology().getGISObjects(lastLocation, getRadius());
+                    Set<GeoObject> ontoData = getOntology().getGISObjects(lastLocation.getLongitude(), lastLocation.getLatitude(), getRadius());
 
                     // if there is no data, try to download it from geoportal
                     if (ontoData.isEmpty()) {
                         Set<GeoObject> geoportalData = getGeoportal().getGeoportalData(lastLocation, getRadius());
                         // store downloaded data into ontology
-                        getOntology().addGeoportalData(lastLocation, geoportalData);
+                        getOntology().addGeoportalData(lastLocation.getLongitude(), lastLocation.getLatitude(), geoportalData);
                     }
                 }
             }

@@ -438,12 +438,8 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
         FeatureVector responseVector = new FeatureVector();
 
         Set<GeoObject> geographicalInformation = null;
-        itti.com.pl.arena.cm.dto.Location cmLocation = null;
-        if(location != null){
-            cmLocation = new itti.com.pl.arena.cm.dto.Location(location.getX(), location.getY());
-        }
         try {
-            geographicalInformation = getOntology().getGISObjects(cmLocation, radius, classes);
+            geographicalInformation = getOntology().getGISObjects(location.getX(), location.getY(), radius, classes);
         } catch (OntologyException exc) {
             LogHelper.exception(ContextModuleJmsService.class, "getGISData", "Could not retrieve ontology data", exc);
         }
@@ -480,12 +476,11 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
 
         Set<GeoObject> geoData = null;
         try {
-            // create CM location from Arena location
-            itti.com.pl.arena.cm.dto.Location cmLocation = new itti.com.pl.arena.cm.dto.Location(location.getX(), location.getY());
             // call geoportal service to retrieve all available data
-            geoData = getGeoportal().getGeoportalData(cmLocation, getRadius());
+            geoData = getGeoportal().getGeoportalData(
+                    new itti.com.pl.arena.cm.dto.Location(location.getX(), location.getY()), getRadius());
             // update ontology with the geoportal data
-            getOntology().addGeoportalData(cmLocation, geoData);
+            getOntology().addGeoportalData(location.getX(), location.getY(), geoData);
         } catch (OntologyException exc) {
             LogHelper.exception(ContextModuleJmsService.class, "getGeoportalData", "Could not add data to the ontology ", exc);
         } catch (GeoportalException exc) {
