@@ -40,7 +40,7 @@ public class ContextModuleOntologyManagerTest {
 
     @Test
     public void testGetPlatform() throws OntologyException {
-        Platform information = cmOntologyManager.getPlatform("Vehicla_with_cameras_R1");
+        Platform information = cmOntologyManager.getOntologyObject("Vehicle_with_cameras_R1", Platform.class);
         assertNotNull(information);
     }
 
@@ -67,7 +67,7 @@ public class ContextModuleOntologyManagerTest {
         information.setHeight(random.nextDouble());
         information.setLength(random.nextDouble());
         cmOntologyManager.updatePlatform(information);
-        assertEquals(information, cmOntologyManager.getPlatform(information.getId()));
+        assertEquals(information, cmOntologyManager.getOntologyObject(information.getId(), Platform.class));
     }
 
     @Test
@@ -77,10 +77,10 @@ public class ContextModuleOntologyManagerTest {
         Location nextLocation = new Location(random.nextDouble(), random.nextDouble(), random.nextInt(100));
         Platform information = new Platform("vehicle_m1", initLocation, Type.Vehicle_with_cameras, null);
         cmOntologyManager.updatePlatform(information);
-        assertEquals(initLocation, cmOntologyManager.getPlatform(information.getId()).getLocation());
+        assertEquals(initLocation, cmOntologyManager.getOntologyObject(information.getId(), Platform.class).getLocation());
         information.setLocation(nextLocation);
         cmOntologyManager.updatePlatform(information);
-        assertEquals(nextLocation, cmOntologyManager.getPlatform(information.getId()).getLocation());
+        assertEquals(nextLocation, cmOntologyManager.getOntologyObject(information.getId(), Platform.class).getLocation());
     }
 
     @Test
@@ -117,8 +117,7 @@ public class ContextModuleOntologyManagerTest {
     @Test
     public void testCalculateDistance() throws OntologyException {
         // create parking lot and add truck to it
-        String parkingId = "Vehicla_with_cameras_R1";
+        String parkingId = "Vehicle_with_cameras_R1";
         cmOntologyManager.calculateDistancesForPlatform(parkingId, 5);
     }
-
 }

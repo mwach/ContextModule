@@ -14,22 +14,6 @@ import java.util.List;
 public interface Persistence {
 
     /**
-     * Initializes persistence storage
-     * 
-     * @throws PersistenceException
-     *             Could not initialize storage
-     */
-    public void init() throws PersistenceException;
-
-    /**
-     * Shutdowns persistence storage
-     * 
-     * @throws PersistenceException
-     *             Could not shutdown storage
-     */
-    public void shutdown() throws PersistenceException;
-
-    /**
      * Persist information about location of the platform in the database
      * 
      * @param platformId

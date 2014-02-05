@@ -1,6 +1,7 @@
 package itti.com.pl.arena.cm.ontology;
 
 import itti.com.pl.arena.cm.ErrorMessages;
+import itti.com.pl.arena.cm.OntologyObject;
 import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.dto.Location;
 import itti.com.pl.arena.cm.dto.dynamicobj.Camera;
@@ -45,42 +46,6 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
     private static final String QUERY_PARKING_OBJECTS = "PREFIX ns: <%s> " + "SELECT ?%s " + "WHERE " + "{ "
             + "?%s rdf:type ns:%s. " + "?%s ns:Parking_has_GPS_x ?coordinate_x. " + "?%s ns:Parking_has_GPS_y ?coordinate_y. "
             + "FILTER ( (?coordinate_x >= %f && ?coordinate_x <= %f) || (?coordinate_y >= %f && ?coordinate_y <= %f)) " + "}";
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see itti.com.pl.arena.cm.ontology.Ontology#getPlatformInformation(java.lang.String)
-     */
-    @Override
-    public Platform getPlatform(String platformId) throws OntologyException {
-
-        // prepare data object
-        String platformType = getInstanceClass(platformId);
-        Platform platform = new Platform(platformId, null, Type.valueOf(platformType), null);
-
-        // get information about the platform from ontology
-        Map<String, String[]> properties = getInstanceProperties(platformId);
-
-        // get information about cameras installed on platform
-        String[] cameras = properties.get(OntologyConstants.Vehicle_has_cameras.name());
-        if (cameras != null) {
-            for (String cameraId : cameras) {
-                Camera cameraInfo = getCameraInformation(cameraId);
-                platform.addCamera(cameraInfo);
-
-            }
-        }
-        // set location of the platform
-        Location lastLocation = prepareLastLocation(properties);
-        platform.setLocation(lastLocation);
-        // set size of the platform
-        setPlatformSizes(platform,
-                getDoubleProperty(properties, OntologyConstants.Object_has_width),
-                getDoubleProperty(properties, OntologyConstants.Object_has_height),
-                getDoubleProperty(properties, OntologyConstants.Object_has_length)
-        );
-        return platform;
-    }
 
     /**
      * Sets dimensions of the platform object
@@ -262,6 +227,51 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         }
 
         return information;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see itti.com.pl.arena.cm.ontology.Ontology#getGISObject(java.lang.String)
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T extends OntologyObject> T getOntologyObject(String id, Class<T> objectclass) throws OntologyException {
+        T response = null;
+        if(objectclass == Platform.class){
+            response = (T) getPlatform(id);
+        }
+        return response;
+    }
+
+    public Platform getPlatform(String platformId) throws OntologyException {
+
+        // prepare data object
+        String platformType = getInstanceClass(platformId);
+        Platform platform = new Platform(platformId, null, Type.valueOf(platformType), null);
+
+        // get information about the platform from ontology
+        Map<String, String[]> properties = getInstanceProperties(platformId);
+
+        // get information about cameras installed on platform
+        String[] cameras = properties.get(OntologyConstants.Vehicle_has_cameras.name());
+        if (cameras != null) {
+            for (String cameraId : cameras) {
+                Camera cameraInfo = getCameraInformation(cameraId);
+                platform.addCamera(cameraInfo);
+
+            }
+        }
+        // set location of the platform
+        Location lastLocation = prepareLastLocation(properties);
+        platform.setLocation(lastLocation);
+        // set size of the platform
+        setPlatformSizes(platform,
+                getDoubleProperty(properties, OntologyConstants.Object_has_width),
+                getDoubleProperty(properties, OntologyConstants.Object_has_height),
+                getDoubleProperty(properties, OntologyConstants.Object_has_length)
+        );
+        return platform;
     }
 
     @Override

@@ -1,11 +1,13 @@
 package itti.com.pl.arena.cm.persistence.jdbc;
 
 import itti.com.pl.arena.cm.ErrorMessages;
+import itti.com.pl.arena.cm.Service;
 import itti.com.pl.arena.cm.dto.Location;
 import itti.com.pl.arena.cm.persistence.Persistence;
 import itti.com.pl.arena.cm.persistence.PersistenceException;
 import itti.com.pl.arena.cm.utils.helper.DateTimeHelper;
 import itti.com.pl.arena.cm.utils.helper.DateTimeHelperException;
+import itti.com.pl.arena.cm.utils.helper.LogHelper;
 
 import java.sql.Connection;
 import java.sql.Driver;
@@ -23,6 +25,7 @@ import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.RowProcessor;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
+import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.annotation.Required;
 
 /**
@@ -31,7 +34,7 @@ import org.springframework.beans.factory.annotation.Required;
  * @author cm-admin
  * 
  */
-public class JdbcPersistence implements Persistence {
+public class JdbcPersistence implements Persistence, Service {
 
     private static final String QUERY_LOCATION_CREATE = "DROP TABLE IF EXISTS OBJ_LOCATION; CREATE TABLE OBJ_LOCATION(id identity, objectId varchar(50) not null, longitude double not null, latitude double not null, altitude double not null, bearing integer not null, period timestamp not null, speed double not null, accuracy double not null, PRIMARY KEY (id))";
     private static final String QUERY_LOCATION_INSERT = "INSERT into OBJ_LOCATION(objectId, longitude, latitude, altitude, bearing, period, speed, accuracy) values (?,?,?,?,?,?,?,?)";
@@ -62,10 +65,10 @@ public class JdbcPersistence implements Persistence {
     /*
      * (non-Javadoc)
      * 
-     * @see itti.com.pl.arena.cm.persistence.Persistence#init()
+     * @see itti.com.pl.arena.cm.Service#init()
      */
     @Override
-    public void init() throws PersistenceException {
+    public void init() {
 
         boolean initialized = false;
         try {
@@ -80,9 +83,11 @@ public class JdbcPersistence implements Persistence {
             initialized = true;
 
         } catch (SQLException e) {
-            throw new PersistenceException(ErrorMessages.PERSISTENCE_CANNOT_INITIALIZE, e, e.getLocalizedMessage());
+            throw new BeanInitializationException("Could not initialize persistance service", new PersistenceException(
+                    ErrorMessages.PERSISTENCE_CANNOT_INITIALIZE, e, e.getLocalizedMessage()));
         } catch (ClassNotFoundException e) {
-            throw new PersistenceException(ErrorMessages.PERSISTENCE_CANNOT_LOAD_DRIVER, e, e.getLocalizedMessage());
+            throw new BeanInitializationException("Could not initialize persistance service", new PersistenceException(
+                    ErrorMessages.PERSISTENCE_CANNOT_LOAD_DRIVER, e, e.getLocalizedMessage()));
         } finally {
             if (!initialized) {
                 shutdown();
@@ -105,26 +110,36 @@ public class JdbcPersistence implements Persistence {
     /*
      * (non-Javadoc)
      * 
-     * @see itti.com.pl.arena.cm.persistence.Persistence#shutdown()
+     * @see itti.com.pl.arena.cm.Service#shutdown()
      */
     @Override
-    public void shutdown() throws PersistenceException {
+    public void shutdown() {
         if (connection != null) {
             try {
                 connection.close();
             } catch (SQLException exc) {
-                throw new PersistenceException(ErrorMessages.PERSISTENCE_CANNOT_CLOSE_CONNECTION, exc, exc.getLocalizedMessage());
+                LogHelper.exception(
+                        JdbcPersistence.class,
+                        "shutdown",
+                        "Could not shutdown JDBC service",
+                        new PersistenceException(ErrorMessages.PERSISTENCE_CANNOT_CLOSE_CONNECTION, exc, exc
+                                .getLocalizedMessage()));
             }
         }
-        
+
         Enumeration<Driver> drivers = DriverManager.getDrivers();
         while (drivers.hasMoreElements()) {
             Driver driver = drivers.nextElement();
             try {
                 DriverManager.deregisterDriver(driver);
-            } catch (SQLException e) {
+            } catch (SQLException exc) {
+                LogHelper.exception(
+                        JdbcPersistence.class,
+                        "shutdown",
+                        "Could not deregister the JDBC driver",
+                        new PersistenceException(ErrorMessages.PERSISTENCE_CANNOT_DEREGISTER_DRIVER, exc, exc
+                                .getLocalizedMessage()));
             }
-
         }
     }
 
@@ -233,8 +248,9 @@ public class JdbcPersistence implements Persistence {
         @SuppressWarnings("unchecked")
         @Override
         public <T> T toBean(ResultSet rs, Class<T> arg1) throws SQLException {
-            Location location = new Location(rs.getDouble("longitude"), rs.getDouble("latitude"),
-                    rs.getInt("bearing"), rs.getDouble("altitude"), rs.getDouble("accuracy"), rs.getDouble("speed"), rs.getTimestamp("period").getTime());
+            Location location = new Location(rs.getDouble("longitude"), rs.getDouble("latitude"), rs.getInt("bearing"),
+                    rs.getDouble("altitude"), rs.getDouble("accuracy"), rs.getDouble("speed"), rs.getTimestamp("period")
+                            .getTime());
             return (T) location;
         }
 

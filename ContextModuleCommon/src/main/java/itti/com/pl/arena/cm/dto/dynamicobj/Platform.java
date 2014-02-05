@@ -1,8 +1,8 @@
 package itti.com.pl.arena.cm.dto.dynamicobj;
 
+import itti.com.pl.arena.cm.OntologyObject;
 import itti.com.pl.arena.cm.dto.Location;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -12,7 +12,7 @@ import java.util.Set;
  * @author cm-admin
  *
  */
-public class Platform implements Serializable{
+public class Platform extends OntologyObject{
 
     /**
      * 
@@ -32,10 +32,6 @@ public class Platform implements Serializable{
         Vehicle_with_cameras,
     }
 
-    /*
-     * Unique (per ContextModule) ID of the platform
-     */
-    private String id;
     /*
      * Last known location of the platform)
      */
@@ -66,7 +62,7 @@ public class Platform implements Serializable{
      * @param id ID of the platform
      */
     public Platform(String id) {
-        this.id = id;
+        super(id);
     }
 
     /**
@@ -86,14 +82,6 @@ public class Platform implements Serializable{
                 addCamera(camera);
             }
         }
-    }
-
-    /**
-     * Returns ID of the platform
-     * @return ID
-     */
-    public String getId() {
-        return id;
     }
 
     /**
@@ -213,8 +201,15 @@ public class Platform implements Serializable{
         final int prime = 31;
         int result = 1;
         result = prime * result + ((cameras == null) ? 0 : cameras.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        long temp;
+        temp = Double.doubleToLongBits(height);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(length);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
         result = prime * result + ((location == null) ? 0 : location.hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        temp = Double.doubleToLongBits(width);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
         return result;
     }
 
@@ -230,27 +225,21 @@ public class Platform implements Serializable{
         if (cameras == null) {
             if (other.cameras != null)
                 return false;
-        } else if (cameras.size() != other.cameras.size())
+        } else if (!cameras.equals(other.cameras))
             return false;
-        else {
-            for (Camera camera : cameras.values()) {
-                if (!other.cameras.containsValue(camera)) {
-                    return false;
-                }
-            }
-        }
-
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
+        if (Double.doubleToLongBits(height) != Double.doubleToLongBits(other.height))
+            return false;
+        if (Double.doubleToLongBits(length) != Double.doubleToLongBits(other.length))
             return false;
         if (location == null) {
             if (other.location != null)
                 return false;
         } else if (!location.equals(other.location))
             return false;
+        if (type != other.type)
+            return false;
+        if (Double.doubleToLongBits(width) != Double.doubleToLongBits(other.width))
+            return false;
         return true;
     }
-
 }

@@ -1,18 +1,14 @@
 package itti.com.pl.arena.cm.dto.dynamicobj;
 
-import java.io.Serializable;
+import itti.com.pl.arena.cm.OntologyObject;
 
-public class Camera implements Serializable {
+public class Camera extends OntologyObject {
 
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
 
-    /*
-     * ID of the camera
-     */
-    private String id;
     /*
      * Type of the camera (like infrared, thermal, normal...)
      */
@@ -44,20 +40,11 @@ public class Camera implements Serializable {
      * @param position position of the camera on truck
      */
     public Camera(String id, String type, double angleX, double angleY, RelativePosition position) {
-        this.id = id;
+        super(id);
         this.type = type;
         this.angleX = angleX;
         this.angleY = angleY;
         this.onPlatformPosition = position;
-    }
-
-    /**
-     * Returns ID of the camera
-     * 
-     * @return ID
-     */
-    public String getId() {
-        return id;
     }
 
     /**
@@ -147,7 +134,6 @@ public class Camera implements Serializable {
         result = prime * result + (int) (temp ^ (temp >>> 32));
         temp = Double.doubleToLongBits(angleY);
         result = prime * result + (int) (temp ^ (temp >>> 32));
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((onPlatformPosition == null) ? 0 : onPlatformPosition.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
         return result;
@@ -166,11 +152,6 @@ public class Camera implements Serializable {
             return false;
         if (Double.doubleToLongBits(angleY) != Double.doubleToLongBits(other.angleY))
             return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
         if (onPlatformPosition != other.onPlatformPosition)
             return false;
         if (type == null) {
@@ -180,4 +161,5 @@ public class Camera implements Serializable {
             return false;
         return true;
     }
+
 }

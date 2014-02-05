@@ -2,6 +2,7 @@ package itti.com.pl.arena.cm.ontology;
 
 import java.util.Set;
 
+import itti.com.pl.arena.cm.OntologyObject;
 import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.dto.Location;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
@@ -13,17 +14,6 @@ import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
  * 
  */
 public interface Ontology {
-
-    /**
-     * Returns information about platform
-     * 
-     * @param platformId
-     *            ID of the platform
-     * @return {@link Platform} object containing information about the platform
-     * @throws OntologyException
-     *             could not retrieve information from the ontology
-     */
-    public Platform getPlatform(String platformId) throws OntologyException;
 
     /**
      * Updates (or create new if not found) ontology object representing platform
@@ -116,6 +106,17 @@ public interface Ontology {
      *             could not retrieve information from the ontology
      */
     public GeoObject getGISObject(String id) throws OntologyException;
+
+    /**
+     * Returns information about GIS object identified by its ID
+     * @param id
+     *            ID of the object
+     * @param <T> class of the requested {@link OntologyObject}
+     * @return information about the object
+     * @throws OntologyException
+     *             could not retrieve information from the ontology
+     */
+    public <T extends OntologyObject> T getOntologyObject(String id, Class<T> objectclass) throws OntologyException;
 
     /**
      * Returns list of GIS objects found near given location

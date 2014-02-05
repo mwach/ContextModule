@@ -32,8 +32,8 @@ public enum ErrorMessages {
     SPRING_HELPER_COULD_NOT_OPEN_RESOURCE(502, "Could not open resource '%s'. Details: %s"),
     SPRING_HELPER_COULD_NOT_READ_RESOURCE(503, "Could not read resource '%s'. Details: %s"),
 
-    PERSISTENCE_CANNOT_INITIALIZE(600, "Could not initialize HSQL database. Details: %s"),
-    PERSISTENCE_CANNOT_LOAD_DRIVER(601, "Failed to load HSQLDB JDBC driver. Details: %s"),
+    PERSISTENCE_CANNOT_INITIALIZE(600, "Could not initialize database. Details: %s"),
+    PERSISTENCE_CANNOT_LOAD_DRIVER(601, "Failed to load JDBC driver. Details: %s"),
     PERSISTENCE_CANNOT_LOAD_PROPERTIES(602, "Failed to load DAO properties."),
     PERSISTENCE_CANNOT_CLOSE_CONNECTION(603, "Could not close connection. Details: %s"),
     PERSISTENCE_CANNOT_PREPARE_TIMESTAMP(604, "Could not parse provided timestamp '%d' into DB-supported form. Details: %s"),
@@ -41,6 +41,7 @@ public enum ErrorMessages {
     PERSISTENCE_CANNOT_READ_LAST_RECORD(606, "Could not read last entry from the database. Details: %s"),
     PERSISTENCE_CANNOT_READ_RECORDS(607, "Could not read list of entries from the database. Details: %s"),
     PERSISTENCE_CANNOT_DELETE_RECORD(608, "Could not delete entry from the database. Details: %s"),
+    PERSISTENCE_CANNOT_DEREGISTER_DRIVER(609, "Failed to deregister JDBC driver. Details: %s"),
 
     JMS_SERVER_IP_NOT_PROVIDED(700, "ServerIpAddress not provided"),
     JMS_CLIENT_IP_NOT_PROVIDED(700, "ClientIpAddress not provided"),

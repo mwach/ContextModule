@@ -1,23 +1,19 @@
 package itti.com.pl.arena.cm.dto;
 
-import java.io.Serializable;
+import itti.com.pl.arena.cm.OntologyObject;
 
 /**
  * Abstract class representing geoportal objects (like buildings, infrastructure or vehicles)
  * @author cm-admin
  *
  */
-public abstract class GeoObject implements Serializable {
+public abstract class GeoObject extends OntologyObject {
 
     /**
 	 * 
 	 */
     private static final long serialVersionUID = 1L;
 
-    /*
-     * ID of the object (unique per module/ontology)
-     */
-    private String id;
     /*
      * Last known location of the object
      */
@@ -41,7 +37,7 @@ public abstract class GeoObject implements Serializable {
      * @param id ID of the object
      */
     public GeoObject(String id){
-        this.id = id;
+        super(id);
     }
     /**
      * Returns information about object boundaries
@@ -69,14 +65,6 @@ public abstract class GeoObject implements Serializable {
         } else {
             this.boundaries = new Location[0];
         }
-    }
-
-    /**
-     * Returns information about ID of the object
-     * @return ID of the object
-     */
-    public String getId() {
-        return id;
     }
 
     /**
