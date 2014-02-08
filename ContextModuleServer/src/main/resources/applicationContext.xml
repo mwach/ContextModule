@@ -17,7 +17,7 @@
 
 	<!-- DAL layer -->
 	<bean id="Persistance" class="itti.com.pl.arena.cm.persistence.jdbc.JdbcPersistence"
-		init-method="init">
+		init-method="init" destroy-method="shutdown">
 		<property name="jdbcProperties" ref="JdbcProperties" />
 	</bean>
 
@@ -66,9 +66,9 @@
 	<!-- Ontology bean -->
 	<bean id="Ontology"
 		class="itti.com.pl.arena.cm.ontology.ContextModuleOntologyManager"
-		init-method="init">
+		init-method="init" destroy-method="shutdown">
 		<!-- properties: ontology location and namespace -->
-		<property name="ontologyLocation" value="Arena_update_v09c.owl" />
+		<property name="ontologyLocation" value="Arena_update_v10a.owl" />
 		<property name="ontologyNamespace"
 			value="http://www.owl-ontologies.com/Ontology1350654591.owl#" />
 	</bean>
