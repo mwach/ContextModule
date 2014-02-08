@@ -46,11 +46,11 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
             + "FILTER ( (?coordinate_x >= %f && ?coordinate_x <= %f) && (?coordinate_y >= %f && ?coordinate_y <= %f)) " + "}";
 
     private static final String QUERY_GET_PLATFORMS = "PREFIX ns: <%s> " + "SELECT ?%s " + "WHERE " + "{ "
-            + "?%s rdf:type ns:%s. " + "?%s ns:Vehicle_has_GPS_x ?coordinate_x. " + "?%s ns:Vehicle_has_GPS_y ?coordinate_y. "
+            + "?%s rdf:type ns:%s. " + "?%s ns:Object_has_GPS_x ?coordinate_x. " + "?%s ns:Object_has_GPS_y ?coordinate_y. "
             + "FILTER ( (?coordinate_x >= %f && ?coordinate_x <= %f) && (?coordinate_y >= %f && ?coordinate_y <= %f)) " + "}";
 
     private static final String QUERY_PARKING_OBJECTS = "PREFIX ns: <%s> " + "SELECT ?%s " + "WHERE " + "{ "
-            + "?%s rdf:type ns:%s. " + "?%s ns:Parking_has_GPS_x ?coordinate_x. " + "?%s ns:Parking_has_GPS_y ?coordinate_y. "
+            + "?%s rdf:type ns:%s. " + "?%s ns:Object_has_GPS_x ?coordinate_x. " + "?%s ns:Object_has_GPS_y ?coordinate_y. "
             + "FILTER ( (?coordinate_x >= %f && ?coordinate_x <= %f) || (?coordinate_y >= %f && ?coordinate_y <= %f)) " + "}";
 
     /**
