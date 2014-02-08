@@ -47,10 +47,12 @@ import edu.stanford.smi.protegex.owl.swrl.parser.SWRLParseException;
  */
 public class OntologyManager implements Service {
 
-    private static final String QUERY_GET_DIRECT_INSTANCES = "PREFIX ns: <%s> SELECT ?%s WHERE { ?%s rdf:type ns:%s }";
-    private static final String QUERY_GET_INSTANCES = "PREFIX ns: <%s> SELECT ?%s WHERE { ?%s rdf:type ?subclass. ?subclass rdfs:subClassOf ns:%s }";
+    private static final String QUERY_GET_DIRECT_INSTANCES = "PREFIX ns:<%s> SELECT ?%s WHERE { ?%s rdf:type ns:%s }";
+    private static final String QUERY_GET_INSTANCES = "PREFIX ns:<%s> SELECT ?%s WHERE { ?%s rdf:type ?subclass. "
+            + "?subclass rdfs:subClassOf ns:%s }";
     private static final String QUERY_GET_INSTANCE_CLASS = "PREFIX ns:<%s> SELECT ?%s WHERE { ns:%s rdf:type ?%s }";
-    private static final String QUERY_GET_INSTANCE_GRAND_CLASS = "PREFIX ns:<%s> SELECT ?%s WHERE { ns:%s rdf:type ?directParent. ?directParent rdfs:subClassOf ?%s }";
+    private static final String QUERY_GET_INSTANCE_GRAND_CLASS = "PREFIX ns:<%s> SELECT ?%s WHERE { ns:%s rdf:type "
+            + "?directParent. ?directParent rdfs:subClassOf ?%s }";
 
     // in-memory ontology model
     private JenaOWLModel model = null;

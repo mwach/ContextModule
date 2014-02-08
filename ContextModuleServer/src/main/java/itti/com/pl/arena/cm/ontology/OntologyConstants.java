@@ -12,17 +12,16 @@ public enum OntologyConstants {
     Static_object,
     Object_has_GPS_coordinates,
     Object_has_GPS_bearing,
-    Vehicle_has_GPS_x,
-    Vehicle_has_GPS_y,
 
     Object_has_width,
     Object_has_height,
     Object_has_length,
 
-    Parking_has_GPS_x,
-    Parking_has_GPS_y,
+    Object_has_GPS_x,
+    Object_has_GPS_y,
     Parking_has_infrastructure,
     Parking_has_building,
     Building,
+    Infrastructure,
     Object_has_distance
 }

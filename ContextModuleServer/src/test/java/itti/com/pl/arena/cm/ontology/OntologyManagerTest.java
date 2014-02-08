@@ -57,6 +57,7 @@ public class OntologyManagerTest {
         Assert.assertTrue(ontologyManager.createOwlClass(className));
         // now add some basic instance to newly create class
         ontologyManager.createSimpleInstance(className, instanceName, null);
+        
         List<String> instances = ontologyManager.getDirectInstances(className);
         // verify, instance was added to given class
         Assert.assertEquals(1, instances.size());
@@ -68,7 +69,7 @@ public class OntologyManagerTest {
 
         // select existing class having at least one known property
         String className = OntologyConstants.Parking.name();
-        String propertyName = OntologyConstants.Parking_has_GPS_x.name();
+        String propertyName = OntologyConstants.Object_has_GPS_x.name();
         String propertyValue = String.valueOf(123.456);
         Map<String, String[]> properties = new HashMap<>();
         properties.put(propertyName, new String[] { propertyValue });

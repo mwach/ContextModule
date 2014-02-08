@@ -36,7 +36,7 @@ public final class LocationHelper {
         if (locationSplit.length != 2) {
             throw new LocationHelperException(ErrorMessages.LOCATION_HELPER_INVALID_FORMAT, locationString);
         }
-        if (NumbersHelper.isDouble(locationSplit[0]) && NumbersHelper.isDouble(locationSplit[1])) {
+        if (!NumbersHelper.isDouble(locationSplit[0]) || !NumbersHelper.isDouble(locationSplit[1])) {
             throw new LocationHelperException(ErrorMessages.LOCATION_HELPER_INVALID_FORMAT, locationString);
         }
         // create and return location object
