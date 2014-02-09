@@ -59,7 +59,7 @@ public class CMClient {
             client.init();
             // call all available CM public services
             //get the platform info
-            parseGetPlatformServiceResponse(client.getPlatformService("Vehicla_with_cameras_R1"));
+            parseGetPlatformServiceResponse(client.getPlatformService("Vehicle_CB04432"));
             //get all the platforms from given location
             parseGetPlatformsServiceResponse(client.getPlatformsService(-0.94, 51.43));
             //get GIS data from the ontology
@@ -69,7 +69,8 @@ public class CMClient {
             //retrieve data from the external service (geoportal) and add it to ontology
             parseGetGeoportalDataServiceResponse(client.getGeoportalDataService(17.972946559166793, 53.124318916278824));
             //retrieve info about camera field of view
-            parseGetCameraFieldOfViewResponse(client.getCameraFieldOfView("Cameras_5"));
+            parseGetCameraFieldOfViewResponse(client.getCameraFieldOfView("Camera_3"));
+
         } catch (ContextModuleClientException exc) {
             //CM exception e.g. properties file parsing
             LogHelper.error(CMClient.class, "main", "Could not perform operation. Details: %s", exc.getMessage());
@@ -402,6 +403,7 @@ public class CMClient {
         Situation object = objectFactory.createSituation();
         object.setId(getObjectId());
         object.setDataSourceId(CLIENT_MODULE_NAME);
+        object.setGlobalSceneProperty(new FeatureVector());
         object.getGlobalSceneProperty().getFeature().addAll(Arrays.asList(params));
         return object;
     }

@@ -223,7 +223,7 @@ public class OntologyManager implements Service {
         if (results.isEmpty()) {
             LogHelper.warning(OntologyManager.class, "getInstanceGrandClass", "No results were found for instance '%s'",
                     instanceName);
-            throw new OntologyException(ErrorMessages.ONTOLOGY_INSTANCE_NOT_FOUND, instanceName);
+            return null;
         }
         return results.get(0);
     }

@@ -15,7 +15,6 @@ import itti.com.pl.arena.cm.geoportal.Geoportal;
 import itti.com.pl.arena.cm.geoportal.GeoportalException;
 import itti.com.pl.arena.cm.ontology.Ontology;
 import itti.com.pl.arena.cm.ontology.OntologyException;
-import itti.com.pl.arena.cm.service.Constants.ContextModuleRequestProperties;
 import itti.com.pl.arena.cm.service.Constants.ContextModuleRequests;
 import itti.com.pl.arena.cm.service.Constants.ContextModuleResponseProperties;
 import itti.com.pl.arena.cm.service.ContextModule;
@@ -225,12 +224,18 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getGISData.name(), data.getHref())
                         && (data instanceof Location)) {
                     response = getGISData((Location) data);
+                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getGISDataExt.name(), data.getHref())
+                        && (data instanceof Situation)) {
+                    response = getGISData((Situation) data);
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getGeoportalData.name(), data.getHref())
                         && (data instanceof Location)) {
                     response = getGeoportalData((Location) data);
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.updatePlatform.name(), data.getHref())
                         && (data instanceof SimpleNamedValue)) {
                     response = updateGISData((SimpleNamedValue) data);
+                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getCameraFieldOfView.name(), data.getHref())
+                        && (data instanceof SimpleNamedValue)) {
+                    response = getCameraFieldOfView((SimpleNamedValue) data);
                 } else {
                     // invalid service name provided
                     LogHelper.info(ContextModuleJmsService.class, "onDataChanged", "Invalid method requested: '%s'",
@@ -268,28 +273,12 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
         }
         // data retrieved -try to process it
         if (platform != null) {
-            // ID of the object
-            vector.getFeature().add(createSimpleNamedValue(ContextModuleRequestProperties.Id.name(), platform.getId()));
-
-            // size of the object
-            vector.getFeature().add(createSimpleNamedValue(ContextModuleRequestProperties.Width.name(), platform.getWidth()));
-            vector.getFeature().add(createSimpleNamedValue(ContextModuleRequestProperties.Height.name(), platform.getHeight()));
-            vector.getFeature().add(createSimpleNamedValue(ContextModuleRequestProperties.Length.name(), platform.getLength()));
-
-            // information about location
-            if (platform.getLocation() != null) {
-                vector.getFeature().add(
-                        createLocation(ContextModuleRequestProperties.Location.name(), platform.getLocation().getLatitude(),
-                                platform.getLocation().getLongitude()));
-                vector.getFeature()
-                        .add(createSimpleNamedValue(ContextModuleRequestProperties.Bearing.name(), platform.getLocation()
-                                .getBearing()));
-            }
-            // information about cameras
-            if (platform.getCameras() != null) {
-                for (Camera camera : platform.getCameras().values()) {
-                    collectCameraInformation(vector, camera);
-                }
+            try {
+                vector.getFeature().add(createSimpleNamedValue(platform.getId(), JsonHelper.toJson(platform)));
+            } catch (JsonHelperException exc) {
+                LogHelper.warning(ContextModuleJmsService.class, "getPlatforms",
+                        "Could not add given object to the response: '%s'. Details: %s", platform,
+                        exc.getLocalizedMessage());
             }
         }
         response.setFeatureVector(vector);
@@ -513,24 +502,6 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
     }
 
     /**
-     * Prepare list of features containing information about single camera installed on platform
-     * 
-     * @param vector
-     *            feature vector
-     * @param camera
-     *            instance of the on-truck camera
-     */
-    private void collectCameraInformation(FeatureVector vector, Camera camera) {
-        vector.getFeature().add(createSimpleNamedValue(ContextModuleRequestProperties.CameraId.name(), camera.getId()));
-        vector.getFeature().add(
-                createSimpleNamedValue(ContextModuleRequestProperties.CameraPosition.name(), camera.getOnPPlatformPosition()
-                        .name()));
-        vector.getFeature().add(createSimpleNamedValue(ContextModuleRequestProperties.CameraType.name(), camera.getType()));
-        vector.getFeature().add(createSimpleNamedValue(ContextModuleRequestProperties.CameraAngleX.name(), camera.getAngleX()));
-        vector.getFeature().add(createSimpleNamedValue(ContextModuleRequestProperties.CameraAngleY.name(), camera.getAngleY()));
-    }
-
-    /**
      * Prepares instance of the {@link AbstractNamedValue} class
      * 
      * @param id
@@ -545,25 +516,5 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
         snv.setId(id);
         snv.setValue(String.valueOf(value));
         return snv;
-    }
-
-    /**
-     * Prepares Location as instance of the {@link Location} class
-     * 
-     * @param id
-     *            ID of the object
-     * @param x
-     *            longitude
-     * @param y
-     *            latitude
-     * @return object containing location attributes
-     */
-    private AbstractNamedValue createLocation(String id, double x, double y) {
-        Location location = factory.createLocation();
-        location.setDataSourceId(Constants.MODULE_NAME);
-        location.setId(id);
-        location.setX(x);
-        location.setX(y);
-        return location;
     }
 }

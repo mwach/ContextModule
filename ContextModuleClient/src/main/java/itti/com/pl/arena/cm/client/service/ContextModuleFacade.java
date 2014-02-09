@@ -6,7 +6,6 @@ import java.util.HashMap;
 import com.safran.arena.MessageFilterInterface;
 import com.safran.arena.impl.Client;
 import com.safran.arena.impl.ModuleImpl;
-import com.safran.arena.impl.SimpleMessageFilter;
 
 import eu.arena_fp7._1.AbstractDataFusionType;
 import eu.arena_fp7._1.BooleanNamedValue;
