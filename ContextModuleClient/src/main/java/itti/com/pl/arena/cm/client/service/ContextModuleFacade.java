@@ -12,7 +12,6 @@ import eu.arena_fp7._1.BooleanNamedValue;
 import eu.arena_fp7._1.Location;
 import eu.arena_fp7._1.Object;
 import eu.arena_fp7._1.SimpleNamedValue;
-import eu.arena_fp7._1.Situation;
 import itti.com.pl.arena.cm.Constants;
 import itti.com.pl.arena.cm.ContextModuleRuntimeException;
 import itti.com.pl.arena.cm.Service;
@@ -246,8 +245,8 @@ public class ContextModuleFacade extends ModuleImpl implements Service, ContextM
      * @see itti.com.pl.arena.cm.service.ContextModule#getPlatforms(eu.arena_fp7._1.Location)
      */
     @Override
-    public Situation getPlatforms(Location location) {
-        return (Situation) submitData(location);
+    public Object getPlatforms(Location location) {
+        return (Object) submitData(location);
     }
 
     /*
@@ -256,18 +255,18 @@ public class ContextModuleFacade extends ModuleImpl implements Service, ContextM
      * @see itti.com.pl.arena.cm.service.ContextModule#getGISData(eu.arena_fp7._1.Location)
      */
     @Override
-    public Situation getGISData(Location location) {
-        return (Situation) submitData(location);
+    public Object getGISData(Location location) {
+        return (Object) submitData(location);
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see itti.com.pl.arena.cm.service.ContextModule#getGISData(eu.arena_fp7._1.Situation)
+     * @see itti.com.pl.arena.cm.service.ContextModule#getGISData(eu.arena_fp7._1.Object)
      */
     @Override
-    public Situation getGISData(Situation parameters) {
-        return (Situation) submitData(parameters);
+    public Object getGISData(Object parameters) {
+        return (Object) submitData(parameters);
     }
 
     /*
@@ -276,8 +275,8 @@ public class ContextModuleFacade extends ModuleImpl implements Service, ContextM
      * @see itti.com.pl.arena.cm.service.ContextModule#getGeoportalData(eu.arena_fp7._1.Location)
      */
     @Override
-    public Situation getGeoportalData(Location location) {
-        return (Situation) submitData(location);
+    public Object getGeoportalData(Location location) {
+        return (Object) submitData(location);
     }
 
     /* (non-Javadoc)
@@ -286,6 +285,16 @@ public class ContextModuleFacade extends ModuleImpl implements Service, ContextM
     @Override
     public BooleanNamedValue updateGISData(SimpleNamedValue gisData) {
         return (BooleanNamedValue)submitData(gisData);
+    }
+
+    @Override
+    public SimpleNamedValue defineZone(Object zoneDefinition) {
+        return (SimpleNamedValue)submitData(zoneDefinition);
+    }
+
+    @Override
+    public Object getZone(SimpleNamedValue zoneId) {
+        return (Object)submitData(zoneId);
     }
 
     /**

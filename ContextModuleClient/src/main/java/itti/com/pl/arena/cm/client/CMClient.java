@@ -21,7 +21,6 @@ import eu.arena_fp7._1.Location;
 import eu.arena_fp7._1.Object;
 import eu.arena_fp7._1.ObjectFactory;
 import eu.arena_fp7._1.SimpleNamedValue;
-import eu.arena_fp7._1.Situation;
 
 /**
  * Sample client class showing base CM functionalities
@@ -58,28 +57,33 @@ public class CMClient {
             // initialize the client
             client.init();
             // call all available CM public services
-            //get the platform info
+            // get the platform info
             parseGetPlatformServiceResponse(client.getPlatformService("Vehicle_CB04432"));
-            //get all the platforms from given location
+            // get all the platforms from given location
             parseGetPlatformsServiceResponse(client.getPlatformsService(-0.94, 51.43));
-            //get GIS data from the ontology
+            // get GIS data from the ontology
             parseGetGISDataServiceResponse(client.getGISDataService(-0.94, 51.43));
-            //get GIS data from the ontology using additional filters
+            // get GIS data from the ontology using additional filters
             parseGetGISDataServiceResponse(client.getGISDataService(-0.94, 51.43, 1.0, "Parking"));
-            //retrieve data from the external service (geoportal) and add it to ontology
+            // retrieve data from the external service (geoportal) and add it to ontology
             parseGetGeoportalDataServiceResponse(client.getGeoportalDataService(17.972946559166793, 53.124318916278824));
-            //retrieve info about camera field of view
+            // retrieve info about camera field of view
             parseGetCameraFieldOfViewResponse(client.getCameraFieldOfView("Camera_3"));
 
+            // retrieve data from the external service (geoportal) and add it to ontology
+            parseCreateZoneResponse(client.defineZone(new double[][] {
+                    // define square-shaped zone
+                    { -1.0, -1.0 }, { 1.0, -1.0 }, { 1.0, 1.0 }, { -1.0, 1.0 } }));
+
         } catch (ContextModuleClientException exc) {
-            //CM exception e.g. properties file parsing
+            // CM exception e.g. properties file parsing
             LogHelper.error(CMClient.class, "main", "Could not perform operation. Details: %s", exc.getMessage());
             printUsage();
         } catch (RuntimeException | JsonHelperException exc) {
-            //other exception e.g. response parsing error
+            // other exception e.g. response parsing error
             LogHelper.error(CMClient.class, "main", "Could not perform operation. Details: %s", exc.getMessage());
         } finally {
-            //shutdown the client
+            // shutdown the client
             client.shutdown();
         }
         // call 'exit' to interrupt the client listener thread
@@ -120,9 +124,9 @@ public class CMClient {
      * @param platforms
      *            information about trucks
      */
-    private static void parseGetPlatformsServiceResponse(Situation platforms) {
+    private static void parseGetPlatformsServiceResponse(Object platforms) {
         if (platforms != null) {
-            parseFeatureVector(platforms.getGlobalSceneProperty());
+            parseFeatureVector(platforms.getFeatureVector());
         }
     }
 
@@ -132,9 +136,9 @@ public class CMClient {
      * @param gisData
      *            information about GIS objects
      */
-    private static void parseGetGISDataServiceResponse(Situation gisData) {
+    private static void parseGetGISDataServiceResponse(Object gisData) {
         if (gisData != null) {
-            parseFeatureVector(gisData.getGlobalSceneProperty());
+            parseFeatureVector(gisData.getFeatureVector());
         }
     }
 
@@ -144,9 +148,9 @@ public class CMClient {
      * @param geoportalData
      *            information retrieved from geoportal
      */
-    private static void parseGetGeoportalDataServiceResponse(Situation geoportalData) {
+    private static void parseGetGeoportalDataServiceResponse(Object geoportalData) {
         if (geoportalData != null) {
-            parseFeatureVector(geoportalData.getGlobalSceneProperty());
+            parseFeatureVector(geoportalData.getFeatureVector());
         }
     }
 
@@ -163,10 +167,22 @@ public class CMClient {
     }
 
     /**
-     * Parses response received from getGeoportalData service
+     * Parses response received from getCameraFieldOfView service
      * 
-     * @param geoportalData
-     *            information retrieved from geoportal
+     * @param zoneResponse
+     *            information retrieved from the ontology about camera
+     */
+    private static void parseCreateZoneResponse(SimpleNamedValue zoneResponse) {
+        if (zoneResponse != null) {
+            parseSimpleNamedValue(zoneResponse);
+        }
+    }
+
+    /**
+     * Parses response stored inside {@link FeatureVector} object
+     * 
+     * @param featureVector
+     *            information stored inside {@link FeatureVector}
      */
     private static void parseFeatureVector(FeatureVector featureVector) {
         if (featureVector != null) {
@@ -187,6 +203,22 @@ public class CMClient {
     }
 
     /**
+     * Parses response stored inside {@link SimpleNamedValue} object
+     * 
+     * @param value
+     *            information stored inside {@link SimpleNamedValue}
+     */
+    private static void parseSimpleNamedValue(SimpleNamedValue value) {
+        if (value != null) {
+            StringBuilder output = new StringBuilder();
+            output.append("\n");
+            output.append(String.format("       %s: %s", value.getId(), value.getValue()));
+            output.append("\n");
+            LogHelper.info(CMClient.class, "parseFeatureList", output.toString());
+        }
+    }
+
+    /**
      * Loads properties from given file Also performs some basic validation
      * 
      * @param propertiesFile
@@ -201,8 +233,8 @@ public class CMClient {
             throw new ContextModuleClientException(String.format("Could not load properties file. Details: '%s'",
                     e.getLocalizedMessage()));
         }
-        //check, if all required properties were defined in the file
-        if(!PropertiesHelper.hasProperty(properties, ClientPropertyNames.brokerUrl.name())){
+        // check, if all required properties were defined in the file
+        if (!PropertiesHelper.hasProperty(properties, ClientPropertyNames.brokerUrl.name())) {
             throw new ContextModuleClientException(String.format("Required property '%s' not found",
                     ClientPropertyNames.brokerUrl.name()));
         }
@@ -232,10 +264,10 @@ public class CMClient {
      *            latitude
      * @return Object containing information retrieved from ContextModule
      */
-    public Situation getPlatformsService(double x, double y) {
+    public Object getPlatformsService(double x, double y) {
         Location objectLocation = createLocation(x, y);
         objectLocation.setHref(ContextModuleRequests.getPlatforms.name());
-        Situation data = contextModule.getPlatforms(objectLocation);
+        Object data = contextModule.getPlatforms(objectLocation);
         LogHelper.info(CMClient.class, "getPlatformsService", "Server response received: %s", String.valueOf(data));
         return data;
     }
@@ -249,10 +281,10 @@ public class CMClient {
      *            latitude
      * @return Object containing information retrieved from ContextModule
      */
-    public Situation getGISDataService(double x, double y) {
+    public Object getGISDataService(double x, double y) {
         Location objectLocation = createLocation(x, y);
         objectLocation.setHref(ContextModuleRequests.getGISData.name());
-        Situation data = contextModule.getGISData(objectLocation);
+        Object data = contextModule.getGISData(objectLocation);
         LogHelper.info(CMClient.class, "getGISDataService", "Server response received: %s", String.valueOf(data));
         return data;
     }
@@ -272,7 +304,7 @@ public class CMClient {
      * @throws JsonHelperException
      *             could not create request object
      */
-    public Situation getGISDataService(double x, double y, Double radius, String... classes) throws JsonHelperException {
+    public Object getGISDataService(double x, double y, Double radius, String... classes) throws JsonHelperException {
 
         Location locationObject = createLocation(x, y);
 
@@ -281,10 +313,10 @@ public class CMClient {
 
         SimpleNamedValue classesObject = createSimpleNamedValue(JsonHelper.toJson(classes));
 
-        Situation situation = createSituation(locationObject, radiusObject, classesObject);
-        situation.setHref(ContextModuleRequests.getGISDataExt.name());
+        Object requestData = createObject(locationObject, radiusObject, classesObject);
+        requestData.setHref(ContextModuleRequests.getGISDataExt.name());
 
-        Situation data = contextModule.getGISData(situation);
+        Object data = contextModule.getGISData(requestData);
 
         LogHelper.info(CMClient.class, "getGISDataService", "Server response received: %s", String.valueOf(data));
         return data;
@@ -299,17 +331,19 @@ public class CMClient {
      *            latitude
      * @return Object containing information retrieved from external Geoportal service
      */
-    public Situation getGeoportalDataService(double x, double y) {
+    public Object getGeoportalDataService(double x, double y) {
         Location objectLocation = createLocation(x, y);
         objectLocation.setHref(ContextModuleRequests.getGeoportalData.name());
-        Situation data = contextModule.getGeoportalData(objectLocation);
+        Object data = contextModule.getGeoportalData(objectLocation);
         LogHelper.info(CMClient.class, "getGeoportalDataService", "Server response received: %s", String.valueOf(data));
         return data;
     }
 
     /**
      * Returns information about objects in the camera field of view
-     * @param cameraId ID of the camera
+     * 
+     * @param cameraId
+     *            ID of the camera
      * @return Object containing information about camera field of view (ontology data)
      */
     public Object getCameraFieldOfView(String cameraId) {
@@ -318,6 +352,36 @@ public class CMClient {
         Object data = contextModule.getCameraFieldOfView(cameraObject);
         LogHelper.info(CMClient.class, "getCameraFieldOfView", "Server response received: %s", String.valueOf(data));
         return data;
+    }
+
+    /**
+     * Creates a new zone object from list of provided coordinates
+     * 
+     * @param coordinates
+     *            coordinates defining size and shape of the zone
+     * @return {@link SimpleNamedValue} object containing ID of the created zone
+     */
+    private SimpleNamedValue defineZone(double[][] coordinates) {
+        AbstractNamedValue[] requestParams = null;
+        // check, if there are coordinates provided
+        if (coordinates != null) {
+            requestParams = new AbstractNamedValue[coordinates.length];
+            // for each coordinate
+            for (int i = 0; i < coordinates.length; i++) {
+                double[] coordinate = coordinates[i];
+                // validate it first
+                if (coordinate != null && coordinate.length == 2) {
+                    // if valid, create location object
+                    requestParams[i] = createLocation(coordinate[0], coordinate[1]);
+                }
+            }
+        }
+        Object requestObject = createObject(requestParams);
+        requestObject.setHref(ContextModuleRequests.getCameraFieldOfView.name());
+        SimpleNamedValue data = contextModule.defineZone(requestObject);
+        LogHelper.info(CMClient.class, "getCameraFieldOfView", "Server response received: %s", String.valueOf(data));
+        return data;
+
     }
 
     /**
@@ -336,15 +400,18 @@ public class CMClient {
         String brokerUrl = PropertiesHelper.getPropertyAsString(properties, ClientPropertyNames.brokerUrl.name(), null);
 
         // client's port
-        int clientPort = PropertiesHelper.getPropertyAsInteger(properties, ClientPropertyNames.clientPort.name(), ClientDefaults.DEFAULT_CLIENT_PORT);
+        int clientPort = PropertiesHelper.getPropertyAsInteger(properties, ClientPropertyNames.clientPort.name(),
+                ClientDefaults.DEFAULT_CLIENT_PORT);
 
         // debug mode state
-        boolean debugMode = PropertiesHelper.getPropertyAsBoolean(properties, ClientPropertyNames.debugMode.name(), ClientDefaults.DEFAULT_DEBUG_MODE);
+        boolean debugMode = PropertiesHelper.getPropertyAsBoolean(properties, ClientPropertyNames.debugMode.name(),
+                ClientDefaults.DEFAULT_DEBUG_MODE);
 
         // maximum client waiting time
-        int responseWaitingTime = PropertiesHelper.getPropertyAsInteger(properties, ClientPropertyNames.responseWaitingTime.name(), ClientDefaults.DEFAULT_WAITING_TIME);
+        int responseWaitingTime = PropertiesHelper.getPropertyAsInteger(properties,
+                ClientPropertyNames.responseWaitingTime.name(), ClientDefaults.DEFAULT_WAITING_TIME);
 
-        //create CM facade object
+        // create CM facade object
         ContextModuleFacade cmFacade = new ContextModuleFacade(CLIENT_MODULE_NAME, brokerUrl);
         cmFacade.setDebug(debugMode);
         cmFacade.setResponseWaitingTime(responseWaitingTime);
@@ -391,20 +458,21 @@ public class CMClient {
     }
 
     /**
-     * Creates simple location object
+     * Creates simple {@link Object} object
      * 
-     * @param x
-     *            longitude
-     * @param y
-     *            latitude
+     * @param params
+     *            objects to be put in the {@link FeatureVector} of that object
+     * 
      * @return created request object
      */
-    private Situation createSituation(AbstractNamedValue... params) {
-        Situation object = objectFactory.createSituation();
+    private Object createObject(AbstractNamedValue... params) {
+        Object object = objectFactory.createObject();
         object.setId(getObjectId());
         object.setDataSourceId(CLIENT_MODULE_NAME);
-        object.setGlobalSceneProperty(new FeatureVector());
-        object.getGlobalSceneProperty().getFeature().addAll(Arrays.asList(params));
+        object.setFeatureVector(new FeatureVector());
+        if (params != null) {
+            object.getFeatureVector().getFeature().addAll(Arrays.asList(params));
+        }
         return object;
     }
 

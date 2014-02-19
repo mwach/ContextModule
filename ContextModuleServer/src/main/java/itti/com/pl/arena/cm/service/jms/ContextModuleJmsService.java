@@ -37,7 +37,6 @@ import eu.arena_fp7._1.Location;
 import eu.arena_fp7._1.Object;
 import eu.arena_fp7._1.ObjectFactory;
 import eu.arena_fp7._1.SimpleNamedValue;
-import eu.arena_fp7._1.Situation;
 
 /**
  * Implementation of the {@link ContextModule} interface
@@ -225,8 +224,8 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
                         && (data instanceof Location)) {
                     response = getGISData((Location) data);
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getGISDataExt.name(), data.getHref())
-                        && (data instanceof Situation)) {
-                    response = getGISData((Situation) data);
+                        && (data instanceof Object)) {
+                    response = getGISData((Object) data);
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getGeoportalData.name(), data.getHref())
                         && (data instanceof Location)) {
                     response = getGeoportalData((Location) data);
@@ -342,10 +341,10 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
      * @see itti.com.pl.arena.cm.service.ContextModule#getPlatforms(eu.arena_fp7._1.Location)
      */
     @Override
-    public Situation getPlatforms(Location location) {
+    public Object getPlatforms(Location location) {
 
         // prepare response object
-        Situation response = factory.createSituation();
+        Object response = factory.createObject();
         FeatureVector responseVector = new FeatureVector();
 
         // try to get data from the ontology
@@ -370,7 +369,7 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
                 }
             }
         }
-        response.setGlobalSceneProperty(responseVector);
+        response.setFeatureVector(responseVector);
         return response;
     }
 
@@ -380,7 +379,7 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
      * @see itti.com.pl.arena.cm.service.ContextModule#getGISData(eu.arena_fp7._1.Location)
      */
     @Override
-    public Situation getGISData(Location location) {
+    public Object getGISData(Location location) {
 
         return getGeoObjects(location, getRadius(), (String[]) null);
     }
@@ -388,17 +387,17 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
     /*
      * (non-Javadoc)
      * 
-     * @see itti.com.pl.arena.cm.service.ContextModule#getGISData(eu.arena_fp7._1.Situation)
+     * @see itti.com.pl.arena.cm.service.ContextModule#getGISData(eu.arena_fp7._1.Object)
      */
     @Override
-    public Situation getGISData(Situation parameters) {
+    public Object getGISData(Object parameters) {
 
         Location requestLocation = null;
         double requestRange = getRadius();
         String[] requestClasses = new String[]{null};
         // try to parse request object into parameters
         try {
-            for (AbstractNamedValue parameter : parameters.getGlobalSceneProperty().getFeature()) {
+            for (AbstractNamedValue parameter : parameters.getFeatureVector().getFeature()) {
 
                 if (parameter instanceof Location) {
                     requestLocation = (Location) parameter;
@@ -420,10 +419,10 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
                 requestClasses);
     }
 
-    private Situation getGeoObjects(Location location, double radius, String... classes) {
+    private Object getGeoObjects(Location location, double radius, String... classes) {
 
         // prepare response object
-        Situation response = factory.createSituation();
+        Object response = factory.createObject();
         FeatureVector responseVector = new FeatureVector();
 
         Set<GeoObject> geographicalInformation = null;
@@ -447,7 +446,7 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
             }
         }
         // add results to the response
-        response.setGlobalSceneProperty(responseVector);
+        response.setFeatureVector(responseVector);
         return response;
     }
 
@@ -457,10 +456,10 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
      * @see itti.com.pl.arena.cm.service.ContextModule#getGeoportalData(eu.arena_fp7._1.Location)
      */
     @Override
-    public Situation getGeoportalData(Location location) {
+    public Object getGeoportalData(Location location) {
 
         // prepare response data
-        Situation response = factory.createSituation();
+        Object response = factory.createObject();
         FeatureVector responseVector = new FeatureVector();
 
         Set<GeoObject> geoData = null;
@@ -490,7 +489,7 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
                                     exc.getLocalizedMessage());
                 }
             }
-            response.setGlobalSceneProperty(responseVector);
+            response.setFeatureVector(responseVector);
         }
         return response;
     }
@@ -499,6 +498,18 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
     public BooleanNamedValue updateGISData(SimpleNamedValue gisData) {
         // TODO: to be implemented
         return factory.createBooleanNamedValue();
+    }
+
+    @Override
+    public SimpleNamedValue defineZone(Object zoneDefinition) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Object getZone(SimpleNamedValue zoneId) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     /**

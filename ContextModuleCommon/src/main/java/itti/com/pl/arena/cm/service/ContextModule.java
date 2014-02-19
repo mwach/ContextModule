@@ -6,7 +6,6 @@ import eu.arena_fp7._1.BooleanNamedValue;
 import eu.arena_fp7._1.Location;
 import eu.arena_fp7._1.Object;
 import eu.arena_fp7._1.SimpleNamedValue;
-import eu.arena_fp7._1.Situation;
 
 /**
  * General external interface for the ContextModule defines method, which can be used by external component to access CM
@@ -49,7 +48,7 @@ public interface ContextModule {
     BooleanNamedValue updatePlatform(SimpleNamedValue platform);
 
     /**
-     * This method allows retrieval of data about platforms found near the given location (i.e. returned Situation class
+     * This method allows retrieval of data about platforms found near the given location (i.e. returned Object class
      * will contain Object classes describing each platform).
      * 
      * @param location
@@ -57,11 +56,11 @@ public interface ContextModule {
      * @return data about platforms with Object classes having in their featureVectors Location and Kinematics
      *         attributes
      */
-    Situation getPlatforms(Location location);
+    Object getPlatforms(Location location);
 
     /**
-     * This method allows retrieval of available GIS data for specified location (i.e. creates Situation class with
-     * Objects having capabilities stored in their featureVectors) Situation class contains Object classes describing
+     * This method allows retrieval of available GIS data for specified location (i.e. creates Object class with
+     * Objects having capabilities stored in their featureVectors) Object class contains other Object classes describing
      * GIS features (e.g. buildings, roads, etc.) with appropriate featureVectors (e.g. number of lanes for roads or
      * height for buildings). The type of that data depends on GIS data source capabilities
      * 
@@ -69,11 +68,11 @@ public interface ContextModule {
      *            location
      * @return available GIS data for specified location
      */
-    Situation getGISData(Location location);
+    Object getGISData(Location location);
 
     /**
-     * This method allows retrieval of available GIS data for specified location (i.e. creates Situation class with
-     * Objects having capabilities stored in their featureVectors) Situation class contains Object classes describing
+     * This method allows retrieval of available GIS data for specified location (i.e. creates Object class with
+     * Objects having capabilities stored in their featureVectors) Object class contains other Object classes describing
      * GIS features (e.g. buildings, roads, etc.) with appropriate featureVectors (e.g. number of lanes for roads or
      * height for buildings). The type of that data depends on GIS data source capabilities
      * 
@@ -82,10 +81,10 @@ public interface ContextModule {
      *          - radius (instance of the double object), measured in kilometers
      *          - filters (instance of the String[] object) array containing names of the ontology classes
      *                  which should be used to filter results
-     * All parameters are stored as {@link Location} and {@link SimpleNamedValue} objects inside {@link Situation} vector
+     * All parameters are stored as {@link Location} and {@link SimpleNamedValue} objects inside {@link Object} vector
      * @return available GIS data for specified location
      */
-    Situation getGISData(Situation parameters);
+    Object getGISData(Object parameters);
 
     /**
      * This method allows to update existing or create new geo-object (instance of the {@link GeoObject} interface) in
@@ -105,5 +104,19 @@ public interface ContextModule {
      *            geographical location
      * @return Geoportal-defined data
      */
-    Situation getGeoportalData(Location location);
+    Object getGeoportalData(Location location);
+
+    /**
+     * Defines a new zone in the ontology
+     * @param zoneDefinition definition of the zone (list of coordinates ({@link Location} objects) describing zone)
+     * @return ID of the zone
+     */
+    SimpleNamedValue defineZone(Object zoneDefinition);
+
+    /**
+     * Returns list of coordinates ({@link Location} objects) describing zone
+     * @param zoneId ID of the zone
+     * @return list of coordinates, or empty list, if zone with given ID not found in the ontology
+     */
+    Object getZone(SimpleNamedValue zoneId);
 }
