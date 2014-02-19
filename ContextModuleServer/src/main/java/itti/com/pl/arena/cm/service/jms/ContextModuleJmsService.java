@@ -235,10 +235,19 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getCameraFieldOfView.name(), data.getHref())
                         && (data instanceof SimpleNamedValue)) {
                     response = getCameraFieldOfView((SimpleNamedValue) data);
+                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.defineZone.name(), data.getHref())
+                        && (data instanceof Object)) {
+                    response = defineZone((Object) data);
+                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getZone.name(), data.getHref())
+                        && (data instanceof SimpleNamedValue)) {
+                    response = getZone((SimpleNamedValue) data);
                 } else {
                     // invalid service name provided
                     LogHelper.info(ContextModuleJmsService.class, "onDataChanged", "Invalid method requested: '%s'",
                             data.getHref());
+                    SimpleNamedValue invalidRequestResponse = new SimpleNamedValue();
+                    invalidRequestResponse.setValue(String.format("Unsupprted service name specified: '%s'", data.getHref()));
+                    response = invalidRequestResponse;
                 }
 
                 // prepare valid response object

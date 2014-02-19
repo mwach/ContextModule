@@ -48,6 +48,16 @@ public final class Constants {
          */
         getCameraFieldOfView,
 
+        /**
+         * Service name used by the {@link ContextModule} 'defineZone' method
+         */
+        defineZone,
+
+        /**
+         * Service name used by the {@link ContextModule} 'getZone' method
+         */
+        getZone,
+
         ;
     }
 

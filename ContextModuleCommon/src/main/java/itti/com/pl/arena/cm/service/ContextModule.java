@@ -108,13 +108,13 @@ public interface ContextModule {
 
     /**
      * Defines a new zone in the ontology
-     * @param zoneDefinition definition of the zone (list of coordinates ({@link Location} objects) describing zone)
+     * @param zoneDefinition definition of the zone (list of zone vertexes stored as {@link Location} objects)
      * @return ID of the zone
      */
     SimpleNamedValue defineZone(Object zoneDefinition);
 
     /**
-     * Returns list of coordinates ({@link Location} objects) describing zone
+     * Returns zone definition: list of zone vertexes stored as {@link Location} objects
      * @param zoneId ID of the zone
      * @return list of coordinates, or empty list, if zone with given ID not found in the ontology
      */

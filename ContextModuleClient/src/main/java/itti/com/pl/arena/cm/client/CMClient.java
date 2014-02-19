@@ -70,11 +70,15 @@ public class CMClient {
             // retrieve info about camera field of view
             parseGetCameraFieldOfViewResponse(client.getCameraFieldOfView("Camera_3"));
 
-            // retrieve data from the external service (geoportal) and add it to ontology
-            parseCreateZoneResponse(client.defineZone(new double[][] {
+            // defines new zone in the ontology
+            String zoneId = parseDefineZoneResponse(client.defineZone(new double[][] {
                     // define square-shaped zone
                     { -1.0, -1.0 }, { 1.0, -1.0 }, { 1.0, 1.0 }, { -1.0, 1.0 } }));
 
+            // retrieves zone information from the ontology
+            parseGetZoneResponse(client.getZone(zoneId));
+
+            
         } catch (ContextModuleClientException exc) {
             // CM exception e.g. properties file parsing
             LogHelper.error(CMClient.class, "main", "Could not perform operation. Details: %s", exc.getMessage());
@@ -167,17 +171,34 @@ public class CMClient {
     }
 
     /**
-     * Parses response received from getCameraFieldOfView service
+     * Parses response received from defineZone service
      * 
      * @param zoneResponse
-     *            information retrieved from the ontology about camera
+     *            information about created zone retrieved from the ontology
+     * @return ID of the zone
      */
-    private static void parseCreateZoneResponse(SimpleNamedValue zoneResponse) {
+    private static String parseDefineZoneResponse(SimpleNamedValue zoneResponse) {
         if (zoneResponse != null) {
             parseSimpleNamedValue(zoneResponse);
+            return zoneResponse.getValue();
+        }
+        return null;
+    }
+
+    /**
+     * Parses response received from defineZone service
+     * 
+     * @param zoneResponse
+     *            information about created zone retrieved from the ontology
+     * @return ID of the zone
+     */
+    private static void parseGetZoneResponse(Object zoneResponse) {
+        if (zoneResponse != null) {
+            parseFeatureVector(zoneResponse.getFeatureVector());
         }
     }
 
+    
     /**
      * Parses response stored inside {@link FeatureVector} object
      * 
@@ -377,12 +398,28 @@ public class CMClient {
             }
         }
         Object requestObject = createObject(requestParams);
-        requestObject.setHref(ContextModuleRequests.getCameraFieldOfView.name());
+        requestObject.setHref(ContextModuleRequests.defineZone.name());
         SimpleNamedValue data = contextModule.defineZone(requestObject);
-        LogHelper.info(CMClient.class, "getCameraFieldOfView", "Server response received: %s", String.valueOf(data));
+        LogHelper.info(CMClient.class, "defineZone", "Server response received: %s", String.valueOf(data));
         return data;
-
     }
+    
+
+    /**
+     * Returns information about zone
+     * 
+     * @param zoneId
+     *            ID of the zone
+     * @return Object containing information retrieved from ContextModule
+     */
+    public Object getZone(String zoneId) {
+        SimpleNamedValue objectId = createSimpleNamedValue(zoneId);
+        objectId.setHref(ContextModuleRequests.getZone.name());
+        Object data = contextModule.getZone(objectId);
+        LogHelper.debug(CMClient.class, "getZone", "Server response received: %s", String.valueOf(data));
+        return data;
+    }
+
 
     /**
      * Prints command usage
