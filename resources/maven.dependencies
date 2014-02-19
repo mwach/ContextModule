@@ -1,4 +1,4 @@
-mkdir in catalina_home for plugins
+#mkdir in catalina_home for plugins
 
 mvn install:install-file -Dfile=libs/protege.jar -DgroupId=edu.stanford.smi.protege -DartifactId=protege -Dversion=3.4.8 -Dpackaging=jar
 
