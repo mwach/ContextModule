@@ -18,6 +18,7 @@ import itti.com.pl.arena.cm.ontology.OntologyException;
 import itti.com.pl.arena.cm.service.Constants.ContextModuleRequests;
 import itti.com.pl.arena.cm.service.Constants.ContextModuleResponseProperties;
 import itti.com.pl.arena.cm.service.ContextModule;
+import itti.com.pl.arena.cm.service.PlatformListener;
 import itti.com.pl.arena.cm.utils.helper.JsonHelper;
 import itti.com.pl.arena.cm.utils.helper.JsonHelperException;
 import itti.com.pl.arena.cm.utils.helper.LogHelper;
@@ -44,7 +45,7 @@ import eu.arena_fp7._1.SimpleNamedValue;
  * @author cm-admin
  * 
  */
-public class ContextModuleJmsService extends ModuleImpl implements ContextModule, Service {
+public class ContextModuleJmsService extends ModuleImpl implements ContextModule, Service, PlatformListener {
 
     /*
      * Objects used to communicate via Arena Bus
@@ -536,5 +537,11 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
         snv.setId(id);
         snv.setValue(String.valueOf(value));
         return snv;
+    }
+
+    @Override
+    public void destinationReached(itti.com.pl.arena.cm.dto.Location location) {
+        // TODO Auto-generated method stub
+        
     }
 }

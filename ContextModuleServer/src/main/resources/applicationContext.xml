@@ -9,8 +9,8 @@
         http://www.springframework.org/schema/task
         http://www.springframework.org/schema/task/spring-task-3.0.xsd">
 
-	<!--  value of the radius property measured in degrees. 
-	One degree is about 110km. Value of 0.01 is about one kilometer. -->
+	<!-- value of the radius property measured in degrees. One degree is about 
+		110km. Value of 0.01 is about one kilometer. -->
 	<bean id="radius" class="java.lang.Double">
 		<constructor-arg value="1.0" />
 	</bean>
@@ -81,15 +81,13 @@
 	<bean id="PlatformTracker" class="itti.com.pl.arena.cm.service.PlatformTracker"
 		init-method="init" destroy-method="shutdown">
 		<property name="persistence" ref="Persistance" />
-		<property name="ontology" ref="Ontology" />
-		<property name="geoportal" ref="Geoportal" />
 		<!-- name of the platform -->
 		<property name="platformId" value="arenaTruck1" />
-		<!-- radius (in kilometers) - defines search area -->
-		<property name="radius" ref="radius" />
-		<!-- if platform is not moving for that time (in minutes) CM will assume 
-			that parking lot was reached -->
-		<property name="maxBreakTime" value="30" />
+		<!-- JMS bean (inform other objects, that parking has been reached -->
+		<property name="platformListener" ref="ContextModuleJmsService" />
+		<!-- IDLE time between platform stop and 'destinationReached' method called 
+			(used to avoid false notification -->
+		<property name="maxIdleTime" value="300" />
 	</bean>
 
 	<!-- Communication layer -->
@@ -110,11 +108,10 @@
 
 	<!-- periodical tasks -->
 	<task:scheduled-tasks scheduler="CmScheduler">
-		<!-- once a minute check, if platform is still moving -->
-		<task:scheduled ref="PlatformTracker" method="checkIfMoving"
-			fixed-delay="60000" />
 		<!-- once per five seconds update GPS location of the mock GPS device -->
 		<task:scheduled ref="GpsListenerMock" method="updateLocation"
+			fixed-delay="5000" />
+		<task:scheduled ref="PlatformTracker" method="checkPlatformStopped"
 			fixed-delay="5000" />
 	</task:scheduled-tasks>
 
