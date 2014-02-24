@@ -137,7 +137,8 @@ public class PlatformTracker implements Service, LocationListener {
 
                         // we are on the parking
                         if (range == Range.getClosestRange()) {
-                            getPlatformListener().destinationReached(lastLocation);
+                            //notify the listener
+                            getPlatformListener().destinationReached(getId(), lastLocation);
                         }
                     } else {
                         // no parking lots in the given area, break the loop

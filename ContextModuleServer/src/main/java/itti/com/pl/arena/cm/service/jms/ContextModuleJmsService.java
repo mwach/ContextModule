@@ -1,6 +1,7 @@
 package itti.com.pl.arena.cm.service.jms;
 
 import java.util.Set;
+import java.util.UUID;
 
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.annotation.Required;
@@ -286,18 +287,17 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
                 vector.getFeature().add(createSimpleNamedValue(platform.getId(), JsonHelper.toJson(platform)));
             } catch (JsonHelperException exc) {
                 LogHelper.warning(ContextModuleJmsService.class, "getPlatforms",
-                        "Could not add given object to the response: '%s'. Details: %s", platform,
-                        exc.getLocalizedMessage());
+                        "Could not add given object to the response: '%s'. Details: %s", platform, exc.getLocalizedMessage());
             }
         }
         response.setFeatureVector(vector);
         return response;
     }
 
-//    @Override
-//    public Object getPlatformNeighborhood(SimpleNamedValue platformId) {
-//
-//    }
+    // @Override
+    // public Object getPlatformNeighborhood(SimpleNamedValue platformId) {
+    //
+    // }
 
     @Override
     public Object getCameraFieldOfView(SimpleNamedValue cameraRequestObject) {
@@ -404,7 +404,7 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
 
         Location requestLocation = null;
         double requestRange = getRadius();
-        String[] requestClasses = new String[]{null};
+        String[] requestClasses = new String[] { null };
         // try to parse request object into parameters
         try {
             for (AbstractNamedValue parameter : parameters.getFeatureVector().getFeature()) {
@@ -424,9 +424,7 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
             LogHelper.exception(ContextModuleJmsService.class, "getGISData", "Could not parse request data", exc);
         }
 
-        return getGeoObjects(requestLocation, 
-                requestRange,
-                requestClasses);
+        return getGeoObjects(requestLocation, requestRange, requestClasses);
     }
 
     private Object getGeoObjects(Location location, double radius, String... classes) {
@@ -475,8 +473,8 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
         Set<GeoObject> geoData = null;
         try {
             // call geoportal service to retrieve all available data
-            geoData = getGeoportal().getGeoportalData(
-                    new itti.com.pl.arena.cm.dto.Location(location.getX(), location.getY()), getRadius());
+            geoData = getGeoportal().getGeoportalData(new itti.com.pl.arena.cm.dto.Location(location.getX(), location.getY()),
+                    getRadius());
             // update ontology with the geoportal data
             getOntology().updateGeoportalData(location.getX(), location.getY(), geoData);
         } catch (OntologyException exc) {
@@ -522,6 +520,19 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
         return null;
     }
 
+    @Override
+    public void destinationReached(String platformId, itti.com.pl.arena.cm.dto.Location location) {
+
+        SimpleNamedValue destinationReachedMessage = new SimpleNamedValue();
+        destinationReachedMessage.setHref(ContextModuleRequests.destinationReached.name());
+        destinationReachedMessage.setValue(platformId);
+        // prepare valid response object
+        destinationReachedMessage.setId(String.format("%s.%s.%s", Constants.MODULE_NAME,
+                ContextModuleRequests.destinationReached.name(), UUID.randomUUID().toString()));
+        destinationReachedMessage.setDataSourceId(Constants.MODULE_NAME);
+        client.publish(destinationReachedMessage.getDataSourceId(), destinationReachedMessage);
+    }
+
     /**
      * Prepares instance of the {@link AbstractNamedValue} class
      * 
@@ -537,11 +548,5 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
         snv.setId(id);
         snv.setValue(String.valueOf(value));
         return snv;
-    }
-
-    @Override
-    public void destinationReached(itti.com.pl.arena.cm.dto.Location location) {
-        // TODO Auto-generated method stub
-        
     }
 }

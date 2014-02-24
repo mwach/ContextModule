@@ -12,7 +12,8 @@ public interface PlatformListener {
 
     /**
      * method called by the {@link LocationListener} once the destination will be reached
+     * @param platformId ID of the platform
      * @param location final position of the platform
      */
-    public void destinationReached(Location location);
+    public void destinationReached(String platformId, Location location);
 }

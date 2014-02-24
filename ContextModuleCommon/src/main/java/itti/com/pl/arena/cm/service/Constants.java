@@ -58,6 +58,11 @@ public final class Constants {
          */
         getZone,
 
+        /**
+         * Service name used by the 'destinationReached' notifier method
+         */
+        destinationReached,
+
         ;
     }
 
