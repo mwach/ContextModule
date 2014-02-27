@@ -12,6 +12,7 @@ import itti.com.pl.arena.cm.dto.dynamicobj.RelativePosition;
 import itti.com.pl.arena.cm.dto.staticobj.Building;
 import itti.com.pl.arena.cm.dto.staticobj.Infrastructure;
 import itti.com.pl.arena.cm.dto.staticobj.ParkingLot;
+import itti.com.pl.arena.cm.location.Range;
 import itti.com.pl.arena.cm.ontology.OntologyConstants;
 import itti.com.pl.arena.cm.service.PlatformTracker;
 import itti.com.pl.arena.cm.utils.helper.LocationHelper;
@@ -497,7 +498,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
      * @see itti.com.pl.arena.cm.ontology.Ontology#calculateDistancesForTruck(java.lang.String, double)
      */
     @Override
-    public void calculateDistancesForPlatform(String platformId, double radius) throws OntologyException {
+    public String calculateDistancesForPlatform(String platformId, double radius) throws OntologyException {
 
         LogHelper.debug(ContextModuleOntologyManager.class, "calculateDistancesForPlatform",
                 "Calculating distance for platform %s using radius %f", platformId, radius);
@@ -510,13 +511,33 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
             LogHelper.warning(ContextModuleOntologyManager.class, "calculateDistancesForPlatform",
                     "There are no parkings for platform %s in location %s and radius %f", platformId, platform.getLocation(),
                     radius);
-            return;
+            return null;
         }
         // use first parking as a default one
-        Set<String> buildings = getParkingLotInfrastructure(parkingLots.iterator().next());
+        String parkingId = parkingLots.iterator().next();
+        Set<String> buildings = getParkingLotInfrastructure(parkingId);
         for (String buildingId : buildings) {
             calculateDistanceForObject(buildingId, platform.getLocation());
         }
+        //ID of the updated parking
+        return parkingId;
+    }
+
+    /* (non-Javadoc)
+     * @see itti.com.pl.arena.cm.ontology.Ontology#calculateArenaDistancesForPlatform(java.lang.String)
+     */
+    @Override
+    public void calculateArenaDistancesForPlatform(String platformId) throws OntologyException {
+        LogHelper.debug(ContextModuleOntologyManager.class, "calculateArenaDistancesForPlatform",
+                "Calculating distance for platform %s", platformId);
+
+        //call base ontology method to calculate all distances (in meters) and store them in ontology
+        String parkingId = calculateDistancesForPlatform(platformId, Range.Km1.getRangeInKms());
+        ParkingLot parkingLot = getParkingLot(parkingId);
+
+        // get the platform data from ontology
+        Platform platform = getPlatform(platformId);
+
     }
 
     /**

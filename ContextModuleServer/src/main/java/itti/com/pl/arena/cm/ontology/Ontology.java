@@ -110,8 +110,19 @@ public interface Ontology {
      *            ID of the platform, calculations should be done
      * @param radius
      *            radius of the search area
+     * @return ID of the updated parking lot
      * @throws OntologyException
      *             processing exception
      */
-    public void calculateDistancesForPlatform(String platformId, double radius) throws OntologyException;
+    public String calculateDistancesForPlatform(String platformId, double radius) throws OntologyException;
+
+    /**
+     * Calculates distance between platform, and all objects localized on given parking lot
+     * 
+     * @param platformId
+     *            ID of the platform, calculations should be done
+     * @throws OntologyException
+     *             processing exception
+     */
+    public void calculateArenaDistancesForPlatform(String platformId) throws OntologyException;
 }

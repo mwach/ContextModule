@@ -521,14 +521,22 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
     }
 
     @Override
+    public Object findZones(SimpleNamedValue platformId) {
+
+        getOntology().calculateArenaDistancesForPlatform(platformId.getValue());
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
     public void destinationReached(String platformId, itti.com.pl.arena.cm.dto.Location location) {
 
-        SimpleNamedValue destinationReachedMessage = new SimpleNamedValue();
-        destinationReachedMessage.setHref(ContextModuleRequests.destinationReached.name());
-        destinationReachedMessage.setValue(platformId);
         // prepare valid response object
-        destinationReachedMessage.setId(String.format("%s.%s.%s", Constants.MODULE_NAME,
-                ContextModuleRequests.destinationReached.name(), UUID.randomUUID().toString()));
+        AbstractNamedValue destinationReachedMessage = createSimpleNamedValue(
+                String.format("%s.%s.%s", Constants.MODULE_NAME,
+                        ContextModuleRequests.destinationReached.name(), UUID.randomUUID().toString()), 
+                        platformId);
+        destinationReachedMessage.setHref(ContextModuleRequests.destinationReached.name());
         destinationReachedMessage.setDataSourceId(Constants.MODULE_NAME);
         client.publish(destinationReachedMessage.getDataSourceId(), destinationReachedMessage);
     }
