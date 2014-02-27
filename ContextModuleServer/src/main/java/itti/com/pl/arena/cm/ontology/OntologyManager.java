@@ -418,6 +418,20 @@ public class OntologyManager implements Service {
     }
 
     /**
+     * returns values for single property of an individual stored in the ontology model
+     * 
+     * @param instanceName
+     *            name of the instance
+     * @param propertyName
+     *            name of the property
+     * @return list of property values
+     * @throws OntologyException
+     */
+    public String[] getInstanceProperties(String instanceName, String propertyName) throws OntologyException {
+        return getInstanceProperties(instanceName).get(propertyName);
+    }
+
+    /**
      * Creates a new class in the ontology model
      * 
      * @param className

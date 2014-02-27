@@ -521,14 +521,6 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
     }
 
     @Override
-    public Object findZones(SimpleNamedValue platformId) {
-
-        getOntology().calculateArenaDistancesForPlatform(platformId.getValue());
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public void destinationReached(String platformId, itti.com.pl.arena.cm.dto.Location location) {
 
         // prepare valid response object
