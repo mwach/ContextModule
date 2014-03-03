@@ -42,7 +42,7 @@ public class ContextModuleOntologyManagerTest {
 
     @Test
     public void testGetPlatform() throws OntologyException {
-        Platform information = cmOntologyManager.getOntologyObject("Vehicle_with_cameras_R1", Platform.class);
+        Platform information = cmOntologyManager.getOntologyObject("Vehicle_CNA0544", Platform.class);
         assertNotNull(information);
     }
 
@@ -119,14 +119,14 @@ public class ContextModuleOntologyManagerTest {
     @Test
     public void testCalculateDistance() throws OntologyException {
         // create parking lot and add truck to it
-        String truckId = "Vehicle_with_cameras_R1";
+        String truckId = "Vehicle_CNA0544";
         cmOntologyManager.calculateDistancesForPlatform(truckId, 5);
     }
 
     // test for complex functionality for retrieving cameras field of view
     @Test
     public void testGetTruckWorld() throws OntologyException {
-        String truckId = "Vehicle_with_cameras_R1";
+        String truckId = "Vehicle_CNA0544";
         Platform platformWithCameras = cmOntologyManager.getOntologyObject(truckId, Platform.class);
         Location location = platformWithCameras.getLocation();
         Set<String> availableParkings = cmOntologyManager.getInstanceNames(location.getLongitude(), location.getLatitude(),
@@ -135,4 +135,12 @@ public class ContextModuleOntologyManagerTest {
         ParkingLot parkingLot = cmOntologyManager.getOntologyObject(firstParking, ParkingLot.class);
         assertNotNull(parkingLot);
     }
+
+    // test for complex functionality for retrieving cameras field of view
+    @Test
+    public void testCalculateArenaDistancesForPlatform() throws OntologyException {
+        String truckId = "Vehicle_CNA0544";
+        cmOntologyManager.calculateArenaDistancesForPlatform(truckId);
+    }
+
 }

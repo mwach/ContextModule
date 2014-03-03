@@ -2,6 +2,8 @@ package itti.com.pl.arena.cm.ontology;
 
 import itti.com.pl.arena.cm.ErrorMessages;
 import itti.com.pl.arena.cm.OntologyObject;
+import itti.com.pl.arena.cm.dto.ArenaObjectCoordinate;
+import itti.com.pl.arena.cm.dto.ArenaRadialCoordinate;
 import itti.com.pl.arena.cm.dto.GeoObject;
 //import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.dto.Location;
@@ -537,7 +539,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
      * @see itti.com.pl.arena.cm.ontology.Ontology#calculateArenaDistancesForPlatform(java.lang.String)
      */
     @Override
-    public void calculateArenaDistancesForPlatform(String platformId) throws OntologyException {
+    public Set<ArenaObjectCoordinate> calculateArenaDistancesForPlatform(String platformId) throws OntologyException {
         LogHelper.debug(ContextModuleOntologyManager.class, "calculateArenaDistancesForPlatform",
                 "Calculating distance for platform %s", platformId);
 
@@ -548,25 +550,41 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         if (parkingLots.isEmpty()) {
             LogHelper.warning(ContextModuleOntologyManager.class, "calculateArenaDistancesForPlatform",
                     "There are no parkings for platform %s", platformId);
-            return;
+            return null;
         }
         // use first parking as a default one
         String parkingId = parkingLots.iterator().next();
         Set<String> buildings = getParkingLotInfrastructure(parkingId);
+        Set<ArenaObjectCoordinate> objectCoordinates = new HashSet<>();
         for (String buildingId : buildings) {
             //get the coordinates of the building
-            String[] objectCoordinates = getInstanceProperties(buildingId, OntologyConstants.Object_has_GPS_coordinates.name());
+            ArenaObjectCoordinate objectCoordinate = new ArenaObjectCoordinate(buildingId);
+            String[] buildingCoordinates = getInstanceProperties(buildingId, OntologyConstants.Object_has_GPS_coordinates.name());
             //try to parse them into doubles
             if(objectCoordinates != null){
-                Double[][] numberCoordinates = NumbersHelper.fromStringArray(objectCoordinates);
-                //TODO: calculate radius coordinates
-                calculateDistanceForObject(buildingId, platform.getLocation(), numberCoordinates);
+                //calculate radius coordinates
+                Double[][] numberCoordinates = NumbersHelper.fromStringArray(buildingCoordinates);
+                for (Double[] coordinate : numberCoordinates) {
+                    double radius = calculateDistance(coordinate, platform.getLocation());
+                    double angle = calculateAngle(coordinate, platform.getLocation());
+                    objectCoordinate.addRadialCoordinates(radius, angle);
+                }
             } else {
                 LogHelper.info(ContextModuleOntologyManager.class, "calculateDistanceForObject",
                         "No GPS coordinates found for instance: '%s'", buildingId);
             }
+            objectCoordinates.add(objectCoordinate);
         }
+        
+        //now update objects angle with the platform bearing
+        for (ArenaObjectCoordinate objectCoordinate : objectCoordinates) {
+            for(ArenaRadialCoordinate radialCoordinate : objectCoordinate){
+                radialCoordinate.updateAngle(platform.getLocation().getBearing());
+            }
+        }
+        return objectCoordinates;
     }
+
 
     /**
      * Calculated distance between object identified by its ID and given location
@@ -642,6 +660,26 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         double distance = EARTH_RADIUS * c;
         return distance;
+    }
+
+    /**
+     * Calculates angle between two locations. One is stored as a string: 'xPos, yPos', the second one is stored as a
+     * {@link Location} object. Calculation was implemented based on instructions from:
+     * http://stackoverflow.com/questions/7586063
+     * 
+     * @param coordinateString
+     *            first coordinate in string form
+     * @param referenceLocation
+     *            second coordinate
+     * @return distance between two locations measured in meters
+     */
+    private Double calculateAngle(Double[] coordinates, Location referenceLocation) {
+
+        double deltaLongitude = Math.toRadians(coordinates[0] - referenceLocation.getLongitude());
+        double deltaLatitude = Math.toRadians(coordinates[1] - referenceLocation.getLatitude());
+
+        double angle = Math.atan(deltaLatitude / deltaLongitude) * 100 / Math.PI;
+        return angle;
     }
 
     private String getStringProperty(Map<String, String[]> properties, OntologyConstants propertyName) {

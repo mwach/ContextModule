@@ -3,6 +3,7 @@ package itti.com.pl.arena.cm.ontology;
 import java.util.Set;
 
 import itti.com.pl.arena.cm.OntologyObject;
+import itti.com.pl.arena.cm.dto.ArenaObjectCoordinate;
 import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
 
@@ -120,8 +121,9 @@ public interface Ontology {
      * 
      * @param platformId
      *            ID of the platform, calculations should be done
+     * @return list of 
      * @throws OntologyException
      *             processing exception
      */
-    public void calculateArenaDistancesForPlatform(String platformId) throws OntologyException;
+    public Set<ArenaObjectCoordinate> calculateArenaDistancesForPlatform(String platformId) throws OntologyException;
 }
