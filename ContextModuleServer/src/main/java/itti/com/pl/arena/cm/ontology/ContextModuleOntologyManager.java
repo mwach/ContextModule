@@ -2,11 +2,11 @@ package itti.com.pl.arena.cm.ontology;
 
 import itti.com.pl.arena.cm.ErrorMessages;
 import itti.com.pl.arena.cm.OntologyObject;
-import itti.com.pl.arena.cm.dto.ArenaObjectCoordinate;
-import itti.com.pl.arena.cm.dto.ArenaRadialCoordinate;
 import itti.com.pl.arena.cm.dto.GeoObject;
 //import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.dto.Location;
+import itti.com.pl.arena.cm.dto.coordinates.ArenaObjectCoordinate;
+import itti.com.pl.arena.cm.dto.coordinates.RadialCoordinate;
 import itti.com.pl.arena.cm.dto.dynamicobj.Camera;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform.Type;
@@ -578,7 +578,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         
         //now update objects angle with the platform bearing
         for (ArenaObjectCoordinate objectCoordinate : objectCoordinates) {
-            for(ArenaRadialCoordinate radialCoordinate : objectCoordinate){
+            for(RadialCoordinate radialCoordinate : objectCoordinate){
                 radialCoordinate.updateAngle(platform.getLocation().getBearing());
             }
         }

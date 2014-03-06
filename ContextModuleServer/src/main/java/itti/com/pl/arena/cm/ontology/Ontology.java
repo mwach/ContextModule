@@ -3,8 +3,8 @@ package itti.com.pl.arena.cm.ontology;
 import java.util.Set;
 
 import itti.com.pl.arena.cm.OntologyObject;
-import itti.com.pl.arena.cm.dto.ArenaObjectCoordinate;
 import itti.com.pl.arena.cm.dto.GeoObject;
+import itti.com.pl.arena.cm.dto.coordinates.ArenaObjectCoordinate;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
 
 /**
