@@ -1,7 +1,9 @@
 package itti.com.pl.arena.cm.ontology;
 
+import java.util.List;
 import java.util.Set;
 
+import eu.arena_fp7._1.Location;
 import itti.com.pl.arena.cm.OntologyObject;
 import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.dto.coordinates.ArenaObjectCoordinate;
@@ -126,4 +128,23 @@ public interface Ontology {
      *             processing exception
      */
     public Set<ArenaObjectCoordinate> calculateArenaDistancesForPlatform(String platformId) throws OntologyException;
+
+    /**
+     * Defines a new zone in the ontology
+     * @param locations zone boundaries (list of zone vertexes stored as {@link Location} objects)
+     * @return ID of the zone
+     * @throws OntologyException
+     *             processing exception
+     */
+    public String defineZone(List<itti.com.pl.arena.cm.dto.Location> locations) throws OntologyException;
+
+    /**
+     * Defines a new zone in the ontology
+     * @param zoneId ID of the zone
+     * @return zone boundaries (list of zone vertexes stored as {@link Location} objects)
+     * @throws OntologyException
+     *             processing exception
+     */
+    public List<itti.com.pl.arena.cm.dto.Location> getZone(String zoneId) throws OntologyException;
+
 }

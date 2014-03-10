@@ -2,7 +2,9 @@ package itti.com.pl.arena.cm.ontology;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
@@ -141,6 +143,86 @@ public class ContextModuleOntologyManagerTest {
     public void testCalculateArenaDistancesForPlatform() throws OntologyException {
         String truckId = "Vehicle_CNA0544";
         cmOntologyManager.calculateArenaDistancesForPlatform(truckId);
+    }
+
+    // test 'define zone' functionality
+    @Test
+    public void testDefineZoneNullLocations() throws OntologyException {
+
+        //if no locations were specified, zone is not going to be created
+        expectedException.expect(OntologyException.class);
+        expectedException.expectMessage(
+                String.format(ErrorMessages.ONTOLOGY_EMPTY_VALUE_PROVIDED.getMessage(), OntologyConstants.Object_has_GPS_coordinates.name()));
+
+        cmOntologyManager.defineZone(null);
+    }
+
+    @Test
+    public void testDefineZoneEmptyLocations() throws OntologyException {
+
+        //if no locations were specified, zone is not going to be created
+        expectedException.expect(OntologyException.class);
+        expectedException.expectMessage(
+                String.format(ErrorMessages.ONTOLOGY_EMPTY_VALUE_PROVIDED.getMessage(), OntologyConstants.Object_has_GPS_coordinates.name()));
+
+        cmOntologyManager.defineZone(new ArrayList<Location>());
+    }
+
+    // test 'get zone' functionality
+    @Test
+    public void testGetZoneNullId() throws OntologyException {
+
+        expectedException.expect(OntologyException.class);
+        expectedException.expectMessage(
+                String.format(ErrorMessages.ONTOLOGY_EMPTY_VALUE_PROVIDED.getMessage(), OntologyConstants.Car_parking_zone.name()));
+        //if invalid zoneId was specified, nothing is going to be returned
+        cmOntologyManager.getZone(null);
+    }
+
+    @Test
+    public void testGetZoneEmptyId() throws OntologyException {
+
+        expectedException.expect(OntologyException.class);
+        expectedException.expectMessage(
+                String.format(ErrorMessages.ONTOLOGY_EMPTY_VALUE_PROVIDED.getMessage(), OntologyConstants.Car_parking_zone.name()));
+        //if invalid zoneId was specified, nothing is going to be returned
+        cmOntologyManager.getZone("");
+    }
+
+    @Test
+    public void testGetZoneInvalidId() throws OntologyException {
+
+        String instanceName = "someDummyZoneName";
+        expectedException.expect(OntologyException.class);
+        expectedException.expectMessage(
+                String.format(ErrorMessages.ONTOLOGY_INSTANCE_NOT_FOUND.getMessage(), 
+                        instanceName));
+        //if invalid zoneId was specified, nothing is going to be returned
+        cmOntologyManager.getZone(instanceName);
+    }
+
+    @Test
+    public void testDefineGetZoneValid() throws OntologyException {
+
+        List<Location> locations = new ArrayList<>();
+        int noOfLocations = 5;
+        for(int i=0;i<noOfLocations ; i++){
+            locations.add(
+                    new Location(random.nextDouble(), random.nextDouble(), 0, random.nextDouble()));
+        }
+        //add new zone to ontology
+        String zoneId = cmOntologyManager.defineZone(locations);
+        assertNotNull(zoneId);
+
+        //now try to get the zone from ontology
+        List<Location> response = cmOntologyManager.getZone(zoneId);
+        assertEquals(noOfLocations, response.size());
+
+        //verify returned values
+        for (Location location : response) {
+            assertTrue(locations.contains(location));
+            locations.remove(location);
+        }
     }
 
 }

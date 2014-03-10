@@ -23,5 +23,7 @@ public enum OntologyConstants {
     Parking_has_building,
     Building,
     Infrastructure,
-    Object_has_distance
+    Object_has_distance,
+
+    Car_parking_zone,
 }

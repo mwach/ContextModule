@@ -1,5 +1,7 @@
 package itti.com.pl.arena.cm.service.jms;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -38,6 +40,7 @@ import eu.arena_fp7._1.FeatureVector;
 import eu.arena_fp7._1.Location;
 import eu.arena_fp7._1.Object;
 import eu.arena_fp7._1.ObjectFactory;
+import eu.arena_fp7._1.RealWorldCoordinate;
 import eu.arena_fp7._1.SimpleNamedValue;
 
 /**
@@ -510,8 +513,31 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
 
     @Override
     public SimpleNamedValue defineZone(Object zoneDefinition) {
-        // TODO Auto-generated method stub
-        return null;
+
+        // prepare response object
+        SimpleNamedValue response = factory.createSimpleNamedValue();
+
+        //get the zone definition
+        List<itti.com.pl.arena.cm.dto.Location> locations = new ArrayList<>();
+        for(AbstractNamedValue vertex : zoneDefinition.getFeatureVector().getFeature()){
+            if(vertex instanceof Location){
+                Location flatLocation = (Location)vertex;
+                locations.add(new itti.com.pl.arena.cm.dto.Location(flatLocation.getX(), flatLocation.getY()));
+            }else if(vertex instanceof RealWorldCoordinate){
+                RealWorldCoordinate sphereLocation = (RealWorldCoordinate)vertex;
+                locations.add(new itti.com.pl.arena.cm.dto.Location(sphereLocation.getX(), sphereLocation.getY(), 0, sphereLocation.getZ()));
+            }
+        }
+        //ID of the created zone
+        String zoneId = "";
+        try {
+            zoneId = getOntology().defineZone(locations);
+        } catch (OntologyException exc) {
+            LogHelper.exception(ContextModuleJmsService.class, "defineZone", "Could not define a zone in ontology", exc);
+        }
+        // add results to the response
+        response.setValue(zoneId);
+        return response;
     }
 
     @Override

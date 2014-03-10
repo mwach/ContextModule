@@ -62,6 +62,24 @@ public class Location implements Serializable {
     }
 
     /**
+     * Constructor for basic location object containing information about longitude, latitude, altitude and bearing This is a
+     * basic location object used by zone-defining ContenxtModule functionalities
+     * 
+     * @param longitude
+     *            longitude
+     * @param latitude
+     *            latitude
+     * @param bearing
+     *            bearing
+     * @param altitude
+     *            altitude
+     */
+    public Location(double longitude, double latitude, int bearing, double altitude) {
+        this(longitude, latitude, bearing);
+        this.altitude = altitude;
+    }
+
+    /**
      * Creates a complete location object Used by ContextModule listeners (contains GPS data collected from external
      * device/module about last platform location)
      * 

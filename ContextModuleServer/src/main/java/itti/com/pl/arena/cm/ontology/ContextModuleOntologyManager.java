@@ -17,12 +17,14 @@ import itti.com.pl.arena.cm.dto.staticobj.ParkingLot;
 import itti.com.pl.arena.cm.location.Range;
 import itti.com.pl.arena.cm.ontology.OntologyConstants;
 import itti.com.pl.arena.cm.service.PlatformTracker;
+import itti.com.pl.arena.cm.utils.helper.CoordinatesHelper;
 import itti.com.pl.arena.cm.utils.helper.LocationHelper;
 import itti.com.pl.arena.cm.utils.helper.LocationHelperException;
 import itti.com.pl.arena.cm.utils.helper.LogHelper;
 import itti.com.pl.arena.cm.utils.helper.NumbersHelper;
 import itti.com.pl.arena.cm.utils.helper.StringHelper;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -94,7 +96,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
      */
     private Location prepareLocationFromProperties(Map<String, String[]> properties) {
 
-        //default properties for vehicle (platform) classes
+        // default properties for vehicle (platform) classes
         OntologyConstants longitudeProperty = OntologyConstants.Object_has_GPS_x;
         OntologyConstants latitudeProperty = OntologyConstants.Object_has_GPS_y;
 
@@ -272,9 +274,12 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 
     /**
      * Returns complete information about parking lot
-     * @param parkingLotId ID of the parking lot
+     * 
+     * @param parkingLotId
+     *            ID of the parking lot
      * @return Information about parking lot
-     * @throws OntologyException Could not retrieve information from the ontology
+     * @throws OntologyException
+     *             Could not retrieve information from the ontology
      */
     private ParkingLot getParkingLot(String parkingLotId) throws OntologyException {
 
@@ -309,8 +314,8 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         Map<String, String[]> infrastrProperties = getInstanceProperties(infrastructureId);
         if (!infrastrProperties.isEmpty()) {
             try {
-                Location[] coordinates = parseCoordinates(infrastrProperties
-                        .get(OntologyConstants.Object_has_GPS_coordinates.name()));
+                Location[] coordinates = parseCoordinates(infrastrProperties.get(OntologyConstants.Object_has_GPS_coordinates
+                        .name()));
                 infrastructure.setBoundaries(coordinates);
             } catch (LocationHelperException exc) {
                 LogHelper.exception(ContextModuleOntologyManager.class, "getParkingLot", String.format(
@@ -329,13 +334,13 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         if (!buildingProperties.isEmpty()) {
 
             try {
-                Location[] coordinates = parseCoordinates(buildingProperties
-                        .get(OntologyConstants.Object_has_GPS_coordinates.name()));
+                Location[] coordinates = parseCoordinates(buildingProperties.get(OntologyConstants.Object_has_GPS_coordinates
+                        .name()));
                 building.setBoundaries(coordinates);
             } catch (LocationHelperException exc) {
                 LogHelper.exception(ContextModuleOntologyManager.class, "getParkingLot", String.format(
-                        "Could not parse ontlogy-stored data. Location data is not available for given object: %s",
-                        buildingId), exc);
+                        "Could not parse ontlogy-stored data. Location data is not available for given object: %s", buildingId),
+                        exc);
             }
         }
         return building;
@@ -367,8 +372,8 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 
         // get list of all available objects
         String queryPattern = QUERY_GET_OBJECTS;
-        String query = String.format(queryPattern, getOntologyNamespace(), VAR, VAR, VAR,
-                x - radius, x + radius, y - radius, y + radius);
+        String query = String.format(queryPattern, getOntologyNamespace(), VAR, VAR, VAR, x - radius, x + radius, y - radius, y
+                + radius);
 
         // execute the query
         List<String> matches = executeSparqlQuery(query, VAR);
@@ -376,7 +381,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         Set<GeoObject> responseSet = new HashSet<>();
 
         Set<String> classesFilter = new HashSet<>();
-        if(gisObjectClasses != null){
+        if (gisObjectClasses != null) {
             classesFilter.addAll(Arrays.asList(gisObjectClasses));
         }
 
@@ -384,16 +389,13 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
             String objectClass = getInstanceClass(geoObject);
             String parentClass = getInstanceGrandClass(geoObject);
             if (classesFilter.isEmpty() || classesFilter.contains(objectClass)) {
-                if(StringHelper.equalsIgnoreCase(objectClass, OntologyConstants.Parking.name())){
+                if (StringHelper.equalsIgnoreCase(objectClass, OntologyConstants.Parking.name())) {
                     responseSet.add(getParkingLot(geoObject));
-                }
-                else if(StringHelper.equalsIgnoreCase(objectClass, OntologyConstants.Vehicle_with_cameras.name())){
-                    //ignore this one
-                }
-                else if(StringHelper.equalsIgnoreCase(parentClass, OntologyConstants.Building.name())){
+                } else if (StringHelper.equalsIgnoreCase(objectClass, OntologyConstants.Vehicle_with_cameras.name())) {
+                    // ignore this one
+                } else if (StringHelper.equalsIgnoreCase(parentClass, OntologyConstants.Building.name())) {
                     responseSet.add(getBuilding(geoObject));
-                }
-                else if(StringHelper.equalsIgnoreCase(parentClass, OntologyConstants.Infrastructure.name())){
+                } else if (StringHelper.equalsIgnoreCase(parentClass, OntologyConstants.Infrastructure.name())) {
                     responseSet.add(getInfrastructure(geoObject));
                 }
             }
@@ -522,10 +524,10 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         String parkingId = parkingLots.iterator().next();
         Set<String> buildings = getParkingLotInfrastructure(parkingId);
         for (String buildingId : buildings) {
-            //get the coordinates of the building
+            // get the coordinates of the building
             String[] objectCoordinates = getInstanceProperties(buildingId, OntologyConstants.Object_has_GPS_coordinates.name());
-            //try to parse them into doubles
-            if(objectCoordinates != null){
+            // try to parse them into doubles
+            if (objectCoordinates != null) {
                 Double[][] numberCoordinates = NumbersHelper.fromStringArray(objectCoordinates);
                 calculateDistanceForObject(buildingId, platform.getLocation(), numberCoordinates);
             } else {
@@ -535,7 +537,9 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         }
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see itti.com.pl.arena.cm.ontology.Ontology#calculateArenaDistancesForPlatform(java.lang.String)
      */
     @Override
@@ -557,12 +561,12 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         Set<String> buildings = getParkingLotInfrastructure(parkingId);
         Set<ArenaObjectCoordinate> objectCoordinates = new HashSet<>();
         for (String buildingId : buildings) {
-            //get the coordinates of the building
+            // get the coordinates of the building
             ArenaObjectCoordinate objectCoordinate = new ArenaObjectCoordinate(buildingId);
             String[] buildingCoordinates = getInstanceProperties(buildingId, OntologyConstants.Object_has_GPS_coordinates.name());
-            //try to parse them into doubles
-            if(objectCoordinates != null){
-                //calculate radius coordinates
+            // try to parse them into doubles
+            if (objectCoordinates != null) {
+                // calculate radius coordinates
                 Double[][] numberCoordinates = NumbersHelper.fromStringArray(buildingCoordinates);
                 for (Double[] coordinate : numberCoordinates) {
                     double radius = calculateDistance(coordinate, platform.getLocation());
@@ -575,16 +579,74 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
             }
             objectCoordinates.add(objectCoordinate);
         }
-        
-        //now update objects angle with the platform bearing
+
+        // now update objects angle with the platform bearing
         for (ArenaObjectCoordinate objectCoordinate : objectCoordinates) {
-            for(RadialCoordinate radialCoordinate : objectCoordinate){
+            for (RadialCoordinate radialCoordinate : objectCoordinate) {
                 radialCoordinate.updateAngle(platform.getLocation().getBearing());
             }
         }
         return objectCoordinates;
     }
 
+    @Override
+    public String defineZone(List<Location> locations) throws OntologyException {
+
+        String zoneName = "";
+        if (locations == null || locations.isEmpty()) {
+            LogHelper.info(ContextModuleOntologyManager.class, "defineZone",
+                    "Zone is not going to be created. No locations specified");
+            throw new OntologyException(ErrorMessages.ONTOLOGY_EMPTY_VALUE_PROVIDED, OntologyConstants.Object_has_GPS_coordinates.name());
+        } else {
+            zoneName = generateZoneName();
+            Map<String, String[]> properties = new HashMap<>();
+            properties.put(OntologyConstants.Object_has_GPS_coordinates.name(),
+                    LocationHelper.createStringsFromLocations(locations.toArray(new Location[locations.size()])));
+
+            OWLIndividual zoneInstance = createSimpleInstance(OntologyConstants.Car_parking_zone.name(), zoneName, properties);
+            zoneName = zoneInstance.getName();
+        }
+        return zoneName;
+    }
+
+    @Override
+    public List<Location> getZone(String zoneId) throws OntologyException {
+
+        List<Location> response = new ArrayList<>();
+        if (!StringHelper.hasContent(zoneId)) {
+            LogHelper.info(ContextModuleOntologyManager.class, "getZone",
+                    "Null or empty zoneId was provided");
+            throw new OntologyException(ErrorMessages.ONTOLOGY_EMPTY_VALUE_PROVIDED, OntologyConstants.Car_parking_zone.name());
+        } else {
+            String[] coordinateStrings = getInstanceProperties(zoneId, OntologyConstants.Object_has_GPS_coordinates.name());
+            if(coordinateStrings != null){
+                try {
+                    response = Arrays.asList(LocationHelper.getLocationsFromStrings(coordinateStrings));
+                } catch (LocationHelperException e) {
+                    LogHelper.error(ContextModuleOntologyManager.class, "getZone", "Could not retrieve information about zone: '%s' from ontology. Details: %s", zoneId, e.getLocalizedMessage());
+                }
+            }
+        }
+        return response;
+    }
+
+    /**
+     * generates zone name in form of 'zone_%id', where 'id' is an unique zone identifier
+     * 
+     * @return zone name
+     */
+    private String generateZoneName() {
+        // zone name format
+        String zoneNameFormat = "zone_%d";
+        // get all available instances
+        List<String> zones = getDirectInstances(OntologyConstants.Car_parking_zone);
+        // start counting
+        int startId = zones.size();
+        // search for first, not found zone
+        while (zones.contains(String.format(zoneNameFormat, startId++)))
+            ;
+        return String.format(zoneNameFormat, startId--);
+    }
 
     /**
      * Calculated distance between object identified by its ID and given location
@@ -596,12 +658,13 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
      * @throws OntologyException
      *             could not calculate location
      */
-    private void calculateDistanceForObject(String objectId, Location referenceLocation, Double[][] numberCoordinates) throws OntologyException {
+    private void calculateDistanceForObject(String objectId, Location referenceLocation, Double[][] numberCoordinates)
+            throws OntologyException {
 
         LogHelper.debug(ContextModuleOntologyManager.class, "calculateDistanceForObject",
                 "calculate distance for object '%s' and location %s'", String.valueOf(objectId),
                 String.valueOf(referenceLocation));
- 
+
         Double maxDistance = null;
         for (Double[] coordinate : numberCoordinates) {
             // invalid coordinates, ignore
@@ -617,19 +680,24 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 
     /**
      * Validates coordinates
-     * @param instanceName name of the instance (logging purposes)
-     * @param coordinates array of coordinates
-     * @param dimensions expected number of dimensions
-     * @throws OntologyException invalid dimensions were provided
+     * 
+     * @param instanceName
+     *            name of the instance (logging purposes)
+     * @param coordinates
+     *            array of coordinates
+     * @param dimensions
+     *            expected number of dimensions
+     * @throws OntologyException
+     *             invalid dimensions were provided
      */
-    protected void validateCoordinates(String instanceName, Double[] coordinates, int dimensions) throws OntologyException{
+    protected void validateCoordinates(String instanceName, Double[] coordinates, int dimensions) throws OntologyException {
 
-        if (coordinates == null || coordinates.length != dimensions){
+        if (coordinates == null || coordinates.length != dimensions) {
             LogHelper.warning(ContextModuleOntologyManager.class, "validateCoordinates",
                     "Invalid format of the coordinates: '%s' for instance '%s'", String.valueOf(coordinates), instanceName);
         }
-        for(int i=0 ; i<dimensions; i++){
-            if(coordinates[i] == null){
+        for (int i = 0; i < dimensions; i++) {
+            if (coordinates[i] == null) {
                 LogHelper.warning(ContextModuleOntologyManager.class, "validateCoordinates",
                         "Null coodrinate found: '%s' for instance '%s'", String.valueOf(coordinates), instanceName);
             }
