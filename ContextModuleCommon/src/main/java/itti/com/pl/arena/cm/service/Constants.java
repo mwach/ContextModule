@@ -62,6 +62,10 @@ public final class Constants {
          * Service name used by the 'destinationReached' notifier method
          */
         destinationReached,
+        /**
+         * Service name used by the 'destinationLeft' notifier method
+         */
+        destinationLeft,
 
         ;
     }

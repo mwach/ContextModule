@@ -16,4 +16,12 @@ public interface PlatformListener {
      * @param location final position of the platform
      */
     public void destinationReached(String platformId, Location location);
+
+    /**
+     * method called by the {@link LocationListener} once the destination will be left
+     * @param platformId ID of the platform
+     * @param location last position of the platform
+     */
+    void destinationLeft(String platformId, itti.com.pl.arena.cm.dto.Location location);
+
 }

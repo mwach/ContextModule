@@ -3,7 +3,6 @@ package itti.com.pl.arena.cm.service.jms;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.annotation.Required;
@@ -19,9 +18,9 @@ import itti.com.pl.arena.cm.geoportal.GeoportalException;
 import itti.com.pl.arena.cm.ontology.Ontology;
 import itti.com.pl.arena.cm.ontology.OntologyException;
 import itti.com.pl.arena.cm.service.Constants.ContextModuleRequests;
-import itti.com.pl.arena.cm.service.Constants.ContextModuleResponseProperties;
 import itti.com.pl.arena.cm.service.ContextModule;
 import itti.com.pl.arena.cm.service.PlatformListener;
+import itti.com.pl.arena.cm.utils.helper.DateTimeHelper;
 import itti.com.pl.arena.cm.utils.helper.JsonHelper;
 import itti.com.pl.arena.cm.utils.helper.JsonHelperException;
 import itti.com.pl.arena.cm.utils.helper.LogHelper;
@@ -36,7 +35,6 @@ import com.safran.arena.impl.ModuleImpl;
 import eu.arena_fp7._1.AbstractDataFusionType;
 import eu.arena_fp7._1.AbstractNamedValue;
 import eu.arena_fp7._1.BooleanNamedValue;
-import eu.arena_fp7._1.FeatureVector;
 import eu.arena_fp7._1.Location;
 import eu.arena_fp7._1.Object;
 import eu.arena_fp7._1.ObjectFactory;
@@ -77,6 +75,11 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
      * radius used for search data in ontology module
      */
     private double radius;
+
+    private ObjectFactory getFactory()
+    {
+        return factory;
+    }
 
     @Required
     public void setOntology(Ontology ontology) {
@@ -271,10 +274,7 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
     @Override
     public Object getPlatform(SimpleNamedValue objectId) {
 
-        // prepare response object
-        Object response = factory.createObject();
-        FeatureVector vector = factory.createFeatureVector();
-        vector.setDataSourceId(Constants.MODULE_NAME);
+        List<AbstractNamedValue> vector = new ArrayList<>();
 
         String platformId = objectId.getValue();
         Platform platform = null;
@@ -287,13 +287,14 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
         // data retrieved -try to process it
         if (platform != null) {
             try {
-                vector.getFeature().add(createSimpleNamedValue(platform.getId(), JsonHelper.toJson(platform)));
+                vector.add(createSimpleNamedValue(platform.getId(), JsonHelper.toJson(platform)));
             } catch (JsonHelperException exc) {
                 LogHelper.warning(ContextModuleJmsService.class, "getPlatforms",
                         "Could not add given object to the response: '%s'. Details: %s", platform, exc.getLocalizedMessage());
             }
         }
-        response.setFeatureVector(vector);
+        // prepare response object
+        Object response = createObject(objectId.getId(), vector);
         return response;
     }
 
@@ -305,10 +306,7 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
     @Override
     public Object getCameraFieldOfView(SimpleNamedValue cameraRequestObject) {
 
-        // prepare response object
-        Object response = factory.createObject();
-        FeatureVector vector = factory.createFeatureVector();
-        vector.setDataSourceId(Constants.MODULE_NAME);
+        List<AbstractNamedValue> vector = new ArrayList<>();
 
         String cameraId = cameraRequestObject.getValue();
         Camera camera = null;
@@ -319,9 +317,12 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
             LogHelper.exception(ContextModuleJmsService.class, "getPlatform", "Could not retrieve data from ontology", e);
         }
         // data retrieved -try to process it
+        //TODO
         if (camera != null) {
         }
-        response.setFeatureVector(vector);
+
+        // prepare response object
+        Object response = createObject(cameraRequestObject.getId(), vector);
         return response;
     }
 
@@ -329,22 +330,21 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
     public BooleanNamedValue updatePlatform(SimpleNamedValue platformObject) {
 
         Platform platform = null;
-        // prepare response object
-        BooleanNamedValue response = factory.createBooleanNamedValue();
-        response.setFeatureName(ContextModuleResponseProperties.Status.name());
+        boolean status = false;
 
         try {
             // try to parse JSON into object
             platform = JsonHelper.fromJson(platformObject.getValue(), Platform.class);
             // update ontology with provided data
             ontology.updatePlatform(platform);
-            response.setFeatureValue(true);
+            status = true;
 
         } catch (JsonHelperException | OntologyException exc) {
             // could not update data
             LogHelper.exception(ContextModuleJmsService.class, "updatePlatform", "Could not update platform", exc);
-            response.setFeatureValue(false);
         }
+        // prepare response object
+        BooleanNamedValue response = createBooleanNamedValue(platformObject.getId(), status);
         return response;
     }
 
@@ -356,9 +356,7 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
     @Override
     public Object getPlatforms(Location location) {
 
-        // prepare response object
-        Object response = factory.createObject();
-        FeatureVector responseVector = new FeatureVector();
+        List<AbstractNamedValue> responseVector = new ArrayList<>();
 
         // try to get data from the ontology
         Set<Platform> platformsInformation = null;
@@ -373,7 +371,7 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
 
             for (Platform platformInformation : platformsInformation) {
                 try {
-                    responseVector.getFeature().add(
+                    responseVector.add(
                             createSimpleNamedValue(platformInformation.getId(), JsonHelper.toJson(platformInformation)));
                 } catch (JsonHelperException exc) {
                     LogHelper.warning(ContextModuleJmsService.class, "getPlatforms",
@@ -382,7 +380,8 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
                 }
             }
         }
-        response.setFeatureVector(responseVector);
+        // prepare response object
+        Object response = createObject(location.getId(), responseVector);
         return response;
     }
 
@@ -432,9 +431,7 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
 
     private Object getGeoObjects(Location location, double radius, String... classes) {
 
-        // prepare response object
-        Object response = factory.createObject();
-        FeatureVector responseVector = new FeatureVector();
+        List<AbstractNamedValue> responseVector = new ArrayList<>();
 
         Set<GeoObject> geographicalInformation = null;
         try {
@@ -447,7 +444,7 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
 
             for (GeoObject geoObject : geographicalInformation) {
                 try {
-                    responseVector.getFeature().add(createSimpleNamedValue(geoObject.getId(), JsonHelper.toJson(geoObject)));
+                    responseVector.add(createSimpleNamedValue(geoObject.getId(), JsonHelper.toJson(geoObject)));
                 } catch (JsonHelperException exc) {
                     LogHelper
                             .warning(ContextModuleJmsService.class, "getGISData",
@@ -456,8 +453,8 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
                 }
             }
         }
-        // add results to the response
-        response.setFeatureVector(responseVector);
+        // prepare response object
+        Object response = createObject(location.getId(), responseVector);
         return response;
     }
 
@@ -469,9 +466,7 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
     @Override
     public Object getGeoportalData(Location location) {
 
-        // prepare response data
-        Object response = factory.createObject();
-        FeatureVector responseVector = new FeatureVector();
+        List<AbstractNamedValue> responseVector = new ArrayList<>();
 
         Set<GeoObject> geoData = null;
         try {
@@ -492,7 +487,7 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
 
             for (GeoObject geoObject : geoData) {
                 try {
-                    responseVector.getFeature().add(createSimpleNamedValue(geoObject.getId(), JsonHelper.toJson(geoObject)));
+                    responseVector.add(createSimpleNamedValue(geoObject.getId(), JsonHelper.toJson(geoObject)));
                 } catch (JsonHelperException exc) {
                     LogHelper
                             .warning(ContextModuleJmsService.class, "getGeoportalData",
@@ -500,22 +495,21 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
                                     exc.getLocalizedMessage());
                 }
             }
-            response.setFeatureVector(responseVector);
         }
+        // prepare response object
+        Object response = createObject(location.getId(), responseVector);
+
         return response;
     }
 
     @Override
     public BooleanNamedValue updateGISData(SimpleNamedValue gisData) {
         // TODO: to be implemented
-        return factory.createBooleanNamedValue();
+        return createBooleanNamedValue(gisData.getId(), false);
     }
 
     @Override
     public SimpleNamedValue defineZone(Object zoneDefinition) {
-
-        // prepare response object
-        SimpleNamedValue response = factory.createSimpleNamedValue();
 
         //get the zone definition
         List<itti.com.pl.arena.cm.dto.Location> locations = new ArrayList<>();
@@ -535,15 +529,32 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
         } catch (OntologyException exc) {
             LogHelper.exception(ContextModuleJmsService.class, "defineZone", "Could not define a zone in ontology", exc);
         }
-        // add results to the response
-        response.setValue(zoneId);
+
+        // prepare response object
+        SimpleNamedValue response = createSimpleNamedValue(zoneDefinition.getId(), zoneId);
         return response;
     }
 
     @Override
-    public Object getZone(SimpleNamedValue zoneId) {
-        // TODO Auto-generated method stub
-        return null;
+    public Object getZone(SimpleNamedValue zoneMessage) {
+
+        List<AbstractNamedValue> responseVector = new  ArrayList<>();
+        //get the zone ID
+        String zoneId = zoneMessage.getValue();
+        try {
+            List<itti.com.pl.arena.cm.dto.Location> zoneLocations = getOntology().getZone(zoneId);
+            for (itti.com.pl.arena.cm.dto.Location location : zoneLocations) {
+                AbstractNamedValue coordinate = createCoordinate(zoneMessage.getId(), location.getLongitude(), location.getLatitude(), location.getAltitude());
+                responseVector.add(coordinate);
+            }
+        } catch (OntologyException exc) {
+            LogHelper.exception(ContextModuleJmsService.class, "getZone", "Could not retrieve zone from the ontology", exc);
+        }
+        // prepare response object
+        Object response = createObject(zoneMessage.getId(), responseVector);
+
+        // add results to the response
+        return response;
     }
 
     @Override
@@ -552,11 +563,50 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
         // prepare valid response object
         AbstractNamedValue destinationReachedMessage = createSimpleNamedValue(
                 String.format("%s.%s.%s", Constants.MODULE_NAME,
-                        ContextModuleRequests.destinationReached.name(), UUID.randomUUID().toString()), 
-                        platformId);
+                        ContextModuleRequests.destinationReached.name(), 
+                        getDataInDefaultFormat(), platformId), 
+                        location);
         destinationReachedMessage.setHref(ContextModuleRequests.destinationReached.name());
         destinationReachedMessage.setDataSourceId(Constants.MODULE_NAME);
         client.publish(destinationReachedMessage.getDataSourceId(), destinationReachedMessage);
+    }
+
+    @Override
+    public void destinationLeft(String platformId, itti.com.pl.arena.cm.dto.Location location) {
+
+        // prepare valid response object
+        AbstractNamedValue destinationLeftMessage = createSimpleNamedValue(
+                String.format("%s.%s.%s", Constants.MODULE_NAME,
+                        ContextModuleRequests.destinationLeft.name(), 
+                        getDataInDefaultFormat(), platformId),
+                        location);
+        destinationLeftMessage.setHref(ContextModuleRequests.destinationLeft.name());
+        destinationLeftMessage.setDataSourceId(Constants.MODULE_NAME);
+        client.publish(destinationLeftMessage.getDataSourceId(), destinationLeftMessage);
+    }
+
+    /**
+     * Returns timestamp in default date-time format
+     * @return timestamp in default format used by the ContextModule
+     */
+    private String getDataInDefaultFormat(){
+        return DateTimeHelper.formatTime(System.currentTimeMillis(), Constants.TIMESTAMP_FORMAT);
+    }
+    /**
+     * Prepares instance of the {@link AbstractNamedValue} class
+     * 
+     * @param id
+     *            ID of the object
+     * @param value
+     *            value of the object
+     * @return object containing provided values
+     */
+    private SimpleNamedValue createSimpleNamedValue(String id, java.lang.Object value) {
+        SimpleNamedValue snv = getFactory().createSimpleNamedValue();
+        snv.setDataSourceId(Constants.MODULE_NAME);
+        snv.setId(id);
+        snv.setValue(String.valueOf(value));
+        return snv;
     }
 
     /**
@@ -568,11 +618,50 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
      *            value of the object
      * @return object containing provided values
      */
-    private AbstractNamedValue createSimpleNamedValue(String id, java.lang.Object value) {
-        SimpleNamedValue snv = factory.createSimpleNamedValue();
-        snv.setDataSourceId(Constants.MODULE_NAME);
-        snv.setId(id);
-        snv.setValue(String.valueOf(value));
-        return snv;
+    private BooleanNamedValue createBooleanNamedValue(String id, boolean status) {
+        BooleanNamedValue bnv = getFactory().createBooleanNamedValue();
+        bnv.setDataSourceId(Constants.MODULE_NAME);
+        bnv.setId(id);
+        bnv.setFeatureValue(status);
+        return bnv;
     }
+
+    /**
+     * Prepares instance of the {@link AbstractNamedValue} class
+     * 
+     * @param id
+     *            ID of the object
+     * @param value
+     *            value of the object
+     * @return object containing provided values
+     */
+    private AbstractNamedValue createCoordinate(String id, double x, double y, double z) {
+        RealWorldCoordinate rwc = getFactory().createRealWorldCoordinate();
+        rwc.setDataSourceId(Constants.MODULE_NAME);
+        rwc.setId(id);
+        rwc.setX(x);
+        rwc.setY(y);
+        rwc.setZ(z);
+        return rwc;
+    }
+
+    /**
+     * Prepares instance of the {@link AbstractNamedValue} class
+     * 
+     * @param id
+     *            ID of the object
+     * @param vector 
+     * @param value
+     *            value of the object
+     * @return object containing provided values
+     */
+    private Object createObject(String id, List<AbstractNamedValue> vector) {
+        Object object = getFactory().createObject();
+        object.setDataSourceId(Constants.MODULE_NAME);
+        object.getFeatureVector().setId(id);
+        object.getFeatureVector().setDataSourceId(Constants.MODULE_NAME);
+        object.getFeatureVector().getFeature().addAll(vector);
+        return object;
+    }
+
 }

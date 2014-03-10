@@ -17,7 +17,6 @@ import itti.com.pl.arena.cm.dto.staticobj.ParkingLot;
 import itti.com.pl.arena.cm.location.Range;
 import itti.com.pl.arena.cm.ontology.OntologyConstants;
 import itti.com.pl.arena.cm.service.PlatformTracker;
-import itti.com.pl.arena.cm.utils.helper.CoordinatesHelper;
 import itti.com.pl.arena.cm.utils.helper.LocationHelper;
 import itti.com.pl.arena.cm.utils.helper.LocationHelperException;
 import itti.com.pl.arena.cm.utils.helper.LogHelper;

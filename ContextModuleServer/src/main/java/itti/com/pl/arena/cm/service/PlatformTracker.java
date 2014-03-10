@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Required;
 import itti.com.pl.arena.cm.Service;
 import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.dto.Location;
+import itti.com.pl.arena.cm.dto.dynamicobj.PlatformStatus;
 import itti.com.pl.arena.cm.location.LocationListener;
 import itti.com.pl.arena.cm.location.Range;
 import itti.com.pl.arena.cm.ontology.Ontology;
@@ -35,6 +36,16 @@ public class PlatformTracker implements Service, LocationListener {
     private PlatformListener platformListener = null;
     // max idle time: after that time passes, destinationReached of the platformListener will be called
     private int maxIdleTime = 0;
+
+    // current status of the platform
+    private PlatformStatus status = PlatformStatus.Unknown;
+
+    private void updateStatus(PlatformStatus newStatus){
+        this.status = newStatus;
+    }
+    public PlatformStatus getStatus(){
+        return status;
+    }
 
     /*
      * ID of the listener (if not provided, random UUID generated during initialization)
@@ -116,6 +127,10 @@ public class PlatformTracker implements Service, LocationListener {
         }
     }
 
+    /**
+     * Method periodically called by application scheduler to verify platform status
+     * (is it moving, stopped, parked on the parking lot)
+     */
     public void checkPlatformStopped() {
 
         try {
@@ -137,14 +152,22 @@ public class PlatformTracker implements Service, LocationListener {
 
                         // we are on the parking
                         if (range == Range.getClosestRange()) {
+                            updateStatus(PlatformStatus.StoppedOnParking);
                             //notify the listener
                             getPlatformListener().destinationReached(getId(), lastLocation);
                         }
                     } else {
                         // no parking lots in the given area, break the loop
+                        updateStatus(PlatformStatus.StoppedOutsideParking);
                         break;
                     }
                 }
+            }else{
+                //platform started moving again
+                if(getStatus() == PlatformStatus.StoppedOnParking){
+                    getPlatformListener().destinationLeft(getId(), lastLocation);
+                }
+                updateStatus(PlatformStatus.Moving);
             }
         } catch (OntologyException exc) {
             LogHelper.warning(PlatformTracker.class, "checkPlatformStopped",

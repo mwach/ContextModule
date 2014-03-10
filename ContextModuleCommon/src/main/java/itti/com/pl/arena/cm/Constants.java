@@ -18,6 +18,11 @@ public final class Constants {
     public static final String ENCODING = "UTF-8";
 
     /**
+     * Default format of the date-time timestamp
+     */
+    public static final String TIMESTAMP_FORMAT = "yyyyMMdd-HHmm";
+
+    /**
      * Not specified value
      */
     public static final int UNDEFINED_VALUE = -1;
