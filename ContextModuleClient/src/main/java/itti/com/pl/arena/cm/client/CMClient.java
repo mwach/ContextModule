@@ -7,6 +7,10 @@ import java.util.UUID;
 import itti.com.pl.arena.cm.Constants;
 import itti.com.pl.arena.cm.client.service.ContextModuleClientException;
 import itti.com.pl.arena.cm.client.service.ContextModuleFacade;
+import itti.com.pl.arena.cm.dto.coordinates.CartesianCoordinate;
+import itti.com.pl.arena.cm.dto.dynamicobj.Camera;
+import itti.com.pl.arena.cm.dto.dynamicobj.CameraType;
+import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
 import itti.com.pl.arena.cm.service.ContextModule;
 import itti.com.pl.arena.cm.service.MessageConstants.ContextModuleRequests;
 import itti.com.pl.arena.cm.utils.helper.IOHelperException;
@@ -16,6 +20,7 @@ import itti.com.pl.arena.cm.utils.helper.LogHelper;
 import itti.com.pl.arena.cm.utils.helper.PropertiesHelper;
 import eu.arena_fp7._1.AbstractDataFusionType;
 import eu.arena_fp7._1.AbstractNamedValue;
+import eu.arena_fp7._1.BooleanNamedValue;
 import eu.arena_fp7._1.FeatureVector;
 import eu.arena_fp7._1.Location;
 import eu.arena_fp7._1.Object;
@@ -70,6 +75,9 @@ public class CMClient {
             // retrieve info about camera field of view
             parseGetCameraFieldOfViewResponse(client.getCameraFieldOfView("Camera_3"));
 
+            Platform platform = createDummyPlatform("dummyPlatform_" + System.currentTimeMillis());
+            parseUpdatePlatformResponse(client.updatePlatform(platform));
+
             // defines new zone in the ontology
             String zoneId = parseDefineZoneResponse(client.defineZone(new double[][] {
                     // define square-shaped zone
@@ -92,6 +100,26 @@ public class CMClient {
         }
         // call 'exit' to interrupt the client listener thread
         System.exit(0);
+    }
+
+    private static Platform createDummyPlatform(String platformId) {
+        Platform platform = new Platform(platformId);
+        //platform cameras
+        platform.addCamera(createDummyCamera("dummyCamera_" + System.currentTimeMillis()));
+        platform.addCamera(createDummyCamera("anotherDummyCamera_" + System.currentTimeMillis()));
+        //platform dimensions
+        platform.setHeight(3);
+        platform.setWidth(3);
+        platform.setLength(15);
+        //platform location
+        platform.setLocation(new itti.com.pl.arena.cm.dto.Location(23.434, 32.235235));
+        return platform;
+    }
+
+    private static Camera createDummyCamera(String cameraId) {
+        //thermal camera located on the right side of the truck (X coordinate is set to '2'), 5m back from the front
+        //angle is 0.5 rad (90 degree), which means, camera is directed to the right side of the truck
+        return new Camera(cameraId, CameraType.Thermal.name(), 120, 90, new CartesianCoordinate(2, -5), 0.5);
     }
 
     /**
@@ -190,7 +218,6 @@ public class CMClient {
      * 
      * @param zoneResponse
      *            information about created zone retrieved from the ontology
-     * @return ID of the zone
      */
     private static void parseGetZoneResponse(Object zoneResponse) {
         if (zoneResponse != null) {
@@ -198,6 +225,17 @@ public class CMClient {
         }
     }
 
+    /**
+     * Parses response received from updatePlatform service
+     * 
+     * @param updatePlatformResponse
+     *            status information: true (success) or false (failure)
+     */
+    private static void parseUpdatePlatformResponse(BooleanNamedValue updatePlatformResponse) {
+        if (updatePlatformResponse != null) {
+            parseBooleanNamedValue(updatePlatformResponse);
+        }
+    }
     
     /**
      * Parses response stored inside {@link FeatureVector} object
@@ -236,6 +274,22 @@ public class CMClient {
             output.append(String.format("       %s: %s", value.getId(), value.getValue()));
             output.append("\n");
             LogHelper.info(CMClient.class, "parseFeatureList", output.toString());
+        }
+    }
+
+    /**
+     * Parses response stored inside {@link BooleanNamedValue} object
+     * 
+     * @param value
+     *            information stored inside {@link BooleanNamedValue}
+     */
+    private static void parseBooleanNamedValue(BooleanNamedValue value) {
+        if (value != null) {
+            StringBuilder output = new StringBuilder();
+            output.append("\n");
+            output.append(String.format("       %s: %b", value.getFeatureName(), value.isFeatureValue()));
+            output.append("\n");
+            LogHelper.info(CMClient.class, "parseBooleanNamedValue", output.toString());
         }
     }
 
@@ -420,6 +474,20 @@ public class CMClient {
         return data;
     }
 
+    private BooleanNamedValue updatePlatform(Platform platform) throws ContextModuleClientException {
+        String serializedObject = null;
+        try{
+            serializedObject = JsonHelper.toJson(platform);
+        }catch(JsonHelperException exc){
+            throw new ContextModuleClientException(exc.getLocalizedMessage());
+        }
+        SimpleNamedValue platformRequest = createSimpleNamedValue(serializedObject);
+        platformRequest.setHref(ContextModuleRequests.updatePlatform.name());
+        BooleanNamedValue data = contextModule.updatePlatform(platformRequest);
+        LogHelper.debug(CMClient.class, "updatePlatform", "Server response received: %s", String.valueOf(data));
+        return data;
+    }
+
 
     /**
      * Prints command usage
@@ -430,8 +498,9 @@ public class CMClient {
 
     /**
      * Initializes client module. Connects to the Arena bus
+     * @throws ContextModuleClientException could not initialize client
      */
-    public void init() {
+    public void init() throws ContextModuleClientException {
 
         // URL of the arena bus
         String brokerUrl = PropertiesHelper.getPropertyAsString(properties, ClientPropertyNames.brokerUrl.name(), null);

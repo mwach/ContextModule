@@ -52,6 +52,10 @@ public class ContextModuleFacade extends ModuleImpl implements ContextModule {
         this.brokerUrl = brokerUrl;
     }
 
+    /**
+     * returns URL of the broker
+     * @return broker URL
+     */
     private String getBrokerUrl() {
         return brokerUrl;
     }
@@ -70,6 +74,10 @@ public class ContextModuleFacade extends ModuleImpl implements ContextModule {
         this.clientIpAddress = clientIpAddress;
     }
 
+    /**
+     * Returns IP of the client
+     * @return client IP address
+     */
     private String getClientIpAddress() {
         return clientIpAddress;
     }
@@ -88,6 +96,10 @@ public class ContextModuleFacade extends ModuleImpl implements ContextModule {
         this.clientPort = clientPort;
     }
 
+    /**
+     * returns port of the client
+     * @return client port
+     */
     private int getClientPort() {
         return clientPort;
     }
@@ -106,6 +118,10 @@ public class ContextModuleFacade extends ModuleImpl implements ContextModule {
         this.responseWaitingTime = responseWaitingTime;
     }
 
+    /**
+     * returns maximum response waiting time
+     * @return response waiting time
+     */
     private int getResponseWaitingTime() {
         return responseWaitingTime;
     }
@@ -124,6 +140,10 @@ public class ContextModuleFacade extends ModuleImpl implements ContextModule {
         this.debug = debug;
     }
 
+    /**
+     * returns value of the 'debug' flag
+     * @return debug status
+     */
     private boolean isDebug() {
         return debug;
     }
@@ -152,8 +172,9 @@ public class ContextModuleFacade extends ModuleImpl implements ContextModule {
 
     /**
      * Initializes the module. This method must be called before any of the CM services will be called
+     * @throws ContextModuleClientException could not initialize client
      */
-    public void init() {
+    public void init() throws ContextModuleClientException {
 
         try {
             // if client IP was not provided, use default value (IP of the current host)
@@ -176,18 +197,20 @@ public class ContextModuleFacade extends ModuleImpl implements ContextModule {
                 }
             });
         } catch (RuntimeException exc) {
+            //runtime exception handling
             LogHelper.error(ContextModuleFacade.class, "init", "Could not initialize client object. Reason: '%s'",
                     exc.getLocalizedMessage());
-            throw new ContextModuleRuntimeException(exc.getLocalizedMessage(), exc);
-        } catch (NetworkHelperException e) {
+            throw new ContextModuleClientException(exc.getLocalizedMessage(), exc);
+        } catch (NetworkHelperException exc) {
+            //network exception handling
             LogHelper.error(ContextModuleFacade.class, "init", "Could not obtain local IP address. Reason: '%s'",
-                    e.getLocalizedMessage());
-            throw new ContextModuleRuntimeException("Could not obtain local IP address during client initialization", e);
+                    exc.getLocalizedMessage());
+            throw new ContextModuleClientException("Could not obtain local IP address during client initialization", exc);
         }
     }
 
     /**
-     * Data from server received
+     * Method called on server response received
      */
     @Override
     public void onDataChanged(Class<? extends AbstractDataFusionType> dataType, String dataSourceId, AbstractDataFusionType data) {
@@ -284,11 +307,17 @@ public class ContextModuleFacade extends ModuleImpl implements ContextModule {
         return (BooleanNamedValue)submitData(gisData);
     }
 
+    /* (non-Javadoc)
+     * @see itti.com.pl.arena.cm.service.ContextModule#defineZone(eu.arena_fp7._1.Object)
+     */
     @Override
     public SimpleNamedValue defineZone(Object zoneDefinition) {
         return (SimpleNamedValue)submitData(zoneDefinition);
     }
 
+    /* (non-Javadoc)
+     * @see itti.com.pl.arena.cm.service.ContextModule#getZone(eu.arena_fp7._1.SimpleNamedValue)
+     */
     @Override
     public Object getZone(SimpleNamedValue zoneId) {
         return (Object)submitData(zoneId);

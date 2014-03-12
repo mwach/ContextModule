@@ -1,6 +1,7 @@
 package itti.com.pl.arena.cm.dto.dynamicobj;
 
 import itti.com.pl.arena.cm.dto.GeoObject;
+import itti.com.pl.arena.cm.dto.coordinates.CartesianCoordinate;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -53,8 +54,8 @@ public class CameraFieldOfView extends Camera{
      * @param angleY camera vertical angle
      * @param position position of the camera on the platform
      */
-    public CameraFieldOfView(String id, String type, double angleX, double angleY, RelativePosition position) {
-        super(id, type, angleX, angleY, position);
+    public CameraFieldOfView(String id, String type, double angleX, double angleY) {
+        super(id, type, angleX, angleY, new CartesianCoordinate(0, 0), 0);
     }
 
     @Override

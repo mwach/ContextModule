@@ -14,10 +14,10 @@ import org.junit.rules.ExpectedException;
 
 import itti.com.pl.arena.cm.TestHelper;
 import itti.com.pl.arena.cm.dto.Location;
+import itti.com.pl.arena.cm.dto.coordinates.CartesianCoordinate;
 import itti.com.pl.arena.cm.dto.dynamicobj.Camera;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform.Type;
-import itti.com.pl.arena.cm.dto.dynamicobj.RelativePosition;
 import itti.com.pl.arena.cm.dto.staticobj.ParkingLot;
 import itti.com.pl.arena.cm.exception.ErrorMessages;
 import itti.com.pl.arena.cm.location.Range;
@@ -58,9 +58,9 @@ public class ContextModuleOntologyManagerTest {
         // then tries to retrieve it
         Set<Camera> cameras = new HashSet<Camera>();
         Camera cameraOne = new Camera(TestHelper.getOntologyName(), "typeA", TestHelper.getCoordinate(), TestHelper.getCoordinate(),
-                RelativePosition.Back);
+                new CartesianCoordinate(0, 0), 0);
         Camera cameraTwo = new Camera(TestHelper.getOntologyName().toString(), "typeB", TestHelper.getCoordinate(), TestHelper.getCoordinate(),
-                RelativePosition.Front);
+                new CartesianCoordinate(0, 0), 0);
         cameras.add(cameraOne);
         cameras.add(cameraTwo);
         Platform information = new Platform("Vehicle_test1", new Location(TestHelper.getCoordinate(), TestHelper.getCoordinate(),

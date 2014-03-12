@@ -1,6 +1,7 @@
 package itti.com.pl.arena.cm.dto.dynamicobj;
 
 import itti.com.pl.arena.cm.dto.OntologyObject;
+import itti.com.pl.arena.cm.dto.coordinates.CartesianCoordinate;
 
 public class Camera extends OntologyObject {
 
@@ -24,7 +25,16 @@ public class Camera extends OntologyObject {
     /*
      * position of the camera on platform
      */
-    private RelativePosition onPlatformPosition;
+    private CartesianCoordinate onPlatformPosition;
+
+    /*
+     * angle (measured in radians) is used to determine camera angle against main truck axis (Y)
+     * - if camera is directed to the front, then angle is 0
+     * - if camera is directed to the back, then angle is PI
+     * - if camera is directed to the left side of the scene, then angle is 3/2PI
+     * - if camera is directed to the right side of the scene, then angle is 1/2PI
+     */
+    private double directionAngle;
 
     /**
      * Default camera object constructor
@@ -34,17 +44,19 @@ public class Camera extends OntologyObject {
      * @param type
      *            type of the camera (any string accepted but should be some common, easy to recognize value like
      *            infrared, fisheye)
-     *            TODO: should we create an enum to keep acceptable values
      * @param angleX camera horizontal angle 
      * @param angleY camera vertical angle
-     * @param position position of the camera on truck
+     * @param cameraPosition position of the camera on truck measured in meters. 
+     * Point (0,0) of the Cartesian axis should be located at the front of the truck, in the middle width
+     * @param directionAngle angle (measured in radians) which determines main camera direction axis against main truck axis (Y)
      */
-    public Camera(String id, String type, double angleX, double angleY, RelativePosition position) {
+    public Camera(String id, String type, double angleX, double angleY, CartesianCoordinate cameraPosition, double directionAngle) {
         super(id);
         this.type = type;
         this.angleX = angleX;
         this.angleY = angleY;
-        this.onPlatformPosition = position;
+        this.onPlatformPosition = cameraPosition;
+        this.directionAngle = directionAngle;
     }
 
     /**
@@ -63,6 +75,15 @@ public class Camera extends OntologyObject {
      */
     public void setType(String type) {
         this.type = type;
+    }
+
+    /**
+     * Updates type of the camera
+     * 
+     * @param type
+     */
+    public void setType(CameraType type) {
+        this.type = type.name();
     }
 
     /**
@@ -102,11 +123,29 @@ public class Camera extends OntologyObject {
     }
 
     /**
+     * Returns main camera direction axis
+     * 
+     * @return vertical angle
+     */
+    public double getDirectionAngle() {
+        return directionAngle;
+    }
+
+    /**
+     * Updates main camera direction axis 
+     * 
+     * @param angleY vertical angle
+     */
+    public void setDirectionAngle(double directionAngle) {
+        this.directionAngle = directionAngle;
+    }
+
+    /**
      * Returns position of the camera on platform
      * 
      * @return position on platform
      */
-    public RelativePosition getOnPPlatformPosition() {
+    public CartesianCoordinate getOnPPlatformPosition() {
         return onPlatformPosition;
     }
 
@@ -115,7 +154,7 @@ public class Camera extends OntologyObject {
      * 
      * @param onPlatformPosition position on platform
      */
-    public void setOnPlatformPosition(RelativePosition onPlatformPosition) {
+    public void setOnPlatformPosition(CartesianCoordinate onPlatformPosition) {
         this.onPlatformPosition = onPlatformPosition;
     }
 
