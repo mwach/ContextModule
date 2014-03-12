@@ -30,7 +30,10 @@ public interface Ontology {
     /**
      * Adds information about new GIS object to the ontology
      * 
-     * @param location location 
+     * @param x
+     *            latitude
+     * @param y
+     *            longitude
      * @param geoportalData
      *            information about GIS objects
      * @throws OntologyException
@@ -51,13 +54,16 @@ public interface Ontology {
      * @throws OntologyException
      *             could not retrieve information from the ontology
      */
-    public Set<String> getInstanceNames(double x, double y, double radius, Class<? extends OntologyObject> ontologyClass) throws OntologyException;
+    public Set<String> getInstanceNames(double x, double y, double radius, Class<? extends OntologyObject> ontologyClass)
+            throws OntologyException;
 
     /**
      * Returns list of platform objects found near given location
      * 
-     * @param location
-     *            location
+     * @param x
+     *            longitude
+     * @param y
+     *            langitude
      * @param radius
      *            radius
      * @return list of platforms objects
@@ -81,9 +87,11 @@ public interface Ontology {
 
     /**
      * Returns information about GIS object identified by its ID
+     * 
      * @param id
      *            ID of the object
-     * @param <T> class of the requested {@link OntologyObject}
+     * @param <T>
+     *            class of the requested {@link OntologyObject}
      * @return information about the object
      * @throws OntologyException
      *             could not retrieve information from the ontology
@@ -93,8 +101,10 @@ public interface Ontology {
     /**
      * Returns list of specific GIS objects found near given location
      * 
-     * @param location
-     *            location (information about longitude and latitude)
+     * @param x
+     *            longitude
+     * @param y
+     *            latitude
      * @param radius
      *            radius
      * @param gisObjectClasses
@@ -104,7 +114,6 @@ public interface Ontology {
      *             could not retrieve information from the ontology
      */
     public Set<GeoObject> getGISObjects(double x, double y, double radius, String... gisObjectClasses) throws OntologyException;
-
 
     /**
      * Calculates distance between platform, and objects localized on given parking lot
@@ -123,7 +132,7 @@ public interface Ontology {
      * 
      * @param platformId
      *            ID of the platform, calculations should be done
-     * @return list of 
+     * @return list of
      * @throws OntologyException
      *             processing exception
      */
@@ -131,7 +140,9 @@ public interface Ontology {
 
     /**
      * Defines a new zone in the ontology
-     * @param locations zone boundaries (list of zone vertexes stored as {@link Location} objects)
+     * 
+     * @param locations
+     *            zone boundaries (list of zone vertexes stored as {@link Location} objects)
      * @return ID of the zone
      * @throws OntologyException
      *             processing exception
@@ -140,7 +151,9 @@ public interface Ontology {
 
     /**
      * Defines a new zone in the ontology
-     * @param zoneId ID of the zone
+     * 
+     * @param zoneId
+     *            ID of the zone
      * @return zone boundaries (list of zone vertexes stored as {@link Location} objects)
      * @throws OntologyException
      *             processing exception
