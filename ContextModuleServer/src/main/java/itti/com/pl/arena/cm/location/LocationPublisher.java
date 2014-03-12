@@ -1,6 +1,6 @@
 package itti.com.pl.arena.cm.location;
 
-import itti.com.pl.arena.cm.Service;
+import itti.com.pl.arena.cm.service.Service;
 
 /**
  * Service publishes current location of the platform

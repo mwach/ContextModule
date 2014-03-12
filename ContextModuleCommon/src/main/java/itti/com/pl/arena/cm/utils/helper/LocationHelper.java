@@ -1,7 +1,7 @@
 package itti.com.pl.arena.cm.utils.helper;
 
-import itti.com.pl.arena.cm.ErrorMessages;
 import itti.com.pl.arena.cm.dto.Location;
+import itti.com.pl.arena.cm.exception.ErrorMessages;
 
 /**
  * Helper class for the {@link Location} objects

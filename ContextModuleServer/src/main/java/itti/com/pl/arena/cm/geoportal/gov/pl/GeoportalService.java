@@ -1,8 +1,8 @@
 package itti.com.pl.arena.cm.geoportal.gov.pl;
 
-import itti.com.pl.arena.cm.ErrorMessages;
 import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.dto.Location;
+import itti.com.pl.arena.cm.exception.ErrorMessages;
 import itti.com.pl.arena.cm.geoportal.Geoportal;
 import itti.com.pl.arena.cm.geoportal.GeoportalException;
 import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalRequestDataObject;

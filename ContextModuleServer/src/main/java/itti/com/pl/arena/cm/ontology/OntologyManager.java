@@ -1,8 +1,8 @@
 package itti.com.pl.arena.cm.ontology;
 
-import itti.com.pl.arena.cm.ErrorMessages;
-import itti.com.pl.arena.cm.Service;
+import itti.com.pl.arena.cm.exception.ErrorMessages;
 import itti.com.pl.arena.cm.ontology.OntologyConstants;
+import itti.com.pl.arena.cm.service.Service;
 import itti.com.pl.arena.cm.utils.helper.IOHelper;
 import itti.com.pl.arena.cm.utils.helper.LogHelper;
 import itti.com.pl.arena.cm.utils.helper.NumbersHelper;

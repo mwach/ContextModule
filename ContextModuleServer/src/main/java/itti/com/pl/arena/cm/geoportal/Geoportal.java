@@ -2,9 +2,9 @@ package itti.com.pl.arena.cm.geoportal;
 
 import java.util.Set;
 
-import itti.com.pl.arena.cm.Service;
 import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.dto.Location;
+import itti.com.pl.arena.cm.service.Service;
 
 /**
  * General Geoportal service interface

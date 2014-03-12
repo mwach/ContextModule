@@ -1,7 +1,7 @@
 package itti.com.pl.arena.cm.geoportal.gov.pl;
 
 import static org.junit.Assert.*;
-import itti.com.pl.arena.cm.ErrorMessages;
+import itti.com.pl.arena.cm.exception.ErrorMessages;
 import itti.com.pl.arena.cm.geoportal.GeoportalException;
 import itti.com.pl.arena.cm.geoportal.gov.pl.GeoportalService;
 import itti.com.pl.arena.cm.geoportal.gov.pl.GeoportalUrls;

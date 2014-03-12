@@ -1,6 +1,6 @@
 package itti.com.pl.arena.cm.utils.helper;
 
-import itti.com.pl.arena.cm.ErrorMessages;
+import itti.com.pl.arena.cm.exception.ErrorMessages;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

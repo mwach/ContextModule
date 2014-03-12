@@ -1,6 +1,6 @@
 package itti.com.pl.arena.cm.utils.helpers;
 
-import itti.com.pl.arena.cm.ErrorMessages;
+import itti.com.pl.arena.cm.exception.ErrorMessages;
 import itti.com.pl.arena.cm.utils.helper.IOHelper;
 import itti.com.pl.arena.cm.utils.helper.IOHelperException;
 import itti.com.pl.arena.cm.utils.helper.StringHelper;

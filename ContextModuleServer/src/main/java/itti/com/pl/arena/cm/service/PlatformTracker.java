@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Required;
 
-import itti.com.pl.arena.cm.Service;
 import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.dto.Location;
 import itti.com.pl.arena.cm.dto.dynamicobj.PlatformStatus;

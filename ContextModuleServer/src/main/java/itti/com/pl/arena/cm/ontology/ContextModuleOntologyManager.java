@@ -1,10 +1,9 @@
 package itti.com.pl.arena.cm.ontology;
 
-import itti.com.pl.arena.cm.ErrorMessages;
-import itti.com.pl.arena.cm.OntologyObject;
 import itti.com.pl.arena.cm.dto.GeoObject;
 //import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.dto.Location;
+import itti.com.pl.arena.cm.dto.OntologyObject;
 import itti.com.pl.arena.cm.dto.coordinates.ArenaObjectCoordinate;
 import itti.com.pl.arena.cm.dto.coordinates.RadialCoordinate;
 import itti.com.pl.arena.cm.dto.dynamicobj.Camera;
@@ -14,6 +13,7 @@ import itti.com.pl.arena.cm.dto.dynamicobj.RelativePosition;
 import itti.com.pl.arena.cm.dto.staticobj.Building;
 import itti.com.pl.arena.cm.dto.staticobj.Infrastructure;
 import itti.com.pl.arena.cm.dto.staticobj.ParkingLot;
+import itti.com.pl.arena.cm.exception.ErrorMessages;
 import itti.com.pl.arena.cm.location.Range;
 import itti.com.pl.arena.cm.ontology.OntologyConstants;
 import itti.com.pl.arena.cm.service.PlatformTracker;

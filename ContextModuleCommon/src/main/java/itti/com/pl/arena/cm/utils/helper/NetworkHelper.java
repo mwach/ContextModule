@@ -1,7 +1,7 @@
 package itti.com.pl.arena.cm.utils.helper;
 
 import itti.com.pl.arena.cm.Constants;
-import itti.com.pl.arena.cm.ErrorMessages;
+import itti.com.pl.arena.cm.exception.ErrorMessages;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;

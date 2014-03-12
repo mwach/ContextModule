@@ -1,7 +1,7 @@
 package itti.com.pl.arena.cm.geoportal;
 
-import itti.com.pl.arena.cm.ContextModuleException;
-import itti.com.pl.arena.cm.ErrorMessages;
+import itti.com.pl.arena.cm.exception.ContextModuleException;
+import itti.com.pl.arena.cm.exception.ErrorMessages;
 
 /**
  * Geoportal exception thrown by the Geoportal module

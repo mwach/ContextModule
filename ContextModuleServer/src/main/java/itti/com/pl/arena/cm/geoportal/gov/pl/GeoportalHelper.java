@@ -6,9 +6,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import itti.com.pl.arena.cm.ErrorMessages;
 import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.dto.Location;
+import itti.com.pl.arena.cm.exception.ErrorMessages;
 import itti.com.pl.arena.cm.geoportal.GeoportalException;
 import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalRequestImageObject;
 import itti.com.pl.arena.cm.geoportal.gov.pl.dto.GeoportalRequestObject;

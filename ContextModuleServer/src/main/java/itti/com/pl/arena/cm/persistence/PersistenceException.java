@@ -1,7 +1,7 @@
 package itti.com.pl.arena.cm.persistence;
 
-import itti.com.pl.arena.cm.ContextModuleException;
-import itti.com.pl.arena.cm.ErrorMessages;
+import itti.com.pl.arena.cm.exception.ContextModuleException;
+import itti.com.pl.arena.cm.exception.ErrorMessages;
 
 /**
  * Exception thrown by the Persistence components

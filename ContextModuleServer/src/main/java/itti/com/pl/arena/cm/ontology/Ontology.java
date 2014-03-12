@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Set;
 
 import eu.arena_fp7._1.Location;
-import itti.com.pl.arena.cm.OntologyObject;
 import itti.com.pl.arena.cm.dto.GeoObject;
+import itti.com.pl.arena.cm.dto.OntologyObject;
 import itti.com.pl.arena.cm.dto.coordinates.ArenaObjectCoordinate;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
 

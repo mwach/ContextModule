@@ -6,8 +6,8 @@ import java.util.Map;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.annotation.Required;
 
-import itti.com.pl.arena.cm.ErrorMessages;
 import itti.com.pl.arena.cm.dto.Location;
+import itti.com.pl.arena.cm.exception.ErrorMessages;
 import itti.com.pl.arena.cm.geoportal.GeoportalException;
 import itti.com.pl.arena.cm.location.LocationListener;
 import itti.com.pl.arena.cm.location.LocationPublisher;

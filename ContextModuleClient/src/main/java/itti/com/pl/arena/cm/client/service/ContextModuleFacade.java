@@ -13,8 +13,7 @@ import eu.arena_fp7._1.Location;
 import eu.arena_fp7._1.Object;
 import eu.arena_fp7._1.SimpleNamedValue;
 import itti.com.pl.arena.cm.Constants;
-import itti.com.pl.arena.cm.ContextModuleRuntimeException;
-import itti.com.pl.arena.cm.Service;
+import itti.com.pl.arena.cm.exception.ContextModuleRuntimeException;
 import itti.com.pl.arena.cm.service.ContextModule;
 import itti.com.pl.arena.cm.utils.helper.LogHelper;
 import itti.com.pl.arena.cm.utils.helper.NetworkHelper;
@@ -27,7 +26,7 @@ import itti.com.pl.arena.cm.utils.helper.StringHelper;
  * @author cm-admin
  * 
  */
-public class ContextModuleFacade extends ModuleImpl implements Service, ContextModule {
+public class ContextModuleFacade extends ModuleImpl implements ContextModule {
 
     private static final int DEFAULT_CLIENT_PORT = 45444;
     private static final int DEFAULT_MAX_WAITING_TIME = 5000;
@@ -154,7 +153,6 @@ public class ContextModuleFacade extends ModuleImpl implements Service, ContextM
     /**
      * Initializes the module. This method must be called before any of the CM services will be called
      */
-    @Override
     public void init() {
 
         try {
@@ -204,7 +202,6 @@ public class ContextModuleFacade extends ModuleImpl implements Service, ContextM
     /**
      * Unregisters current module from the server
      */
-    @Override
     public void shutdown() {
         if (client != null) {
             client.unregisterModule(this);

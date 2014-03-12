@@ -1,6 +1,5 @@
 package itti.com.pl.arena.cm.dto;
 
-import itti.com.pl.arena.cm.OntologyObject;
 
 /**
  * Abstract class representing geoportal objects (like buildings, infrastructure or vehicles)

@@ -1,6 +1,6 @@
 package itti.com.pl.arena.cm.client.service;
 
-import itti.com.pl.arena.cm.ContextModuleException;
+import itti.com.pl.arena.cm.exception.ContextModuleException;
 
 /**
  * Client-side exception

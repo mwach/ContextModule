@@ -1,10 +1,10 @@
 package itti.com.pl.arena.cm.persistence.jdbc;
 
-import itti.com.pl.arena.cm.ErrorMessages;
-import itti.com.pl.arena.cm.Service;
 import itti.com.pl.arena.cm.dto.Location;
+import itti.com.pl.arena.cm.exception.ErrorMessages;
 import itti.com.pl.arena.cm.persistence.Persistence;
 import itti.com.pl.arena.cm.persistence.PersistenceException;
+import itti.com.pl.arena.cm.service.Service;
 import itti.com.pl.arena.cm.utils.helper.DateTimeHelper;
 import itti.com.pl.arena.cm.utils.helper.DateTimeHelperException;
 import itti.com.pl.arena.cm.utils.helper.LogHelper;

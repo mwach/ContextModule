@@ -1,6 +1,7 @@
 package itti.com.pl.arena.cm;
 
-import itti.com.pl.arena.cm.ContextModuleException;
+import itti.com.pl.arena.cm.exception.ContextModuleException;
+import itti.com.pl.arena.cm.exception.ContextModuleRuntimeException;
 
 import org.junit.Rule;
 import org.junit.Test;

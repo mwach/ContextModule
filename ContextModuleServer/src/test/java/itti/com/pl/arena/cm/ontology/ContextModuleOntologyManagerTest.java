@@ -14,13 +14,13 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import itti.com.pl.arena.cm.ErrorMessages;
 import itti.com.pl.arena.cm.dto.Location;
 import itti.com.pl.arena.cm.dto.dynamicobj.Camera;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform.Type;
 import itti.com.pl.arena.cm.dto.dynamicobj.RelativePosition;
 import itti.com.pl.arena.cm.dto.staticobj.ParkingLot;
+import itti.com.pl.arena.cm.exception.ErrorMessages;
 import itti.com.pl.arena.cm.location.Range;
 
 public class ContextModuleOntologyManagerTest {

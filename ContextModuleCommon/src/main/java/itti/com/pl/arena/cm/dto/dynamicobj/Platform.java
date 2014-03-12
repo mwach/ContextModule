@@ -1,7 +1,7 @@
 package itti.com.pl.arena.cm.dto.dynamicobj;
 
-import itti.com.pl.arena.cm.OntologyObject;
 import itti.com.pl.arena.cm.dto.Location;
+import itti.com.pl.arena.cm.dto.OntologyObject;
 
 import java.util.HashMap;
 import java.util.Map;

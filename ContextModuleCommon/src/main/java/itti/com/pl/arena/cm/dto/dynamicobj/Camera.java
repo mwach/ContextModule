@@ -1,6 +1,6 @@
 package itti.com.pl.arena.cm.dto.dynamicobj;
 
-import itti.com.pl.arena.cm.OntologyObject;
+import itti.com.pl.arena.cm.dto.OntologyObject;
 
 public class Camera extends OntologyObject {
 
