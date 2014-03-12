@@ -30,6 +30,14 @@ public class Platform extends OntologyObject{
          * Vehicle with cameras installed on it - default (and currently the only one) Platform Type used by the ContextModule
          */
         Vehicle_with_cameras,
+        ;
+        /**
+         * Returns default type of the {@link Platform} used by the module
+         * @return default type of the platform
+         */
+        public static Type getDefaultType(){
+            return Vehicle_with_cameras;
+        }
     }
 
     /*
@@ -39,7 +47,7 @@ public class Platform extends OntologyObject{
     /*
      * Type of the platform
      */
-    private Type type;
+    private Type type = Type.getDefaultType();
     /*
      * List of cameras installed on platform
      */

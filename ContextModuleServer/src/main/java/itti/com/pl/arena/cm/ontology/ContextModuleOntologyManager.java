@@ -5,11 +5,11 @@ import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.dto.Location;
 import itti.com.pl.arena.cm.dto.OntologyObject;
 import itti.com.pl.arena.cm.dto.coordinates.ArenaObjectCoordinate;
+import itti.com.pl.arena.cm.dto.coordinates.CartesianCoordinate;
 import itti.com.pl.arena.cm.dto.coordinates.RadialCoordinate;
 import itti.com.pl.arena.cm.dto.dynamicobj.Camera;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform.Type;
-import itti.com.pl.arena.cm.dto.dynamicobj.RelativePosition;
 import itti.com.pl.arena.cm.dto.staticobj.Building;
 import itti.com.pl.arena.cm.dto.staticobj.Infrastructure;
 import itti.com.pl.arena.cm.dto.staticobj.ParkingLot;
@@ -161,10 +161,9 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
             String cameraType = getStringProperty(cameraInstance, OntologyConstants.Camera_has_type);
             Double angleXVal = getDoubleProperty(cameraInstance, OntologyConstants.Camera_has_angle_x);
             Double angleYVal = getDoubleProperty(cameraInstance, OntologyConstants.Camera_has_angle_y);
-            RelativePosition position = getRelativePosition(cameraInstance, OntologyConstants.Camera_view);
 
             cameraInfo = new Camera(cameraId, cameraType, angleXVal == null ? 0 : angleXVal.doubleValue(), angleYVal == null ? 0
-                    : angleYVal.doubleValue(), position);
+                    : angleYVal.doubleValue(), new CartesianCoordinate(0, 0), 0);
         }
         return cameraInfo;
     }
@@ -175,7 +174,6 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         properties.put(OntologyConstants.Camera_has_type.name(), new String[] { camera.getType() });
         properties.put(OntologyConstants.Camera_has_angle_x.name(), new String[] { String.valueOf(camera.getAngleX()) });
         properties.put(OntologyConstants.Camera_has_angle_y.name(), new String[] { String.valueOf(camera.getAngleY()) });
-        properties.put(OntologyConstants.Camera_view.name(), new String[] { camera.getOnPPlatformPosition().name() });
         return createSimpleInstance(OntologyConstants.Camera.name(), camera.getId(), properties);
     }
 
@@ -765,9 +763,5 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 
     private Double getDoubleProperty(Map<String, String[]> properties, OntologyConstants propertyName) {
         return NumbersHelper.getDoubleFromString(getStringProperty(properties, propertyName));
-    }
-
-    private RelativePosition getRelativePosition(Map<String, String[]> properties, OntologyConstants propertyName) {
-        return RelativePosition.getPostion(getStringProperty(properties, propertyName));
     }
 }
