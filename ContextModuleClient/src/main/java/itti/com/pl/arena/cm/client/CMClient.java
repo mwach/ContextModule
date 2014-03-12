@@ -8,7 +8,7 @@ import itti.com.pl.arena.cm.Constants;
 import itti.com.pl.arena.cm.client.service.ContextModuleClientException;
 import itti.com.pl.arena.cm.client.service.ContextModuleFacade;
 import itti.com.pl.arena.cm.service.ContextModule;
-import itti.com.pl.arena.cm.service.Constants.ContextModuleRequests;
+import itti.com.pl.arena.cm.service.MessageConstants.ContextModuleRequests;
 import itti.com.pl.arena.cm.utils.helper.IOHelperException;
 import itti.com.pl.arena.cm.utils.helper.JsonHelper;
 import itti.com.pl.arena.cm.utils.helper.JsonHelperException;

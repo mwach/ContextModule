@@ -31,7 +31,7 @@ public class ArenaObjectCoordinateTest {
             testCoordinates[i][1] = angle;
             objectCoordinate.addRadialCoordinates(radius, angle);
         }
-        Assert.assertEquals(objectId, objectCoordinate.getObjectId());
+        Assert.assertEquals(objectId, objectCoordinate.getId());
         Assert.assertEquals(noOfPairs, objectCoordinate.getRadialCoordinates().size());
         int itemPos = 0;
         for (RadialCoordinate radialCoordinate : objectCoordinate){

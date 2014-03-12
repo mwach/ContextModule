@@ -1,11 +1,18 @@
 package itti.com.pl.arena.cm.dto.coordinates;
 
+import java.io.Serializable;
+
 /**
  * Class representing single point in the Cartesian -D space
  * @author cm-admin
  *
  */
-public class CartesianCoordinate {
+public class CartesianCoordinate implements Serializable{
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
     //x coordinate
     private double x;

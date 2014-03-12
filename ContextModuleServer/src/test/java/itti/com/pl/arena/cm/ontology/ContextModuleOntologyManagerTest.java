@@ -5,15 +5,14 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
-import java.util.UUID;
 
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import itti.com.pl.arena.cm.TestHelper;
 import itti.com.pl.arena.cm.dto.Location;
 import itti.com.pl.arena.cm.dto.dynamicobj.Camera;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
@@ -29,7 +28,6 @@ public class ContextModuleOntologyManagerTest {
     public ExpectedException expectedException = ExpectedException.none();
 
     private static Ontology cmOntologyManager;
-    private Random random = new Random();
 
     @BeforeClass
     public static void beforeClass() {
@@ -59,17 +57,17 @@ public class ContextModuleOntologyManagerTest {
         // adds a new truck to the ontology
         // then tries to retrieve it
         Set<Camera> cameras = new HashSet<Camera>();
-        Camera cameraOne = new Camera(UUID.randomUUID().toString(), "typeA", random.nextDouble(), random.nextDouble(),
+        Camera cameraOne = new Camera(TestHelper.getOntologyName(), "typeA", TestHelper.getCoordinate(), TestHelper.getCoordinate(),
                 RelativePosition.Back);
-        Camera cameraTwo = new Camera(UUID.randomUUID().toString(), "typeB", random.nextDouble(), random.nextDouble(),
+        Camera cameraTwo = new Camera(TestHelper.getOntologyName().toString(), "typeB", TestHelper.getCoordinate(), TestHelper.getCoordinate(),
                 RelativePosition.Front);
         cameras.add(cameraOne);
         cameras.add(cameraTwo);
-        Platform information = new Platform("Vehicle_test1", new Location(random.nextDouble(), random.nextDouble(),
-                random.nextInt(100)), Type.Vehicle_with_cameras, cameras);
-        information.setWidth(random.nextDouble());
-        information.setHeight(random.nextDouble());
-        information.setLength(random.nextDouble());
+        Platform information = new Platform("Vehicle_test1", new Location(TestHelper.getCoordinate(), TestHelper.getCoordinate(),
+                TestHelper.getBearing()), Type.Vehicle_with_cameras, cameras);
+        information.setWidth(TestHelper.getCoordinate());
+        information.setHeight(TestHelper.getCoordinate());
+        information.setLength(TestHelper.getCoordinate());
         cmOntologyManager.updatePlatform(information);
         assertEquals(information, cmOntologyManager.getOntologyObject(information.getId(), Platform.class));
     }
@@ -77,8 +75,8 @@ public class ContextModuleOntologyManagerTest {
     @Test
     public void testUpdateTruckPosition() throws OntologyException {
         // checks, if location of the platform is correctly updated
-        Location initLocation = new Location(random.nextDouble(), random.nextDouble(), random.nextInt(100));
-        Location nextLocation = new Location(random.nextDouble(), random.nextDouble(), random.nextInt(100));
+        Location initLocation = new Location(TestHelper.getCoordinate(), TestHelper.getCoordinate(), TestHelper.getBearing());
+        Location nextLocation = new Location(TestHelper.getCoordinate(), TestHelper.getCoordinate(), TestHelper.getBearing());
         Platform information = new Platform("vehicle_m1", initLocation, Type.Vehicle_with_cameras, null);
         cmOntologyManager.updatePlatform(information);
         assertEquals(initLocation, cmOntologyManager.getOntologyObject(information.getId(), Platform.class).getLocation());
@@ -208,7 +206,7 @@ public class ContextModuleOntologyManagerTest {
         int noOfLocations = 5;
         for(int i=0;i<noOfLocations ; i++){
             locations.add(
-                    new Location(random.nextDouble(), random.nextDouble(), 0, random.nextDouble()));
+                    new Location(TestHelper.getCoordinate(), TestHelper.getCoordinate(), 0, TestHelper.getCoordinate()));
         }
         //add new zone to ontology
         String zoneId = cmOntologyManager.defineZone(locations);

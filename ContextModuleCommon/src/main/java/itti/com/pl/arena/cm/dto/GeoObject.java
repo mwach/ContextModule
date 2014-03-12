@@ -1,5 +1,9 @@
 package itti.com.pl.arena.cm.dto;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 
 /**
  * Abstract class representing geoportal objects (like buildings, infrastructure or vehicles)
@@ -29,7 +33,7 @@ public abstract class GeoObject extends OntologyObject {
     /*
      * Boundaries of the objects
      */
-    private Location[] boundaries = new Location[0];
+    private List<Location> boundaries = new ArrayList<>();
 
     /**
      * Creates new object with given ID
@@ -43,7 +47,7 @@ public abstract class GeoObject extends OntologyObject {
      * @return list of the object boundaries
      */
     public Location[] getBoundaries() {
-        return boundaries.clone();
+        return boundaries.toArray(new Location[boundaries.size()]);
     }
 
     /**
@@ -51,7 +55,7 @@ public abstract class GeoObject extends OntologyObject {
      * @return number (count) of the object boundaries
      */
     private int getBoundariesLength(){
-        return boundaries.length;
+        return boundaries.size();
     }
 
     /**
@@ -60,9 +64,9 @@ public abstract class GeoObject extends OntologyObject {
      */
     public void setBoundaries(Location[] boundaries) {
         if (boundaries != null) {
-            this.boundaries = boundaries.clone();
+            this.boundaries = Arrays.asList(boundaries);
         } else {
-            this.boundaries = new Location[0];
+            this.boundaries.clear();
         }
     }
 

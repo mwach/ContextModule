@@ -16,7 +16,7 @@ import itti.com.pl.arena.cm.geoportal.Geoportal;
 import itti.com.pl.arena.cm.geoportal.GeoportalException;
 import itti.com.pl.arena.cm.ontology.Ontology;
 import itti.com.pl.arena.cm.ontology.OntologyException;
-import itti.com.pl.arena.cm.service.Constants.ContextModuleRequests;
+import itti.com.pl.arena.cm.service.MessageConstants.ContextModuleRequests;
 import itti.com.pl.arena.cm.service.ContextModule;
 import itti.com.pl.arena.cm.service.PlatformListener;
 import itti.com.pl.arena.cm.service.Service;

@@ -3,8 +3,8 @@ package itti.com.pl.arena.cm.ontology;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
+import itti.com.pl.arena.cm.TestHelper;
 import itti.com.pl.arena.cm.exception.ErrorMessages;
 
 import org.junit.AfterClass;
@@ -51,7 +51,7 @@ public class OntologyManagerTest {
 
     @Test
     public void testCreateOwlClass() throws OntologyException {
-        String className = UUID.randomUUID().toString();
+        String className = TestHelper.getOntologyName();
         String instanceName = className + "inst";
         // verify class was added
         Assert.assertTrue(ontologyManager.createOwlClass(className));
@@ -75,7 +75,7 @@ public class OntologyManagerTest {
         properties.put(propertyName, new String[] { propertyValue });
 
         // try to add instance of parking
-        String instanceName = UUID.randomUUID().toString();
+        String instanceName = TestHelper.getOntologyName();
         // now add some basic instance to newly create class
         ontologyManager.createSimpleInstance(className, instanceName, properties);
 

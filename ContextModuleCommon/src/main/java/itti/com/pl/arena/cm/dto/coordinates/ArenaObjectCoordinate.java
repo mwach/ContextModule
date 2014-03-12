@@ -1,5 +1,6 @@
 package itti.com.pl.arena.cm.dto.coordinates;
 
+import itti.com.pl.arena.cm.dto.OntologyObject;
 import itti.com.pl.arena.cm.utils.helper.CoordinatesHelper;
 
 import java.util.ArrayList;
@@ -11,27 +12,23 @@ import java.util.List;
  * @author cm-admin
  *
  */
-public class ArenaObjectCoordinate implements Iterable<RadialCoordinate> {
+public class ArenaObjectCoordinate extends OntologyObject implements Iterable<RadialCoordinate> {
 
-    //ID of the object
-    private String objectId;
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     //list of coordinates describing given object
     private List<RadialCoordinate> radialCoordinates = new ArrayList<>();
 
     /**
      * Object constructor
-     * @param objectId ID of the ontology object
+     * @param id ID of the ontology object
      */
-    public ArenaObjectCoordinate(String objectId) {
-        this.objectId = objectId;
-    }
-
-    /**
-     * Returns ID of the ontology object
-     * @return ID of the object
-     */
-    public String getObjectId() {
-        return objectId;
+    public ArenaObjectCoordinate(String id) {
+        super(id);
     }
 
     /**

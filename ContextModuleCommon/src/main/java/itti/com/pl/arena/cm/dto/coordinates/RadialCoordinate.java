@@ -1,11 +1,18 @@
 package itti.com.pl.arena.cm.dto.coordinates;
 
+import java.io.Serializable;
+
 /**
  * Class representing single point in the radius 2-D space
  * @author cm-admin
  *
  */
-public class RadialCoordinate {
+public class RadialCoordinate implements Serializable{
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
     //radius (distance between points)
     private double radius;

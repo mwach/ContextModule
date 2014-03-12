@@ -30,7 +30,6 @@ public interface ContextModule {
      * This method returns information about camera field of view. This method requires platform to be parked on
      * parking lot, or any other defined area (Geo-data information about close platform area must be stored in
      * Ontology). Expected result is: complete information objects, which are supposed to be in camera field of view
-     * TODO: return list of points (coordinates) of the building
      * @param cameraId
      *            ID of the camera
      * @return complete information about parking area, where platform is parked 
