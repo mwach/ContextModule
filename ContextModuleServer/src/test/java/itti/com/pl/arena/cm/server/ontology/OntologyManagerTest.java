@@ -54,7 +54,7 @@ public class OntologyManagerTest {
 
     @Test
     public void testCreateOwlClass() throws OntologyException {
-        String className = TestHelper.getOntologyName();
+        String className = TestHelper.getOntologyClassName();
         String instanceName = className + "inst";
         // verify class was added
         Assert.assertTrue(ontologyManager.createOwlClass(className));
@@ -78,7 +78,7 @@ public class OntologyManagerTest {
         properties.put(propertyName, new String[] { propertyValue });
 
         // try to add instance of parking
-        String instanceName = TestHelper.getOntologyName();
+        String instanceName = TestHelper.getOntologyClassName();
         // now add some basic instance to newly create class
         ontologyManager.createSimpleInstance(className, instanceName, properties);
 

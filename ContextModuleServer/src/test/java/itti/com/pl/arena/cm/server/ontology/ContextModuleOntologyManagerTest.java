@@ -3,7 +3,6 @@ package itti.com.pl.arena.cm.server.ontology;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -13,8 +12,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import itti.com.pl.arena.cm.dto.Location;
-import itti.com.pl.arena.cm.dto.coordinates.CartesianCoordinate;
-import itti.com.pl.arena.cm.dto.dynamicobj.Camera;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform.Type;
 import itti.com.pl.arena.cm.dto.staticobj.ParkingLot;
@@ -57,21 +54,10 @@ public class ContextModuleOntologyManagerTest {
     }
 
     @Test
-    public void testAddRetrieveTruck() throws OntologyException {
+    public void testUpldatePlatform() throws OntologyException {
         // adds a new truck to the ontology
         // then tries to retrieve it
-        Set<Camera> cameras = new HashSet<Camera>();
-        Camera cameraOne = new Camera(TestHelper.getOntologyName(), "typeA", TestHelper.getCoordinate(), TestHelper.getCoordinate(),
-                new CartesianCoordinate(0, 0), 0);
-        Camera cameraTwo = new Camera(TestHelper.getOntologyName().toString(), "typeB", TestHelper.getCoordinate(), TestHelper.getCoordinate(),
-                new CartesianCoordinate(0, 0), 0);
-        cameras.add(cameraOne);
-        cameras.add(cameraTwo);
-        Platform information = new Platform("Vehicle_test1", new Location(TestHelper.getCoordinate(), TestHelper.getCoordinate(),
-                TestHelper.getBearing()), Type.Vehicle_with_cameras, cameras);
-        information.setWidth(TestHelper.getCoordinate());
-        information.setHeight(TestHelper.getCoordinate());
-        information.setLength(TestHelper.getCoordinate());
+        Platform information = TestHelper.createDummyPlatform("TestPlatform_" + System.currentTimeMillis());
         cmOntologyManager.updatePlatform(information);
         assertEquals(information, cmOntologyManager.getOntologyObject(information.getId(), Platform.class));
     }

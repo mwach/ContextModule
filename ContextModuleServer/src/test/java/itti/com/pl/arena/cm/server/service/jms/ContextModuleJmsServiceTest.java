@@ -1,11 +1,18 @@
 package itti.com.pl.arena.cm.server.service.jms;
 
 import static org.junit.Assert.*;
+import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
+import itti.com.pl.arena.cm.server.TestHelper;
+import itti.com.pl.arena.cm.server.ontology.Ontology;
+import itti.com.pl.arena.cm.server.ontology.OntologyException;
 import itti.com.pl.arena.cm.server.service.jms.ContextModuleJmsService;
+import itti.com.pl.arena.cm.utils.helper.JsonHelper;
+import itti.com.pl.arena.cm.utils.helper.JsonHelperException;
 import itti.com.pl.arena.cm.utils.helper.StringHelper;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import eu.arena_fp7._1.BooleanNamedValue;
 import eu.arena_fp7._1.ObjectFactory;
@@ -60,6 +67,26 @@ public class ContextModuleJmsServiceTest {
         assertEquals(false, response.isFeatureValue());
         assertEquals(StringHelper.toString(null), response.getFeatureName());
 
+    }
+
+    @Test
+    public void testUpdatePlatformServiceProperValueRequest() throws JsonHelperException, OntologyException {
+
+        //prepare dummy ontology
+        Ontology ontology = Mockito.mock(Ontology.class);
+        CMJmsService.setOntology(ontology);
+
+        //valid value in the request
+        SimpleNamedValue snv = new SimpleNamedValue();
+        Platform platform = TestHelper.createDummyPlatform(null);
+        snv.setValue(JsonHelper.toJson(platform));
+        BooleanNamedValue response = CMJmsService.updatePlatform(snv);
+        //request failure returned
+        assertEquals(true, response.isFeatureValue());
+        assertEquals(StringHelper.toString(platform.getId()), response.getFeatureName());
+
+        //verify ontology was called
+        Mockito.verify(ontology).updatePlatform(Mockito.any(Platform.class));
     }
 
 }

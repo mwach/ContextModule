@@ -360,6 +360,12 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
         return response;
     }
 
+    /**
+     * Verifies provided {@link SimpleNamedValue} object
+     * Checks, if object is not null and has defined value
+     * @param requestObject object to be verified
+     * @throws JmsException validation failed
+     */
     private void verifyRequestObject(SimpleNamedValue requestObject) throws JmsException {
 
         //null object provided
