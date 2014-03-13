@@ -28,13 +28,13 @@ public class Camera extends OntologyObject {
     private CartesianCoordinate onPlatformPosition;
 
     /*
-     * angle (measured in radians) is used to determine camera angle against main truck axis (Y)
+     * angle (measured in degrees) is used to determine camera angle against main truck axis (Y)
      * - if camera is directed to the front, then angle is 0
-     * - if camera is directed to the back, then angle is PI
-     * - if camera is directed to the left side of the scene, then angle is 3/2PI
-     * - if camera is directed to the right side of the scene, then angle is 1/2PI
+     * - if camera is directed to the back, then angle is 180
+     * - if camera is directed to the left side of the scene, then angle is 270
+     * - if camera is directed to the right side of the scene, then angle is 90
      */
-    private double directionAngle;
+    private int directionAngle;
 
     /**
      * Default camera object constructor
@@ -50,7 +50,7 @@ public class Camera extends OntologyObject {
      * Point (0,0) of the Cartesian axis should be located at the front of the truck, in the middle width
      * @param directionAngle angle (measured in radians) which determines main camera direction axis against main truck axis (Y)
      */
-    public Camera(String id, String type, double angleX, double angleY, CartesianCoordinate cameraPosition, double directionAngle) {
+    public Camera(String id, String type, double angleX, double angleY, CartesianCoordinate cameraPosition, int directionAngle) {
         super(id);
         this.type = type;
         this.angleX = angleX;
@@ -127,7 +127,7 @@ public class Camera extends OntologyObject {
      * 
      * @return vertical angle
      */
-    public double getDirectionAngle() {
+    public int getDirectionAngle() {
         return directionAngle;
     }
 
@@ -136,7 +136,7 @@ public class Camera extends OntologyObject {
      * 
      * @param angleY vertical angle
      */
-    public void setDirectionAngle(double directionAngle) {
+    public void setDirectionAngle(int directionAngle) {
         this.directionAngle = directionAngle;
     }
 
@@ -145,7 +145,7 @@ public class Camera extends OntologyObject {
      * 
      * @return position on platform
      */
-    public CartesianCoordinate getOnPPlatformPosition() {
+    public CartesianCoordinate getOnPlatformPosition() {
         return onPlatformPosition;
     }
 
@@ -161,7 +161,7 @@ public class Camera extends OntologyObject {
     @Override
     public String toString() {
         return String.format("Camera [id=%s, type=%s, angleX=%f, angleY=%f, onPlatformPosition=%s]", getId(),
-                String.valueOf(getType()), getAngleX(), getAngleY(), String.valueOf(getOnPPlatformPosition()));
+                String.valueOf(getType()), getAngleX(), getAngleY(), String.valueOf(getOnPlatformPosition()));
     }
 
     @Override
@@ -172,6 +172,8 @@ public class Camera extends OntologyObject {
         temp = Double.doubleToLongBits(angleX);
         result = prime * result + (int) (temp ^ (temp >>> 32));
         temp = Double.doubleToLongBits(angleY);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(directionAngle);
         result = prime * result + (int) (temp ^ (temp >>> 32));
         result = prime * result + ((onPlatformPosition == null) ? 0 : onPlatformPosition.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
@@ -191,7 +193,12 @@ public class Camera extends OntologyObject {
             return false;
         if (Double.doubleToLongBits(angleY) != Double.doubleToLongBits(other.angleY))
             return false;
-        if (onPlatformPosition != other.onPlatformPosition)
+        if (Double.doubleToLongBits(directionAngle) != Double.doubleToLongBits(other.directionAngle))
+            return false;
+        if (onPlatformPosition == null) {
+            if (other.onPlatformPosition != null)
+                return false;
+        } else if (!onPlatformPosition.equals(other.onPlatformPosition))
             return false;
         if (type == null) {
             if (other.type != null)
@@ -200,5 +207,4 @@ public class Camera extends OntologyObject {
             return false;
         return true;
     }
-
 }

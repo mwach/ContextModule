@@ -119,7 +119,7 @@ public class CMClient {
     private static Camera createDummyCamera(String cameraId) {
         //thermal camera located on the right side of the truck (X coordinate is set to '2'), 5m back from the front
         //angle is 0.5 rad (90 degree), which means, camera is directed to the right side of the truck
-        return new Camera(cameraId, CameraType.Thermal.name(), 120, 90, new CartesianCoordinate(2, -5), 0.5);
+        return new Camera(cameraId, CameraType.Thermal.name(), 120, 90, new CartesianCoordinate(2, -5), 90);
     }
 
     /**

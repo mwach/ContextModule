@@ -74,7 +74,7 @@ public class TestHelper {
                 random.nextInt(360), random.nextInt(360), 
                 //position of camera on platform (relative position where middle-front of the platform is marked as (0,0)
                 //plus camera direction (comparing to main truck angle - Y axis)
-                new CartesianCoordinate(getPlatformCoordinate(), getPlatformCoordinate()), getBearing() / 180);
+                new CartesianCoordinate(getPlatformCoordinate(), getPlatformCoordinate()), getBearing());
     }
 
 }

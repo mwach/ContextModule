@@ -74,15 +74,9 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
      */
     private void setPlatformSizes(Platform platform, Double width, Double height, Double length) {
         if (platform != null) {
-            if (width != null) {
-                platform.setWidth(width);
-            }
-            if (height != null) {
-                platform.setHeight(height);
-            }
-            if (length != null) {
-                platform.setLength(length);
-            }
+            platform.setWidth(getValue(width));
+            platform.setHeight(getValue(height));
+            platform.setLength(getValue(length));
         }
     }
 
@@ -102,8 +96,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         Double longitude = getDoubleProperty(properties, longitudeProperty);
         Double latitude = getDoubleProperty(properties, latitudeProperty);
         Integer bearing = getIntProperty(properties, OntologyConstants.Object_has_GPS_bearing);
-        return new Location(longitude == null ? 0 : longitude.doubleValue(), latitude == null ? 0 : latitude.doubleValue(),
-                bearing == null ? 0 : bearing.intValue());
+        return new Location(getValue(longitude), getValue(latitude), getValue(bearing));
     }
 
     /*
@@ -162,8 +155,12 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
             Double angleXVal = getDoubleProperty(cameraInstance, OntologyConstants.Camera_has_angle_x);
             Double angleYVal = getDoubleProperty(cameraInstance, OntologyConstants.Camera_has_angle_y);
 
-            cameraInfo = new Camera(cameraId, cameraType, angleXVal == null ? 0 : angleXVal.doubleValue(), angleYVal == null ? 0
-                    : angleYVal.doubleValue(), new CartesianCoordinate(0, 0), 0);
+            Double positionX = getDoubleProperty(cameraInstance, OntologyConstants.Camera_has_position_x);
+            Double positionY = getDoubleProperty(cameraInstance, OntologyConstants.Camera_has_position_y);
+            Integer cameraDirection = getIntProperty(cameraInstance, OntologyConstants.Camera_has_direction);
+
+            cameraInfo = new Camera(cameraId, cameraType, getValue(angleXVal), getValue(angleYVal), 
+                    new CartesianCoordinate(getValue(positionX), getValue(positionY)), getValue(cameraDirection));
         }
         return cameraInfo;
     }
@@ -174,6 +171,13 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         properties.put(OntologyConstants.Camera_has_type.name(), new String[] { camera.getType() });
         properties.put(OntologyConstants.Camera_has_angle_x.name(), new String[] { String.valueOf(camera.getAngleX()) });
         properties.put(OntologyConstants.Camera_has_angle_y.name(), new String[] { String.valueOf(camera.getAngleY()) });
+
+        CartesianCoordinate onPlatformPosition = camera.getOnPlatformPosition();
+        if(onPlatformPosition != null){
+            properties.put(OntologyConstants.Camera_has_position_x.name(), new String[] { String.valueOf(onPlatformPosition.getX()) });
+            properties.put(OntologyConstants.Camera_has_position_y.name(), new String[] { String.valueOf(onPlatformPosition.getY()) });
+        }
+        properties.put(OntologyConstants.Camera_has_direction.name(), new String[] { String.valueOf(camera.getDirectionAngle()) });
         return createSimpleInstance(OntologyConstants.Camera.name(), camera.getId(), properties);
     }
 
@@ -764,4 +768,13 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
     private Double getDoubleProperty(Map<String, String[]> properties, OntologyConstants propertyName) {
         return NumbersHelper.getDoubleFromString(getStringProperty(properties, propertyName));
     }
+
+    private double getValue(Double value){
+        return value == null ? 0 : value.doubleValue();
+    }
+
+    private int getValue(Integer value){
+        return value == null ? 0 : value.intValue();
+    }
+
 }

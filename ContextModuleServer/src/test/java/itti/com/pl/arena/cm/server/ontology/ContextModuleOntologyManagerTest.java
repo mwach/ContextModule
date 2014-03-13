@@ -54,12 +54,24 @@ public class ContextModuleOntologyManagerTest {
     }
 
     @Test
-    public void testUpldatePlatform() throws OntologyException {
-        // adds a new truck to the ontology
-        // then tries to retrieve it
+    public void testUpdateNewPlatform() throws OntologyException {
+        // adds a new platform to the ontology, then tries to retrieve it
         Platform information = TestHelper.createDummyPlatform("TestPlatform_" + System.currentTimeMillis());
         cmOntologyManager.updatePlatform(information);
         assertEquals(information, cmOntologyManager.getOntologyObject(information.getId(), Platform.class));
+    }
+
+    @Test
+    public void testUpdateExistingPlatform() throws OntologyException {
+        // adds a new platform to the ontology
+        Platform information = TestHelper.createDummyPlatform("TestPlatform_" + System.currentTimeMillis());
+        cmOntologyManager.updatePlatform(information);
+        assertEquals(information, cmOntologyManager.getOntologyObject(information.getId(), Platform.class));
+
+        //then modifies it and updates one more time
+        Platform updatedPlatform = TestHelper.createDummyPlatform(information.getId());
+        cmOntologyManager.updatePlatform(updatedPlatform);
+        assertEquals(updatedPlatform, cmOntologyManager.getOntologyObject(information.getId(), Platform.class));
     }
 
     @Test
