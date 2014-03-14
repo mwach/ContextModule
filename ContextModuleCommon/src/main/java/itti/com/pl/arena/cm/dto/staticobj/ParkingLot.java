@@ -89,4 +89,38 @@ public class ParkingLot extends GeoObject {
         this.buildings.remove(buildingId);
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((buildings == null) ? 0 : buildings.hashCode());
+        result = prime * result + ((infrastructures == null) ? 0 : infrastructures.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ParkingLot other = (ParkingLot) obj;
+        if(getId() != other.getId())
+            return false;
+        if (buildings == null) {
+            if (other.buildings != null)
+                return false;
+        } else if (!buildings.equals(other.buildings))
+            return false;
+        if (infrastructures == null) {
+            if (other.infrastructures != null)
+                return false;
+        } else if (!infrastructures.equals(other.infrastructures))
+            return false;
+        return true;
+    }
+
+    
 }

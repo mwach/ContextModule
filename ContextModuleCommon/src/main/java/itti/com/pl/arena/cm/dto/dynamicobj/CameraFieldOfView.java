@@ -52,7 +52,6 @@ public class CameraFieldOfView extends Camera{
      * @param type type of the camera
      * @param angleX camera horizontal angle
      * @param angleY camera vertical angle
-     * @param position position of the camera on the platform
      */
     public CameraFieldOfView(String id, String type, double angleX, double angleY) {
         super(id, type, angleX, angleY, new CartesianCoordinate(0, 0), 0);

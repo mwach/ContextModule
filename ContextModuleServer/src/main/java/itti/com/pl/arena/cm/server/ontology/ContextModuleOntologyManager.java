@@ -137,6 +137,54 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         createSimpleInstance(platform.getType().name(), platform.getId(), properties);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see itti.com.pl.arena.cm.ontology.Ontology#getPlatformInformation(java.lang.String)
+     */
+    @Override
+    public void updateParkingLot(ParkingLot parkingLot) throws OntologyException {
+
+        Map<String, String[]> properties = new HashMap<>();
+        // prepare location info
+        if (parkingLot.getLocation() != null) {
+            properties.put(OntologyConstants.Object_has_GPS_x.name(),
+                    new String[] { String.valueOf(parkingLot.getLocation().getLongitude()) });
+            properties.put(OntologyConstants.Object_has_GPS_y.name(),
+                    new String[] { String.valueOf(parkingLot.getLocation().getLatitude()) });
+        }
+
+        // prepare information about boundaries
+        properties.put(OntologyConstants.Object_has_GPS_coordinates.name(),
+                LocationHelper.createStringsFromLocations(parkingLot.getBoundaries().toArray(
+                        new Location[parkingLot.getBoundaries().size()])));
+
+        // process buildings
+        if (parkingLot.getBuildings() != null) {
+            String[] buildingIds = new String[parkingLot.getBuildings().size()];
+            int currentBuilding = 0;
+            for (Entry<String, Building> building : parkingLot.getBuildings().entrySet()) {
+                updateBuildingInformation(building.getValue());
+                buildingIds[currentBuilding++] = building.getKey();
+            }
+            properties.put(OntologyConstants.Parking_has_building.name(), buildingIds);
+        }
+
+        // process infrastructure
+        if (parkingLot.getInfrastructure() != null) {
+            String[] infrastructureIds = new String[parkingLot.getInfrastructure().size()];
+            int currentInfrastructure = 0;
+            for (Entry<String, Infrastructure> infrastructure : parkingLot.getInfrastructure().entrySet()) {
+                updateInfrastructureInformation(infrastructure.getValue());
+                infrastructureIds[currentInfrastructure++] = infrastructure.getKey();
+            }
+            properties.put(OntologyConstants.Parking_has_infrastructure.name(), infrastructureIds);
+        }
+
+        // create instance in the ontology
+        createSimpleInstance(OntologyConstants.Parking.name(), parkingLot.getId(), properties);
+    }
+
     /**
      * Retrieves information about camera from ontology
      * 
@@ -179,6 +227,34 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         }
         properties.put(OntologyConstants.Camera_has_direction.name(), new String[] { String.valueOf(camera.getDirectionAngle()) });
         return createSimpleInstance(OntologyConstants.Camera.name(), camera.getId(), properties);
+    }
+
+    private OWLIndividual updateBuildingInformation(Building building) throws OntologyException {
+
+        String buildingType = building.getType().name();
+
+        Map<String, String[]> properties = new HashMap<>();
+
+        // prepare information about boundaries
+         properties.put(OntologyConstants.Object_has_GPS_coordinates.name(),
+                LocationHelper.createStringsFromLocations(building.getBoundaries().toArray(
+                        new Location[building.getBoundaries().size()])));
+
+        return createSimpleInstance(buildingType, building.getId(), properties);
+    }
+
+    private OWLIndividual updateInfrastructureInformation(Infrastructure infrastructure) throws OntologyException {
+
+        String infrastructureType = infrastructure.getType().name();
+
+        Map<String, String[]> properties = new HashMap<>();
+
+        // prepare information about boundaries
+         properties.put(OntologyConstants.Object_has_GPS_coordinates.name(),
+                LocationHelper.createStringsFromLocations(infrastructure.getBoundaries().toArray(
+                        new Location[infrastructure.getBoundaries().size()])));
+
+        return createSimpleInstance(infrastructureType, infrastructure.getId(), properties);
     }
 
     /*
@@ -288,16 +364,27 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 
         ParkingLot parkingLotInformation = new ParkingLot(parkingLotId);
 
-        String[] infrastructureList = properties.get(OntologyConstants.Parking_has_infrastructure.name());
-
+        //location
         parkingLotInformation.setLocation(prepareLocationFromProperties(properties));
-
+        try {
+            String[] boundaries = properties.get(OntologyConstants.Object_has_GPS_coordinates.name());
+            parkingLotInformation.setBoundaries(LocationHelper.getLocationsFromStrings(
+                    boundaries));
+        } catch (LocationHelperException exc) {
+            LogHelper.exception(ContextModuleOntologyManager.class, "getParkingLot", String.format(
+                    "Could not parse ontlogy-stored data. Location data is not available for given object: %s",
+                    parkingLotId), exc);
+        }
+        
+        //infrastructure
+        String[] infrastructureList = properties.get(OntologyConstants.Parking_has_infrastructure.name());
         if (infrastructureList != null) {
             for (String infrastrId : infrastructureList) {
                 parkingLotInformation.addIntrastructure(getInfrastructure(infrastrId));
             }
         }
 
+        //buildings
         String[] buildingList = properties.get(OntologyConstants.Parking_has_building.name());
         if (buildingList != null) {
             for (String buildingId : buildingList) {
@@ -310,7 +397,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 
     private Infrastructure getInfrastructure(String infrastructureId) throws OntologyException {
 
-        Infrastructure infrastructure = new Infrastructure(infrastructureId);
+        Infrastructure infrastructure = new Infrastructure(infrastructureId, null);
 
         Map<String, String[]> infrastrProperties = getInstanceProperties(infrastructureId);
         if (!infrastrProperties.isEmpty()) {
@@ -319,17 +406,19 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
                         .name()));
                 infrastructure.setBoundaries(coordinates);
             } catch (LocationHelperException exc) {
-                LogHelper.exception(ContextModuleOntologyManager.class, "getParkingLot", String.format(
+                LogHelper.exception(ContextModuleOntologyManager.class, "getInfrastructure", String.format(
                         "Could not parse ontlogy-stored data. Location data is not available for given object: %s",
                         infrastructureId), exc);
             }
         }
+        String objectType = getInstanceClass(infrastructureId);
+        infrastructure.setType(itti.com.pl.arena.cm.dto.staticobj.Infrastructure.Type.getType(objectType));
         return infrastructure;
     }
 
     private Building getBuilding(String buildingId) throws OntologyException {
 
-        Building building = new Building(buildingId);
+        Building building = new Building(buildingId, null);
 
         Map<String, String[]> buildingProperties = getInstanceProperties(buildingId);
         if (!buildingProperties.isEmpty()) {
@@ -339,11 +428,14 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
                         .name()));
                 building.setBoundaries(coordinates);
             } catch (LocationHelperException exc) {
-                LogHelper.exception(ContextModuleOntologyManager.class, "getParkingLot", String.format(
+                LogHelper.exception(ContextModuleOntologyManager.class, "getBuilding", String.format(
                         "Could not parse ontlogy-stored data. Location data is not available for given object: %s", buildingId),
                         exc);
             }
         }
+        String objectType = getInstanceClass(buildingId);
+        building.setType(itti.com.pl.arena.cm.dto.staticobj.Building.Type.getType(objectType));
+
         return building;
     }
 

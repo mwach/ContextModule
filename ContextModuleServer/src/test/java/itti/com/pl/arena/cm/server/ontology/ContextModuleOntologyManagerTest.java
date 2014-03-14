@@ -119,6 +119,17 @@ public class ContextModuleOntologyManagerTest {
     }
 
     @Test
+    public void testUpdateParkingLot() throws OntologyException{
+        //creates a new parking lot
+        ParkingLot parkingLot = TestHelper.createDummyParkingLot("MyParkingLot_" + System.currentTimeMillis());
+
+        //add to ontology, then try to retrieve it back
+        cmOntologyManager.updateParkingLot(parkingLot);
+        ParkingLot returnedParkingLot = cmOntologyManager.getOntologyObject(parkingLot.getId(), ParkingLot.class);
+        assertEquals(parkingLot, returnedParkingLot);
+    }
+
+    @Test
     public void testCalculateDistance() throws OntologyException {
         // create parking lot and add truck to it
         String truckId = "Vehicle_CNA0544";

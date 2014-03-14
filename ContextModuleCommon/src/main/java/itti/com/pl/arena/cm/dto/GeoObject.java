@@ -1,8 +1,8 @@
 package itti.com.pl.arena.cm.dto;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -33,7 +33,7 @@ public abstract class GeoObject extends OntologyObject {
     /*
      * Boundaries of the objects
      */
-    private List<Location> boundaries = new ArrayList<>();
+    private Set<Location> boundaries = new HashSet<>();
 
     /**
      * Creates new object with given ID
@@ -42,20 +42,46 @@ public abstract class GeoObject extends OntologyObject {
     public GeoObject(String id){
         super(id);
     }
+
+    /**
+     * Adds a new boundary
+     * @param boundary new object boundary
+     */
+    public void addBoundary(Location boundary) {
+        if(boundary != null){
+            boundaries.add(boundary);
+        }
+    }
+
+    /**
+     * Deletes an existing boundary from object
+     * @param boundary boundary to remove
+     * @return true if boundary was removed, false otherwise
+     */
+    public boolean deleteBoundary(Location boundary) {
+        if(boundary != null){
+            return boundaries.remove(boundary);
+        }
+        return false;
+    }
+
     /**
      * Returns information about object boundaries
      * @return list of the object boundaries
      */
-    public Location[] getBoundaries() {
-        return boundaries.toArray(new Location[boundaries.size()]);
+    public Set<Location> getBoundaries() {
+        return new HashSet<>(boundaries);
     }
 
     /**
-     * Returns number of boundary objects
-     * @return number (count) of the object boundaries
+     * Sets new boundaries of the object
+     * @param boundaries
      */
-    private int getBoundariesLength(){
-        return boundaries.size();
+    public void setBoundaries(Set<Location> boundaries) {
+        this.boundaries.clear();
+        if (boundaries != null) {
+            this.boundaries.addAll(boundaries);
+        }
     }
 
     /**
@@ -63,10 +89,9 @@ public abstract class GeoObject extends OntologyObject {
      * @param boundaries
      */
     public void setBoundaries(Location[] boundaries) {
+        this.boundaries.clear();
         if (boundaries != null) {
-            this.boundaries = Arrays.asList(boundaries);
-        } else {
-            this.boundaries.clear();
+            this.boundaries.addAll(Arrays.asList(boundaries));
         }
     }
 
@@ -152,6 +177,6 @@ public abstract class GeoObject extends OntologyObject {
 
     @Override
     public String toString() {
-        return String.format("GeoObject [objectId=%s, location=%s, boundaries size=%d]", getId(), getLocation(), getBoundariesLength());
+        return String.format("GeoObject [objectId=%s, location=%s, boundaries size=%d]", getId(), getLocation(), getBoundaries().size());
     }
 }

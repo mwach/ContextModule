@@ -2,6 +2,7 @@ package itti.com.pl.arena.cm.service;
 
 import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
+import itti.com.pl.arena.cm.dto.staticobj.ParkingLot;
 import eu.arena_fp7._1.BooleanNamedValue;
 import eu.arena_fp7._1.Location;
 import eu.arena_fp7._1.Object;
@@ -22,7 +23,7 @@ public interface ContextModule {
      * 
      * @param objectId
      *            ID of the object
-     * @return information about platform with Kinematics and Location classes stored in Object’s featureVector
+     * @return information about platform stored in Object’s featureVector
      */
     Object getPlatform(SimpleNamedValue objectId);
 
@@ -37,10 +38,29 @@ public interface ContextModule {
     Object getCameraFieldOfView(SimpleNamedValue cameraId);
 
     /**
-     * This method allows to update existing or create new platform in the ContextModule
+     * This method allows to update existing or create new parking lot in the ContextModule
+     * 
+     * @param parkingLot
+     *            new or updated {@link ParkingLot} object. Attribute 'value' of the provided {@link SimpleNamedValue} should contain
+     *            serialized {@link ParkingLot} object
+     * @return update status
+     */
+    BooleanNamedValue updateParkingLot(SimpleNamedValue parkingLot);
+
+    /**
+     * This method allows retrieval of information about the parking lot (location, boundaries, objects like buildings or infrastructure).
+     * 
+     * @param objectId
+     *            ID of the object
+     * @return information about parking lot stored in Object’s featureVector
+     */
+    Object getParkingLot(SimpleNamedValue objectId);
+
+    /**
+     * This method allows to update existing or create new {@link Platform} in the ContextModule
      * 
      * @param platform
-     *            new or updated Platform object. Attribute 'value' of the {@link SimpleNamedValue} should contain
+     *            new or updated Platform object. Attribute 'value' of the provided {@link SimpleNamedValue} should contain
      *            serialized {@link Platform} object
      * @return update status
      */

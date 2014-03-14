@@ -1,5 +1,8 @@
 package itti.com.pl.arena.cm.dto;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import org.junit.Assert;
@@ -11,16 +14,16 @@ public class GeoObjectTest {
     public void testSetBoundaries(){
         //check default value
         GeoObject geoObject = new TestGeoObject(UUID.randomUUID().toString());
-        Assert.assertArrayEquals(new Location[0], geoObject.getBoundaries());
+        Assert.assertEquals(new HashSet<>(), geoObject.getBoundaries());
 
         //verify, cannot be overwrite by null
-        geoObject.setBoundaries(null);
-        Assert.assertArrayEquals(new Location[0], geoObject.getBoundaries());
+        geoObject.setBoundaries((Set<Location>)null);
+        Assert.assertEquals(new HashSet<>(), geoObject.getBoundaries());
 
         //verify getter
         Location[] locations = new Location[]{new Location(1.11, 2.22), new Location(3.33, 4.44)};
         geoObject.setBoundaries(locations);
-        Assert.assertArrayEquals(locations, geoObject.getBoundaries());
+        Assert.assertEquals(new HashSet<>(Arrays.asList(locations)), geoObject.getBoundaries());
     }
 
 

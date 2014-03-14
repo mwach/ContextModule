@@ -8,6 +8,7 @@ import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.dto.OntologyObject;
 import itti.com.pl.arena.cm.dto.coordinates.ArenaObjectCoordinate;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
+import itti.com.pl.arena.cm.dto.staticobj.ParkingLot;
 
 /**
  * Interface defining Arena-specific ontology operations
@@ -26,6 +27,16 @@ public interface Ontology {
      *             could not update information about platform
      */
     public void updatePlatform(Platform platform) throws OntologyException;
+
+    /**
+     * Updates (or create new if not found) ontology object representing parking lot
+     * 
+     * @param parkingLot
+     *            information about parking lot
+     * @throws OntologyException
+     *             could not update information about parking lot
+     */
+    public void updateParkingLot(ParkingLot parkingLot) throws OntologyException;
 
     /**
      * Adds information about new GIS object to the ontology

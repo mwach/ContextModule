@@ -134,7 +134,7 @@ public class Camera extends OntologyObject {
     /**
      * Updates main camera direction axis 
      * 
-     * @param angleY vertical angle
+     * @param directionAngle vertical angle
      */
     public void setDirectionAngle(int directionAngle) {
         this.directionAngle = directionAngle;

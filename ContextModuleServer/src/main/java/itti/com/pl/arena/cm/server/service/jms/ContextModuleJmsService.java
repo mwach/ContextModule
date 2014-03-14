@@ -11,6 +11,7 @@ import itti.com.pl.arena.cm.Constants;
 import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.dto.dynamicobj.Camera;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
+import itti.com.pl.arena.cm.dto.staticobj.ParkingLot;
 import itti.com.pl.arena.cm.server.exception.ErrorMessages;
 import itti.com.pl.arena.cm.server.geoportal.Geoportal;
 import itti.com.pl.arena.cm.server.geoportal.GeoportalException;
@@ -76,13 +77,11 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
      */
     private double radius;
 
-    public void setFactory(ObjectFactory factory)
-    {
+    public void setFactory(ObjectFactory factory) {
         this.factory = factory;
     }
 
-    private ObjectFactory getFactory()
-    {
+    private ObjectFactory getFactory() {
         return factory;
     }
 
@@ -227,6 +226,12 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
                 if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getPlatform.name(), data.getHref())
                         && (data instanceof SimpleNamedValue)) {
                     response = getPlatform((SimpleNamedValue) data);
+                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.updateParkingLot.name(), data.getHref())
+                        && (data instanceof SimpleNamedValue)) {
+                    response = updateParkingLot((SimpleNamedValue) data);
+                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getParkingLot.name(), data.getHref())
+                        && (data instanceof SimpleNamedValue)) {
+                    response = getParkingLot((SimpleNamedValue) data);
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.updatePlatform.name(), data.getHref())
                         && (data instanceof SimpleNamedValue)) {
                     response = updatePlatform((SimpleNamedValue) data);
@@ -294,8 +299,35 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
             try {
                 vector.add(createSimpleNamedValue(platform.getId(), JsonHelper.toJson(platform)));
             } catch (JsonHelperException exc) {
-                LogHelper.warning(ContextModuleJmsService.class, "getPlatforms",
+                LogHelper.warning(ContextModuleJmsService.class, "getPlatform",
                         "Could not add given object to the response: '%s'. Details: %s", platform, exc.getLocalizedMessage());
+            }
+        }
+        // prepare response object
+        Object response = createObject(objectId.getId(), vector);
+        return response;
+    }
+
+    @Override
+    public Object getParkingLot(SimpleNamedValue objectId) {
+
+        List<AbstractNamedValue> vector = new ArrayList<>();
+
+        String parkingLotId = objectId.getValue();
+        ParkingLot parkingLot = null;
+        // try to retrieve data from ontology
+        try {
+            parkingLot = getOntology().getOntologyObject(parkingLotId, ParkingLot.class);
+        } catch (OntologyException e) {
+            LogHelper.exception(ContextModuleJmsService.class, "getParkingLot", "Could not retrieve data from ontology", e);
+        }
+        // data retrieved -try to process it
+        if (parkingLot != null) {
+            try {
+                vector.add(createSimpleNamedValue(parkingLot.getId(), JsonHelper.toJson(parkingLot)));
+            } catch (JsonHelperException exc) {
+                LogHelper.warning(ContextModuleJmsService.class, "getParkingLot",
+                        "Could not add given object to the response: '%s'. Details: %s", parkingLot, exc.getLocalizedMessage());
             }
         }
         // prepare response object
@@ -322,12 +354,41 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
             LogHelper.exception(ContextModuleJmsService.class, "getPlatform", "Could not retrieve data from ontology", e);
         }
         // data retrieved -try to process it
-        //TODO
+        // TODO
         if (camera != null) {
         }
 
         // prepare response object
         Object response = createObject(cameraRequestObject.getId(), vector);
+        return response;
+    }
+
+    @Override
+    public BooleanNamedValue updateParkingLot(SimpleNamedValue platformObject) {
+
+        ParkingLot parkingLot = null;
+        boolean status = false;
+        String parkingLotId = null;
+        String requestId = null;
+
+        try {
+            verifyRequestObject(platformObject);
+            requestId = platformObject.getId();
+
+            // try to parse JSON into object
+            parkingLot = JsonHelper.fromJson(platformObject.getValue(), ParkingLot.class);
+            // update ontology with provided data
+            ontology.updateParkingLot(parkingLot);
+
+            parkingLotId = parkingLot.getId();
+            status = true;
+
+        } catch (JsonHelperException | OntologyException | JmsException exc) {
+            // could not update data
+            LogHelper.exception(ContextModuleJmsService.class, "updateParkingLot", "Could not update parking lot", exc);
+        }
+        // prepare response object
+        BooleanNamedValue response = createBooleanNamedValue(requestId, StringHelper.toString(parkingLotId), status);
         return response;
     }
 
@@ -361,20 +422,22 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
     }
 
     /**
-     * Verifies provided {@link SimpleNamedValue} object
-     * Checks, if object is not null and has defined value
-     * @param requestObject object to be verified
-     * @throws JmsException validation failed
+     * Verifies provided {@link SimpleNamedValue} object Checks, if object is not null and has defined value
+     * 
+     * @param requestObject
+     *            object to be verified
+     * @throws JmsException
+     *             validation failed
      */
     private void verifyRequestObject(SimpleNamedValue requestObject) throws JmsException {
 
-        //null object provided
-        if(requestObject == null){
+        // null object provided
+        if (requestObject == null) {
             throw new JmsException(ErrorMessages.JMS_NULL_REQUEST_OBJECT);
         }
 
-        //no value in the object
-        if(!StringHelper.hasContent(requestObject.getValue())){
+        // no value in the object
+        if (!StringHelper.hasContent(requestObject.getValue())) {
             throw new JmsException(ErrorMessages.JMS_NULL_VALUE_REQUEST_OBJECT);
         }
 
@@ -403,8 +466,8 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
 
             for (Platform platformInformation : platformsInformation) {
                 try {
-                    responseVector.add(
-                            createSimpleNamedValue(platformInformation.getId(), JsonHelper.toJson(platformInformation)));
+                    responseVector
+                            .add(createSimpleNamedValue(platformInformation.getId(), JsonHelper.toJson(platformInformation)));
                 } catch (JsonHelperException exc) {
                     LogHelper.warning(ContextModuleJmsService.class, "getPlatforms",
                             "Could not add given object to the response: '%s'. Details: %s", platformInformation,
@@ -543,18 +606,19 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
     @Override
     public SimpleNamedValue defineZone(Object zoneDefinition) {
 
-        //get the zone definition
+        // get the zone definition
         List<itti.com.pl.arena.cm.dto.Location> locations = new ArrayList<>();
-        for(AbstractNamedValue vertex : zoneDefinition.getFeatureVector().getFeature()){
-            if(vertex instanceof Location){
-                Location flatLocation = (Location)vertex;
+        for (AbstractNamedValue vertex : zoneDefinition.getFeatureVector().getFeature()) {
+            if (vertex instanceof Location) {
+                Location flatLocation = (Location) vertex;
                 locations.add(new itti.com.pl.arena.cm.dto.Location(flatLocation.getX(), flatLocation.getY()));
-            }else if(vertex instanceof RealWorldCoordinate){
-                RealWorldCoordinate sphereLocation = (RealWorldCoordinate)vertex;
-                locations.add(new itti.com.pl.arena.cm.dto.Location(sphereLocation.getX(), sphereLocation.getY(), 0, sphereLocation.getZ()));
+            } else if (vertex instanceof RealWorldCoordinate) {
+                RealWorldCoordinate sphereLocation = (RealWorldCoordinate) vertex;
+                locations.add(new itti.com.pl.arena.cm.dto.Location(sphereLocation.getX(), sphereLocation.getY(), 0,
+                        sphereLocation.getZ()));
             }
         }
-        //ID of the created zone
+        // ID of the created zone
         String zoneId = "";
         try {
             zoneId = getOntology().defineZone(locations);
@@ -570,13 +634,14 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
     @Override
     public Object getZone(SimpleNamedValue zoneMessage) {
 
-        List<AbstractNamedValue> responseVector = new  ArrayList<>();
-        //get the zone ID
+        List<AbstractNamedValue> responseVector = new ArrayList<>();
+        // get the zone ID
         String zoneId = zoneMessage.getValue();
         try {
             List<itti.com.pl.arena.cm.dto.Location> zoneLocations = getOntology().getZone(zoneId);
             for (itti.com.pl.arena.cm.dto.Location location : zoneLocations) {
-                AbstractNamedValue coordinate = createCoordinate(zoneMessage.getId(), location.getLongitude(), location.getLatitude(), location.getAltitude());
+                AbstractNamedValue coordinate = createCoordinate(zoneMessage.getId(), location.getLongitude(),
+                        location.getLatitude(), location.getAltitude());
                 responseVector.add(coordinate);
             }
         } catch (OntologyException exc) {
@@ -593,11 +658,8 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
     public void destinationReached(String platformId, itti.com.pl.arena.cm.dto.Location location) {
 
         // prepare valid response object
-        AbstractNamedValue destinationReachedMessage = createSimpleNamedValue(
-                String.format("%s.%s.%s", Constants.MODULE_NAME,
-                        ContextModuleRequests.destinationReached.name(), 
-                        getDataInDefaultFormat(), platformId), 
-                        location);
+        AbstractNamedValue destinationReachedMessage = createSimpleNamedValue(String.format("%s.%s.%s", Constants.MODULE_NAME,
+                ContextModuleRequests.destinationReached.name(), getDataInDefaultFormat(), platformId), location);
         destinationReachedMessage.setHref(ContextModuleRequests.destinationReached.name());
         destinationReachedMessage.setDataSourceId(Constants.MODULE_NAME);
         client.publish(destinationReachedMessage.getDataSourceId(), destinationReachedMessage);
@@ -607,11 +669,8 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
     public void destinationLeft(String platformId, itti.com.pl.arena.cm.dto.Location location) {
 
         // prepare valid response object
-        AbstractNamedValue destinationLeftMessage = createSimpleNamedValue(
-                String.format("%s.%s.%s", Constants.MODULE_NAME,
-                        ContextModuleRequests.destinationLeft.name(), 
-                        getDataInDefaultFormat(), platformId),
-                        location);
+        AbstractNamedValue destinationLeftMessage = createSimpleNamedValue(String.format("%s.%s.%s", Constants.MODULE_NAME,
+                ContextModuleRequests.destinationLeft.name(), getDataInDefaultFormat(), platformId), location);
         destinationLeftMessage.setHref(ContextModuleRequests.destinationLeft.name());
         destinationLeftMessage.setDataSourceId(Constants.MODULE_NAME);
         client.publish(destinationLeftMessage.getDataSourceId(), destinationLeftMessage);
@@ -619,11 +678,13 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
 
     /**
      * Returns timestamp in default date-time format
+     * 
      * @return timestamp in default format used by the ContextModule
      */
-    private String getDataInDefaultFormat(){
+    private String getDataInDefaultFormat() {
         return DateTimeHelper.formatTime(System.currentTimeMillis(), Constants.TIMESTAMP_FORMAT);
     }
+
     /**
      * Prepares instance of the {@link AbstractNamedValue} class
      * 
@@ -683,7 +744,7 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
      * 
      * @param id
      *            ID of the object
-     * @param vector 
+     * @param vector
      * @param value
      *            value of the object
      * @return object containing provided values

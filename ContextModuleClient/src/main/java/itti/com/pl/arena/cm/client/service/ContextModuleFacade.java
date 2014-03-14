@@ -252,6 +252,14 @@ public class ContextModuleFacade extends ModuleImpl implements ContextModule {
     }
 
     /* (non-Javadoc)
+     * @see itti.com.pl.arena.cm.service.ContextModule#updateParkingLot(eu.arena_fp7._1.SimpleNamedValue)
+     */
+    @Override
+    public BooleanNamedValue updateParkingLot(SimpleNamedValue parkingLot) {
+        return (BooleanNamedValue)submitData(parkingLot);
+    }
+
+    /* (non-Javadoc)
      * @see itti.com.pl.arena.cm.service.ContextModule#updatePlatform(eu.arena_fp7._1.SimpleNamedValue)
      */
     @Override

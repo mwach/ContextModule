@@ -20,7 +20,14 @@ public final class MessageConstants {
          * Service name used by the {@link ContextModule} 'updatePlatform' method
          */
         updatePlatform,
-
+        /**
+         * Service name used by the {@link ContextModule} 'getParkingLot' method
+         */
+        getParkingLot,
+        /**
+         * Service name used by the {@link ContextModule} 'updateParkingLot' method
+         */
+        updateParkingLot,
         /**
          * Service name used by the {@link ContextModule} 'getPlatforms' method
          */

@@ -4,6 +4,10 @@ import itti.com.pl.arena.cm.dto.coordinates.CartesianCoordinate;
 import itti.com.pl.arena.cm.dto.dynamicobj.Camera;
 import itti.com.pl.arena.cm.dto.dynamicobj.CameraType;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
+import itti.com.pl.arena.cm.dto.staticobj.Building;
+import itti.com.pl.arena.cm.dto.staticobj.Infrastructure;
+import itti.com.pl.arena.cm.dto.staticobj.ParkingLot;
+import itti.com.pl.arena.cm.dto.staticobj.Building.Type;
 
 import java.util.Random;
 
@@ -75,6 +79,58 @@ public class TestHelper {
                 //position of camera on platform (relative position where middle-front of the platform is marked as (0,0)
                 //plus camera direction (comparing to main truck angle - Y axis)
                 new CartesianCoordinate(getPlatformCoordinate(), getPlatformCoordinate()), getBearing());
+    }
+
+    public static ParkingLot createDummyParkingLot(String parkingLotId) {
+        ParkingLot parkingLot = new ParkingLot(parkingLotId);
+
+        //general information about parking
+        parkingLot.setCountry("UK");
+        parkingLot.setLocation(new itti.com.pl.arena.cm.dto.Location(-0.94, 51.43));
+        parkingLot.setTown("Reading");
+        parkingLot.setStreet("London Street");
+        parkingLot.setStreetNumber(23);
+
+        //add parking boundaries
+        parkingLot.addBoundary(new itti.com.pl.arena.cm.dto.Location(-0.94334, 51.43234));
+        parkingLot.addBoundary(new itti.com.pl.arena.cm.dto.Location(-0.94345, 51.43233));
+        parkingLot.addBoundary(new itti.com.pl.arena.cm.dto.Location(-0.94332, 51.43245));
+        parkingLot.addBoundary(new itti.com.pl.arena.cm.dto.Location(-0.94366, 51.43212));
+
+        //parking infrastructure
+        parkingLot.addBuilding(createDummyBuilding("dummyBuilding1_" + System.currentTimeMillis()));
+        parkingLot.addBuilding(createDummyBuilding("dummyBuilding2_" + System.currentTimeMillis()));
+        parkingLot.addIntrastructure(createDummyInfrastructure("dummyInfrastructure_" + System.currentTimeMillis()));
+
+        return parkingLot;
+    }
+
+    public static Building createDummyBuilding(String buildingId) {
+
+        //new building object
+        Building building = new Building(buildingId, Type.Hotel);
+
+        //building boundaries
+        building.addBoundary(new itti.com.pl.arena.cm.dto.Location(-0.94334, 51.43234));
+        building.addBoundary(new itti.com.pl.arena.cm.dto.Location(-0.94345, 51.43233));
+        building.addBoundary(new itti.com.pl.arena.cm.dto.Location(-0.94332, 51.43245));
+        building.addBoundary(new itti.com.pl.arena.cm.dto.Location(-0.94366, 51.43212));
+
+        return building;
+    }
+
+    public static Infrastructure createDummyInfrastructure(String infrastructureId) {
+
+        //new infrastructure object
+        Infrastructure infrastructure = new Infrastructure(infrastructureId, Infrastructure.Type.Fence);
+
+        //building boundaries
+        infrastructure.addBoundary(new itti.com.pl.arena.cm.dto.Location(-0.94334, 51.43234));
+        infrastructure.addBoundary(new itti.com.pl.arena.cm.dto.Location(-0.94345, 51.43233));
+        infrastructure.addBoundary(new itti.com.pl.arena.cm.dto.Location(-0.94332, 51.43245));
+        infrastructure.addBoundary(new itti.com.pl.arena.cm.dto.Location(-0.94366, 51.43212));
+
+        return infrastructure;
     }
 
 }
