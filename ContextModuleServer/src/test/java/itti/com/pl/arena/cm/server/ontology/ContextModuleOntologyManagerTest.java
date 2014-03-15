@@ -151,9 +151,36 @@ public class ContextModuleOntologyManagerTest {
 
     // test for complex functionality for retrieving cameras field of view
     @Test
-    public void testCalculateArenaDistancesForPlatform() throws OntologyException {
-        String truckId = "Vehicle_CNA0544";
-        cmOntologyManager.calculateArenaDistancesForPlatform(truckId);
+    public void testCalculateArenaDistancesForPlatformNullId() throws OntologyException {
+
+        //null platformId provided
+        expectedException.expect(OntologyException.class);
+        expectedException.expectMessage(ErrorMessages.ONTOLOGY_EMPTY_INSTANCE_NAME.getMessage());
+
+        cmOntologyManager.calculateArenaDistancesForPlatform(null);
+    }
+
+    @Test
+    public void testCalculateArenaDistancesForPlatforEmptyId() throws OntologyException {
+
+        //empty platformId provided
+        expectedException.expect(OntologyException.class);
+        expectedException.expectMessage(ErrorMessages.ONTOLOGY_EMPTY_INSTANCE_NAME.getMessage());
+
+        cmOntologyManager.calculateArenaDistancesForPlatform("");
+    }
+
+    @Test
+    public void testCalculateArenaDistancesForPlatformInvalidId() throws OntologyException {
+
+        //invalid platformId provided
+        String platformId = "nonExistingPlatformId";
+
+        expectedException.expect(OntologyException.class);
+        expectedException.expectMessage(String.format(
+                ErrorMessages.ONTOLOGY_INSTANCE_NOT_FOUND.getMessage(), platformId));
+
+        cmOntologyManager.calculateArenaDistancesForPlatform(platformId);
     }
 
     // test 'define zone' functionality

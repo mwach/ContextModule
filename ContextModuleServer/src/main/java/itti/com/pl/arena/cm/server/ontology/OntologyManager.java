@@ -188,7 +188,7 @@ public class OntologyManager implements Service {
                 .debug(OntologyManager.class, "getInstanceClass", "Query for parent class of '%s'", String.valueOf(instanceName));
 
         if (!StringHelper.hasContent(instanceName)) {
-            LogHelper.warning(OntologyManager.class, "getInstanceClass", "Null instance name provided");
+            LogHelper.error(OntologyManager.class, "getInstanceClass", "Null instance name provided");
             throw new OntologyException(ErrorMessages.ONTOLOGY_EMPTY_INSTANCE_NAME);
         }
         String query = String.format(QUERY_GET_INSTANCE_CLASS, getOntologyNamespace(), VAR, instanceName, VAR);
