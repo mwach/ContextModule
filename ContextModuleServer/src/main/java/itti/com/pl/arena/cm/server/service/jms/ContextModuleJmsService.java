@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Required;
 
 import itti.com.pl.arena.cm.Constants;
 import itti.com.pl.arena.cm.dto.GeoObject;
-import itti.com.pl.arena.cm.dto.dynamicobj.Camera;
+import itti.com.pl.arena.cm.dto.coordinates.ArenaObjectCoordinate;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
 import itti.com.pl.arena.cm.dto.staticobj.ParkingLot;
 import itti.com.pl.arena.cm.server.exception.ErrorMessages;
@@ -247,15 +247,12 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getGeoportalData.name(), data.getHref())
                         && (data instanceof Location)) {
                     response = getGeoportalData((Location) data);
-                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.updatePlatform.name(), data.getHref())
+                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getPlatformNeighborhood.name(), data.getHref())
                         && (data instanceof SimpleNamedValue)) {
-                    response = updateGISData((SimpleNamedValue) data);
-                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getCameraFieldOfView.name(), data.getHref())
-                        && (data instanceof SimpleNamedValue)) {
-                    response = getCameraFieldOfView((SimpleNamedValue) data);
+                    response = getPlatformNeighborhood((SimpleNamedValue) data);
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.defineZone.name(), data.getHref())
                         && (data instanceof Object)) {
-                    response = defineZone((Object) data);
+                    response = updateZone((Object) data);
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getZone.name(), data.getHref())
                         && (data instanceof SimpleNamedValue)) {
                     response = getZone((SimpleNamedValue) data);
@@ -335,31 +332,37 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
         return response;
     }
 
-    // @Override
-    // public Object getPlatformNeighborhood(SimpleNamedValue platformId) {
-    //
-    // }
-
     @Override
-    public Object getCameraFieldOfView(SimpleNamedValue cameraRequestObject) {
+    public Object getPlatformNeighborhood(SimpleNamedValue platformIdRequestObject) {
 
         List<AbstractNamedValue> vector = new ArrayList<>();
+        String requestId = null;
 
-        String cameraId = cameraRequestObject.getValue();
-        Camera camera = null;
-        // try to retrieve data from ontology
         try {
-            camera = getOntology().getOntologyObject(cameraId, Camera.class);
-        } catch (OntologyException e) {
-            LogHelper.exception(ContextModuleJmsService.class, "getPlatform", "Could not retrieve data from ontology", e);
-        }
-        // data retrieved -try to process it
-        // TODO
-        if (camera != null) {
+            verifyRequestObject(platformIdRequestObject);
+
+            requestId = StringHelper.toString(platformIdRequestObject.getId());
+
+            String platformId = platformIdRequestObject.getValue();
+            // try to retrieve data from ontology
+            Set<ArenaObjectCoordinate> objects = getOntology().calculateArenaDistancesForPlatform(platformId);
+
+            // data retrieved -try to process it
+            // TODO
+            if(objects != null){
+                for (ArenaObjectCoordinate geoObject : objects) {
+                    vector.add(new SimpleNamedValue());
+                }
+            }
+
+        } catch (OntologyException | JmsException exc) {
+            // could not update data
+            LogHelper.exception(ContextModuleJmsService.class, "getPlatformNeighborhood",
+                    "Could not retrieve data from ontology", exc);
         }
 
         // prepare response object
-        Object response = createObject(cameraRequestObject.getId(), vector);
+        Object response = createObject(requestId, vector);
         return response;
     }
 
@@ -598,13 +601,7 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
     }
 
     @Override
-    public BooleanNamedValue updateGISData(SimpleNamedValue gisData) {
-        // TODO: to be implemented
-        return createBooleanNamedValue(gisData.getId(), "featureName", false);
-    }
-
-    @Override
-    public SimpleNamedValue defineZone(Object zoneDefinition) {
+    public SimpleNamedValue updateZone(Object zoneDefinition) {
 
         // get the zone definition
         List<itti.com.pl.arena.cm.dto.Location> locations = new ArrayList<>();
@@ -697,7 +694,7 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
     private SimpleNamedValue createSimpleNamedValue(String id, java.lang.Object value) {
         SimpleNamedValue snv = getFactory().createSimpleNamedValue();
         snv.setDataSourceId(Constants.MODULE_NAME);
-        snv.setId(id);
+        snv.setId(String.format("CM_RESP_%s", StringHelper.toString(id)));
         snv.setValue(String.valueOf(value));
         return snv;
     }
@@ -732,7 +729,7 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
     private AbstractNamedValue createCoordinate(String id, double x, double y, double z) {
         RealWorldCoordinate rwc = getFactory().createRealWorldCoordinate();
         rwc.setDataSourceId(Constants.MODULE_NAME);
-        rwc.setId(id);
+        rwc.setId(StringHelper.toString(id));
         rwc.setX(x);
         rwc.setY(y);
         rwc.setZ(z);
@@ -751,8 +748,10 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
      */
     private Object createObject(String id, List<AbstractNamedValue> vector) {
         Object object = getFactory().createObject();
+        object.setFeatureVector(getFactory().createFeatureVector());
+        object.setId(String.format("CM_RESP_%s", StringHelper.toString(id)));
         object.setDataSourceId(Constants.MODULE_NAME);
-        object.getFeatureVector().setId(id);
+        object.getFeatureVector().setId(StringHelper.toString(id));
         object.getFeatureVector().setDataSourceId(Constants.MODULE_NAME);
         object.getFeatureVector().getFeature().addAll(vector);
         return object;

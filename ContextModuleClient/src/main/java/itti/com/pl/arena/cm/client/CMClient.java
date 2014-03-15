@@ -76,14 +76,16 @@ public class CMClient {
             parseGetGISDataServiceResponse(client.getGISDataService(-0.94, 51.43, 1.0, "Parking"));
             // retrieve data from the external service (geoportal) and add it to ontology
             parseGetGeoportalDataServiceResponse(client.getGeoportalDataService(17.972946559166793, 53.124318916278824));
-            // retrieve info about camera field of view
-            parseGetCameraFieldOfViewResponse(client.getCameraFieldOfView("Camera_3"));
+            // retrieve info about platform neighborhood
+            parseGetCameraFieldOfViewResponse(client.getPlatformNeighborhood("Vehicle_CB04432"));
 
             Platform platform = createDummyPlatform("dummyPlatform_" + System.currentTimeMillis());
             parseUpdatePlatformResponse(client.updatePlatform(platform));
 
             ParkingLot parkingLot = createDummyParkingLot("dummyParkingLot_" + System.currentTimeMillis());
             parseUpdatePlatformResponse(client.updateParkingLot(parkingLot));
+
+            parseObjectResponse(client.getParkingLot(parkingLot.getId()));
 
             // defines new zone in the ontology
             String zoneId = parseDefineZoneResponse(client.defineZone(new double[][] {
@@ -242,6 +244,18 @@ public class CMClient {
     private static void parseGetGeoportalDataServiceResponse(Object geoportalData) {
         if (geoportalData != null) {
             parseFeatureVector(geoportalData.getFeatureVector());
+        }
+    }
+
+    /**
+     * Parses response received from the CM component
+     * 
+     * @param objectResponse
+     *            information retrieved from the ontology
+     */
+    private static void parseObjectResponse(Object objectResponse) {
+        if (objectResponse != null) {
+            parseFeatureVector(objectResponse.getFeatureVector());
         }
     }
 
@@ -474,17 +488,17 @@ public class CMClient {
     }
 
     /**
-     * Returns information about objects in the camera field of view
+     * Returns information about objects in the platform neighborhood
      * 
-     * @param cameraId
-     *            ID of the camera
-     * @return Object containing information about camera field of view (ontology data)
+     * @param platformId
+     *            ID of the platform
+     * @return Object containing information about platform neighborhood
      */
-    public Object getCameraFieldOfView(String cameraId) {
-        SimpleNamedValue cameraObject = createSimpleNamedValue(cameraId);
-        cameraObject.setHref(ContextModuleRequests.getCameraFieldOfView.name());
-        Object data = contextModule.getCameraFieldOfView(cameraObject);
-        LogHelper.info(CMClient.class, "getCameraFieldOfView", "Server response received: %s", String.valueOf(data));
+    public Object getPlatformNeighborhood(String platformId) {
+        SimpleNamedValue parkingIdObject = createSimpleNamedValue(platformId);
+        parkingIdObject.setHref(ContextModuleRequests.getPlatformNeighborhood.name());
+        Object data = contextModule.getPlatformNeighborhood(parkingIdObject);
+        LogHelper.info(CMClient.class, "getPlatformNeighborhood", "Server response received: %s", String.valueOf(data));
         return data;
     }
 
@@ -512,7 +526,7 @@ public class CMClient {
         }
         Object requestObject = createObject(requestParams);
         requestObject.setHref(ContextModuleRequests.defineZone.name());
-        SimpleNamedValue data = contextModule.defineZone(requestObject);
+        SimpleNamedValue data = contextModule.updateZone(requestObject);
         LogHelper.info(CMClient.class, "defineZone", "Server response received: %s", String.valueOf(data));
         return data;
     }
@@ -544,6 +558,15 @@ public class CMClient {
         platformRequest.setHref(ContextModuleRequests.updateParkingLot.name());
         BooleanNamedValue data = contextModule.updateParkingLot(platformRequest);
         LogHelper.debug(CMClient.class, "updateParkingLot", "Server response received: %s", String.valueOf(data));
+        return data;
+    }
+
+    private Object getParkingLot(String parkingLotId) throws ContextModuleClientException {
+
+        SimpleNamedValue platformRequest = createSimpleNamedValue(parkingLotId);
+        platformRequest.setHref(ContextModuleRequests.getParkingLot.name());
+        Object data = contextModule.getParkingLot(platformRequest);
+        LogHelper.debug(CMClient.class, "getParkingLot", "Server response received: %s", String.valueOf(data));
         return data;
     }
 

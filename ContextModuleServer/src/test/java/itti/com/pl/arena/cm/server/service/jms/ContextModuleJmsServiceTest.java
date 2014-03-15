@@ -1,6 +1,11 @@
 package itti.com.pl.arena.cm.server.service.jms;
 
 import static org.junit.Assert.*;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import itti.com.pl.arena.cm.dto.coordinates.ArenaObjectCoordinate;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
 import itti.com.pl.arena.cm.dto.staticobj.ParkingLot;
 import itti.com.pl.arena.cm.server.TestHelper;
@@ -16,6 +21,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import eu.arena_fp7._1.BooleanNamedValue;
+import eu.arena_fp7._1.Object;
 import eu.arena_fp7._1.ObjectFactory;
 import eu.arena_fp7._1.SimpleNamedValue;
 
@@ -142,7 +148,59 @@ public class ContextModuleJmsServiceTest {
         assertEquals(StringHelper.toString(parkingLot.getId()), response.getFeatureName());
 
         //verify ontology was called
-        Mockito.verify(ontology).updatePlatform(Mockito.any(Platform.class));
+        Mockito.verify(ontology).updateParkingLot(Mockito.any(ParkingLot.class));
+    }
+
+    @Test
+    public void testGetPlatformNeighborhoodNullRequest() {
+
+        //null request
+        Object response = CMJmsService.getPlatformNeighborhood(null);
+        //empty response returned
+        assertTrue(response.getFeatureVector().getFeature().isEmpty());
+    }
+
+    @Test
+    public void testGetPlatformNeighborhoodEmptyRequest() {
+
+        //empty request
+        Object response = CMJmsService.getPlatformNeighborhood(new SimpleNamedValue());
+        //empty response returned
+        assertTrue(response.getFeatureVector().getFeature().isEmpty());
+    }
+
+    @Test
+    public void testGetPlatformNeighborhoodInvalidValueRequest() {
+
+        //non-parseable value in the request
+        SimpleNamedValue snv = new SimpleNamedValue();
+        snv.setValue("dummyText");
+        Object response = CMJmsService.getPlatformNeighborhood(snv);
+        //empty response returned
+        assertTrue(response.getFeatureVector().getFeature().isEmpty());
+    }
+
+    @Test
+    public void testGetPlatformNeighborhoodProperValueRequest() throws JsonHelperException, OntologyException {
+
+        //prepare dummy ontology
+        Ontology ontology = Mockito.mock(Ontology.class);
+        //object found, ontology is going to return it
+        Set<ArenaObjectCoordinate> coordinates = new HashSet<>();
+        coordinates.add(new ArenaObjectCoordinate("ID"));
+        Mockito.when(ontology.calculateArenaDistancesForPlatform(Mockito.anyString())).thenReturn(
+                coordinates);
+        CMJmsService.setOntology(ontology);
+
+        //valid value in the request
+        SimpleNamedValue snv = new SimpleNamedValue();
+        snv.setValue("ValidPlatform");
+        Object response = CMJmsService.getPlatformNeighborhood(snv);
+        //there are some items in the response
+        assertTrue(!response.getFeatureVector().getFeature().isEmpty());
+
+        //verify ontology was called
+        Mockito.verify(ontology).calculateArenaDistancesForPlatform(Mockito.anyString());
     }
 
 }

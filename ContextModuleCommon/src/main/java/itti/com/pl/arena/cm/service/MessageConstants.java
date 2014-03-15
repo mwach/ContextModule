@@ -38,13 +38,9 @@ public final class MessageConstants {
          */
         getGISData,
         /**
-         * Service name used by the {@link ContextModule} extended 'getGISData' method
+         * Service name used by the {@link ContextModule} extended 'getGISDataExt' method
          */
         getGISDataExt,
-        /**
-         * Service name used by the {@link ContextModule} 'updateGISData' method
-         */
-        updateGISData,
         /**
          * Service name used by the {@link ContextModule} 'getGeoportalData' method
          */
@@ -53,7 +49,7 @@ public final class MessageConstants {
         /**
          * Service name used by the {@link ContextModule} 'getCameraFieldOfView' method
          */
-        getCameraFieldOfView,
+        getPlatformNeighborhood,
 
         /**
          * Service name used by the {@link ContextModule} 'defineZone' method

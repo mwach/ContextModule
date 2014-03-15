@@ -1,6 +1,5 @@
 package itti.com.pl.arena.cm.service;
 
-import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
 import itti.com.pl.arena.cm.dto.staticobj.ParkingLot;
 import eu.arena_fp7._1.BooleanNamedValue;
@@ -28,35 +27,6 @@ public interface ContextModule {
     Object getPlatform(SimpleNamedValue objectId);
 
     /**
-     * This method returns information about camera field of view. This method requires platform to be parked on
-     * parking lot, or any other defined area (Geo-data information about close platform area must be stored in
-     * Ontology). Expected result is: complete information objects, which are supposed to be in camera field of view
-     * @param cameraId
-     *            ID of the camera
-     * @return complete information about parking area, where platform is parked 
-     */
-    Object getCameraFieldOfView(SimpleNamedValue cameraId);
-
-    /**
-     * This method allows to update existing or create new parking lot in the ContextModule
-     * 
-     * @param parkingLot
-     *            new or updated {@link ParkingLot} object. Attribute 'value' of the provided {@link SimpleNamedValue} should contain
-     *            serialized {@link ParkingLot} object
-     * @return update status
-     */
-    BooleanNamedValue updateParkingLot(SimpleNamedValue parkingLot);
-
-    /**
-     * This method allows retrieval of information about the parking lot (location, boundaries, objects like buildings or infrastructure).
-     * 
-     * @param objectId
-     *            ID of the object
-     * @return information about parking lot stored in Object’s featureVector
-     */
-    Object getParkingLot(SimpleNamedValue objectId);
-
-    /**
      * This method allows to update existing or create new {@link Platform} in the ContextModule
      * 
      * @param platform
@@ -76,6 +46,25 @@ public interface ContextModule {
      *         attributes
      */
     Object getPlatforms(Location location);
+
+    /**
+     * This method allows to update existing or create new parking lot in the ContextModule
+     * 
+     * @param parkingLot
+     *            new or updated {@link ParkingLot} object. Attribute 'value' of the provided {@link SimpleNamedValue} should contain
+     *            serialized {@link ParkingLot} object
+     * @return update status
+     */
+    BooleanNamedValue updateParkingLot(SimpleNamedValue parkingLot);
+
+    /**
+     * This method allows retrieval of information about the parking lot (location, boundaries, objects like buildings or infrastructure).
+     * 
+     * @param objectId
+     *            ID of the object
+     * @return information about parking lot stored in Object’s featureVector
+     */
+    Object getParkingLot(SimpleNamedValue objectId);
 
     /**
      * This method allows retrieval of available GIS data for specified location (i.e. creates Object class with
@@ -106,17 +95,6 @@ public interface ContextModule {
     Object getGISData(Object parameters);
 
     /**
-     * This method allows to update existing or create new geo-object (instance of the {@link GeoObject} interface) in
-     * the ContextModule
-     * 
-     * @param gisData
-     *            new or updated geo-object. Attribute 'value' of the {@link SimpleNamedValue} should contain serialized
-     *            {@link GeoObject} object
-     * @return update status
-     */
-    BooleanNamedValue updateGISData(SimpleNamedValue gisData);
-
-    /**
      * Retrieves data from the Geoportal service
      * 
      * @param location
@@ -126,11 +104,20 @@ public interface ContextModule {
     Object getGeoportalData(Location location);
 
     /**
+     * returns information about platform neighborhood in the ContextModule-specific Cartesian coordinate system
+     * Point (0,0) of that system is located in the driver's cabin, default unit is calibrated to one meter
+     * and axis are compatible with the main truck axis
+     * @param platformId ID of the platform
+     * @return information about platform neighborhood (surrounding buildings or parking infrastructure)
+     */
+    Object getPlatformNeighborhood(SimpleNamedValue platformId);
+
+    /**
      * Defines a new zone in the ontology
      * @param zoneDefinition definition of the zone (list of zone vertexes stored as {@link Location} objects)
      * @return ID of the zone
      */
-    SimpleNamedValue defineZone(Object zoneDefinition);
+    SimpleNamedValue updateZone(Object zoneDefinition);
 
     /**
      * Returns zone definition: list of zone vertexes stored as {@link Location} objects

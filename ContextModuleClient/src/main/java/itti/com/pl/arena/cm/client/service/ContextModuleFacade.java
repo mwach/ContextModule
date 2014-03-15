@@ -247,8 +247,8 @@ public class ContextModuleFacade extends ModuleImpl implements ContextModule {
      * @see itti.com.pl.arena.cm.service.ContextModule#getPlatform(eu.arena_fp7._1.SimpleNamedValue)
      */
     @Override
-    public eu.arena_fp7._1.Object getCameraFieldOfView(SimpleNamedValue objectId) {
-        return (Object) submitData(objectId);
+    public eu.arena_fp7._1.Object getPlatformNeighborhood(SimpleNamedValue parkingId) {
+        return (Object) submitData(parkingId);
     }
 
     /* (non-Javadoc)
@@ -257,6 +257,14 @@ public class ContextModuleFacade extends ModuleImpl implements ContextModule {
     @Override
     public BooleanNamedValue updateParkingLot(SimpleNamedValue parkingLot) {
         return (BooleanNamedValue)submitData(parkingLot);
+    }
+
+    /* (non-Javadoc)
+     * @see itti.com.pl.arena.cm.service.ContextModule#updateParkingLot(eu.arena_fp7._1.SimpleNamedValue)
+     */
+    @Override
+    public Object getParkingLot(SimpleNamedValue parkingLot) {
+        return (Object)submitData(parkingLot);
     }
 
     /* (non-Javadoc)
@@ -308,18 +316,10 @@ public class ContextModuleFacade extends ModuleImpl implements ContextModule {
     }
 
     /* (non-Javadoc)
-     * @see itti.com.pl.arena.cm.service.ContextModule#updateGISData(eu.arena_fp7._1.SimpleNamedValue)
-     */
-    @Override
-    public BooleanNamedValue updateGISData(SimpleNamedValue gisData) {
-        return (BooleanNamedValue)submitData(gisData);
-    }
-
-    /* (non-Javadoc)
      * @see itti.com.pl.arena.cm.service.ContextModule#defineZone(eu.arena_fp7._1.Object)
      */
     @Override
-    public SimpleNamedValue defineZone(Object zoneDefinition) {
+    public SimpleNamedValue updateZone(Object zoneDefinition) {
         return (SimpleNamedValue)submitData(zoneDefinition);
     }
 

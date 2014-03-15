@@ -170,5 +170,4 @@ public interface Ontology {
      *             processing exception
      */
     public List<itti.com.pl.arena.cm.dto.Location> getZone(String zoneId) throws OntologyException;
-
 }
