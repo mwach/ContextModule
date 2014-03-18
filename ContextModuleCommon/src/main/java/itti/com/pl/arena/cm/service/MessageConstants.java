@@ -52,9 +52,9 @@ public final class MessageConstants {
         getPlatformNeighborhood,
 
         /**
-         * Service name used by the {@link ContextModule} 'defineZone' method
+         * Service name used by the {@link ContextModule} 'updateZone' method
          */
-        defineZone,
+        updateZone,
 
         /**
          * Service name used by the {@link ContextModule} 'getZone' method

@@ -361,11 +361,15 @@ public class OntologyManager implements Service {
                 OWLIndividual valueInd = getModel().getOWLIndividual(value);
                 if (valueInd != null) {
                     setPropertyValue(individual, property, valueInd);
-                    // not an instance - try number
+                    // not an instance - try numbers first
+                    // try to add value as a string
                 } else if (NumbersHelper.isInteger(value)) {
-                    int valueInt = NumbersHelper.getIntegerFromString(value);
+                    Integer valueInt = NumbersHelper.getIntegerFromString(value);
                     setPropertyValue(individual, property, valueInt);
                     // try to add value as a string
+                } else if (NumbersHelper.isDouble(value)) {
+                    Float valueFloat = NumbersHelper.getDoubleFromString(value).floatValue();
+                    setPropertyValue(individual, property, valueFloat);
                 } else {
                     setPropertyValue(individual, property, value);
                 }

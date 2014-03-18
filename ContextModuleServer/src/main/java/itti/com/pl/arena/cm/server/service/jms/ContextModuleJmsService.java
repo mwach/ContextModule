@@ -19,6 +19,7 @@ import itti.com.pl.arena.cm.server.ontology.Ontology;
 import itti.com.pl.arena.cm.server.ontology.OntologyException;
 import itti.com.pl.arena.cm.server.service.PlatformListener;
 import itti.com.pl.arena.cm.server.service.Service;
+import itti.com.pl.arena.cm.server.utils.helpers.LocationFactory;
 import itti.com.pl.arena.cm.service.MessageConstants.ContextModuleRequests;
 import itti.com.pl.arena.cm.service.ContextModule;
 import itti.com.pl.arena.cm.utils.helper.DateTimeHelper;
@@ -250,7 +251,7 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getPlatformNeighborhood.name(), data.getHref())
                         && (data instanceof SimpleNamedValue)) {
                     response = getPlatformNeighborhood((SimpleNamedValue) data);
-                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.defineZone.name(), data.getHref())
+                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.updateZone.name(), data.getHref())
                         && (data instanceof Object)) {
                     response = updateZone((Object) data);
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getZone.name(), data.getHref())
@@ -606,21 +607,19 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
         // get the zone definition
         List<itti.com.pl.arena.cm.dto.Location> locations = new ArrayList<>();
         for (AbstractNamedValue vertex : zoneDefinition.getFeatureVector().getFeature()) {
-            if (vertex instanceof Location) {
-                Location flatLocation = (Location) vertex;
-                locations.add(new itti.com.pl.arena.cm.dto.Location(flatLocation.getX(), flatLocation.getY()));
-            } else if (vertex instanceof RealWorldCoordinate) {
-                RealWorldCoordinate sphereLocation = (RealWorldCoordinate) vertex;
-                locations.add(new itti.com.pl.arena.cm.dto.Location(sphereLocation.getX(), sphereLocation.getY(), 0,
-                        sphereLocation.getZ()));
+            itti.com.pl.arena.cm.dto.Location location = LocationFactory.createLocation(vertex);
+            if(location != null){
+                locations.add(location);
+            }else{
+                LogHelper.warning(ContextModuleJmsService.class, "updateZone", "Could not convert given ARENA object into Location: %s", StringHelper.toString(vertex));
             }
         }
         // ID of the created zone
         String zoneId = "";
         try {
-            zoneId = getOntology().defineZone(locations);
+            zoneId = getOntology().updateZone(locations);
         } catch (OntologyException exc) {
-            LogHelper.exception(ContextModuleJmsService.class, "defineZone", "Could not define a zone in ontology", exc);
+            LogHelper.exception(ContextModuleJmsService.class, "updateZone", "Could not define a zone in ontology", exc);
         }
 
         // prepare response object

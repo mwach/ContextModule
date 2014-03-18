@@ -3,11 +3,13 @@ package itti.com.pl.arena.cm.server.jms.zeromq;
 import itti.com.pl.arena.cm.server.service.jms.ContextModuleJmsService;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class ZeroMqContextManagerServiceTest {
 
     @Test
+    @Ignore
     public void connectTest() {
 
         int MAX_WAITING_TIME = 10 * 1000;

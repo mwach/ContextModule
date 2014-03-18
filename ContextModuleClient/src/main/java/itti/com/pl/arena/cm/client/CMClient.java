@@ -525,7 +525,7 @@ public class CMClient {
             }
         }
         Object requestObject = createObject(requestParams);
-        requestObject.setHref(ContextModuleRequests.defineZone.name());
+        requestObject.setHref(ContextModuleRequests.updateZone.name());
         SimpleNamedValue data = contextModule.updateZone(requestObject);
         LogHelper.info(CMClient.class, "defineZone", "Server response received: %s", String.valueOf(data));
         return data;

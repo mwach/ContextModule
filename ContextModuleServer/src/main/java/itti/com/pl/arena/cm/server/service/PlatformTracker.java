@@ -68,6 +68,15 @@ public class PlatformTracker implements Service, LocationListener {
         this.persistence = persistence;
     }
 
+    private Ontology getOntology() {
+        return ontology;
+    }
+
+    @Required
+    public void setOntology(Ontology ontology) {
+        this.ontology = ontology;
+    }
+
     private PlatformListener getPlatformListener() {
         return platformListener;
     }
@@ -141,7 +150,7 @@ public class PlatformTracker implements Service, LocationListener {
                 for (Range range : Range.values()) {
 
                     // get parking lots for given range
-                    Set<GeoObject> parkingLots = ontology.getGISObjects(lastLocation.getLongitude(), lastLocation.getLatitude(),
+                    Set<GeoObject> parkingLots = getOntology().getGISObjects(lastLocation.getLongitude(), lastLocation.getLatitude(),
                             range.getRangeInKms(), OntologyConstants.Parking.name());
 
                     if (!parkingLots.isEmpty()) {

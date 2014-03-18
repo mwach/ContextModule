@@ -7,11 +7,13 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import itti.com.pl.arena.cm.dto.Location;
+import itti.com.pl.arena.cm.dto.coordinates.ArenaObjectCoordinate;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform.Type;
 import itti.com.pl.arena.cm.dto.staticobj.ParkingLot;
@@ -23,6 +25,7 @@ import itti.com.pl.arena.cm.server.ontology.Ontology;
 import itti.com.pl.arena.cm.server.ontology.OntologyConstants;
 import itti.com.pl.arena.cm.server.ontology.OntologyException;
 
+@Ignore
 public class ContextModuleOntologyManagerTest {
 
     @Rule
@@ -149,7 +152,7 @@ public class ContextModuleOntologyManagerTest {
         assertNotNull(parkingLot);
     }
 
-    // test for complex functionality for retrieving cameras field of view
+    // test for complex functionality for retrieving information about platform neighborhood
     @Test
     public void testCalculateArenaDistancesForPlatformNullId() throws OntologyException {
 
@@ -183,6 +186,35 @@ public class ContextModuleOntologyManagerTest {
         cmOntologyManager.calculateArenaDistancesForPlatform(platformId);
     }
 
+    @Test
+    public void testCalculateArenaDistancesForPlatformValidId() throws OntologyException {
+
+        //valid platformId provided
+        String platformId = "platformId_" + System.currentTimeMillis();
+        //valid parkingLotId provided
+        String parkingLotId = "parkingLot_" + System.currentTimeMillis();
+
+        //create dummy objects for test purposes
+        ParkingLot parkingLot = TestHelper.createDummyParkingLot(parkingLotId);
+        Platform platform = TestHelper.createDummyPlatform(platformId);
+
+        //make sure, their locations match
+        platform.setLocation(parkingLot.getLocation());
+        //now add them to the ontology
+        cmOntologyManager.updatePlatform(platform);
+        cmOntologyManager.updateParkingLot(parkingLot);
+
+        //verify stored objects
+        Platform ontoPlatform = cmOntologyManager.getOntologyObject(platformId, Platform.class);
+        ParkingLot ontoParkingLot = cmOntologyManager.getOntologyObject(parkingLotId, ParkingLot.class);
+        assertEquals(platform, ontoPlatform);
+        assertEquals(parkingLot, ontoParkingLot);
+
+        //later, try to retrieve parking data
+        Set<ArenaObjectCoordinate> coordinates = cmOntologyManager.calculateArenaDistancesForPlatform(platformId);
+        assertFalse(coordinates.isEmpty());
+    }
+
     // test 'define zone' functionality
     @Test
     public void testDefineZoneNullLocations() throws OntologyException {
@@ -192,7 +224,7 @@ public class ContextModuleOntologyManagerTest {
         expectedException.expectMessage(
                 String.format(ErrorMessages.ONTOLOGY_EMPTY_VALUE_PROVIDED.getMessage(), OntologyConstants.Object_has_GPS_coordinates.name()));
 
-        cmOntologyManager.defineZone(null);
+        cmOntologyManager.updateZone(null);
     }
 
     @Test
@@ -203,7 +235,7 @@ public class ContextModuleOntologyManagerTest {
         expectedException.expectMessage(
                 String.format(ErrorMessages.ONTOLOGY_EMPTY_VALUE_PROVIDED.getMessage(), OntologyConstants.Object_has_GPS_coordinates.name()));
 
-        cmOntologyManager.defineZone(new ArrayList<Location>());
+        cmOntologyManager.updateZone(new ArrayList<Location>());
     }
 
     // test 'get zone' functionality
@@ -249,7 +281,7 @@ public class ContextModuleOntologyManagerTest {
                     new Location(TestHelper.getCoordinate(), TestHelper.getCoordinate(), 0, TestHelper.getCoordinate()));
         }
         //add new zone to ontology
-        String zoneId = cmOntologyManager.defineZone(locations);
+        String zoneId = cmOntologyManager.updateZone(locations);
         assertNotNull(zoneId);
 
         //now try to get the zone from ontology

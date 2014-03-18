@@ -150,7 +150,7 @@ public interface Ontology {
     public Set<ArenaObjectCoordinate> calculateArenaDistancesForPlatform(String platformId) throws OntologyException;
 
     /**
-     * Defines a new zone in the ontology
+     * Defines a new, or update an existing zone in the ontology
      * 
      * @param locations
      *            zone boundaries (list of zone vertexes stored as {@link Location} objects)
@@ -158,7 +158,7 @@ public interface Ontology {
      * @throws OntologyException
      *             processing exception
      */
-    public String defineZone(List<itti.com.pl.arena.cm.dto.Location> locations) throws OntologyException;
+    public String updateZone(List<itti.com.pl.arena.cm.dto.Location> locations) throws OntologyException;
 
     /**
      * Defines a new zone in the ontology

@@ -55,7 +55,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 
     private static final String QUERY_PARKING_OBJECTS = "PREFIX ns: <%s> " + "SELECT ?%s " + "WHERE " + "{ "
             + "?%s rdf:type ns:%s. " + "?%s ns:Object_has_GPS_x ?coordinate_x. " + "?%s ns:Object_has_GPS_y ?coordinate_y. "
-            + "FILTER ( (?coordinate_x >= %f && ?coordinate_x <= %f) || (?coordinate_y >= %f && ?coordinate_y <= %f)) " + "}";
+            + "FILTER ( (?coordinate_x >= %f && ?coordinate_x <= %f) && (?coordinate_y >= %f && ?coordinate_y <= %f)) " + "}";
 
     protected static final int DIMENSIONS_XY = 2;
     protected static final int DIMENSIONS_XYZ = 3;
@@ -683,7 +683,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
     }
 
     @Override
-    public String defineZone(List<Location> locations) throws OntologyException {
+    public String updateZone(List<Location> locations) throws OntologyException {
 
         String zoneName = "";
         if (locations == null || locations.isEmpty()) {

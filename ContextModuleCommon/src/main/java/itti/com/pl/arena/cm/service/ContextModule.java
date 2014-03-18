@@ -5,6 +5,7 @@ import itti.com.pl.arena.cm.dto.staticobj.ParkingLot;
 import eu.arena_fp7._1.BooleanNamedValue;
 import eu.arena_fp7._1.Location;
 import eu.arena_fp7._1.Object;
+import eu.arena_fp7._1.RealWorldCoordinate;
 import eu.arena_fp7._1.SimpleNamedValue;
 
 /**
@@ -113,15 +114,20 @@ public interface ContextModule {
     Object getPlatformNeighborhood(SimpleNamedValue platformId);
 
     /**
-     * Defines a new zone in the ontology
-     * @param zoneDefinition definition of the zone (list of zone vertexes stored as {@link Location} objects)
+     * Defines a new, or updates an existing zone in the ontology
+     * 
+     * @param zoneDefinition
+     *            definition of the zone (list of zone vertexes stored as {@link Location} or
+     *            {@link RealWorldCoordinate} objects)
      * @return ID of the zone
      */
     SimpleNamedValue updateZone(Object zoneDefinition);
 
     /**
-     * Returns zone definition: list of zone vertexes stored as {@link Location} objects
-     * @param zoneId ID of the zone
+     * Returns zone definition: list of zone vertexes stored as {@link RealWorldCoordinate} objects
+     * 
+     * @param zoneId
+     *            ID of the zone
      * @return list of coordinates, or empty list, if zone with given ID not found in the ontology
      */
     Object getZone(SimpleNamedValue zoneId);
