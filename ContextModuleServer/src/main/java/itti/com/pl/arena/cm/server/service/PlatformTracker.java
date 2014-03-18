@@ -39,10 +39,11 @@ public class PlatformTracker implements Service, LocationListener {
     // current status of the platform
     private PlatformStatus status = PlatformStatus.Unknown;
 
-    private void updateStatus(PlatformStatus newStatus){
+    private void updateStatus(PlatformStatus newStatus) {
         this.status = newStatus;
     }
-    public PlatformStatus getStatus(){
+
+    public PlatformStatus getStatus() {
         return status;
     }
 
@@ -103,7 +104,7 @@ public class PlatformTracker implements Service, LocationListener {
     @Override
     public void init() {
         LogHelper.debug(PlatformTracker.class, "init", "init using ID: %s", getPlatformId());
-        if (StringHelper.hasContent(getPlatformId())) {
+        if (!StringHelper.hasContent(getPlatformId())) {
             setPlatformId(UUID.randomUUID().toString());
             LogHelper.debug(PlatformTracker.class, "init", "no ID provided, random values will be used: %s", getPlatformId());
         }
@@ -124,34 +125,45 @@ public class PlatformTracker implements Service, LocationListener {
     public void onLocationChange(Location location) {
 
         LogHelper.debug(PlatformTracker.class, "onLocationChange", "New platform location received: %s for platfrom %s",
-                location, getPlatformId());
+                StringHelper.toString(location), getPlatformId());
 
-        // first, try to persist latest location in the database
-        try {
-            getPersistence().create(getPlatformId(), location);
-        } catch (PersistenceException e) {
-            LogHelper.warning(PlatformTracker.class, "onLocationChange",
-                    "Could not persist location data: for platform %s. Details: %s", getPlatformId(), e.getLocalizedMessage());
+        // try to persist latest location in the database
+        if (location != null) {
+            try {
+                getPersistence().create(getPlatformId(), location);
+            } catch (PersistenceException e) {
+                LogHelper
+                        .warning(PlatformTracker.class, "onLocationChange",
+                                "Could not persist location data: for platform %s. Details: %s", getPlatformId(),
+                                e.getLocalizedMessage());
+            }
+        } else {
+            LogHelper.info(PlatformTracker.class, "onLocationChange", "Null location received for platform %s", getPlatformId());
         }
     }
 
     /**
-     * Method periodically called by application scheduler to verify platform status
-     * (is it moving, stopped, parked on the parking lot)
+     * Method periodically called by application scheduler to verify platform status (is it moving, stopped, parked on
+     * the parking lot)
      */
     public void checkPlatformStopped() {
 
         try {
 
             Location lastLocation = getPersistence().getLastPosition(getPlatformId());
-            if (DateTimeHelper.delta(lastLocation.getTime(), System.currentTimeMillis() / 1000, DateTimeHelper.SECOND) > getMaxIdleTime()) {
+            if (lastLocation == null) {
+                LogHelper.debug(PlatformTracker.class, "checkPlatformStopped",
+                        "No location retrieved from the persistence storage");
+                return;
+            }
+            if (DateTimeHelper.delta(lastLocation.getTime() * 1000, System.currentTimeMillis(), DateTimeHelper.SECOND) > getMaxIdleTime()) {
 
                 // check all the ranges, from the widest one to the closest
                 for (Range range : Range.values()) {
 
                     // get parking lots for given range
-                    Set<GeoObject> parkingLots = getOntology().getGISObjects(lastLocation.getLongitude(), lastLocation.getLatitude(),
-                            range.getRangeInKms(), OntologyConstants.Parking.name());
+                    Set<GeoObject> parkingLots = getOntology().getGISObjects(lastLocation.getLongitude(),
+                            lastLocation.getLatitude(), range.getRangeInKms(), OntologyConstants.Parking.name());
 
                     if (!parkingLots.isEmpty()) {
                         LogHelper.debug(PlatformTracker.class, "checkPlatformStopped",
@@ -161,7 +173,7 @@ public class PlatformTracker implements Service, LocationListener {
                         // we are on the parking
                         if (range == Range.getClosestRange()) {
                             updateStatus(PlatformStatus.StoppedOnParking);
-                            //notify the listener
+                            // notify the listener
                             getPlatformListener().destinationReached(getId(), lastLocation);
                         }
                     } else {
@@ -170,9 +182,9 @@ public class PlatformTracker implements Service, LocationListener {
                         break;
                     }
                 }
-            }else{
-                //platform started moving again
-                if(getStatus() == PlatformStatus.StoppedOnParking){
+            } else {
+                // platform started moving again
+                if (getStatus() == PlatformStatus.StoppedOnParking) {
                     getPlatformListener().destinationLeft(getId(), lastLocation);
                 }
                 updateStatus(PlatformStatus.Moving);
@@ -183,6 +195,9 @@ public class PlatformTracker implements Service, LocationListener {
         } catch (PersistenceException exc) {
             LogHelper.warning(PlatformTracker.class, "checkPlatformStopped",
                     "Could not retrieve parking data from the persistence storage. Details: %s", exc.getLocalizedMessage());
+        } catch (RuntimeException exc) {
+            LogHelper.warning(PlatformTracker.class, "checkPlatformStopped",
+                    "Runtime exception during data processing. Details: %s", exc.getLocalizedMessage());
         }
     }
 

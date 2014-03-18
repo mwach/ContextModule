@@ -90,7 +90,7 @@ X       Time zone       ISO 8601 time zone      -08; -0800; -08:00
      * @return delta between two timestamps
      */
     public static long delta(long timeEnd, long timeStart, int unit) {
-        long delta = timeEnd - timeStart;
+        long delta = Math.abs(timeEnd - timeStart);
         switch (unit) {
         case SECOND:
             return delta / 1000;
