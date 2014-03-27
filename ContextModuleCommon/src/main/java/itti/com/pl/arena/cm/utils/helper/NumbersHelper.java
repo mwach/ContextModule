@@ -132,4 +132,41 @@ public class NumbersHelper {
         }
         return retArray;
     }
+
+    public static boolean equals(Double valueA, Double valueB){
+        if(valueA == null && valueB == null){
+            return true;
+        }else if(valueA == null || valueB == null){
+            return false;
+        }
+        double delta = Math.abs(valueA - valueB);
+        return  delta < 0.001;
+    }
+
+    public static boolean equals(Integer valueA, Integer valueB){
+        if(valueA == null && valueB == null){
+            return true;
+        }else if(valueA == null || valueB == null){
+            return false;
+        }
+        return valueA.intValue() == valueB.intValue();
+    }
+
+    public static boolean equals(Long valueA, Long valueB){
+        if(valueA == null && valueB == null){
+            return true;
+        }else if(valueA == null || valueB == null){
+            return false;
+        }
+        return valueA.longValue() == valueB.longValue();
+    }
+
+    public static Double changePrecision(Double value){
+        if(value == null){
+            return value;
+        }
+        long longValue = value.longValue();
+        long fractionValue = (long) ((value - longValue) * Math.pow(10, 3));
+        return (double)longValue + (((double)fractionValue) / Math.pow(10, 3));
+    }
 }

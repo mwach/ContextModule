@@ -78,24 +78,31 @@ public final class IOHelper {
         byte[] response = new byte[arraySize];
 
         try {
+            int readLastChunkLen = 1;
             // if there is data available
-            while (inputStream.available() > 0) {
+            while (readLastChunkLen > 0) {
                 // read new chunk of it
-                totalRead += inputStream.read(response, totalRead, dataChunk);
+                readLastChunkLen = inputStream.read(response, totalRead, dataChunk);
+                if (readLastChunkLen > 0) {
+                    totalRead += readLastChunkLen;
 
-                // check, if array needs to be extended
-                if ((totalRead + DATA_CHUNK_SIZE) > arraySize) {
-                    arraySize += INITIAL_DATA_BUFFER;
-                    response = Arrays.copyOf(response, arraySize);
-                }
-                if (inputStream.available() == 0 && totalSleep < MAX_SLEEP_TIME) {
-                    try {
-                        totalSleep += sleepTime;
-                        Thread.sleep(sleepTime);
-                    } catch (InterruptedException exc) {
-                        throw new IOHelperException(exc, ErrorMessages.IO_HELPER_INTERRUPT_EXCEPTION, exc.getLocalizedMessage());
+                    // check, if array needs to be extended
+                    if ((totalRead + DATA_CHUNK_SIZE) > arraySize) {
+                        arraySize += INITIAL_DATA_BUFFER;
+                        response = Arrays.copyOf(response, arraySize);
                     }
+                    if (inputStream.available() == 0 && totalSleep < MAX_SLEEP_TIME) {
+                        try {
+                            totalSleep += sleepTime;
+                            Thread.sleep(sleepTime);
+                        } catch (InterruptedException exc) {
+                            throw new IOHelperException(exc, ErrorMessages.IO_HELPER_INTERRUPT_EXCEPTION,
+                                    exc.getLocalizedMessage());
+                        }
+                    }
+
                 }
+
             }
         } catch (IOException | RuntimeException exc) {
             throw new IOHelperException(exc, ErrorMessages.IO_HELPER_IO_EXCEPTION, exc.getLocalizedMessage());
@@ -167,13 +174,29 @@ public final class IOHelper {
     /**
      * Writes text data to file specified by its name using 'UTF-8' encoding
      * 
-     * @param content content of the file
+     * @param content
+     *            content of the file
      * @param outputFileName
      *            name of the file to write text data to
      * @throws IOHelperException
      *             could not read data from the file
      */
     public static void saveDataToFile(String content, String outputFileName) throws IOHelperException {
+        saveDataToFile(content, outputFileName, false);
+    }
+
+    /**
+     * Writes text data to file specified by its name using 'UTF-8' encoding
+     * 
+     * @param content
+     *            content of the file
+     * @param outputFileName
+     *            name of the file to write text data to
+     * @param append append or overwrite existing file
+     * @throws IOHelperException
+     *             could not read data from the file
+     */
+    public static void saveDataToFile(String content, String outputFileName, boolean append) throws IOHelperException {
 
         // file name not provided
         if (!StringHelper.hasContent(outputFileName)) {
@@ -187,7 +210,7 @@ public final class IOHelper {
 
         OutputStream stream = null;
         try {
-            stream = new FileOutputStream(outputFileName);
+            stream = new FileOutputStream(outputFileName, append);
             stream.write(content.getBytes(Constants.ENCODING));
         } catch (IOException exc) {
             throw new IOHelperException(exc, ErrorMessages.IO_HELPER_COULD_NOT_WRITE_DATA_TO_FILE, outputFileName,

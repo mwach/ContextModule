@@ -3,8 +3,8 @@ package itti.com.pl.arena.cm.server.ontology;
 import java.util.List;
 import java.util.Set;
 
-import eu.arena_fp7._1.Location;
 import itti.com.pl.arena.cm.dto.GeoObject;
+import itti.com.pl.arena.cm.dto.Location;
 import itti.com.pl.arena.cm.dto.OntologyObject;
 import itti.com.pl.arena.cm.dto.coordinates.ArenaObjectCoordinate;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
@@ -27,6 +27,18 @@ public interface Ontology {
      *             could not update information about platform
      */
     public void updatePlatform(Platform platform) throws OntologyException;
+
+    /**
+     * Updates last position of the platform in the ontology.
+     * If platform with given ID is not defined in the ontology, then it's going to be created
+     * 
+     * @param platformId
+     *            ID of the platform
+     * @param location last location of the platform
+     * @throws OntologyException
+     *             could not update information about platform
+     */
+    public void updatePlatformPosition(String platformId, Location location) throws OntologyException;
 
     /**
      * Updates (or create new if not found) ontology object representing parking lot
@@ -152,13 +164,16 @@ public interface Ontology {
     /**
      * Defines a new, or update an existing zone in the ontology
      * 
+     * @param zoneId
+     *            predefined ID of the zone
+     * 
      * @param locations
      *            zone boundaries (list of zone vertexes stored as {@link Location} objects)
      * @return ID of the zone
      * @throws OntologyException
      *             processing exception
      */
-    public String updateZone(List<itti.com.pl.arena.cm.dto.Location> locations) throws OntologyException;
+    public String updateZone(String zoneId, List<itti.com.pl.arena.cm.dto.Location> locations) throws OntologyException;
 
     /**
      * Defines a new zone in the ontology

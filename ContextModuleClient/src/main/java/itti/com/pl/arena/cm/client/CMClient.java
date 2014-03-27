@@ -65,27 +65,30 @@ public class CMClient {
             client.loadProperties(propertiesFileName);
             // initialize the client
             client.init();
+            
+            Platform platform = createDummyPlatform("Vehicle_Ford_Focus");
+            parseUpdatePlatformResponse(client.updatePlatform(platform));
+
             // call all available CM public services
             // get the platform info
-            parseGetPlatformServiceResponse(client.getPlatformService("Vehicle_CB04432"));
+            parseGetPlatformServiceResponse(client.getPlatformService("Vehicle_Ford_Focus"));
             // get all the platforms from given location
-            parseGetPlatformsServiceResponse(client.getPlatformsService(-0.94, 51.43));
+            parseGetPlatformsServiceResponse(client.getPlatformsService(18.128888541832566, 53.143207943066955));
             // get GIS data from the ontology
-            parseGetGISDataServiceResponse(client.getGISDataService(-0.94, 51.43));
+            parseGetGISDataServiceResponse(client.getGISDataService(18.128888541832566, 53.143207943066955));
             // get GIS data from the ontology using additional filters
-            parseGetGISDataServiceResponse(client.getGISDataService(-0.94, 51.43, 1.0, "Parking"));
+            parseGetGISDataServiceResponse(client.getGISDataService(18.128888541832566, 53.143207943066955, 1.0, "Parking"));
+            parseGetGISDataServiceResponse(client.getGISDataService(18.128888541832566, 53.143207943066955, 1.0, "Building"));
             // retrieve data from the external service (geoportal) and add it to ontology
             parseGetGeoportalDataServiceResponse(client.getGeoportalDataService(17.972946559166793, 53.124318916278824));
             // retrieve info about platform neighborhood
-            parseGetCameraFieldOfViewResponse(client.getPlatformNeighborhood("Vehicle_CB04432"));
-
-            Platform platform = createDummyPlatform("dummyPlatform_" + System.currentTimeMillis());
-            parseUpdatePlatformResponse(client.updatePlatform(platform));
+            parseGetCameraFieldOfViewResponse(client.getPlatformNeighborhood("Vehicle_Ford_Focus"));
 
             ParkingLot parkingLot = createDummyParkingLot("dummyParkingLot_" + System.currentTimeMillis());
             parseUpdatePlatformResponse(client.updateParkingLot(parkingLot));
 
-            parseObjectResponse(client.getParkingLot(parkingLot.getId()));
+            String parkingLotName = "Parking_UTP";
+            parseObjectResponse(client.getParkingLot(parkingLotName));
 
             // defines new zone in the ontology
             String zoneId = parseDefineZoneResponse(client.defineZone(new double[][] {
@@ -173,7 +176,7 @@ public class CMClient {
         platform.setWidth(3);
         platform.setLength(15);
         //platform location
-        platform.setLocation(new itti.com.pl.arena.cm.dto.Location(23.434, 32.235235));
+        platform.setLocation(new itti.com.pl.arena.cm.dto.Location(18.130637,53.147105));
         return platform;
     }
 

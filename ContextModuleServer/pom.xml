@@ -7,7 +7,7 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<groupId>itti.com.pl.arena.cm</groupId>
-	<artifactId>ContextModuleServer</artifactId>
+	<artifactId>GpsListener</artifactId>
 	<packaging>war</packaging>
 
 	<dependencies>

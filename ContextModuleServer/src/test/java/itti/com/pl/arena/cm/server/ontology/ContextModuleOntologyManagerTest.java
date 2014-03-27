@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import org.junit.BeforeClass;
@@ -24,14 +25,15 @@ import itti.com.pl.arena.cm.server.ontology.ContextModuleOntologyManager;
 import itti.com.pl.arena.cm.server.ontology.Ontology;
 import itti.com.pl.arena.cm.server.ontology.OntologyConstants;
 import itti.com.pl.arena.cm.server.ontology.OntologyException;
+import itti.com.pl.arena.cm.utils.helper.StringHelper;
 
-@Ignore
 public class ContextModuleOntologyManagerTest {
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
     private static Ontology cmOntologyManager;
+    private static Random random = new Random();
 
     @BeforeClass
     public static void beforeClass() {
@@ -187,6 +189,7 @@ public class ContextModuleOntologyManagerTest {
     }
 
     @Test
+    @Ignore("service under development")
     public void testCalculateArenaDistancesForPlatformValidId() throws OntologyException {
 
         //valid platformId provided
@@ -215,27 +218,27 @@ public class ContextModuleOntologyManagerTest {
         assertFalse(coordinates.isEmpty());
     }
 
-    // test 'define zone' functionality
+    // test 'update zone' functionality
     @Test
-    public void testDefineZoneNullLocations() throws OntologyException {
+    public void testUpdateZoneNullLocations() throws OntologyException {
 
         //if no locations were specified, zone is not going to be created
         expectedException.expect(OntologyException.class);
         expectedException.expectMessage(
                 String.format(ErrorMessages.ONTOLOGY_EMPTY_VALUE_PROVIDED.getMessage(), OntologyConstants.Object_has_GPS_coordinates.name()));
 
-        cmOntologyManager.updateZone(null);
+        cmOntologyManager.updateZone(null, null);
     }
 
     @Test
-    public void testDefineZoneEmptyLocations() throws OntologyException {
+    public void testUpdateZoneEmptyLocations() throws OntologyException {
 
         //if no locations were specified, zone is not going to be created
         expectedException.expect(OntologyException.class);
         expectedException.expectMessage(
                 String.format(ErrorMessages.ONTOLOGY_EMPTY_VALUE_PROVIDED.getMessage(), OntologyConstants.Object_has_GPS_coordinates.name()));
 
-        cmOntologyManager.updateZone(new ArrayList<Location>());
+        cmOntologyManager.updateZone(null, new ArrayList<Location>());
     }
 
     // test 'get zone' functionality
@@ -272,7 +275,7 @@ public class ContextModuleOntologyManagerTest {
     }
 
     @Test
-    public void testDefineGetZoneValid() throws OntologyException {
+    public void testUpdateGetZoneValid() throws OntologyException {
 
         List<Location> locations = new ArrayList<>();
         int noOfLocations = 5;
@@ -281,7 +284,7 @@ public class ContextModuleOntologyManagerTest {
                     new Location(TestHelper.getCoordinate(), TestHelper.getCoordinate(), 0, TestHelper.getCoordinate()));
         }
         //add new zone to ontology
-        String zoneId = cmOntologyManager.updateZone(locations);
+        String zoneId = cmOntologyManager.updateZone(null, locations);
         assertNotNull(zoneId);
 
         //now try to get the zone from ontology
@@ -293,6 +296,63 @@ public class ContextModuleOntologyManagerTest {
             assertTrue(locations.contains(location));
             locations.remove(location);
         }
+    }
+
+    @Test
+    public void testUpdateGetMultipleZones() throws OntologyException {
+
+        //update/get more than one zone at once
+        List<Location> locationsZoneA = new ArrayList<>();
+            locationsZoneA.add(
+                    new Location(TestHelper.getCoordinate(), TestHelper.getCoordinate(), 0, TestHelper.getCoordinate()));
+        List<Location> locationsZoneB = new ArrayList<>();
+        locationsZoneB.add(
+                    new Location(TestHelper.getCoordinate(), TestHelper.getCoordinate(), 0, TestHelper.getCoordinate()));
+
+        //add new zones to ontology
+        String zoneIdA = cmOntologyManager.updateZone(null, locationsZoneA);
+        assertNotNull(zoneIdA);
+
+        String zoneIdB = cmOntologyManager.updateZone(null, locationsZoneB);
+        assertNotNull(zoneIdB);
+
+        assertFalse(StringHelper.equalsIgnoreCase(zoneIdA, zoneIdB));
+
+        //now try to get the zone from ontology
+        //verify returned values
+        List<Location> responseZoneA = cmOntologyManager.getZone(zoneIdA);
+        assertTrue(responseZoneA.get(0).equals(locationsZoneA.get(0)));
+
+        List<Location> responseZoneB = cmOntologyManager.getZone(zoneIdB);
+        assertTrue(responseZoneB.get(0).equals(locationsZoneB.get(0)));
+    }
+
+    @Test
+    public void testUpdatePlatformPosition() throws OntologyException {
+
+        //create dummyPlatform
+        String platformId = "platform-" + random.nextInt(1000);
+        Location dummyLocation = new Location(
+                random.nextDouble(), random.nextDouble(), 0);
+
+        //add new zone platform to the ontology
+        cmOntologyManager.updatePlatformPosition(platformId, dummyLocation);
+
+        //get platform from the ontology
+        Platform ontoPlatform = cmOntologyManager.getOntologyObject(platformId, Platform.class);
+        assertEquals(platformId, ontoPlatform.getId());
+        assertEquals(dummyLocation, ontoPlatform.getLocation());
+
+        //simulate platform position update
+        Location newDummyLocation =  new Location(
+                random.nextDouble(), random.nextDouble());
+        //add new zone platform to the ontology
+        cmOntologyManager.updatePlatformPosition(platformId, newDummyLocation);
+
+        //get platform from the ontology
+        ontoPlatform = cmOntologyManager.getOntologyObject(platformId, Platform.class);
+        assertEquals(platformId, ontoPlatform.getId());
+        assertEquals(newDummyLocation, ontoPlatform.getLocation());
     }
 
 }

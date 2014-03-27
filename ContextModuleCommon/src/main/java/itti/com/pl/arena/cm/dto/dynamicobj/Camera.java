@@ -2,6 +2,7 @@ package itti.com.pl.arena.cm.dto.dynamicobj;
 
 import itti.com.pl.arena.cm.dto.OntologyObject;
 import itti.com.pl.arena.cm.dto.coordinates.CartesianCoordinate;
+import itti.com.pl.arena.cm.utils.helper.NumbersHelper;
 
 public class Camera extends OntologyObject {
 
@@ -169,9 +170,9 @@ public class Camera extends OntologyObject {
         final int prime = 31;
         int result = 1;
         long temp;
-        temp = Double.doubleToLongBits(angleX);
+        temp = Double.doubleToLongBits(NumbersHelper.changePrecision(angleX));
         result = prime * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(angleY);
+        temp = Double.doubleToLongBits(NumbersHelper.changePrecision(angleY));
         result = prime * result + (int) (temp ^ (temp >>> 32));
         temp = Double.doubleToLongBits(directionAngle);
         result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -189,11 +190,11 @@ public class Camera extends OntologyObject {
         if (getClass() != obj.getClass())
             return false;
         Camera other = (Camera) obj;
-        if (Double.doubleToLongBits(angleX) != Double.doubleToLongBits(other.angleX))
+        if (!NumbersHelper.equals(angleX, other.angleX))
             return false;
-        if (Double.doubleToLongBits(angleY) != Double.doubleToLongBits(other.angleY))
+        if (!NumbersHelper.equals(angleY, other.angleY))
             return false;
-        if (Double.doubleToLongBits(directionAngle) != Double.doubleToLongBits(other.directionAngle))
+        if (!NumbersHelper.equals(directionAngle, other.directionAngle))
             return false;
         if (onPlatformPosition == null) {
             if (other.onPlatformPosition != null)

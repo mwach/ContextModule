@@ -57,6 +57,8 @@ public class OntologyManager implements Service {
     // in-memory ontology model
     private JenaOWLModel model = null;
 
+    private List<String> ignoredProperties = new ArrayList<>();
+
     protected synchronized final JenaOWLModel getModel() {
         return model;
     }
@@ -114,6 +116,7 @@ public class OntologyManager implements Service {
             throw new BeanInitializationException(String.format(ErrorMessages.ONTOLOGY_CANNOT_LOAD.getMessage(),
                     String.valueOf(getOntologyLocation())), exc);
         }
+        ignoredProperties.add("rdf:type");
     }
 
     /**
@@ -403,6 +406,11 @@ public class OntologyManager implements Service {
 
         for (RDFProperty rdfProperty : instanceProperties) {
             String propertyName = rdfProperty.getName();
+
+            //check, if property is ignored
+            if(ignoredProperties.contains(propertyName)){
+                continue;
+            }
             @SuppressWarnings("rawtypes")
             Collection propertyValues = individual.getPropertyValues(rdfProperty);
             String[] values = new String[propertyValues.size()];
@@ -421,6 +429,19 @@ public class OntologyManager implements Service {
         return properties;
     }
 
+    /**
+     * Checks, if instance with given name exists in the ontology
+     * @param instanceName name of the instance
+     * @return true if instance with given name was found in the ontology, false otherwise
+     */
+    public boolean hasInstance(String instanceName){
+        //check, if name was provided
+        if(StringHelper.hasContent(instanceName)){
+            //check if instance exist in the model
+            return getModel().getOWLIndividual(instanceName) != null;
+        }
+        return false;
+    }
     /**
      * returns values for single property of an individual stored in the ontology model
      * 

@@ -137,6 +137,45 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         createSimpleInstance(platform.getType().name(), platform.getId(), properties);
     }
 
+    /* (non-Javadoc)
+     * @see itti.com.pl.arena.cm.server.ontology.Ontology#updatePlatformPosition(java.lang.String, itti.com.pl.arena.cm.dto.Location)
+     */
+    @Override
+    public void updatePlatformPosition(String platformId, Location location) throws OntologyException {
+
+        //validation
+        if(location == null){
+            throw new OntologyException(ErrorMessages.ONTOLOGY_EMPTY_LOCATION_OBJECT);
+        }
+        if(!StringHelper.hasContent(platformId)){
+            throw new OntologyException(ErrorMessages.ONTOLOGY_EMPTY_INSTANCE_NAME);
+        }
+
+        //get existing platform properties
+        Map<String, String[]> properties = null;
+        String parentClass = null;
+        //if platform exist in the ontology get existing properties
+        if(hasInstance(platformId)){
+            properties = getInstanceProperties(platformId);
+            parentClass = getInstanceClass(platformId);
+        }else{
+            //otherwise create new properties for new instance
+            properties = new HashMap<>();
+            //if new instance in ontology, use default type
+            parentClass = Platform.Type.getDefaultType().name();
+        }
+        // update location info
+        properties.put(OntologyConstants.Object_has_GPS_x.name(),
+                new String[] { String.valueOf(location.getLongitude()) });
+        properties.put(OntologyConstants.Object_has_GPS_y.name(),
+                new String[] { String.valueOf(location.getLatitude()) });
+        properties.put(OntologyConstants.Object_has_GPS_bearing.name(),
+                new String[] { String.valueOf(location.getBearing()) });
+
+        // create instance in the ontology
+        createSimpleInstance(parentClass, platformId, properties);
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -683,22 +722,25 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
     }
 
     @Override
-    public String updateZone(List<Location> locations) throws OntologyException {
+    public String updateZone(String zoneName, List<Location> locations) throws OntologyException {
 
-        String zoneName = "";
         if (locations == null || locations.isEmpty()) {
             LogHelper.info(ContextModuleOntologyManager.class, "defineZone",
                     "Zone is not going to be created. No locations specified");
             throw new OntologyException(ErrorMessages.ONTOLOGY_EMPTY_VALUE_PROVIDED, OntologyConstants.Object_has_GPS_coordinates.name());
-        } else {
-            zoneName = generateZoneName();
-            Map<String, String[]> properties = new HashMap<>();
-            properties.put(OntologyConstants.Object_has_GPS_coordinates.name(),
-                    LocationHelper.createStringsFromLocations(locations.toArray(new Location[locations.size()])));
+        } 
 
-            OWLIndividual zoneInstance = createSimpleInstance(OntologyConstants.Car_parking_zone.name(), zoneName, properties);
-            zoneName = zoneInstance.getName();
+        //check, if zoneId was defined in the request
+        if(!StringHelper.hasContent(zoneName)){
+            zoneName = generateZoneName();
         }
+        Map<String, String[]> properties = new HashMap<>();
+        properties.put(OntologyConstants.Object_has_GPS_coordinates.name(),
+                LocationHelper.createStringsFromLocations(locations.toArray(new Location[locations.size()])));
+
+        OWLIndividual zoneInstance = createSimpleInstance(OntologyConstants.Car_parking_zone.name(), zoneName, properties);
+        zoneName = zoneInstance.getName();
+
         return zoneName;
     }
 

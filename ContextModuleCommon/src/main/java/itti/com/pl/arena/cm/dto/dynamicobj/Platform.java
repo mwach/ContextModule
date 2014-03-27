@@ -2,6 +2,7 @@ package itti.com.pl.arena.cm.dto.dynamicobj;
 
 import itti.com.pl.arena.cm.dto.Location;
 import itti.com.pl.arena.cm.dto.OntologyObject;
+import itti.com.pl.arena.cm.utils.helper.NumbersHelper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -210,13 +211,13 @@ public class Platform extends OntologyObject{
         int result = 1;
         result = prime * result + ((cameras == null) ? 0 : cameras.hashCode());
         long temp;
-        temp = Double.doubleToLongBits(height);
+        temp = Double.doubleToLongBits(NumbersHelper.changePrecision(height));
         result = prime * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(length);
+        temp = Double.doubleToLongBits(NumbersHelper.changePrecision(length));
         result = prime * result + (int) (temp ^ (temp >>> 32));
         result = prime * result + ((location == null) ? 0 : location.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
-        temp = Double.doubleToLongBits(width);
+        temp = Double.doubleToLongBits(NumbersHelper.changePrecision(width));
         result = prime * result + (int) (temp ^ (temp >>> 32));
         return result;
     }
@@ -235,9 +236,11 @@ public class Platform extends OntologyObject{
                 return false;
         } else if (!cameras.equals(other.cameras))
             return false;
-        if (Double.doubleToLongBits(height) != Double.doubleToLongBits(other.height))
+        if (!NumbersHelper.equals(height, other.height))
             return false;
-        if (Double.doubleToLongBits(length) != Double.doubleToLongBits(other.length))
+        if (!NumbersHelper.equals(length, other.length))
+            return false;
+        if (!NumbersHelper.equals(width, other.width))
             return false;
         if (location == null) {
             if (other.location != null)
@@ -245,8 +248,6 @@ public class Platform extends OntologyObject{
         } else if (!location.equals(other.location))
             return false;
         if (type != other.type)
-            return false;
-        if (Double.doubleToLongBits(width) != Double.doubleToLongBits(other.width))
             return false;
         return true;
     }

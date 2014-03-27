@@ -302,7 +302,7 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
             }
         }
         // prepare response object
-        Object response = createObject(objectId.getId(), vector);
+        Object response = createObject(objectId.getId(), objectId.getHref(), vector);
         return response;
     }
 
@@ -329,7 +329,7 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
             }
         }
         // prepare response object
-        Object response = createObject(objectId.getId(), vector);
+        Object response = createObject(objectId.getId(), objectId.getHref(), vector);
         return response;
     }
 
@@ -338,11 +338,13 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
 
         List<AbstractNamedValue> vector = new ArrayList<>();
         String requestId = null;
+        String href = null;
 
         try {
             verifyRequestObject(platformIdRequestObject);
 
             requestId = StringHelper.toString(platformIdRequestObject.getId());
+            href = platformIdRequestObject.getHref();
 
             String platformId = platformIdRequestObject.getValue();
             // try to retrieve data from ontology
@@ -363,7 +365,7 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
         }
 
         // prepare response object
-        Object response = createObject(requestId, vector);
+        Object response = createObject(requestId, href, vector);
         return response;
     }
 
@@ -480,7 +482,7 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
             }
         }
         // prepare response object
-        Object response = createObject(location.getId(), responseVector);
+        Object response = createObject(location.getId(), location.getHref(), responseVector);
         return response;
     }
 
@@ -553,7 +555,7 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
             }
         }
         // prepare response object
-        Object response = createObject(location.getId(), responseVector);
+        Object response = createObject(location.getId(), location.getHref(), responseVector);
         return response;
     }
 
@@ -596,7 +598,7 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
             }
         }
         // prepare response object
-        Object response = createObject(location.getId(), responseVector);
+        Object response = createObject(location.getId(), location.getHref(), responseVector);
 
         return response;
     }
@@ -604,20 +606,23 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
     @Override
     public SimpleNamedValue updateZone(Object zoneDefinition) {
 
+        // ID of the created zone
+        String zoneId = "";
+
         // get the zone definition
         List<itti.com.pl.arena.cm.dto.Location> locations = new ArrayList<>();
         for (AbstractNamedValue vertex : zoneDefinition.getFeatureVector().getFeature()) {
             itti.com.pl.arena.cm.dto.Location location = LocationFactory.createLocation(vertex);
             if(location != null){
                 locations.add(location);
+            }else if(vertex instanceof SimpleNamedValue){
+                zoneId = ((SimpleNamedValue) vertex).getValue();
             }else{
                 LogHelper.warning(ContextModuleJmsService.class, "updateZone", "Could not convert given ARENA object into Location: %s", StringHelper.toString(vertex));
             }
         }
-        // ID of the created zone
-        String zoneId = "";
         try {
-            zoneId = getOntology().updateZone(locations);
+            zoneId = getOntology().updateZone(zoneId, locations);
         } catch (OntologyException exc) {
             LogHelper.exception(ContextModuleJmsService.class, "updateZone", "Could not define a zone in ontology", exc);
         }
@@ -644,7 +649,7 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
             LogHelper.exception(ContextModuleJmsService.class, "getZone", "Could not retrieve zone from the ontology", exc);
         }
         // prepare response object
-        Object response = createObject(zoneMessage.getId(), responseVector);
+        Object response = createObject(zoneMessage.getId(), zoneMessage.getHref(), responseVector);
 
         // add results to the response
         return response;
@@ -745,11 +750,12 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
      *            value of the object
      * @return object containing provided values
      */
-    private Object createObject(String id, List<AbstractNamedValue> vector) {
+    private Object createObject(String id, String href, List<AbstractNamedValue> vector) {
         Object object = getFactory().createObject();
         object.setFeatureVector(getFactory().createFeatureVector());
         object.setId(String.format("CM_RESP_%s", StringHelper.toString(id)));
         object.setDataSourceId(Constants.MODULE_NAME);
+        object.setHref(href);
         object.getFeatureVector().setId(StringHelper.toString(id));
         object.getFeatureVector().setDataSourceId(Constants.MODULE_NAME);
         object.getFeatureVector().getFeature().addAll(vector);

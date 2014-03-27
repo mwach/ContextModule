@@ -1,5 +1,6 @@
 package itti.com.pl.arena.cm.client;
 
+import java.util.List;
 import java.util.UUID;
 
 import itti.com.pl.arena.cm.Constants;
@@ -16,7 +17,9 @@ import com.safran.arena.impl.Client;
 import com.safran.arena.impl.ModuleImpl;
 
 import eu.arena_fp7._1.AbstractDataFusionType;
+import eu.arena_fp7._1.AbstractNamedValue;
 import eu.arena_fp7._1.BooleanNamedValue;
+import eu.arena_fp7._1.Object;
 import eu.arena_fp7._1.ObjectFactory;
 import eu.arena_fp7._1.SimpleNamedValue;
 
@@ -82,6 +85,7 @@ public class BasicCMClient extends ModuleImpl{
         
         //shutdown
         cmClient.shutdown();
+        System.exit(0);
     }
 
 
@@ -207,6 +211,9 @@ public class BasicCMClient extends ModuleImpl{
 
         // check, if data should be processed by current module
         if (dataSourceId.equals(getModuleName())) {
+
+            responseReceived = true;
+
             // do something with the response
 
             // true/false is returned by the 'addPlatform' method
@@ -214,12 +221,12 @@ public class BasicCMClient extends ModuleImpl{
                 System.out.println(String.format("response received: %b", ((BooleanNamedValue)data).isFeatureValue()));
             }
             // string value is returned by the 'getPlatform' method
-            else if(data instanceof SimpleNamedValue && 
-                    data.getHref().equals(ContextModuleRequests.getPlatform)){
-                String response = ((SimpleNamedValue)data).getValue();
+            else if(data instanceof Object && 
+                    data.getHref().equals(ContextModuleRequests.getPlatform.name())){
+                List<AbstractNamedValue> response = ((Object)data).getFeatureVector().getFeature();
                 System.out.println(String.format("response received: %s", response));
                 try {
-                    Platform responsePlatform = JsonHelper.fromJson(response, Platform.class);
+                    Platform responsePlatform = JsonHelper.fromJson(((SimpleNamedValue)response.get(0)).getValue(), Platform.class);
                     System.out.println(String.format("Platform object: %s", responsePlatform));
                 } catch (JsonHelperException e) {
                     e.printStackTrace();

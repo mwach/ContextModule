@@ -130,12 +130,20 @@ public class PlatformTracker implements Service, LocationListener {
         // try to persist latest location in the database
         if (location != null) {
             try {
+                //store location in the database
                 getPersistence().create(getPlatformId(), location);
-            } catch (PersistenceException e) {
+                //update platform position in the ontology
+                getOntology().updatePlatformPosition(getPlatformId(), location);
+            } catch (PersistenceException exc) {
                 LogHelper
                         .warning(PlatformTracker.class, "onLocationChange",
                                 "Could not persist location data: for platform %s. Details: %s", getPlatformId(),
-                                e.getLocalizedMessage());
+                                exc.getLocalizedMessage());
+            } catch (OntologyException exc) {
+                LogHelper
+                .warning(PlatformTracker.class, "onLocationChange",
+                        "Could not update ontlogy with platform '%s' data. Details: %s", getPlatformId(),
+                        exc.getLocalizedMessage());
             }
         } else {
             LogHelper.info(PlatformTracker.class, "onLocationChange", "Null location received for platform %s", getPlatformId());

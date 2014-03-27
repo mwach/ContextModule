@@ -68,7 +68,7 @@
 		class="itti.com.pl.arena.cm.server.ontology.ContextModuleOntologyManager"
 		init-method="init" destroy-method="shutdown">
 		<!-- properties: ontology location and namespace -->
-		<property name="ontologyLocation" value="Arena_update_v10e.owl" />
+		<property name="ontologyLocation" value="Arena_update_v10f.owl" />
 		<property name="ontologyNamespace"
 			value="http://www.owl-ontologies.com/Ontology1350654591.owl#" />
 	</bean>
@@ -83,7 +83,7 @@
 		<property name="persistence" ref="Persistence" />
 		<property name="ontology" ref="Ontology" />
 		<!-- name of the platform -->
-		<property name="platformId" value="arenaTruck1" />
+		<property name="platformId" value="Vehicle_Ford_Focus" />
 		<!-- JMS bean (inform other objects, that parking has been reached -->
 		<property name="platformListener" ref="ContextModuleJmsService" />
 		<!-- IDLE time between platform stop and 'destinationReached' method called 
@@ -110,8 +110,9 @@
 	<!-- periodical tasks -->
 	<task:scheduled-tasks scheduler="CmScheduler">
 		<!-- once per five seconds update GPS location of the mock GPS device -->
-		<task:scheduled ref="GpsListenerMock" method="updateLocation"
+		<!-- <task:scheduled ref="GpsListenerMock" method="updateLocation"
 			fixed-delay="5000" />
+		-->
 		<task:scheduled ref="PlatformTracker" method="checkPlatformStopped"
 			fixed-delay="5000" />
 	</task:scheduled-tasks>

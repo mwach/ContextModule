@@ -1,5 +1,7 @@
 package itti.com.pl.arena.cm.dto.coordinates;
 
+import itti.com.pl.arena.cm.utils.helper.NumbersHelper;
+
 import java.io.Serializable;
 
 /**
@@ -71,9 +73,9 @@ public class CartesianCoordinate implements Serializable{
         if (getClass() != obj.getClass())
             return false;
         CartesianCoordinate other = (CartesianCoordinate) obj;
-        if (Double.doubleToLongBits(x) != Double.doubleToLongBits(other.x))
+        if (!NumbersHelper.equals(x, other.x))
             return false;
-        if (Double.doubleToLongBits(y) != Double.doubleToLongBits(other.y))
+        if (!NumbersHelper.equals(y, other.y))
             return false;
         return true;
     }

@@ -1,10 +1,13 @@
 package itti.com.pl.arena.cm.server.web.servlet;
 
 import itti.com.pl.arena.cm.Constants;
+import itti.com.pl.arena.cm.dto.Location;
 import itti.com.pl.arena.cm.server.location.LocationListener;
 import itti.com.pl.arena.cm.server.location.LocationPublisher;
 import itti.com.pl.arena.cm.utils.helper.IOHelper;
 import itti.com.pl.arena.cm.utils.helper.IOHelperException;
+import itti.com.pl.arena.cm.utils.helper.JsonHelper;
+import itti.com.pl.arena.cm.utils.helper.JsonHelperException;
 import itti.com.pl.arena.cm.utils.helper.LogHelper;
 import itti.com.pl.arena.cm.utils.helper.StringHelper;
 
@@ -76,7 +79,9 @@ public class GpsListener implements HttpRequestHandler, LocationPublisher {
             // write confirmation to the output
             response.getOutputStream().write(StringHelper.hasContent(newLocation) ? POST_RESPONSE_OK : POST_RESPONSE_FAIL);
 
-            notifyListener(newLocation);
+            if (StringHelper.hasContent(newLocation)) {
+                notifyListener(newLocation);
+            }
 
         } catch (IOHelperException e) {
             LogHelper.warning(GpsListener.class, "doPost", "Could not process the request: %s", e.getLocalizedMessage());
@@ -98,13 +103,22 @@ public class GpsListener implements HttpRequestHandler, LocationPublisher {
 
     public void notifyListener(String newLocation) {
 
-        // for (LocationListener listener : listeners.values()) {
-        // listener.onLocationChange(newLocation);
-        // }
-        // Location location =
-        // JsonHelper.getJsonParser().fromJson(newLocation, Location.class);
-        // PlatformLocation platformLocation = new PlatformLocation(pla)
-        // getLocationListener().onLocationChange(location);
+        try {
+            GpsLocation location = JsonHelper.fromJson(newLocation, GpsLocation.class);
+
+            //TODO: temporary for debugging
+            try {
+                IOHelper.saveDataToFile(newLocation + "\n", "/tmp/gpsStats", true);
+            } catch (IOHelperException e) {
+            }
+
+            for (LocationListener listener : getListeners().values()) {
+                listener.onLocationChange(createLocation(location));
+            }
+
+        } catch (JsonHelperException | RuntimeException exc) {
+            LogHelper.error(GpsListener.class, "notifyListener", "Could not deserialize GPS response '%s' into object: '%s'", newLocation, exc.getStackTrace());
+        }
     }
 
     @Override
@@ -122,5 +136,21 @@ public class GpsListener implements HttpRequestHandler, LocationPublisher {
 
     @Override
     public void shutdown() {
+    }
+
+    private static class GpsLocation{
+//        {"Latitude":53.13749182038009,"Longitude":18.127436125651002,"Altitude":66.5,"Bearing":181.0,"Speed":0.1251000016927719,"Time":1395316203000,"Accuracy":15.0}
+
+        public double Latitude;
+        public double Longitude;
+        public double Altitude;
+        public double Bearing;
+        public double Speed;
+        public long Time;
+        public double Accuracy;
+    }
+
+    private Location createLocation(GpsLocation gpsLocation){
+        return  new Location(gpsLocation.Longitude, gpsLocation.Latitude, (int)gpsLocation.Bearing, gpsLocation.Altitude, gpsLocation.Accuracy, gpsLocation.Speed, gpsLocation.Time);
     }
 }

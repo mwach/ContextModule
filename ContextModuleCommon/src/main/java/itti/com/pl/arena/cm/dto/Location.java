@@ -1,5 +1,7 @@
 package itti.com.pl.arena.cm.dto;
 
+import itti.com.pl.arena.cm.utils.helper.NumbersHelper;
+
 import java.io.Serializable;
 
 /**
@@ -174,18 +176,18 @@ public class Location implements Serializable {
         final int prime = 31;
         int result = 1;
         long temp;
-        temp = Double.doubleToLongBits(accuracy);
+        temp = Double.doubleToLongBits(NumbersHelper.changePrecision(accuracy));
         result = prime * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(altitude);
+        temp = Double.doubleToLongBits(NumbersHelper.changePrecision(altitude));
         result = prime * result + (int) (temp ^ (temp >>> 32));
         result = prime * result + bearing;
-        temp = Double.doubleToLongBits(latitude);
+        temp = Double.doubleToLongBits(NumbersHelper.changePrecision(latitude));
         result = prime * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(longitude);
+        temp = Double.doubleToLongBits(NumbersHelper.changePrecision(longitude));
         result = prime * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(speed);
+        temp = Double.doubleToLongBits(NumbersHelper.changePrecision(speed));
         result = prime * result + (int) (temp ^ (temp >>> 32));
-        result = prime * result + (int) (time ^ (time >>> 32));
+//        result = prime * result + (int) (time ^ (time >>> 32));
         return result;
     }
 
@@ -198,20 +200,22 @@ public class Location implements Serializable {
         if (getClass() != obj.getClass())
             return false;
         Location other = (Location) obj;
-        if (Double.doubleToLongBits(accuracy) != Double.doubleToLongBits(other.accuracy))
+
+        if (!NumbersHelper.equals(accuracy, other.accuracy))
             return false;
-        if (Double.doubleToLongBits(altitude) != Double.doubleToLongBits(other.altitude))
+        if (!NumbersHelper.equals(altitude, other.altitude))
             return false;
-        if (bearing != other.bearing)
+        if (!NumbersHelper.equals(bearing, other.bearing))
             return false;
-        if (Double.doubleToLongBits(latitude) != Double.doubleToLongBits(other.latitude))
+        if (!NumbersHelper.equals(latitude, other.latitude))
             return false;
-        if (Double.doubleToLongBits(longitude) != Double.doubleToLongBits(other.longitude))
+        if (!NumbersHelper.equals(longitude, other.longitude))
             return false;
-        if (Double.doubleToLongBits(speed) != Double.doubleToLongBits(other.speed))
+        if (!NumbersHelper.equals(speed, other.speed))
             return false;
-        if (time != other.time)
-            return false;
+        //time is not used for location comparison
+        //        if (NumbersHelper.equals(time, other.time))
+        //            return false;
         return true;
     }
 
