@@ -121,6 +121,4 @@ public class ParkingLot extends GeoObject {
             return false;
         return true;
     }
-
-    
 }

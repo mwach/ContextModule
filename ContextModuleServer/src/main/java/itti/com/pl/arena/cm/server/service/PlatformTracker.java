@@ -157,7 +157,7 @@ public class PlatformTracker implements Service, LocationListener {
     public void checkPlatformStopped() {
 
         try {
-
+          //TODO: verify GPS time units
             Location lastLocation = getPersistence().getLastPosition(getPlatformId());
             if (lastLocation == null) {
                 LogHelper.debug(PlatformTracker.class, "checkPlatformStopped",
@@ -179,7 +179,7 @@ public class PlatformTracker implements Service, LocationListener {
                                 parkingLots);
 
                         // we are on the parking
-                        if (range == Range.getClosestRange()) {
+                        if (range == Range.getClosestRange() && getStatus() != PlatformStatus.StoppedOnParking) {
                             updateStatus(PlatformStatus.StoppedOnParking);
                             // notify the listener
                             getPlatformListener().destinationReached(getId(), lastLocation);

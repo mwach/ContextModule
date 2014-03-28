@@ -603,6 +603,52 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         return new HashSet<>(matches);
     }
 
+    private String findNearestParkingLot(Location location, double radius) throws OntologyException {
+
+        //get list of all available parkings
+        Set<String> availableParkings = getParkingLots(location.getLongitude(), location.getLatitude(), radius);
+
+        //no parking lots returned
+        if(availableParkings.isEmpty()){
+            return null;
+        }
+        //one parking lot returned - return its name
+        if(availableParkings.size() == 1){
+            return availableParkings.iterator().next();
+        }
+        //more than one parking lots - do some processing
+
+        //check all parking lots
+        String closestParkingLot = null;
+        double closestDistance = Double.MAX_VALUE;
+
+        for (String parkingLotName : availableParkings) {
+            ParkingLot parkingLot = getOntologyObject(parkingLotName, ParkingLot.class);
+            Set<Location> parkingLotBoundaries = parkingLot.getBoundaries();
+            //in case, there are no boundaries for parking, use its location
+            parkingLotBoundaries.add(parkingLot.getLocation());
+            
+            //for each parking lot, check all boundaries
+            for (Location boundary : parkingLotBoundaries){
+                double distance = calculateDistance(boundary, location);
+                if(distance < closestDistance){
+                    closestDistance = distance;
+                    closestParkingLot = parkingLotName;
+                }
+            }
+        }
+        return closestParkingLot;
+    }
+
+    private double calculateDistance(Location locationOne, Location locationTwo) {
+        if(locationOne == null || locationTwo == null){
+            return Double.MAX_VALUE;
+        }
+        double distX = Math.pow(locationOne.getLongitude() - locationTwo.getLongitude(), 2);
+        double distY = Math.pow(locationOne.getLatitude() - locationTwo.getLatitude(), 2);
+        return Math.sqrt(distX + distY);
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -644,16 +690,26 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 
         // get the platform data from ontology
         Platform platform = getPlatform(platformId);
-        Set<String> parkingLots = getParkingLots(platform.getLocation().getLongitude(), platform.getLocation().getLatitude(),
+//        Set<String> parkingLots = getParkingLots(platform.getLocation().getLongitude(), platform.getLocation().getLatitude(),
+//                radius);
+//        if (parkingLots.isEmpty()) {
+//            LogHelper.warning(ContextModuleOntologyManager.class, "calculateDistancesForPlatform",
+//                    "There are no parkings for platform %s in location %s and radius %f", platformId, platform.getLocation(),
+//                    radius);
+//            return;
+//        }
+//        // use first parking as a default one
+//        String parkingId = parkingLots.iterator().next();
+
+        String parkingId = findNearestParkingLot(platform.getLocation(),
                 radius);
-        if (parkingLots.isEmpty()) {
+        if (!StringHelper.hasContent(parkingId)) {
             LogHelper.warning(ContextModuleOntologyManager.class, "calculateDistancesForPlatform",
                     "There are no parkings for platform %s in location %s and radius %f", platformId, platform.getLocation(),
                     radius);
             return;
         }
-        // use first parking as a default one
-        String parkingId = parkingLots.iterator().next();
+
         Set<String> buildings = getParkingLotInfrastructure(parkingId);
         for (String buildingId : buildings) {
             // get the coordinates of the building
@@ -681,16 +737,19 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 
         // get the platform data from ontology
         Platform platform = getPlatform(platformId);
-        Set<String> parkingLots = getParkingLots(platform.getLocation().getLongitude(), platform.getLocation().getLatitude(),
+        Location referenceLocation = platform.getLocation();
+
+        // use closest parking as a default one
+        String parkingLotId = findNearestParkingLot(referenceLocation,
                 Range.Km1.getRangeInKms());
-        if (parkingLots.isEmpty()) {
-            LogHelper.warning(ContextModuleOntologyManager.class, "calculateArenaDistancesForPlatform",
-                    "There are no parkings for platform %s", platformId);
+        if (!StringHelper.hasContent(parkingLotId)) {
+            LogHelper.warning(ContextModuleOntologyManager.class, "calculateDistancesForPlatform",
+                    "There are no parkings for platform %s in location %s and radius %f", platformId, referenceLocation,
+                    Range.Km1.getRangeInKms());
             return null;
         }
-        // use first parking as a default one
-        String parkingId = parkingLots.iterator().next();
-        Set<String> buildings = getParkingLotInfrastructure(parkingId);
+
+        Set<String> buildings = getParkingLotInfrastructure(parkingLotId);
         Set<ArenaObjectCoordinate> objectCoordinates = new HashSet<>();
         for (String buildingId : buildings) {
             // get the coordinates of the building
@@ -701,8 +760,8 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
                 // calculate radius coordinates
                 Double[][] numberCoordinates = NumbersHelper.fromStringArray(buildingCoordinates);
                 for (Double[] coordinate : numberCoordinates) {
-                    double radius = calculateDistance(coordinate, platform.getLocation());
-                    double angle = calculateAngle(coordinate, platform.getLocation());
+                    double radius = calculateDistance(coordinate, referenceLocation);
+                    double angle = calculateAngle(coordinate, referenceLocation);
                     objectCoordinate.addRadialCoordinates(radius, angle);
                 }
             } else {
@@ -715,7 +774,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         // now update objects angle with the platform bearing
         for (ArenaObjectCoordinate objectCoordinate : objectCoordinates) {
             for (RadialCoordinate radialCoordinate : objectCoordinate) {
-                radialCoordinate.updateAngle(platform.getLocation().getBearing());
+                radialCoordinate.updateAngle(referenceLocation.getBearing());
             }
         }
         return objectCoordinates;
