@@ -105,12 +105,7 @@ public class GpsListener implements HttpRequestHandler, LocationPublisher {
 
         try {
             GpsLocation location = JsonHelper.fromJson(newLocation, GpsLocation.class);
-
-            //TODO: temporary for debugging
-            try {
-                IOHelper.saveDataToFile(newLocation + "\n", "/tmp/gpsStats", true);
-            } catch (IOHelperException e) {
-            }
+            LogHelper.debug(GpsListener.class, "notifyListener", "GPS update received: %s", location);
 
             for (LocationListener listener : getListeners().values()) {
                 listener.onLocationChange(createLocation(location));

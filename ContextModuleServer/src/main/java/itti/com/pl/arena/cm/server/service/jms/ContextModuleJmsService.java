@@ -350,11 +350,15 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
             // try to retrieve data from ontology
             Set<ArenaObjectCoordinate> objects = getOntology().calculateArenaDistancesForPlatform(platformId);
 
-            // data retrieved -try to process it
-            // TODO
+            // data retrieved -create response message
             if(objects != null){
-                for (ArenaObjectCoordinate geoObject : objects) {
-                    vector.add(new SimpleNamedValue());
+                for (ArenaObjectCoordinate objectCoordinate : objects) {
+                    //if any of the response objects fail, ignore it
+                    try {
+                        vector.add(createSimpleNamedValue(platformIdRequestObject.getId(), JsonHelper.toJson(objectCoordinate)));
+                    } catch (JsonHelperException e) {
+                        LogHelper.warning(ContextModuleJmsService.class, "getPlatformNeighborhood", "Could not serialize object coordinate: '%s'. Details: %s", objectCoordinate, e.getLocalizedMessage());
+                    }
                 }
             }
 

@@ -80,4 +80,36 @@ public class ArenaObjectCoordinate extends OntologyObject implements Iterable<Ra
         }
         return coordinates;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((radialCoordinates == null) ? 0 : radialCoordinates.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ArenaObjectCoordinate other = (ArenaObjectCoordinate) obj;
+        if (radialCoordinates == null) {
+            if (other.radialCoordinates != null)
+                return false;
+        } else if (!radialCoordinates.equals(other.radialCoordinates))
+            return false;
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "ArenaObjectCoordinate [getId()=" + getId() + ", radialCoordinates=" + radialCoordinates + "]";
+    }
+
+    
 }

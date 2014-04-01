@@ -103,7 +103,7 @@ public class CMClient {
             // CM exception e.g. properties file parsing
             LogHelper.error(CMClient.class, "main", "Could not perform operation. Details: %s", exc.getMessage());
             printUsage();
-        } catch (RuntimeException | JsonHelperException exc) {
+        } catch (RuntimeException exc) {
             // other exception e.g. response parsing error
             LogHelper.error(CMClient.class, "main", "Could not perform operation. Details: %s", exc.getMessage());
         } finally {
@@ -455,19 +455,23 @@ public class CMClient {
      * @throws JsonHelperException
      *             could not create request object
      */
-    public Object getGISDataService(double x, double y, Double radius, String... classes) throws JsonHelperException {
+    public Object getGISDataService(double x, double y, Double radius, String... classes) {
 
         Location locationObject = createLocation(x, y);
 
         SimpleNamedValue radiusObject = createSimpleNamedValue(radius != null ? String.valueOf(radius) : String
                 .valueOf(Constants.UNDEFINED_VALUE));
 
-        SimpleNamedValue classesObject = createSimpleNamedValue(JsonHelper.toJson(classes));
+        Object data = null;
+        try{
+            SimpleNamedValue classesObject = createSimpleNamedValue(JsonHelper.toJson(classes));
+            Object requestData = createObject(locationObject, radiusObject, classesObject);
+            requestData.setHref(ContextModuleRequests.getGISDataExt.name());
+            data = contextModule.getGISData(requestData);
 
-        Object requestData = createObject(locationObject, radiusObject, classesObject);
-        requestData.setHref(ContextModuleRequests.getGISDataExt.name());
-
-        Object data = contextModule.getGISData(requestData);
+        }catch(JsonHelperException exc){
+            exc.printStackTrace();
+        }
 
         LogHelper.info(CMClient.class, "getGISDataService", "Server response received: %s", String.valueOf(data));
         return data;

@@ -42,9 +42,6 @@ import edu.stanford.smi.protegex.owl.model.OWLIndividual;
  */
 public class ContextModuleOntologyManager extends OntologyManager implements Ontology {
 
-    // radius of Earth in meters (6371 km)
-    private static final double EARTH_RADIUS = 6371000;
-
     private static final String QUERY_GET_OBJECTS = "PREFIX ns: <%s> " + "SELECT ?%s " + "WHERE " + "{ "
             + "?%s ns:Object_has_GPS_x ?coordinate_x. " + "?%s ns:Object_has_GPS_y ?coordinate_y. "
             + "FILTER ( (?coordinate_x >= %f && ?coordinate_x <= %f) && (?coordinate_y >= %f && ?coordinate_y <= %f)) " + "}";
@@ -605,7 +602,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 
     private String findNearestParkingLot(Location location, double radius) throws OntologyException {
 
-        //get list of all available parkings
+        //get list of all available parking lots
         Set<String> availableParkings = getParkingLots(location.getLongitude(), location.getLatitude(), radius);
 
         //no parking lots returned
@@ -630,7 +627,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
             
             //for each parking lot, check all boundaries
             for (Location boundary : parkingLotBoundaries){
-                double distance = calculateDistance(boundary, location);
+                double distance = LocationHelper.calculateDistance(boundary, location);
                 if(distance < closestDistance){
                     closestDistance = distance;
                     closestParkingLot = parkingLotName;
@@ -640,14 +637,23 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         return closestParkingLot;
     }
 
-    private double calculateDistance(Location locationOne, Location locationTwo) {
-        if(locationOne == null || locationTwo == null){
-            return Double.MAX_VALUE;
-        }
-        double distX = Math.pow(locationOne.getLongitude() - locationTwo.getLongitude(), 2);
-        double distY = Math.pow(locationOne.getLatitude() - locationTwo.getLatitude(), 2);
-        return Math.sqrt(distX + distY);
-    }
+//    private double calculateDistance(Location locationOne, Location locationTwo) {
+//        if(locationOne == null || locationTwo == null){
+//            return Double.MAX_VALUE;
+//        }
+//
+//        double deltaLatitude = Math.toRadians(locationTwo.getLatitude() - locationTwo.getLatitude());
+//        double deltaLongitude = Math.toRadians(locationOne.getLongitude() - locationOne.getLongitude());
+//
+//        double firstLatitude = Math.toRadians(locationTwo.getLatitude());
+//        double secondLatitude = Math.toRadians(locationOne.getLatitude());
+//
+//        double a = Math.pow(Math.sin(deltaLatitude / 2), 2.0) + Math.pow(Math.sin(deltaLongitude / 2), 2.0)
+//                * Math.cos(firstLatitude) * Math.cos(secondLatitude);
+//        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+//        double distance = EARTH_RADIUS * c;
+//        return distance;
+//    }
 
     /*
      * (non-Javadoc)
@@ -690,16 +696,6 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 
         // get the platform data from ontology
         Platform platform = getPlatform(platformId);
-//        Set<String> parkingLots = getParkingLots(platform.getLocation().getLongitude(), platform.getLocation().getLatitude(),
-//                radius);
-//        if (parkingLots.isEmpty()) {
-//            LogHelper.warning(ContextModuleOntologyManager.class, "calculateDistancesForPlatform",
-//                    "There are no parkings for platform %s in location %s and radius %f", platformId, platform.getLocation(),
-//                    radius);
-//            return;
-//        }
-//        // use first parking as a default one
-//        String parkingId = parkingLots.iterator().next();
 
         String parkingId = findNearestParkingLot(platform.getLocation(),
                 radius);
@@ -716,8 +712,20 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
             String[] objectCoordinates = getInstanceProperties(buildingId, OntologyConstants.Object_has_GPS_coordinates.name());
             // try to parse them into doubles
             if (objectCoordinates != null) {
-                Double[][] numberCoordinates = NumbersHelper.fromStringArray(objectCoordinates);
-                calculateDistanceForObject(buildingId, platform.getLocation(), numberCoordinates);
+                float maxDistance = Float.MAX_VALUE;
+                for (String coordinateStr : objectCoordinates) {
+                    try {
+                        Location coordinate = LocationHelper.getLocationFromString(coordinateStr);
+                        float distance = (float) LocationHelper.calculateDistance(platform.getLocation(), coordinate);
+                        if(distance < maxDistance){
+                            maxDistance = distance;
+                        }
+                    } catch (LocationHelperException e) {
+                        LogHelper.warning(ContextModuleOntologyManager.class, "calculateDistancesForPlatform", "Could not convert '%s' into location. Details: %s", coordinateStr, e.getLocalizedMessage());
+                        e.printStackTrace();
+                    }
+                }
+                updatePropertyValue(buildingId, OntologyConstants.Object_has_distance.name(), maxDistance);
             } else {
                 LogHelper.info(ContextModuleOntologyManager.class, "calculateDistanceForObject",
                         "No GPS coordinates found for instance: '%s'", buildingId);
@@ -758,11 +766,16 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
             // try to parse them into doubles
             if (objectCoordinates != null) {
                 // calculate radius coordinates
-                Double[][] numberCoordinates = NumbersHelper.fromStringArray(buildingCoordinates);
-                for (Double[] coordinate : numberCoordinates) {
-                    double radius = calculateDistance(coordinate, referenceLocation);
-                    double angle = calculateAngle(coordinate, referenceLocation);
-                    objectCoordinate.addRadialCoordinates(radius, angle);
+                for (String coordinateStr : buildingCoordinates) {
+                    Location coordinate = null;
+                    try {
+                        coordinate = LocationHelper.getLocationFromString(coordinateStr);
+                        double radius = LocationHelper.calculateDistance(coordinate, referenceLocation);
+                        double angle = calculateAngle(coordinate, referenceLocation);
+                        objectCoordinate.addRadialCoordinates(radius, angle);
+                    } catch (LocationHelperException e) {
+                        LogHelper.warning(ContextModuleOntologyManager.class, "calculateArenaDistancesForPlatform", "Could not parse '%s' into location. Details: %s", coordinateStr, e.getLocalizedMessage());
+                    }
                 }
             } else {
                 LogHelper.info(ContextModuleOntologyManager.class, "calculateDistanceForObject",
@@ -843,88 +856,6 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
     }
 
     /**
-     * Calculated distance between object identified by its ID and given location
-     * 
-     * @param objectId
-     *            ID of the object, for which distance should be calculated
-     * @param referenceLocation
-     *            reference location (distance will be calculated between object position and that location)
-     * @throws OntologyException
-     *             could not calculate location
-     */
-    private void calculateDistanceForObject(String objectId, Location referenceLocation, Double[][] numberCoordinates)
-            throws OntologyException {
-
-        LogHelper.debug(ContextModuleOntologyManager.class, "calculateDistanceForObject",
-                "calculate distance for object '%s' and location %s'", String.valueOf(objectId),
-                String.valueOf(referenceLocation));
-
-        Double maxDistance = null;
-        for (Double[] coordinate : numberCoordinates) {
-            // invalid coordinates, ignore
-            validateCoordinates(objectId, coordinate, DIMENSIONS_XY);
-
-            Double distance = calculateDistance(coordinate, referenceLocation);
-            if (distance != null && (maxDistance == null || maxDistance < distance)) {
-                maxDistance = distance;
-            }
-        }
-        updatePropertyValue(objectId, OntologyConstants.Object_has_distance.name(), maxDistance.toString());
-    }
-
-    /**
-     * Validates coordinates
-     * 
-     * @param instanceName
-     *            name of the instance (logging purposes)
-     * @param coordinates
-     *            array of coordinates
-     * @param dimensions
-     *            expected number of dimensions
-     * @throws OntologyException
-     *             invalid dimensions were provided
-     */
-    protected void validateCoordinates(String instanceName, Double[] coordinates, int dimensions) throws OntologyException {
-
-        if (coordinates == null || coordinates.length != dimensions) {
-            LogHelper.warning(ContextModuleOntologyManager.class, "validateCoordinates",
-                    "Invalid format of the coordinates: '%s' for instance '%s'", String.valueOf(coordinates), instanceName);
-        }
-        for (int i = 0; i < dimensions; i++) {
-            if (coordinates[i] == null) {
-                LogHelper.warning(ContextModuleOntologyManager.class, "validateCoordinates",
-                        "Null coodrinate found: '%s' for instance '%s'", String.valueOf(coordinates), instanceName);
-            }
-        }
-    }
-
-    /**
-     * Calculates distance between two locations. One is stored as a string: 'xPos, yPos', the second one is stored as a
-     * {@link Location} object calculation was implemented based on instructions from:
-     * http://www.movable-type.co.uk/scripts/latlong.html
-     * 
-     * @param coordinateString
-     *            first coordinate in string form
-     * @param referenceLocation
-     *            second coordinate
-     * @return distance between two locations measured in meters
-     */
-    private Double calculateDistance(Double[] coordinates, Location referenceLocation) {
-
-        double deltaLongitude = Math.toRadians(coordinates[0] - referenceLocation.getLongitude());
-        double deltaLatitude = Math.toRadians(coordinates[1] - referenceLocation.getLatitude());
-
-        double firstLatitude = Math.toRadians(referenceLocation.getLatitude());
-        double secondLatitude = Math.toRadians(coordinates[1]);
-
-        double a = Math.pow(Math.sin(deltaLatitude / 2), 2.0) + Math.pow(Math.sin(deltaLongitude / 2), 2.0)
-                * Math.cos(firstLatitude) * Math.cos(secondLatitude);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        double distance = EARTH_RADIUS * c;
-        return distance;
-    }
-
-    /**
      * Calculates angle between two locations. One is stored as a string: 'xPos, yPos', the second one is stored as a
      * {@link Location} object. Calculation was implemented based on instructions from:
      * http://stackoverflow.com/questions/7586063
@@ -935,10 +866,10 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
      *            second coordinate
      * @return distance between two locations measured in meters
      */
-    private Double calculateAngle(Double[] coordinates, Location referenceLocation) {
+    private Double calculateAngle(Location baseLocation, Location referenceLocation) {
 
-        double deltaLongitude = Math.toRadians(coordinates[0] - referenceLocation.getLongitude());
-        double deltaLatitude = Math.toRadians(coordinates[1] - referenceLocation.getLatitude());
+        double deltaLongitude = Math.toRadians(baseLocation.getLongitude() - referenceLocation.getLongitude());
+        double deltaLatitude = Math.toRadians(baseLocation.getLatitude() - referenceLocation.getLatitude());
 
         double angle = Math.atan(deltaLatitude / deltaLongitude) * 100 / Math.PI;
         return angle;

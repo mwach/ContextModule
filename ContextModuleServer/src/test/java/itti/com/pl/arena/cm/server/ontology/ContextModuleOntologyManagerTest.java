@@ -8,7 +8,6 @@ import java.util.Random;
 import java.util.Set;
 
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -189,33 +188,49 @@ public class ContextModuleOntologyManagerTest {
     }
 
     @Test
-    @Ignore("service under development")
     public void testCalculateArenaDistancesForPlatformValidId() throws OntologyException {
 
         //valid platformId provided
         String platformId = "platformId_" + System.currentTimeMillis();
         //valid parkingLotId provided
-        String parkingLotId = "parkingLot_" + System.currentTimeMillis();
+        String parkingLotOneId = "parkingLotOne_" + System.currentTimeMillis();
+        String parkingLotTwoId = "parkingLotTwo_" + System.currentTimeMillis();
 
         //create dummy objects for test purposes
-        ParkingLot parkingLot = TestHelper.createDummyParkingLot(parkingLotId);
+        ParkingLot parkingLotOne = TestHelper.createDummyParkingLot(parkingLotOneId);
+        ParkingLot parkingLotTwo = TestHelper.createDummyParkingLot(parkingLotTwoId);
         Platform platform = TestHelper.createDummyPlatform(platformId);
 
         //make sure, their locations match
-        platform.setLocation(parkingLot.getLocation());
+        platform.setLocation(parkingLotTwo.getLocation());
         //now add them to the ontology
         cmOntologyManager.updatePlatform(platform);
-        cmOntologyManager.updateParkingLot(parkingLot);
+        cmOntologyManager.updateParkingLot(parkingLotOne);
+        cmOntologyManager.updateParkingLot(parkingLotTwo);
 
         //verify stored objects
         Platform ontoPlatform = cmOntologyManager.getOntologyObject(platformId, Platform.class);
-        ParkingLot ontoParkingLot = cmOntologyManager.getOntologyObject(parkingLotId, ParkingLot.class);
+        ParkingLot ontoParkingLotOne = cmOntologyManager.getOntologyObject(parkingLotOneId, ParkingLot.class);
+        ParkingLot ontoParkingLotTwo = cmOntologyManager.getOntologyObject(parkingLotTwoId, ParkingLot.class);
         assertEquals(platform, ontoPlatform);
-        assertEquals(parkingLot, ontoParkingLot);
+        assertEquals(parkingLotOne, ontoParkingLotOne);
+        assertEquals(parkingLotTwo, ontoParkingLotTwo);
 
         //later, try to retrieve parking data
         Set<ArenaObjectCoordinate> coordinates = cmOntologyManager.calculateArenaDistancesForPlatform(platformId);
+
+        //verify data was returned
         assertFalse(coordinates.isEmpty());
+        //data is from added parking lots
+        for (ArenaObjectCoordinate arenaObjectCoordinate : coordinates) {
+            String objectId = arenaObjectCoordinate.getId();
+            assertTrue(
+                    parkingLotOne.getBuildings().containsKey(objectId) ||
+                    parkingLotOne.getInfrastructure().containsKey(objectId) ||
+                    parkingLotTwo.getBuildings().containsKey(objectId) ||
+                    parkingLotTwo.getInfrastructure().containsKey(objectId)
+            );
+        }
     }
 
     // test 'update zone' functionality

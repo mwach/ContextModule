@@ -59,7 +59,7 @@ public interface ContextModule {
     BooleanNamedValue updateParkingLot(SimpleNamedValue parkingLot);
 
     /**
-     * This method allows retrieval of information about the parking lot (location, boundaries, objects like buildings or infrastructure).
+     * This method retries information about the parking lot (location, boundaries, objects like buildings or infrastructure).
      * 
      * @param objectId
      *            ID of the object

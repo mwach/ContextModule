@@ -121,18 +121,6 @@ public class NumbersHelper {
         return output;
     }
 
-    public static Double[][] fromStringArray(String[] objectCoordinates) {
-
-        if(objectCoordinates == null){
-            return null;
-        }
-        Double[][] retArray = new Double[objectCoordinates.length][];
-        for(int i=0 ; i<objectCoordinates.length ; i++){
-            retArray[i] = getDoublesFromString(objectCoordinates[i], ",");
-        }
-        return retArray;
-    }
-
     public static boolean equals(Double valueA, Double valueB){
         if(valueA == null && valueB == null){
             return true;
