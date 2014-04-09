@@ -102,7 +102,7 @@ public class GpsListener implements HttpRequestHandler, LocationPublisher {
     }
 
     public void notifyListener(String newLocation) {
-
+//{"Latitude":53.12406409531832,"Longitude":17.973143979907036,"Altitude":110.0,"Bearing":325.0,"Speed":0.0,"Time":1396528691000,"Accuracy":5.0}
         try {
             GpsLocation location = JsonHelper.fromJson(newLocation, GpsLocation.class);
             LogHelper.debug(GpsListener.class, "notifyListener", "GPS update received: %s", location);

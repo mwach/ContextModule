@@ -54,8 +54,9 @@ public class CMClient {
      * client main class
      * 
      * @param args
+     * @throws JsonHelperException 
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws JsonHelperException {
 
         // initialize the client
         CMClient client = new CMClient();
@@ -66,37 +67,37 @@ public class CMClient {
             // initialize the client
             client.init();
             
-            Platform platform = createDummyPlatform("Vehicle_Ford_Focus");
-            parseUpdatePlatformResponse(client.updatePlatform(platform));
+//            Platform platform = createDummyPlatform("Vehicle_Ford_Focus");
+//            parseUpdatePlatformResponse(client.updatePlatform(platform));
 
             // call all available CM public services
             // get the platform info
             parseGetPlatformServiceResponse(client.getPlatformService("Vehicle_Ford_Focus"));
-            // get all the platforms from given location
-            parseGetPlatformsServiceResponse(client.getPlatformsService(18.128888541832566, 53.143207943066955));
-            // get GIS data from the ontology
-            parseGetGISDataServiceResponse(client.getGISDataService(18.128888541832566, 53.143207943066955));
-            // get GIS data from the ontology using additional filters
-            parseGetGISDataServiceResponse(client.getGISDataService(18.128888541832566, 53.143207943066955, 1.0, "Parking"));
-            parseGetGISDataServiceResponse(client.getGISDataService(18.128888541832566, 53.143207943066955, 1.0, "Building"));
-            // retrieve data from the external service (geoportal) and add it to ontology
-            parseGetGeoportalDataServiceResponse(client.getGeoportalDataService(17.972946559166793, 53.124318916278824));
+//            // get all the platforms from given location
+//            parseGetPlatformsServiceResponse(client.getPlatformsService(18.128888541832566, 53.143207943066955));
+//            // get GIS data from the ontology
+//            parseGetGISDataServiceResponse(client.getGISDataService(18.128888541832566, 53.143207943066955));
+//            // get GIS data from the ontology using additional filters
+//            parseGetGISDataServiceResponse(client.getGISDataService(18.128888541832566, 53.143207943066955, 1.0, "Parking"));
+//            parseGetGISDataServiceResponse(client.getGISDataService(18.128888541832566, 53.143207943066955, 1.0, "Building"));
+//            // retrieve data from the external service (geoportal) and add it to ontology
+//            parseGetGeoportalDataServiceResponse(client.getGeoportalDataService(17.972946559166793, 53.124318916278824));
             // retrieve info about platform neighborhood
             parseGetCameraFieldOfViewResponse(client.getPlatformNeighborhood("Vehicle_Ford_Focus"));
 
-            ParkingLot parkingLot = createDummyParkingLot("dummyParkingLot_" + System.currentTimeMillis());
-            parseUpdatePlatformResponse(client.updateParkingLot(parkingLot));
+//            ParkingLot parkingLot = createDummyParkingLot("dummyParkingLot_" + System.currentTimeMillis());
+//            parseUpdatePlatformResponse(client.updateParkingLot(parkingLot));
 
-            String parkingLotName = "Parking_UTP";
+            String parkingLotName = "Parking_Reading";
             parseObjectResponse(client.getParkingLot(parkingLotName));
-
-            // defines new zone in the ontology
-            String zoneId = parseDefineZoneResponse(client.defineZone(new double[][] {
-                    // define square-shaped zone
-                    { -1.0, -1.0 }, { 1.0, -1.0 }, { 1.0, 1.0 }, { -1.0, 1.0 } }));
-
-            // retrieves zone information from the ontology
-            parseGetZoneResponse(client.getZone(zoneId));
+//
+//            // defines new zone in the ontology
+//            String zoneId = parseDefineZoneResponse(client.defineZone(new double[][] {
+//                    // define square-shaped zone
+//                    { -1.0, -1.0 }, { 1.0, -1.0 }, { 1.0, 1.0 }, { -1.0, 1.0 } }));
+//
+//            // retrieves zone information from the ontology
+//            parseGetZoneResponse(client.getZone(zoneId));
 
             
         } catch (ContextModuleClientException exc) {
@@ -568,12 +569,14 @@ public class CMClient {
         return data;
     }
 
-    private Object getParkingLot(String parkingLotId) throws ContextModuleClientException {
+    private Object getParkingLot(String parkingLotId) throws ContextModuleClientException, JsonHelperException {
 
         SimpleNamedValue platformRequest = createSimpleNamedValue(parkingLotId);
         platformRequest.setHref(ContextModuleRequests.getParkingLot.name());
         Object data = contextModule.getParkingLot(platformRequest);
         LogHelper.debug(CMClient.class, "getParkingLot", "Server response received: %s", String.valueOf(data));
+        SimpleNamedValue value = (SimpleNamedValue) data.getFeatureVector().getFeature().get(0);
+        ParkingLot pl = JsonHelper.fromJson(value.getValue(), ParkingLot.class);
         return data;
     }
 

@@ -86,7 +86,7 @@ public class OntologyManagerTest {
         Map<String, String[]> ontologyProperties = ontologyManager.getInstanceProperties(instanceName);
         // verify, instance was added to given class
         // two properties should be returned - added in this test and ontology-related one (rdf:type)
-        Assert.assertEquals(2, ontologyProperties.size());
+        Assert.assertEquals(1, ontologyProperties.size());
         // verify value of added property
         Assert.assertEquals(propertyValue, ontologyProperties.get(propertyName)[0]);
     }

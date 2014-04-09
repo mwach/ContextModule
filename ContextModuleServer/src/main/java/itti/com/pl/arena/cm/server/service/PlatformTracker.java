@@ -163,7 +163,7 @@ public class PlatformTracker implements Service, LocationListener {
                 LogHelper.debug(PlatformTracker.class, "checkPlatformStopped",
                         "No location retrieved from the persistence storage");
                 return;
-            }
+            }//TODO: remove multiplier, but use delta location (e.g. min diff=1m, otherwise false positives)
             if (DateTimeHelper.delta(lastLocation.getTime() * 1000, System.currentTimeMillis(), DateTimeHelper.SECOND) > getMaxIdleTime()) {
 
                 // check all the ranges, from the widest one to the closest

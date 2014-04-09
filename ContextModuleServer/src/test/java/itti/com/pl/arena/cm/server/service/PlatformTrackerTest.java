@@ -57,15 +57,19 @@ public class PlatformTrackerTest {
     }
 
     @Test
-    public void testOnLocationChangeValidLocation() throws PersistenceException{
+    public void testOnLocationChangeValidLocation() throws PersistenceException, OntologyException{
         //test case for the onLocationChange method method - valid location provided
         PlatformTracker pt = new PlatformTracker();
         Location location = new Location(343, 3435);
         Persistence persistence = Mockito.mock(Persistence.class);
         pt.setPersistence(persistence);
+        Ontology ontology = Mockito.mock(Ontology.class);
+        pt.setOntology(ontology);
         pt.onLocationChange(location);
         //value was persisted
         Mockito.verify(persistence, Mockito.times(1)).create(Mockito.anyString(), Mockito.eq(location));
+        //ontology was updated
+        Mockito.verify(ontology, Mockito.times(1)).updatePlatformPosition(Mockito.anyString(), Mockito.eq(location));
     }
 
     @Test

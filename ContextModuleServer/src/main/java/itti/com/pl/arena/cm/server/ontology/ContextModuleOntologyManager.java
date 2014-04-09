@@ -513,7 +513,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         if (gisObjectClasses != null) {
             classesFilter.addAll(Arrays.asList(gisObjectClasses));
         }
-
+//TODO: this method returns parking lot as well as truck - update to use filter 'Platform' during the search, or update PARENTCLASS to be searched inside IF
         for (String geoObject : matches) {
             String objectClass = getInstanceClass(geoObject);
             String parentClass = getInstanceGrandClass(geoObject);
