@@ -37,7 +37,7 @@ public class BasicCMClient extends ModuleImpl{
     private ObjectFactory objectFactory = new ObjectFactory();
 
     //primitive flag to verify if response was received
-    private static boolean responseReceived = false;
+    private boolean responseReceived = false;
 
     /**
      * Constructor
@@ -63,6 +63,21 @@ public class BasicCMClient extends ModuleImpl{
         //test service - add new platform to the ontology
         cmClient.addPlatform();
 
+        cmClient.waitForResponse();
+
+        //test service - get platform from the ontology
+        cmClient.getPlatform();
+
+        //wait for the response
+        cmClient.waitForResponse();
+        
+        //shutdown
+        cmClient.shutdown();
+        System.exit(0);
+    }
+
+
+    private void waitForResponse() {
         //wait for the response
         while(!responseReceived){
             try {
@@ -71,21 +86,6 @@ public class BasicCMClient extends ModuleImpl{
             }
         }
         responseReceived = false;
-
-        //test service - get platform from the ontology
-        cmClient.getPlatform();
-
-        //wait for the response
-        while(!responseReceived){
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-            }
-        }
-        
-        //shutdown
-        cmClient.shutdown();
-        System.exit(0);
     }
 
 
