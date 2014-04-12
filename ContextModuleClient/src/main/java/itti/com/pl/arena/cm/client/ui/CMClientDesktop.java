@@ -45,7 +45,7 @@ public class CMClientDesktop extends JFrame {
         JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
         getContentPane().add(tabbedPane, BorderLayout.CENTER);
 
-        tabbedPane.addTab(Messages.getString("MainWindowApp.1"), null); //$NON-NLS-1$
+        tabbedPane.addTab(Messages.getString("MainWindowApp.1"), new GeneralPanel()); //$NON-NLS-1$
         tabbedPane.addTab(Messages.getString("MainWindowApp.2"), new TruckPanel()); //$NON-NLS-1$
         tabbedPane.addTab(Messages.getString("MainWindowApp.3"), new ParkingLotPanel()); //$NON-NLS-1$
         tabbedPane.addTab(Messages.getString("MainWindowApp.4"), new ZonesPanel()); //$NON-NLS-1$

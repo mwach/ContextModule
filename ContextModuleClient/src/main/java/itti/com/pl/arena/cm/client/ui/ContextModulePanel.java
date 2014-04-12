@@ -53,12 +53,22 @@ public class ContextModulePanel extends JPanel {
         panel.add(textComboBox);
         return panel;
     }
+
     protected Component createTextBoxButtonRow(String string) {
         
         JPanel panel = new JPanel(new GridLayout(1, 2));
         JTextField textField = new JTextField();
         panel.add(textField);
         JButton button = new JButton(string);
+        panel.add(button);
+        return panel;
+    }
+
+    protected Component createButtonRow(String string) {
+        
+        JPanel panel = new JPanel(new GridLayout(1, 2));
+        JButton button = new JButton(string);
+        panel.add(new JLabel());
         panel.add(button);
         return panel;
     }
