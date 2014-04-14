@@ -137,7 +137,7 @@ public class OntologyManager implements Service {
      * @return list of instances names. If there are no instances, empty list will be returned
      */
     public final List<String> getDirectInstances(OntologyConstants className) {
-        return getDirectInstances(className.name());
+        return getInstances(className.name());
     }
 
     /**
@@ -147,9 +147,9 @@ public class OntologyManager implements Service {
      *            name of the class
      * @return list of instances names. If there are no instances, empty list will be returned
      */
-    public final List<String> getDirectInstances(String className) {
+    public final List<String> getInstances(String className) {
 
-        LogHelper.debug(OntologyManager.class, "getDirectInstances", "Query for instances of '%s'", className);
+        LogHelper.debug(OntologyManager.class, "getInstances", "Query for instances of '%s'", className);
 
         if (!StringHelper.hasContent(className)) {
             return new ArrayList<>();
@@ -165,9 +165,9 @@ public class OntologyManager implements Service {
      *            name of the class
      * @return list of instances names. If there are no instances, empty list will be returned
      */
-    public List<String> getInstances(String className) {
+    public List<String> getNonDirectInstances(String className) {
 
-        LogHelper.debug(OntologyManager.class, "getInstances", "Query for instances of '%s'", className);
+        LogHelper.debug(OntologyManager.class, "getNonDirectInstances", "Query for instances of '%s'", className);
         if (!StringHelper.hasContent(className)) {
             return new ArrayList<>();
         }
@@ -289,7 +289,7 @@ public class OntologyManager implements Service {
 
         // create individual, or get the existing one
         OWLIndividual individual = null;
-        if (getDirectInstances(className).contains(instanceName)) {
+        if (getInstances(className).contains(instanceName)) {
             individual = getInstance(className, instanceName);
         } else {
             individual = createInstanceOnly(className, instanceName);

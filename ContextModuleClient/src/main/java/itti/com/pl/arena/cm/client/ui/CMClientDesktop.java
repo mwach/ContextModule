@@ -1,5 +1,7 @@
 package itti.com.pl.arena.cm.client.ui;
 
+import itti.com.pl.arena.cm.client.service.ContextModuleFacade;
+
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 
@@ -45,9 +47,21 @@ public class CMClientDesktop extends JFrame {
         JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
         getContentPane().add(tabbedPane, BorderLayout.CENTER);
 
-        tabbedPane.addTab(Messages.getString("MainWindowApp.1"), new GeneralPanel()); //$NON-NLS-1$
-        tabbedPane.addTab(Messages.getString("MainWindowApp.2"), new TruckPanel()); //$NON-NLS-1$
-        tabbedPane.addTab(Messages.getString("MainWindowApp.3"), new ParkingLotPanel()); //$NON-NLS-1$
-        tabbedPane.addTab(Messages.getString("MainWindowApp.4"), new ZonesPanel()); //$NON-NLS-1$
+        ContextModuleFacade cmf = new ContextModuleFacade("CMClient_" + System.currentTimeMillis(), "127.0.0.1");
+
+        GeneralPanel generalPanel = new GeneralPanel();
+        TruckPanel truckPanel = new TruckPanel();
+        ParkingLotPanel parkingLotPanel = new ParkingLotPanel();
+        ZonesPanel zonesPanel = new ZonesPanel();
+
+        generalPanel.setContextModule(cmf);
+        truckPanel.setContextModule(cmf);
+        parkingLotPanel.setContextModule(cmf);
+        zonesPanel.setContextModule(cmf);
+
+        tabbedPane.addTab(Messages.getString("MainWindowApp.1"), generalPanel); //$NON-NLS-1$
+        tabbedPane.addTab(Messages.getString("MainWindowApp.2"), truckPanel); //$NON-NLS-1$
+        tabbedPane.addTab(Messages.getString("MainWindowApp.3"), parkingLotPanel); //$NON-NLS-1$
+        tabbedPane.addTab(Messages.getString("MainWindowApp.4"), zonesPanel); //$NON-NLS-1$
     }
 }

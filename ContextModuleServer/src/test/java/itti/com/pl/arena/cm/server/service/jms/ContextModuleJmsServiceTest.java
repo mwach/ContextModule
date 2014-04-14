@@ -22,7 +22,6 @@ import org.mockito.Mockito;
 
 import eu.arena_fp7._1.BooleanNamedValue;
 import eu.arena_fp7._1.Object;
-import eu.arena_fp7._1.ObjectFactory;
 import eu.arena_fp7._1.SimpleNamedValue;
 
 /**
@@ -38,7 +37,6 @@ public class ContextModuleJmsServiceTest {
     @BeforeClass
     public static void beforeClass() {
         CMJmsService = new ContextModuleJmsService();
-        CMJmsService.setFactory(new ObjectFactory());
     }
 
     @Test

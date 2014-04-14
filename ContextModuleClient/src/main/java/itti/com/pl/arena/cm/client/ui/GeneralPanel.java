@@ -1,14 +1,16 @@
 package itti.com.pl.arena.cm.client.ui;
 
+import itti.com.pl.arena.cm.client.ui.components.ButtonRow;
+import itti.com.pl.arena.cm.client.ui.components.TextBoxRow;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.TextArea;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
@@ -19,6 +21,12 @@ public class GeneralPanel extends ContextModulePanel {
      * 
      */
     private static final long serialVersionUID = 1L;
+
+    private boolean connected = false;
+
+    private TextBoxRow brokerUrlRow = null;
+    private ButtonRow connectRow = null;
+    private JTextArea logComponent = null;
 
     /**
      * Create the dialog.
@@ -44,11 +52,30 @@ public class GeneralPanel extends ContextModulePanel {
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.insets = new Insets(3,3,3,3);
 
-        Component connectComponent = createTextBoxButtonRow("Connect to the CM");
-        gbl.setConstraints(connectComponent, gbc);
-        panelGeneral.add(connectComponent);
+        brokerUrlRow = createTextBoxRow("URL of the broker");
+        brokerUrlRow.setText("127.0.0.1");
+        gbl.setConstraints(brokerUrlRow, gbc);
+        panelGeneral.add(brokerUrlRow);
 
-        Component refreshComponent = createButtonRow("Refresh content");
+        connectRow = createButtonRow("Connect");
+        gbl.setConstraints(connectRow, gbc);
+        panelGeneral.add(connectRow);
+        connectRow.setButtonActionListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                connectToCM();
+            }
+        });
+
+        ButtonRow refreshComponent = createButtonRow("Refresh content");
+        refreshComponent.setButtonActionListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                refresh();
+            }
+        });
         gbl.setConstraints(refreshComponent, gbc);
         panelGeneral.add(refreshComponent);
 
@@ -56,15 +83,62 @@ public class GeneralPanel extends ContextModulePanel {
         gbl.setConstraints(emptyComponent, gbc);
         panelGeneral.add(emptyComponent);
 
-        Component logDescComponent = new JLabel("Connection log");
+        Component logDescComponent = createLabelRow("Connection log");
         gbl.setConstraints(logDescComponent, gbc);
         panelGeneral.add(logDescComponent);
 
         gbc.weighty = 10.0;
-        Component logComponent = new JTextArea("", 30, 100);
+        logComponent = new JTextArea(30, 100);
         gbl.setConstraints(logComponent, gbc);
         panelGeneral.add(logComponent);
 
         return panelGeneral;
+    }
+
+    private void connectToCM() {
+        if(!connected)
+        {
+            connect();
+        }
+        else
+        {
+            disconnect();
+        }
+    }
+
+    private void connect() {
+        String brokerUrl = brokerUrlRow.getText();
+        setBrokerUrl(brokerUrl);
+        try {
+            connectToBroker();
+            addLogMessage("Successfully connected\n");
+            connected = true;
+            connectRow.setButtonText("Disconnect");
+
+        } catch (Exception e) {
+            addLogMessage(e.getLocalizedMessage());
+        }
+    }
+
+    private void disconnect() {
+        try {
+            disconnectFromBroker();
+            addLogMessage("Successfully disconnected\n");
+            connected = false;
+            connectRow.setButtonText("Connect");
+
+        } catch (Exception e) {
+            addLogMessage(e.getLocalizedMessage());
+        }
+    }
+
+    private void addLogMessage(String message){
+        logComponent.append(message + "\n");        
+    }
+
+    protected void refresh() {
+
+        getContextModule().getZoneNames(
+                getContextModule().createSimpleNamedValue(getName(), ""));
     }
 }

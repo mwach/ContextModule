@@ -61,7 +61,7 @@ public class OntologyManagerTest {
         // now add some basic instance to newly create class
         ontologyManager.createSimpleInstance(className, instanceName, null);
         
-        List<String> instances = ontologyManager.getDirectInstances(className);
+        List<String> instances = ontologyManager.getInstances(className);
         // verify, instance was added to given class
         Assert.assertEquals(1, instances.size());
         Assert.assertEquals(instanceName, instances.get(0));

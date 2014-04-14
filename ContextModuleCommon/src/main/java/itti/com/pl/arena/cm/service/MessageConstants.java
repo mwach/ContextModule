@@ -62,6 +62,11 @@ public final class MessageConstants {
         getZone,
 
         /**
+         * Service name used by the {@link ContextModule} 'getZoneNames' method
+         */
+        getZoneNames,
+
+        /**
          * Service name used by the 'destinationReached' notifier method
          */
         destinationReached,

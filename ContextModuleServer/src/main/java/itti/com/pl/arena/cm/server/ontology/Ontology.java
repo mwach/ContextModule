@@ -185,4 +185,14 @@ public interface Ontology {
      *             processing exception
      */
     public List<itti.com.pl.arena.cm.dto.Location> getZone(String zoneId) throws OntologyException;
+
+    /**
+     * Returns list of instances of given ontology class
+     * 
+     * @param className
+     *            name of the class
+     * @return list of instances names. If there are no instances, empty list will be returned
+     */
+    public List<String> getInstances(String className) throws OntologyException;
+
 }

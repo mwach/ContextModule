@@ -12,14 +12,17 @@ import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.dto.coordinates.ArenaObjectCoordinate;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
 import itti.com.pl.arena.cm.dto.staticobj.ParkingLot;
+import itti.com.pl.arena.cm.jms.CMModuleImpl;
 import itti.com.pl.arena.cm.server.exception.ErrorMessages;
 import itti.com.pl.arena.cm.server.geoportal.Geoportal;
 import itti.com.pl.arena.cm.server.geoportal.GeoportalException;
 import itti.com.pl.arena.cm.server.ontology.Ontology;
+import itti.com.pl.arena.cm.server.ontology.OntologyConstants;
 import itti.com.pl.arena.cm.server.ontology.OntologyException;
 import itti.com.pl.arena.cm.server.service.PlatformListener;
 import itti.com.pl.arena.cm.server.service.Service;
 import itti.com.pl.arena.cm.server.utils.helpers.LocationFactory;
+import itti.com.pl.arena.cm.service.LocalContextModule;
 import itti.com.pl.arena.cm.service.MessageConstants.ContextModuleRequests;
 import itti.com.pl.arena.cm.service.ContextModule;
 import itti.com.pl.arena.cm.utils.helper.DateTimeHelper;
@@ -32,15 +35,12 @@ import itti.com.pl.arena.cm.utils.helper.NumbersHelper;
 import itti.com.pl.arena.cm.utils.helper.StringHelper;
 
 import com.safran.arena.impl.Client;
-import com.safran.arena.impl.ModuleImpl;
 
 import eu.arena_fp7._1.AbstractDataFusionType;
 import eu.arena_fp7._1.AbstractNamedValue;
 import eu.arena_fp7._1.BooleanNamedValue;
 import eu.arena_fp7._1.Location;
 import eu.arena_fp7._1.Object;
-import eu.arena_fp7._1.ObjectFactory;
-import eu.arena_fp7._1.RealWorldCoordinate;
 import eu.arena_fp7._1.SimpleNamedValue;
 
 /**
@@ -49,13 +49,12 @@ import eu.arena_fp7._1.SimpleNamedValue;
  * @author cm-admin
  * 
  */
-public class ContextModuleJmsService extends ModuleImpl implements ContextModule, Service, PlatformListener {
+public class ContextModuleJmsService extends CMModuleImpl implements LocalContextModule, Service, PlatformListener {
 
     /*
      * Objects used to communicate via Arena Bus
      */
     private Client client = null;
-    private ObjectFactory factory = null;
 
     /*
      * Connection properties
@@ -77,14 +76,6 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
      * radius used for search data in ontology module
      */
     private double radius;
-
-    public void setFactory(ObjectFactory factory) {
-        this.factory = factory;
-    }
-
-    private ObjectFactory getFactory() {
-        return factory;
-    }
 
     @Required
     public void setOntology(Ontology ontology) {
@@ -166,8 +157,6 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
             client.registerModule(this);
             client.registerModuleAsDataProvider(this);
             client.registerModuleAsDataConsumer(this, new ContextModuleFilter());
-
-            setFactory(new ObjectFactory());
 
         } catch (JmsException exc) {
             LogHelper.error(ContextModuleJmsService.class, "init", "Validation failed: %s", exc.getLocalizedMessage());
@@ -257,6 +246,9 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getZone.name(), data.getHref())
                         && (data instanceof SimpleNamedValue)) {
                     response = getZone((SimpleNamedValue) data);
+                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getZoneNames.name(), data.getHref())
+                        && (data instanceof SimpleNamedValue)) {
+                    response = getZoneNames((SimpleNamedValue) data);
                 } else {
                     // invalid service name provided
                     LogHelper.info(ContextModuleJmsService.class, "onDataChanged", "Invalid method requested: '%s'",
@@ -660,11 +652,32 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
     }
 
     @Override
+    public Object getZoneNames(SimpleNamedValue zoneMessage) {
+
+        List<AbstractNamedValue> responseVector = new ArrayList<>();
+        try {
+            List<String> zoneNames = getOntology().getInstances(OntologyConstants.Car_parking_zone.name());
+            for (String zoneName : zoneNames) {
+                AbstractNamedValue zoneObject = createSimpleNamedValue(zoneMessage.getId(), zoneName);
+                responseVector.add(zoneObject);
+            }
+        } catch (OntologyException exc) {
+            LogHelper.exception(ContextModuleJmsService.class, "getZoneNames", "Could not retrieve zone names from the ontology", exc);
+        }
+        // prepare response object
+        Object response = createObject(zoneMessage.getId(), zoneMessage.getHref(), responseVector);
+
+        // add results to the response
+        return response;
+    }
+
+    @Override
     public void destinationReached(String platformId, itti.com.pl.arena.cm.dto.Location location) {
 
         // prepare valid response object
         AbstractNamedValue destinationReachedMessage = createSimpleNamedValue(String.format("%s.%s.%s", Constants.MODULE_NAME,
-                ContextModuleRequests.destinationReached.name(), getDataInDefaultFormat(), platformId), location);
+                ContextModuleRequests.destinationReached.name(), getDataInDefaultFormat(), platformId), 
+                StringHelper.toString(location));
         destinationReachedMessage.setHref(ContextModuleRequests.destinationReached.name());
         destinationReachedMessage.setDataSourceId(Constants.MODULE_NAME);
         client.publish(destinationReachedMessage.getDataSourceId(), destinationReachedMessage);
@@ -675,7 +688,8 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
 
         // prepare valid response object
         AbstractNamedValue destinationLeftMessage = createSimpleNamedValue(String.format("%s.%s.%s", Constants.MODULE_NAME,
-                ContextModuleRequests.destinationLeft.name(), getDataInDefaultFormat(), platformId), location);
+                ContextModuleRequests.destinationLeft.name(), getDataInDefaultFormat(), platformId), 
+                StringHelper.toString(location));
         destinationLeftMessage.setHref(ContextModuleRequests.destinationLeft.name());
         destinationLeftMessage.setDataSourceId(Constants.MODULE_NAME);
         client.publish(destinationLeftMessage.getDataSourceId(), destinationLeftMessage);
@@ -689,81 +703,4 @@ public class ContextModuleJmsService extends ModuleImpl implements ContextModule
     private String getDataInDefaultFormat() {
         return DateTimeHelper.formatTime(System.currentTimeMillis(), Constants.TIMESTAMP_FORMAT);
     }
-
-    /**
-     * Prepares instance of the {@link AbstractNamedValue} class
-     * 
-     * @param id
-     *            ID of the object
-     * @param value
-     *            value of the object
-     * @return object containing provided values
-     */
-    private SimpleNamedValue createSimpleNamedValue(String id, java.lang.Object value) {
-        SimpleNamedValue snv = getFactory().createSimpleNamedValue();
-        snv.setDataSourceId(Constants.MODULE_NAME);
-        snv.setId(String.format("CM_RESP_%s", StringHelper.toString(id)));
-        snv.setValue(String.valueOf(value));
-        return snv;
-    }
-
-    /**
-     * Prepares instance of the {@link AbstractNamedValue} class
-     * 
-     * @param featureName
-     *            ID of the object
-     * @param value
-     *            value of the object
-     * @return object containing provided values
-     */
-    private BooleanNamedValue createBooleanNamedValue(String id, String featureName, boolean status) {
-        BooleanNamedValue bnv = getFactory().createBooleanNamedValue();
-        bnv.setDataSourceId(Constants.MODULE_NAME);
-        bnv.setId(String.format("CM_RESP_%s", StringHelper.toString(id)));
-        bnv.setFeatureName(featureName);
-        bnv.setFeatureValue(status);
-        return bnv;
-    }
-
-    /**
-     * Prepares instance of the {@link AbstractNamedValue} class
-     * 
-     * @param id
-     *            ID of the object
-     * @param value
-     *            value of the object
-     * @return object containing provided values
-     */
-    private AbstractNamedValue createCoordinate(String id, double x, double y, double z) {
-        RealWorldCoordinate rwc = getFactory().createRealWorldCoordinate();
-        rwc.setDataSourceId(Constants.MODULE_NAME);
-        rwc.setId(StringHelper.toString(id));
-        rwc.setX(x);
-        rwc.setY(y);
-        rwc.setZ(z);
-        return rwc;
-    }
-
-    /**
-     * Prepares instance of the {@link AbstractNamedValue} class
-     * 
-     * @param id
-     *            ID of the object
-     * @param vector
-     * @param value
-     *            value of the object
-     * @return object containing provided values
-     */
-    private Object createObject(String id, String href, List<AbstractNamedValue> vector) {
-        Object object = getFactory().createObject();
-        object.setFeatureVector(getFactory().createFeatureVector());
-        object.setId(String.format("CM_RESP_%s", StringHelper.toString(id)));
-        object.setDataSourceId(Constants.MODULE_NAME);
-        object.setHref(href);
-        object.getFeatureVector().setId(StringHelper.toString(id));
-        object.getFeatureVector().setDataSourceId(Constants.MODULE_NAME);
-        object.getFeatureVector().getFeature().addAll(vector);
-        return object;
-    }
-
 }

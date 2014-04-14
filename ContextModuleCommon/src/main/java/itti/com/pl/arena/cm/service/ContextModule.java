@@ -131,4 +131,13 @@ public interface ContextModule {
      * @return list of coordinates, or empty list, if zone with given ID not found in the ontology
      */
     Object getZone(SimpleNamedValue zoneId);
+
+    /**
+     * Returns zone names defined in the ontology
+     * 
+     * @param requestId request message
+     * @return list of zone names, or empty list, if no zones were defined in the ontology
+     */
+    Object getZoneNames(SimpleNamedValue requestId);
+
 }

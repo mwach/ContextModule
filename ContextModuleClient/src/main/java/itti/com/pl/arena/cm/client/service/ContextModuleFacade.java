@@ -14,7 +14,8 @@ import eu.arena_fp7._1.Object;
 import eu.arena_fp7._1.SimpleNamedValue;
 import itti.com.pl.arena.cm.Constants;
 import itti.com.pl.arena.cm.exception.ContextModuleRuntimeException;
-import itti.com.pl.arena.cm.service.ContextModule;
+import itti.com.pl.arena.cm.jms.CMModuleImpl;
+import itti.com.pl.arena.cm.service.LocalContextModule;
 import itti.com.pl.arena.cm.utils.helper.LogHelper;
 import itti.com.pl.arena.cm.utils.helper.NetworkHelper;
 import itti.com.pl.arena.cm.utils.helper.NetworkHelperException;
@@ -26,7 +27,7 @@ import itti.com.pl.arena.cm.utils.helper.StringHelper;
  * @author cm-admin
  * 
  */
-public class ContextModuleFacade extends ModuleImpl implements ContextModule {
+public class ContextModuleFacade extends CMModuleImpl implements LocalContextModule {
 
     private static final int DEFAULT_CLIENT_PORT = 45444;
     private static final int DEFAULT_MAX_WAITING_TIME = 5000;
@@ -174,7 +175,7 @@ public class ContextModuleFacade extends ModuleImpl implements ContextModule {
      * Initializes the module. This method must be called before any of the CM services will be called
      * @throws ContextModuleClientException could not initialize client
      */
-    public void init() throws ContextModuleClientException {
+    public void init() {
 
         try {
             // if client IP was not provided, use default value (IP of the current host)
@@ -200,12 +201,12 @@ public class ContextModuleFacade extends ModuleImpl implements ContextModule {
             //runtime exception handling
             LogHelper.error(ContextModuleFacade.class, "init", "Could not initialize client object. Reason: '%s'",
                     exc.getLocalizedMessage());
-            throw new ContextModuleClientException(exc.getLocalizedMessage(), exc);
+            throw new ContextModuleRuntimeException(exc.getLocalizedMessage(), exc);
         } catch (NetworkHelperException exc) {
             //network exception handling
             LogHelper.error(ContextModuleFacade.class, "init", "Could not obtain local IP address. Reason: '%s'",
                     exc.getLocalizedMessage());
-            throw new ContextModuleClientException("Could not obtain local IP address during client initialization", exc);
+            throw new ContextModuleRuntimeException("Could not obtain local IP address during client initialization", exc);
         }
     }
 
@@ -328,6 +329,14 @@ public class ContextModuleFacade extends ModuleImpl implements ContextModule {
      */
     @Override
     public Object getZone(SimpleNamedValue zoneId) {
+        return (Object)submitData(zoneId);
+    }
+
+    /* (non-Javadoc)
+     * @see itti.com.pl.arena.cm.service.ContextModule#getZone(eu.arena_fp7._1.SimpleNamedValue)
+     */
+    @Override
+    public Object getZoneNames(SimpleNamedValue zoneId) {
         return (Object)submitData(zoneId);
     }
 
