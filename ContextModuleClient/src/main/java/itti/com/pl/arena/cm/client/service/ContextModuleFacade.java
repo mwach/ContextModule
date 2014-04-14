@@ -336,8 +336,13 @@ public class ContextModuleFacade extends CMModuleImpl implements LocalContextMod
      * @see itti.com.pl.arena.cm.service.ContextModule#getZone(eu.arena_fp7._1.SimpleNamedValue)
      */
     @Override
-    public Object getZoneNames(SimpleNamedValue zoneId) {
+    public Object getListOfZones(SimpleNamedValue zoneId) {
         return (Object)submitData(zoneId);
+    }
+
+    @Override
+    public Object getListOfParkingLots(SimpleNamedValue objectId) {
+        return (Object)submitData(objectId);
     }
 
     /**
@@ -415,4 +420,5 @@ public class ContextModuleFacade extends CMModuleImpl implements LocalContextMod
         // response received
         LogHelper.debug(ContextModuleFacade.class, "waitForResponse", "Response received for message with ID: %s", id);
     }
+
 }

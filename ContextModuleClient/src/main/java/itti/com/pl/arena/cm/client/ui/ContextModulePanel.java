@@ -1,36 +1,97 @@
 package itti.com.pl.arena.cm.client.ui;
 
-import itti.com.pl.arena.cm.client.service.ContextModuleClientException;
+import itti.com.pl.arena.cm.client.service.ContextModuleAdapter;
 import itti.com.pl.arena.cm.client.ui.components.ButtonButtonRow;
 import itti.com.pl.arena.cm.client.ui.components.ButtonRow;
 import itti.com.pl.arena.cm.client.ui.components.ComboBoxButtonRow;
 import itti.com.pl.arena.cm.client.ui.components.ComboBoxRow;
 import itti.com.pl.arena.cm.client.ui.components.TextBoxButtonRow;
 import itti.com.pl.arena.cm.client.ui.components.TextBoxRow;
-import itti.com.pl.arena.cm.service.LocalContextModule;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.border.EmptyBorder;
 
-public class ContextModulePanel extends JPanel {
+public abstract class ContextModulePanel extends JPanel {
 
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
 
-    private LocalContextModule contextModuleFacade = null;
+    private ContextModuleAdapter contextModuleAdapter = null;
 
     /**
      * Create the dialog.
      */
     public ContextModulePanel() {
+        setLayout(new BorderLayout());
+        add(createButtonsMenu(), BorderLayout.SOUTH);
     }
+
+    private Component createButtonsMenu() {
+        JPanel buttonsPanel = createJPanel();
+        buttonsPanel.setLayout(new GridLayout(1, 3, 5, 5));
+        JButton refreshButton = new JButton("Refresh");
+        refreshButton.addActionListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                if(getContextModuleAdapter().isConnected()){
+                    onRefreshClick();
+                }else{
+                    JOptionPane.showMessageDialog(null, "Please connect to the CM server first");
+                }
+                
+            }
+        });
+        JButton saveButton = new JButton("Save");
+        saveButton.addActionListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                if(getContextModuleAdapter().isConnected()){
+                    onSaveClick();
+                }else{
+                    JOptionPane.showMessageDialog(null, "Please connect to the CM server first");
+                }
+                
+            }
+        });
+        JButton cancelButton = new JButton("Cancel");
+        cancelButton.addActionListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                if(getContextModuleAdapter().isConnected()){
+                    onCancelClick();
+                }else{
+                    JOptionPane.showMessageDialog(null, "Please connect to the CM server first");
+                }
+                
+            }
+        });
+
+        buttonsPanel.add(refreshButton);
+        buttonsPanel.add(saveButton);
+        buttonsPanel.add(cancelButton);
+        return buttonsPanel;
+    }
+
+    protected abstract void onCancelClick();
+
+    protected abstract void onSaveClick();
+
+    protected abstract void onRefreshClick();
 
     protected TextBoxRow createTextBoxRow(String labelText) {
 
@@ -75,23 +136,11 @@ public class ContextModulePanel extends JPanel {
         return new JLabel(message);
     }
 
-    public void setContextModule(LocalContextModule cmFacade){
-        this.contextModuleFacade = cmFacade;
+    public void setContextModule(ContextModuleAdapter cmAdapter){
+        this.contextModuleAdapter = cmAdapter;
     }
 
-    protected void setBrokerUrl(String brokerUrl) {
-        contextModuleFacade.setBrokerUrl(brokerUrl);
-    }
-
-    protected void connectToBroker() throws ContextModuleClientException {
-        contextModuleFacade.init();
-    }
-
-    protected void disconnectFromBroker() {
-        contextModuleFacade.shutdown();
-    }
-
-    protected LocalContextModule getContextModule() {
-        return contextModuleFacade;
+    protected ContextModuleAdapter getContextModuleAdapter() {
+        return contextModuleAdapter;
     }
 }

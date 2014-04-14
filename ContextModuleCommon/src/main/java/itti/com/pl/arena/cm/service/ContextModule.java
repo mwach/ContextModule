@@ -133,11 +133,20 @@ public interface ContextModule {
     Object getZone(SimpleNamedValue zoneId);
 
     /**
-     * Returns zone names defined in the ontology
+     * Returns list of zones defined for given parking lot
      * 
-     * @param requestId request message
-     * @return list of zone names, or empty list, if no zones were defined in the ontology
+     * @param requestId request message containing parking lot name
+     * @return list of zone names, or empty list, if no zones were defined for given parking lot in the ontology
      */
-    Object getZoneNames(SimpleNamedValue requestId);
+    Object getListOfZones(SimpleNamedValue requestId);
+
+    /**
+     * This method retries a list of parking lots defined in the ontology
+     * 
+     * @param objectId
+     *            empty request object
+     * @return list of parking lot names defined in the ontology
+     */
+    Object getListOfParkingLots(SimpleNamedValue objectId);
 
 }

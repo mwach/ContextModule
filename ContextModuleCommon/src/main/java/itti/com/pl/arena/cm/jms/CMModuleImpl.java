@@ -1,6 +1,5 @@
 package itti.com.pl.arena.cm.jms;
 
-import itti.com.pl.arena.cm.Constants;
 import itti.com.pl.arena.cm.utils.helper.StringHelper;
 
 import java.util.List;
@@ -40,8 +39,9 @@ public class CMModuleImpl extends ModuleImpl{
      */
     public SimpleNamedValue createSimpleNamedValue(String id, String value) {
         SimpleNamedValue snv = getFactory().createSimpleNamedValue();
-        snv.setDataSourceId(Constants.MODULE_NAME);
-        snv.setId(String.format("CM_RESP_%s", StringHelper.toString(id)));
+        snv.setDataSourceId(getModuleName());
+        //snv.setId(String.format("CM_RESP_%s", StringHelper.toString(id)));
+        snv.setId(StringHelper.toString(id));
         snv.setValue(StringHelper.toString(value));
         return snv;
     }
@@ -57,8 +57,9 @@ public class CMModuleImpl extends ModuleImpl{
      */
     public BooleanNamedValue createBooleanNamedValue(String id, String featureName, boolean status) {
         BooleanNamedValue bnv = getFactory().createBooleanNamedValue();
-        bnv.setDataSourceId(Constants.MODULE_NAME);
-        bnv.setId(String.format("CM_RESP_%s", StringHelper.toString(id)));
+        bnv.setDataSourceId(getModuleName());
+        //bnv.setId(String.format("CM_RESP_%s", StringHelper.toString(id)));
+        bnv.setId(StringHelper.toString(id));
         bnv.setFeatureName(featureName);
         bnv.setFeatureValue(status);
         return bnv;
@@ -75,7 +76,7 @@ public class CMModuleImpl extends ModuleImpl{
      */
     public AbstractNamedValue createCoordinate(String id, double x, double y, double z) {
         RealWorldCoordinate rwc = getFactory().createRealWorldCoordinate();
-        rwc.setDataSourceId(Constants.MODULE_NAME);
+        rwc.setDataSourceId(getModuleName());
         rwc.setId(StringHelper.toString(id));
         rwc.setX(x);
         rwc.setY(y);
@@ -96,11 +97,12 @@ public class CMModuleImpl extends ModuleImpl{
     public Object createObject(String id, String href, List<AbstractNamedValue> vector) {
         Object object = getFactory().createObject();
         object.setFeatureVector(getFactory().createFeatureVector());
-        object.setId(String.format("CM_RESP_%s", StringHelper.toString(id)));
-        object.setDataSourceId(Constants.MODULE_NAME);
+        //object.setId(String.format("CM_RESP_%s", StringHelper.toString(id)));
+        object.setId(StringHelper.toString(id));
+        object.setDataSourceId(getModuleName());
         object.setHref(href);
         object.getFeatureVector().setId(StringHelper.toString(id));
-        object.getFeatureVector().setDataSourceId(Constants.MODULE_NAME);
+        object.getFeatureVector().setDataSourceId(getModuleName());
         object.getFeatureVector().getFeature().addAll(vector);
         return object;
     }

@@ -88,7 +88,7 @@ public class CMClient {
             ParkingLot parkingLot = createDummyParkingLot("dummyParkingLot_" + System.currentTimeMillis());
             parseUpdatePlatformResponse(client.updateParkingLot(parkingLot));
 
-            String parkingLotName = "Parking_Reading";
+            String parkingLotName = "Parking_Paris";
             parseObjectResponse(client.getParkingLot(parkingLotName));
 
             // defines new zone in the ontology

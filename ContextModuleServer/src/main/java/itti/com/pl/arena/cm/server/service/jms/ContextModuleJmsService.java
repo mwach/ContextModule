@@ -246,22 +246,29 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getZone.name(), data.getHref())
                         && (data instanceof SimpleNamedValue)) {
                     response = getZone((SimpleNamedValue) data);
-                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getZoneNames.name(), data.getHref())
+                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getListOfZones.name(), data.getHref())
                         && (data instanceof SimpleNamedValue)) {
-                    response = getZoneNames((SimpleNamedValue) data);
-                } else {
+                    response = getListOfZones((SimpleNamedValue) data);
+                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getListOfParkingLots.name(), data.getHref())
+                        && (data instanceof SimpleNamedValue)) {
+                    response = getListOfParkingLots((SimpleNamedValue) data);
+
+                } else if(StringHelper.equalsIgnoreCase(data.getDataSourceId(), dataSourceId)){
+                    //special cases: error, loop detected
+                    LogHelper.warning(ContextModuleJmsService.class, "onDataChanged", "Possible loop detected: "
+                            + "DataSourceId is the same as data.dataSourceId. DataId: %s", data.getId());
+                    response = null;
+                }else{
                     // invalid service name provided
                     LogHelper.info(ContextModuleJmsService.class, "onDataChanged", "Invalid method requested: '%s'",
                             data.getHref());
-                    SimpleNamedValue invalidRequestResponse = new SimpleNamedValue();
-                    invalidRequestResponse.setValue(String.format("Unsupprted service name specified: '%s'", data.getHref()));
+                    SimpleNamedValue invalidRequestResponse = createSimpleNamedValue(
+                            data.getId(), String.format("Unsupprted service name specified: '%s'", data.getHref()));
                     response = invalidRequestResponse;
                 }
 
                 // prepare valid response object
                 if (response != null) {
-                    response.setId(data.getId());
-                    response.setDataSourceId(Constants.MODULE_NAME);
                     client.publish(data.getDataSourceId(), response);
                 }
             }
@@ -652,11 +659,11 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
     }
 
     @Override
-    public Object getZoneNames(SimpleNamedValue zoneMessage) {
+    public Object getListOfZones(SimpleNamedValue zoneMessage) {
 
         List<AbstractNamedValue> responseVector = new ArrayList<>();
         try {
-            List<String> zoneNames = getOntology().getInstances(OntologyConstants.Car_parking_zone.name());
+            Set<String> zoneNames = getOntology().getParkingLotInfrastructure(zoneMessage.getValue(), OntologyConstants.Car_parking_zone.name());
             for (String zoneName : zoneNames) {
                 AbstractNamedValue zoneObject = createSimpleNamedValue(zoneMessage.getId(), zoneName);
                 responseVector.add(zoneObject);
@@ -666,6 +673,25 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
         }
         // prepare response object
         Object response = createObject(zoneMessage.getId(), zoneMessage.getHref(), responseVector);
+
+        // add results to the response
+        return response;
+    }
+
+    @Override
+    public Object getListOfParkingLots(SimpleNamedValue request) {
+        List<AbstractNamedValue> responseVector = new ArrayList<>();
+        try {
+            List<String> parkingLotNames = getOntology().getInstances(OntologyConstants.Parking.name());
+            for (String zoneName : parkingLotNames) {
+                AbstractNamedValue parkingLotObject = createSimpleNamedValue(request.getId(), zoneName);
+                responseVector.add(parkingLotObject);
+            }
+        } catch (OntologyException exc) {
+            LogHelper.exception(ContextModuleJmsService.class, "getListOfParkingLots", "Could not retrieve parking lot names from the ontology", exc);
+        }
+        // prepare response object
+        Object response = createObject(request.getId(), request.getHref(), responseVector);
 
         // add results to the response
         return response;

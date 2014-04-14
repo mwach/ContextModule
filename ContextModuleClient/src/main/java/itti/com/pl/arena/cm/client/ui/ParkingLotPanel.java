@@ -19,14 +19,12 @@ public class ParkingLotPanel extends ContextModulePanel {
     public ParkingLotPanel() {
 
         super();
-        setLayout(new BorderLayout());
-        {
-            JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-            add(tabbedPane, BorderLayout.EAST);
 
-            tabbedPane.addTab(Messages.getString("ParkingLotPanel.0"), createPanelGeneral()); //$NON-NLS-1$
-            tabbedPane.addTab(Messages.getString("ParkingLotPanel.1"), createPanelBuildings()); //$NON-NLS-1$
-        }
+        JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+        add(tabbedPane, BorderLayout.EAST);
+
+        tabbedPane.addTab(Messages.getString("ParkingLotPanel.0"), createPanelGeneral()); //$NON-NLS-1$
+        tabbedPane.addTab(Messages.getString("ParkingLotPanel.1"), createPanelBuildings()); //$NON-NLS-1$
     }
 
     private Component createPanelGeneral() {
@@ -66,6 +64,24 @@ public class ParkingLotPanel extends ContextModulePanel {
             panelCamera.add(createTextBoxButtonRow(null, Messages.getString("ParkingLotPanel.16"))); //$NON-NLS-1$
 
             return panelCamera;
+    }
+
+    @Override
+    protected void onCancelClick() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    protected void onSaveClick() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    protected void onRefreshClick() {
+        // TODO Auto-generated method stub
+        
     }
 
 }

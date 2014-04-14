@@ -18,15 +18,12 @@ public class TruckPanel extends ContextModulePanel {
      */
     public TruckPanel() {
         super();
-        setLayout(new BorderLayout());
-        {
-            JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-            add(tabbedPane, BorderLayout.EAST);
 
-            tabbedPane.addTab(Messages.getString("TruckPanel.0"), createPlatformPanel()); //$NON-NLS-1$
-            tabbedPane.addTab(Messages.getString("TruckPanel.1"), createCameraPanel()); //$NON-NLS-1$
+        JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+        add(tabbedPane, BorderLayout.EAST);
 
-        }
+        tabbedPane.addTab(Messages.getString("TruckPanel.0"), createPlatformPanel()); //$NON-NLS-1$
+        tabbedPane.addTab(Messages.getString("TruckPanel.1"), createCameraPanel()); //$NON-NLS-1$
     }
 
     private Component createPlatformPanel() {
@@ -66,5 +63,23 @@ public class TruckPanel extends ContextModulePanel {
         panelCamera.add(createTextBoxRow(Messages.getString("TruckPanel.18"))); //$NON-NLS-1$
         
         return panelCamera;
+    }
+
+    @Override
+    protected void onCancelClick() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    protected void onSaveClick() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    protected void onRefreshClick() {
+        // TODO Auto-generated method stub
+        
     }
 }

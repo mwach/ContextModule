@@ -11,6 +11,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
@@ -22,8 +23,6 @@ public class GeneralPanel extends ContextModulePanel {
      */
     private static final long serialVersionUID = 1L;
 
-    private boolean connected = false;
-
     private TextBoxRow brokerUrlRow = null;
     private ButtonRow connectRow = null;
     private JTextArea logComponent = null;
@@ -34,7 +33,6 @@ public class GeneralPanel extends ContextModulePanel {
     public GeneralPanel() {
 
         super();
-        setLayout(new BorderLayout());
         add(createPanelGeneral(), BorderLayout.CENTER);
     }
 
@@ -68,17 +66,6 @@ public class GeneralPanel extends ContextModulePanel {
             }
         });
 
-        ButtonRow refreshComponent = createButtonRow("Refresh content");
-        refreshComponent.setButtonActionListener(new ActionListener() {
-            
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                refresh();
-            }
-        });
-        gbl.setConstraints(refreshComponent, gbc);
-        panelGeneral.add(refreshComponent);
-
         Component emptyComponent = createEmptyRow();
         gbl.setConstraints(emptyComponent, gbc);
         panelGeneral.add(emptyComponent);
@@ -96,7 +83,7 @@ public class GeneralPanel extends ContextModulePanel {
     }
 
     private void connectToCM() {
-        if(!connected)
+        if(!getContextModuleAdapter().isConnected())
         {
             connect();
         }
@@ -107,28 +94,25 @@ public class GeneralPanel extends ContextModulePanel {
     }
 
     private void connect() {
-        String brokerUrl = brokerUrlRow.getText();
-        setBrokerUrl(brokerUrl);
-        try {
-            connectToBroker();
-            addLogMessage("Successfully connected\n");
-            connected = true;
-            connectRow.setButtonText("Disconnect");
 
-        } catch (Exception e) {
-            addLogMessage(e.getLocalizedMessage());
+        String brokerUrl = brokerUrlRow.getText();
+        try{
+            getContextModuleAdapter().connect(brokerUrl);
+            addLogMessage("Successfully connected");
+            connectRow.setButtonText("Disconnect");
+        }catch(RuntimeException exc){
+            addLogMessage("Could not connect to the broker: " + exc.getLocalizedMessage());            
         }
     }
 
     private void disconnect() {
         try {
-            disconnectFromBroker();
-            addLogMessage("Successfully disconnected\n");
-            connected = false;
+            getContextModuleAdapter().disconnect();
+            addLogMessage("Successfully disconnected");
             connectRow.setButtonText("Connect");
 
         } catch (Exception e) {
-            addLogMessage(e.getLocalizedMessage());
+            addLogMessage("Could not disconnect from the broker: " + e.getLocalizedMessage());
         }
     }
 
@@ -136,9 +120,18 @@ public class GeneralPanel extends ContextModulePanel {
         logComponent.append(message + "\n");        
     }
 
-    protected void refresh() {
+    @Override
+    protected void onCancelClick() {
+        JOptionPane.showMessageDialog(null, "Action not supported for this panel");
+    }
 
-        getContextModule().getZoneNames(
-                getContextModule().createSimpleNamedValue(getName(), ""));
+    @Override
+    protected void onSaveClick() {
+        JOptionPane.showMessageDialog(null, "Action not supported for this panel");
+    }
+
+    @Override
+    protected void onRefreshClick() {
+        JOptionPane.showMessageDialog(null, "Action not supported for this panel");
     }
 }

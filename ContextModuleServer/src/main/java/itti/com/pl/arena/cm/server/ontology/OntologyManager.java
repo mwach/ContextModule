@@ -224,7 +224,7 @@ public class OntologyManager implements Service {
         String query = String.format(QUERY_GET_INSTANCE_GRAND_CLASS, getOntologyNamespace(), VAR, instanceName, VAR);
         List<String> results = executeSparqlQuery(query, VAR);
         if (results.isEmpty()) {
-            LogHelper.warning(OntologyManager.class, "getInstanceGrandClass", "No results were found for instance '%s'",
+            LogHelper.debug(OntologyManager.class, "getInstanceGrandClass", "No results were found for instance '%s'",
                     instanceName);
             return null;
         }

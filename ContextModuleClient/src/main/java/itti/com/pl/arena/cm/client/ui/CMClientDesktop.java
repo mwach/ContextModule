@@ -1,6 +1,6 @@
 package itti.com.pl.arena.cm.client.ui;
 
-import itti.com.pl.arena.cm.client.service.ContextModuleFacade;
+import itti.com.pl.arena.cm.client.service.ContextModuleAdapter;
 
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
@@ -47,17 +47,17 @@ public class CMClientDesktop extends JFrame {
         JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
         getContentPane().add(tabbedPane, BorderLayout.CENTER);
 
-        ContextModuleFacade cmf = new ContextModuleFacade("CMClient_" + System.currentTimeMillis(), "127.0.0.1");
+        ContextModuleAdapter cma = new ContextModuleAdapter("CMClient_" + System.currentTimeMillis());
 
         GeneralPanel generalPanel = new GeneralPanel();
         TruckPanel truckPanel = new TruckPanel();
         ParkingLotPanel parkingLotPanel = new ParkingLotPanel();
         ZonesPanel zonesPanel = new ZonesPanel();
 
-        generalPanel.setContextModule(cmf);
-        truckPanel.setContextModule(cmf);
-        parkingLotPanel.setContextModule(cmf);
-        zonesPanel.setContextModule(cmf);
+        generalPanel.setContextModule(cma);
+        truckPanel.setContextModule(cma);
+        parkingLotPanel.setContextModule(cma);
+        zonesPanel.setContextModule(cma);
 
         tabbedPane.addTab(Messages.getString("MainWindowApp.1"), generalPanel); //$NON-NLS-1$
         tabbedPane.addTab(Messages.getString("MainWindowApp.2"), truckPanel); //$NON-NLS-1$
