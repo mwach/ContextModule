@@ -252,6 +252,18 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getListOfParkingLots.name(), data.getHref())
                         && (data instanceof SimpleNamedValue)) {
                     response = getListOfParkingLots((SimpleNamedValue) data);
+                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.defineRule.name(), data.getHref())
+                        && (data instanceof SimpleNamedValue)) {
+                    response = defineRule((SimpleNamedValue) data);
+                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.removeRule.name(), data.getHref())
+                        && (data instanceof SimpleNamedValue)) {
+                    response = removeRule((SimpleNamedValue) data);
+                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.applyRules.name(), data.getHref())
+                        && (data instanceof SimpleNamedValue)) {
+                    response = applyRules((SimpleNamedValue) data);
+                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getListOfRules.name(), data.getHref())
+                        && (data instanceof SimpleNamedValue)) {
+                    response = getListOfRules((SimpleNamedValue) data);
 
                 } else if(StringHelper.equalsIgnoreCase(data.getDataSourceId(), dataSourceId)){
                     //special cases: error, loop detected
@@ -696,6 +708,30 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
         // add results to the response
         return response;
     }
+
+	@Override
+	public SimpleNamedValue defineRule(SimpleNamedValue rule) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public BooleanNamedValue removeRule(SimpleNamedValue ruleId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public BooleanNamedValue applyRules(SimpleNamedValue objectId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object getListOfRules(SimpleNamedValue objectId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
     @Override
     public void destinationReached(String platformId, itti.com.pl.arena.cm.dto.Location location) {

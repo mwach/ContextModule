@@ -77,7 +77,23 @@ public final class MessageConstants {
         /**
          * Service name used by the 'destinationLeft' notifier method
          */
-        destinationLeft,
+        destinationLeft, 
+        /**
+         * Service name used by the 'defineRule' notifier method
+         */
+        defineRule, 
+        /**
+         * Service name used by the 'removeRule' notifier method
+         */
+        removeRule, 
+        /**
+         * Service name used by the 'applyRules' notifier method
+         */
+        applyRules, 
+        /**
+         * Service name used by the 'getListOfRules' notifier method
+         */
+        getListOfRules,
 
         ;
     }

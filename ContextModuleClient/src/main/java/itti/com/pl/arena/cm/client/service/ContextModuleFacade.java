@@ -345,6 +345,26 @@ public class ContextModuleFacade extends CMModuleImpl implements LocalContextMod
         return (Object)submitData(objectId);
     }
 
+	@Override
+	public SimpleNamedValue defineRule(SimpleNamedValue rule) {
+		return (SimpleNamedValue)submitData(rule);
+	}
+
+	@Override
+	public BooleanNamedValue removeRule(SimpleNamedValue ruleId) {
+		return (BooleanNamedValue)submitData(ruleId);
+	}
+
+	@Override
+	public BooleanNamedValue applyRules(SimpleNamedValue objectId) {
+		return (BooleanNamedValue)submitData(objectId);	
+	}
+
+	@Override
+	public Object getListOfRules(SimpleNamedValue objectId) {
+		return (Object)submitData(objectId);
+	}
+
     /**
      * Submits data to the server
      * 

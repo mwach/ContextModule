@@ -53,6 +53,7 @@ public class CMClientDesktop extends JFrame {
         TruckPanel truckPanel = new TruckPanel();
         ParkingLotPanel parkingLotPanel = new ParkingLotPanel();
         ZonesPanel zonesPanel = new ZonesPanel();
+        SwrlPanel swrlPanel = new SwrlPanel();
 
         generalPanel.setContextModule(cma);
         truckPanel.setContextModule(cma);
@@ -63,5 +64,6 @@ public class CMClientDesktop extends JFrame {
         tabbedPane.addTab(Messages.getString("MainWindowApp.2"), truckPanel); //$NON-NLS-1$
         tabbedPane.addTab(Messages.getString("MainWindowApp.3"), parkingLotPanel); //$NON-NLS-1$
         tabbedPane.addTab(Messages.getString("MainWindowApp.4"), zonesPanel); //$NON-NLS-1$
+        tabbedPane.addTab("SWRL rules", swrlPanel); //$NON-NLS-1$
     }
 }
