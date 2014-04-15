@@ -5,6 +5,7 @@ import itti.com.pl.arena.cm.client.ui.components.ButtonButtonRow;
 import itti.com.pl.arena.cm.client.ui.components.ButtonRow;
 import itti.com.pl.arena.cm.client.ui.components.ComboBoxButtonRow;
 import itti.com.pl.arena.cm.client.ui.components.ComboBoxRow;
+import itti.com.pl.arena.cm.client.ui.components.ImagePanel;
 import itti.com.pl.arena.cm.client.ui.components.TextBoxButtonRow;
 import itti.com.pl.arena.cm.client.ui.components.TextBoxRow;
 
@@ -123,7 +124,7 @@ public abstract class ContextModulePanel extends JPanel {
 
     protected JPanel createJPanel() {
         JPanel panelPlatform = new JPanel();
-        panelPlatform.setLayout(new GridLayout(12, 1, 10, 10));
+        panelPlatform.setLayout(new GridLayout(13, 1, 10, 10));
         panelPlatform.setBorder(new EmptyBorder(10, 10, 10, 10));
         return panelPlatform;
     }
@@ -143,4 +144,13 @@ public abstract class ContextModulePanel extends JPanel {
     protected ContextModuleAdapter getContextModuleAdapter() {
         return contextModuleAdapter;
     }
+
+    protected Component createImagePanel(String imagePath) {
+    	ImagePanel panel = new ImagePanel(imagePath);
+    	JPanel parentPanel = new JPanel();
+    	parentPanel.add(panel);
+    	parentPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+    	return parentPanel;
+    }
+
 }

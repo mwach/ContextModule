@@ -20,6 +20,9 @@ public class ParkingLotPanel extends ContextModulePanel {
 
         super();
 
+        Component imageComponent = createImagePanel("src/main/resources/img/parkinglot1.png");
+        add(imageComponent, BorderLayout.WEST);
+
         JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
         add(tabbedPane, BorderLayout.EAST);
 
@@ -31,6 +34,9 @@ public class ParkingLotPanel extends ContextModulePanel {
 
         JPanel panelPlatform = createJPanel();
 
+        panelPlatform.add(createComboBoxButtonRow("Delete parking lot", null)); //$NON-NLS-1$
+        panelPlatform.add(createTextBoxButtonRow(null, "Add parking lot")); //$NON-NLS-1$
+
         panelPlatform.add(createLabelRow(Messages.getString("ParkingLotPanel.2"))); //$NON-NLS-1$
         panelPlatform.add(createTextBoxRow(Messages.getString("ParkingLotPanel.3"))); //$NON-NLS-1$
         panelPlatform.add(createTextBoxRow(Messages.getString("ParkingLotPanel.4"))); //$NON-NLS-1$
@@ -40,7 +46,9 @@ public class ParkingLotPanel extends ContextModulePanel {
         panelPlatform.add(createEmptyRow());
         panelPlatform.add(createLabelRow(Messages.getString("ParkingLotPanel.7"))); //$NON-NLS-1$
         panelPlatform.add(createComboBoxButtonRow(Messages.getString("ParkingLotPanel.9"), null)); //$NON-NLS-1$
-        panelPlatform.add(createTextBoxButtonRow(null, Messages.getString("ParkingLotPanel.8"))); //$NON-NLS-1$
+        panelPlatform.add(createTextBoxRow("X")); //$NON-NLS-1$
+        panelPlatform.add(createTextBoxRow("Y")); //$NON-NLS-1$
+        panelPlatform.add(createButtonRow("Add")); //$NON-NLS-1$
 
         return panelPlatform;
     }
@@ -61,7 +69,10 @@ public class ParkingLotPanel extends ContextModulePanel {
             panelCamera.add(createEmptyRow());
             panelCamera.add(createLabelRow(Messages.getString("ParkingLotPanel.15"))); //$NON-NLS-1$
             panelCamera.add(createComboBoxButtonRow(Messages.getString("ParkingLotPanel.17"), null)); //$NON-NLS-1$
-            panelCamera.add(createTextBoxButtonRow(null, Messages.getString("ParkingLotPanel.16"))); //$NON-NLS-1$
+            panelCamera.add(createTextBoxRow("X")); //$NON-NLS-1$
+            panelCamera.add(createTextBoxRow("Y")); //$NON-NLS-1$
+            panelCamera.add(createButtonRow("Add")); //$NON-NLS-1$
+
 
             return panelCamera;
     }

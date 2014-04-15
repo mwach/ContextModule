@@ -28,6 +28,9 @@ public class ZonesPanel extends ContextModulePanel {
     public ZonesPanel() {
         super();
 
+        Component imageComponent = createImagePanel("src/main/resources/img/zone1.png");
+        add(imageComponent, BorderLayout.WEST);
+
         Component zonesPane = createPanelCamera();
         add(zonesPane, BorderLayout.EAST);
     }
@@ -53,7 +56,10 @@ public class ZonesPanel extends ContextModulePanel {
 
         panelZones.add(createEmptyRow());
         panelZones.add(createComboBoxButtonRow(Messages.getString("ZonesPanel.4"), null)); //$NON-NLS-1$
-        panelZones.add(createTextBoxButtonRow(null, Messages.getString("ZonesPanel.5"))); //$NON-NLS-1$
+        panelZones.add(createTextBoxRow("X")); //$NON-NLS-1$
+        panelZones.add(createTextBoxRow("Y")); //$NON-NLS-1$
+        panelZones.add(createButtonRow("Add")); //$NON-NLS-1$
+
 
         return panelZones;
     }

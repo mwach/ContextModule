@@ -40,7 +40,7 @@ public class CMClientDesktop extends JFrame {
      * Initialize the contents of the frame.
      */
     private void initialize() {
-        setBounds(200, 200, 600, 500);
+        setBounds(200, 200, 650, 550);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle(Messages.getString("MainWindowApp.0")); //$NON-NLS-1$
 
