@@ -42,7 +42,7 @@ public abstract class ContextModulePanel extends JPanel {
     private Component createButtonsMenu() {
         JPanel buttonsPanel = createJPanel();
         buttonsPanel.setLayout(new GridLayout(1, 3, 5, 5));
-        JButton refreshButton = new JButton("Refresh");
+        JButton refreshButton = new JButton(Messages.getString("ContextModulePanel.0")); //$NON-NLS-1$
         refreshButton.addActionListener(new ActionListener() {
             
             @Override
@@ -50,12 +50,12 @@ public abstract class ContextModulePanel extends JPanel {
                 if(getContextModuleAdapter().isConnected()){
                     onRefreshClick();
                 }else{
-                    JOptionPane.showMessageDialog(null, "Please connect to the CM server first");
+                    JOptionPane.showMessageDialog(null, Messages.getString("ContextModulePanel.1")); //$NON-NLS-1$
                 }
                 
             }
         });
-        JButton saveButton = new JButton("Save");
+        JButton saveButton = new JButton(Messages.getString("ContextModulePanel.2")); //$NON-NLS-1$
         saveButton.addActionListener(new ActionListener() {
             
             @Override
@@ -63,12 +63,12 @@ public abstract class ContextModulePanel extends JPanel {
                 if(getContextModuleAdapter().isConnected()){
                     onSaveClick();
                 }else{
-                    JOptionPane.showMessageDialog(null, "Please connect to the CM server first");
+                    JOptionPane.showMessageDialog(null, Messages.getString("ContextModulePanel.3")); //$NON-NLS-1$
                 }
                 
             }
         });
-        JButton cancelButton = new JButton("Cancel");
+        JButton cancelButton = new JButton(Messages.getString("ContextModulePanel.4")); //$NON-NLS-1$
         cancelButton.addActionListener(new ActionListener() {
             
             @Override
@@ -76,7 +76,7 @@ public abstract class ContextModulePanel extends JPanel {
                 if(getContextModuleAdapter().isConnected()){
                     onCancelClick();
                 }else{
-                    JOptionPane.showMessageDialog(null, "Please connect to the CM server first");
+                    JOptionPane.showMessageDialog(null, Messages.getString("ContextModulePanel.5")); //$NON-NLS-1$
                 }
                 
             }

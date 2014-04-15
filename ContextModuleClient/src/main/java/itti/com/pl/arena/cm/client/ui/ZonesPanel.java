@@ -28,7 +28,7 @@ public class ZonesPanel extends ContextModulePanel {
     public ZonesPanel() {
         super();
 
-        Component imageComponent = createImagePanel("src/main/resources/img/zone1.png");
+        Component imageComponent = createImagePanel(Messages.getString("ZonesPanel.6")); //$NON-NLS-1$
         add(imageComponent, BorderLayout.WEST);
 
         Component zonesPane = createPanelCamera();
@@ -39,7 +39,7 @@ public class ZonesPanel extends ContextModulePanel {
 
         JPanel panelZones = createJPanel();
 
-        parkingLotsComboBoxRow = createComboBoxRow(Messages.getString("ZonesPanel.0"), null);
+        parkingLotsComboBoxRow = createComboBoxRow(Messages.getString(Messages.getString("ZonesPanel.7")), null); //$NON-NLS-1$
         parkingLotsComboBoxRow.setOnChangeListener(new ActionListener() {
 
             @Override
@@ -50,7 +50,7 @@ public class ZonesPanel extends ContextModulePanel {
 
         panelZones.add(parkingLotsComboBoxRow); //$NON-NLS-1$
         panelZones.add(createLabelRow(Messages.getString("ZonesPanel.1"))); //$NON-NLS-1$
-        zonesComboBoxButtonRow = createComboBoxButtonRow(Messages.getString("ZonesPanel.2"), null);
+        zonesComboBoxButtonRow = createComboBoxButtonRow(Messages.getString(Messages.getString("ZonesPanel.8")), null); //$NON-NLS-1$
         panelZones.add(zonesComboBoxButtonRow); //$NON-NLS-1$
         panelZones.add(createTextBoxButtonRow(null, Messages.getString("ZonesPanel.3"))); //$NON-NLS-1$
 

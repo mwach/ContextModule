@@ -26,7 +26,7 @@ public class TruckPanel extends ContextModulePanel {
         final JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
         add(tabbedPane, BorderLayout.EAST);
 
-        imageComponent = createImagePanel("src/main/resources/img/truck1.png");
+        imageComponent = createImagePanel(Messages.getString("TruckPanel.9")); //$NON-NLS-1$
         add(imageComponent, BorderLayout.WEST);
 
         tabbedPane.addTab(Messages.getString("TruckPanel.0"), createPlatformPanel()); //$NON-NLS-1$
@@ -36,7 +36,7 @@ public class TruckPanel extends ContextModulePanel {
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
 				remove(imageComponent);
-				imageComponent = createImagePanel(String.format("src/main/resources/img/truck%d.png", tabbedPane.getSelectedIndex() + 1));
+				imageComponent = createImagePanel(String.format(Messages.getString("TruckPanel.10"), tabbedPane.getSelectedIndex() + 1)); //$NON-NLS-1$
 		        add(imageComponent, BorderLayout.WEST);
 			}
 		});

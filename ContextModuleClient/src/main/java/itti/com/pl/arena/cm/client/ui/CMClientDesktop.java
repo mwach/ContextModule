@@ -47,7 +47,7 @@ public class CMClientDesktop extends JFrame {
         JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
         getContentPane().add(tabbedPane, BorderLayout.CENTER);
 
-        ContextModuleAdapter cma = new ContextModuleAdapter("CMClient_" + System.currentTimeMillis());
+        ContextModuleAdapter cma = new ContextModuleAdapter(Messages.getString("CMClientDesktop.0") + System.currentTimeMillis()); //$NON-NLS-1$
 
         GeneralPanel generalPanel = new GeneralPanel();
         TruckPanel truckPanel = new TruckPanel();
@@ -59,6 +59,7 @@ public class CMClientDesktop extends JFrame {
         truckPanel.setContextModule(cma);
         parkingLotPanel.setContextModule(cma);
         zonesPanel.setContextModule(cma);
+        swrlPanel.setContextModule(cma);
 
         tabbedPane.addTab(Messages.getString("MainWindowApp.1"), generalPanel); //$NON-NLS-1$
         tabbedPane.addTab(Messages.getString("MainWindowApp.2"), truckPanel); //$NON-NLS-1$

@@ -50,12 +50,12 @@ public class GeneralPanel extends ContextModulePanel {
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.insets = new Insets(3,3,3,3);
 
-        brokerUrlRow = createTextBoxRow("URL of the broker");
-        brokerUrlRow.setText("127.0.0.1");
+        brokerUrlRow = createTextBoxRow(Messages.getString("GeneralPanel.0")); //$NON-NLS-1$
+        brokerUrlRow.setText(Messages.getString("GeneralPanel.1")); //$NON-NLS-1$
         gbl.setConstraints(brokerUrlRow, gbc);
         panelGeneral.add(brokerUrlRow);
 
-        connectRow = createButtonRow("Connect");
+        connectRow = createButtonRow(Messages.getString("GeneralPanel.2")); //$NON-NLS-1$
         gbl.setConstraints(connectRow, gbc);
         panelGeneral.add(connectRow);
         connectRow.setButtonActionListener(new ActionListener() {
@@ -70,7 +70,7 @@ public class GeneralPanel extends ContextModulePanel {
         gbl.setConstraints(emptyComponent, gbc);
         panelGeneral.add(emptyComponent);
 
-        Component logDescComponent = createLabelRow("Connection log");
+        Component logDescComponent = createLabelRow(Messages.getString("GeneralPanel.3")); //$NON-NLS-1$
         gbl.setConstraints(logDescComponent, gbc);
         panelGeneral.add(logDescComponent);
 
@@ -98,40 +98,40 @@ public class GeneralPanel extends ContextModulePanel {
         String brokerUrl = brokerUrlRow.getText();
         try{
             getContextModuleAdapter().connect(brokerUrl);
-            addLogMessage("Successfully connected");
-            connectRow.setButtonText("Disconnect");
+            addLogMessage(Messages.getString("GeneralPanel.4")); //$NON-NLS-1$
+            connectRow.setButtonText(Messages.getString("GeneralPanel.5")); //$NON-NLS-1$
         }catch(RuntimeException exc){
-            addLogMessage("Could not connect to the broker: " + exc.getLocalizedMessage());            
+            addLogMessage(Messages.getString("GeneralPanel.6") + exc.getLocalizedMessage());             //$NON-NLS-1$
         }
     }
 
     private void disconnect() {
         try {
             getContextModuleAdapter().disconnect();
-            addLogMessage("Successfully disconnected");
-            connectRow.setButtonText("Connect");
+            addLogMessage(Messages.getString("GeneralPanel.7")); //$NON-NLS-1$
+            connectRow.setButtonText(Messages.getString("GeneralPanel.8")); //$NON-NLS-1$
 
         } catch (Exception e) {
-            addLogMessage("Could not disconnect from the broker: " + e.getLocalizedMessage());
+            addLogMessage(Messages.getString("GeneralPanel.9") + e.getLocalizedMessage()); //$NON-NLS-1$
         }
     }
 
     private void addLogMessage(String message){
-        logComponent.append(message + "\n");        
+        logComponent.append(message + Messages.getString("GeneralPanel.10"));         //$NON-NLS-1$
     }
 
     @Override
     protected void onCancelClick() {
-        JOptionPane.showMessageDialog(null, "Action not supported for this panel");
+        JOptionPane.showMessageDialog(null, Messages.getString("GeneralPanel.11")); //$NON-NLS-1$
     }
 
     @Override
     protected void onSaveClick() {
-        JOptionPane.showMessageDialog(null, "Action not supported for this panel");
+        JOptionPane.showMessageDialog(null, Messages.getString("GeneralPanel.12")); //$NON-NLS-1$
     }
 
     @Override
     protected void onRefreshClick() {
-        JOptionPane.showMessageDialog(null, "Action not supported for this panel");
+        JOptionPane.showMessageDialog(null, Messages.getString("GeneralPanel.13")); //$NON-NLS-1$
     }
 }

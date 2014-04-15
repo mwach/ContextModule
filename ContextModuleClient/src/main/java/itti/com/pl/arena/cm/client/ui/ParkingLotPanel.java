@@ -20,7 +20,7 @@ public class ParkingLotPanel extends ContextModulePanel {
 
         super();
 
-        Component imageComponent = createImagePanel("src/main/resources/img/parkinglot1.png");
+        Component imageComponent = createImagePanel(Messages.getString("ParkingLotPanel.10")); //$NON-NLS-1$
         add(imageComponent, BorderLayout.WEST);
 
         JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
