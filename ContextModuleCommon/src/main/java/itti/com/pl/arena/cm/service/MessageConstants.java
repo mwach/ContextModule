@@ -38,10 +38,6 @@ public final class MessageConstants {
          */
         getGISData,
         /**
-         * Service name used by the {@link ContextModule} extended 'getGISDataExt' method
-         */
-        getGISDataExt,
-        /**
          * Service name used by the {@link ContextModule} 'getGeoportalData' method
          */
         getGeoportalData,
@@ -60,6 +56,11 @@ public final class MessageConstants {
          * Service name used by the {@link ContextModule} 'getZone' method
          */
         getZone,
+
+        /**
+         * Service name used by the {@link ContextModule} 'removeZone' method
+         */
+        removeZone,
 
         /**
          * Service name used by the {@link ContextModule} 'getListOfZones' method
@@ -117,7 +118,15 @@ public final class MessageConstants {
         /**
          * Properties of the Camera node
          */
-        CameraId, CameraPosition, CameraType, CameraAngleX, CameraAngleY, Bearing, ;
+        CameraId, CameraPosition, CameraType, CameraAngleX, CameraAngleY, Bearing,
+
+        /**
+         * Properties of the Zones
+         */
+        ident, name, plane_name,
+        
+        ;
+
     }
 
     public enum ContextModuleResponseProperties{

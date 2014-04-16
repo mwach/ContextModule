@@ -18,16 +18,18 @@ public class TextBoxRow extends JPanel{
     public TextBoxRow(String text)
     {
         super(new GridLayout(1, 2));
-        JLabel label = new JLabel(text);
+        JLabel label = new JLabel();
         add(label);
         textField = new JTextField();
         add(textField);
+        
+        setText(text);
     }
 
     public String getText() {
         return textField.getText();
     }
     public void setText(String text) {
-        textField.setText(text);
+   		textField.setText(text != null ? text : "");
     }
 }

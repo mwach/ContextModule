@@ -50,7 +50,7 @@ public abstract class ContextModulePanel extends JPanel {
                 if(getContextModuleAdapter().isConnected()){
                     onRefreshClick();
                 }else{
-                    JOptionPane.showMessageDialog(null, Messages.getString("ContextModulePanel.1")); //$NON-NLS-1$
+                	showMessage(Messages.getString("ContextModulePanel.1")); //$NON-NLS-1$
                 }
                 
             }
@@ -63,7 +63,7 @@ public abstract class ContextModulePanel extends JPanel {
                 if(getContextModuleAdapter().isConnected()){
                     onSaveClick();
                 }else{
-                    JOptionPane.showMessageDialog(null, Messages.getString("ContextModulePanel.3")); //$NON-NLS-1$
+                	showMessage(Messages.getString("ContextModulePanel.3")); //$NON-NLS-1$
                 }
                 
             }
@@ -76,7 +76,7 @@ public abstract class ContextModulePanel extends JPanel {
                 if(getContextModuleAdapter().isConnected()){
                     onCancelClick();
                 }else{
-                    JOptionPane.showMessageDialog(null, Messages.getString("ContextModulePanel.5")); //$NON-NLS-1$
+                    showMessage(Messages.getString("ContextModulePanel.5")); //$NON-NLS-1$
                 }
                 
             }
@@ -153,4 +153,7 @@ public abstract class ContextModulePanel extends JPanel {
     	return parentPanel;
     }
 
+    protected void showMessage(String message){
+    	JOptionPane.showMessageDialog(null, message);
+    }
 }

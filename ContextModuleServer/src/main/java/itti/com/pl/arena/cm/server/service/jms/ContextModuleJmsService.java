@@ -25,6 +25,7 @@ import itti.com.pl.arena.cm.server.utils.helpers.LocationFactory;
 import itti.com.pl.arena.cm.service.LocalContextModule;
 import itti.com.pl.arena.cm.service.MessageConstants.ContextModuleRequests;
 import itti.com.pl.arena.cm.service.ContextModule;
+import itti.com.pl.arena.cm.utils.helper.ArenaObjectsMapper;
 import itti.com.pl.arena.cm.utils.helper.DateTimeHelper;
 import itti.com.pl.arena.cm.utils.helper.JsonHelper;
 import itti.com.pl.arena.cm.utils.helper.JsonHelperException;
@@ -231,7 +232,7 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getGISData.name(), data.getHref())
                         && (data instanceof Location)) {
                     response = getGISData((Location) data);
-                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getGISDataExt.name(), data.getHref())
+                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getGISData.name(), data.getHref())
                         && (data instanceof Object)) {
                     response = getGISData((Object) data);
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getGeoportalData.name(), data.getHref())
@@ -246,6 +247,9 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getZone.name(), data.getHref())
                         && (data instanceof SimpleNamedValue)) {
                     response = getZone((SimpleNamedValue) data);
+                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.removeZone.name(), data.getHref())
+                        && (data instanceof SimpleNamedValue)) {
+                    response = removeZone((SimpleNamedValue) data);
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getListOfZones.name(), data.getHref())
                         && (data instanceof SimpleNamedValue)) {
                     response = getListOfZones((SimpleNamedValue) data);
@@ -587,7 +591,7 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
         Set<GeoObject> geoData = null;
         try {
             // call geoportal service to retrieve all available data
-            geoData = getGeoportal().getGeoportalData(new itti.com.pl.arena.cm.dto.Location(location.getX(), location.getY()),
+            geoData = getGeoportal().getGeoportalData(ArenaObjectsMapper.fromLocation(location),
                     getRadius());
             // update ontology with the geoportal data
             getOntology().updateGeoportalData(location.getX(), location.getY(), geoData);
@@ -765,4 +769,10 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
     private String getDataInDefaultFormat() {
         return DateTimeHelper.formatTime(System.currentTimeMillis(), Constants.TIMESTAMP_FORMAT);
     }
+
+	@Override
+	public BooleanNamedValue removeZone(SimpleNamedValue zoneId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

@@ -16,7 +16,6 @@ import itti.com.pl.arena.cm.dto.staticobj.Infrastructure;
 import itti.com.pl.arena.cm.dto.staticobj.Building.Type;
 import itti.com.pl.arena.cm.dto.staticobj.ParkingLot;
 import itti.com.pl.arena.cm.service.ContextModule;
-import itti.com.pl.arena.cm.service.MessageConstants.ContextModuleRequests;
 import itti.com.pl.arena.cm.utils.helper.IOHelperException;
 import itti.com.pl.arena.cm.utils.helper.JsonHelper;
 import itti.com.pl.arena.cm.utils.helper.JsonHelperException;
@@ -401,7 +400,6 @@ public class CMClient {
      */
     public Object getPlatformService(String platformId) {
         SimpleNamedValue objectId = createSimpleNamedValue(platformId);
-        objectId.setHref(ContextModuleRequests.getPlatform.name());
         Object data = contextModule.getPlatform(objectId);
         LogHelper.debug(CMClient.class, "getPlatformsService", "Server response received: %s", String.valueOf(data));
         return data;
@@ -418,7 +416,6 @@ public class CMClient {
      */
     public Object getPlatformsService(double x, double y) {
         Location objectLocation = createLocation(x, y);
-        objectLocation.setHref(ContextModuleRequests.getPlatforms.name());
         Object data = contextModule.getPlatforms(objectLocation);
         LogHelper.info(CMClient.class, "getPlatformsService", "Server response received: %s", String.valueOf(data));
         return data;
@@ -435,7 +432,6 @@ public class CMClient {
      */
     public Object getGISDataService(double x, double y) {
         Location objectLocation = createLocation(x, y);
-        objectLocation.setHref(ContextModuleRequests.getGISData.name());
         Object data = contextModule.getGISData(objectLocation);
         LogHelper.info(CMClient.class, "getGISDataService", "Server response received: %s", String.valueOf(data));
         return data;
@@ -467,7 +463,6 @@ public class CMClient {
         try{
             SimpleNamedValue classesObject = createSimpleNamedValue(JsonHelper.toJson(classes));
             Object requestData = createObject(locationObject, radiusObject, classesObject);
-            requestData.setHref(ContextModuleRequests.getGISDataExt.name());
             data = contextModule.getGISData(requestData);
 
         }catch(JsonHelperException exc){
@@ -489,7 +484,6 @@ public class CMClient {
      */
     public Object getGeoportalDataService(double x, double y) {
         Location objectLocation = createLocation(x, y);
-        objectLocation.setHref(ContextModuleRequests.getGeoportalData.name());
         Object data = contextModule.getGeoportalData(objectLocation);
         LogHelper.info(CMClient.class, "getGeoportalDataService", "Server response received: %s", String.valueOf(data));
         return data;
@@ -504,7 +498,6 @@ public class CMClient {
      */
     public Object getPlatformNeighborhood(String platformId) {
         SimpleNamedValue parkingIdObject = createSimpleNamedValue(platformId);
-        parkingIdObject.setHref(ContextModuleRequests.getPlatformNeighborhood.name());
         Object data = contextModule.getPlatformNeighborhood(parkingIdObject);
         LogHelper.info(CMClient.class, "getPlatformNeighborhood", "Server response received: %s", String.valueOf(data));
         return data;
@@ -533,7 +526,6 @@ public class CMClient {
             }
         }
         Object requestObject = createObject(requestParams);
-        requestObject.setHref(ContextModuleRequests.updateZone.name());
         SimpleNamedValue data = contextModule.updateZone(requestObject);
         LogHelper.info(CMClient.class, "defineZone", "Server response received: %s", String.valueOf(data));
         return data;
@@ -549,7 +541,6 @@ public class CMClient {
      */
     public Object getZone(String zoneId) {
         SimpleNamedValue objectId = createSimpleNamedValue(zoneId);
-        objectId.setHref(ContextModuleRequests.getZone.name());
         Object data = contextModule.getZone(objectId);
         LogHelper.debug(CMClient.class, "getZone", "Server response received: %s", String.valueOf(data));
         return data;
@@ -563,7 +554,6 @@ public class CMClient {
             throw new ContextModuleClientException(exc.getLocalizedMessage());
         }
         SimpleNamedValue platformRequest = createSimpleNamedValue(serializedObject);
-        platformRequest.setHref(ContextModuleRequests.updateParkingLot.name());
         BooleanNamedValue data = contextModule.updateParkingLot(platformRequest);
         LogHelper.debug(CMClient.class, "updateParkingLot", "Server response received: %s", String.valueOf(data));
         return data;
@@ -572,7 +562,6 @@ public class CMClient {
     private Object getParkingLot(String parkingLotId) throws ContextModuleClientException, JsonHelperException {
 
         SimpleNamedValue platformRequest = createSimpleNamedValue(parkingLotId);
-        platformRequest.setHref(ContextModuleRequests.getParkingLot.name());
         Object data = contextModule.getParkingLot(platformRequest);
         LogHelper.debug(CMClient.class, "getParkingLot", "Server response received: %s", String.valueOf(data));
         return data;
@@ -586,7 +575,6 @@ public class CMClient {
             throw new ContextModuleClientException(exc.getLocalizedMessage());
         }
         SimpleNamedValue platformRequest = createSimpleNamedValue(serializedObject);
-        platformRequest.setHref(ContextModuleRequests.updatePlatform.name());
         BooleanNamedValue data = contextModule.updatePlatform(platformRequest);
         LogHelper.debug(CMClient.class, "updatePlatform", "Server response received: %s", String.valueOf(data));
         return data;

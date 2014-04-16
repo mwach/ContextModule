@@ -124,6 +124,14 @@ public interface ContextModule {
     SimpleNamedValue updateZone(Object zoneDefinition);
 
     /**
+     * Removes an existing zone from the ontology
+     * 
+     * @param zoneId ID of the zone to be removed from ontology
+     * @return removal status (true == zone removed, false otherwise)
+     */
+    BooleanNamedValue removeZone(SimpleNamedValue zoneId);
+
+    /**
      * Returns zone definition: list of zone vertexes stored as {@link RealWorldCoordinate} objects
      * 
      * @param zoneId

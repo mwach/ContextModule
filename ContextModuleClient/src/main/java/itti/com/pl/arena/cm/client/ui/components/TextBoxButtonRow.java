@@ -19,17 +19,19 @@ public class TextBoxButtonRow extends JPanel{
     public TextBoxButtonRow(String textFieldText, String buttonText)
     {
         super(new GridLayout(1, 2));
-        textField = new JTextField(textFieldText == null ? "" : textFieldText);
+        textField = new JTextField();
         add(textField);
         button = new JButton(buttonText);
         add(button);
+        
+        setText(textFieldText);
+        setButtonText(buttonText);
     }
 
-    public JTextField getTextField(){
-        return textField;
+    public void setText(String text) {
+    	textField.setText(text == null ? "" : text);
     }
-    public JButton getButton(){
-        return button;
+    public void setButtonText(String buttonText) {
+    	textField.setText(buttonText == null ? "" : buttonText);
     }
-
 }

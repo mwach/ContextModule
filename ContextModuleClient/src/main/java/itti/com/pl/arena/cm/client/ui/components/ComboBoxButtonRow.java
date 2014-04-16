@@ -18,11 +18,12 @@ public class ComboBoxButtonRow extends JPanel{
     private static final long serialVersionUID = 1L;
 
     private JComboBox<String> comboBox = null;
+    private JButton button = null;
 
     public ComboBoxButtonRow(String label, List<String> content)
     {
         super(new GridLayout(1, 2));
-        JButton button = new JButton(label);
+        button = new JButton(label);
         comboBox = new JComboBox<String>();
         if(content != null){
             for (String item : content) {
@@ -52,4 +53,9 @@ public class ComboBoxButtonRow extends JPanel{
         return StringHelper.toString(comboBox.getSelectedItem());
     }
 
+	public void setOnClickListener(ActionListener actionListener) {
+		if(actionListener != null){
+			button.addActionListener(actionListener);
+		}
+	}
 }
