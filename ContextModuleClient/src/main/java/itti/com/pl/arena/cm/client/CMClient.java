@@ -69,6 +69,7 @@ public class CMClient {
             Platform platform = createDummyPlatform("Vehicle_Ford_Focus");
             parseUpdatePlatformResponse(client.updatePlatform(platform));
 
+            client.getZone("Car_parking_zone_P3");
             // call all available CM public services
             // get the platform info
             parseGetPlatformServiceResponse(client.getPlatformService("Vehicle_Ford_Focus"));

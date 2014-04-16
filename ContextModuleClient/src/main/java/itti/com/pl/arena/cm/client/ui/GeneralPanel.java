@@ -1,7 +1,7 @@
 package itti.com.pl.arena.cm.client.ui;
 
 import itti.com.pl.arena.cm.client.ui.components.ButtonRow;
-import itti.com.pl.arena.cm.client.ui.components.TextBoxRow;
+import itti.com.pl.arena.cm.client.ui.components.LabelTextBoxRow;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -23,7 +23,7 @@ public class GeneralPanel extends ContextModulePanel {
      */
     private static final long serialVersionUID = 1L;
 
-    private TextBoxRow brokerUrlRow = null;
+    private LabelTextBoxRow brokerUrlRow = null;
     private ButtonRow connectRow = null;
     private JTextArea logComponent = null;
 
@@ -50,7 +50,7 @@ public class GeneralPanel extends ContextModulePanel {
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.insets = new Insets(3,3,3,3);
 
-        brokerUrlRow = createTextBoxRow(Messages.getString("GeneralPanel.0")); //$NON-NLS-1$
+        brokerUrlRow = createTextBoxRow(Messages.getString("GeneralPanel.0"), null); //$NON-NLS-1$
         brokerUrlRow.setText(Messages.getString("GeneralPanel.1")); //$NON-NLS-1$
         gbl.setConstraints(brokerUrlRow, gbc);
         panelGeneral.add(brokerUrlRow);

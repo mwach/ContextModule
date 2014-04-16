@@ -40,14 +40,15 @@ public class CMClientDesktop extends JFrame {
      * Initialize the contents of the frame.
      */
     private void initialize() {
-        setBounds(200, 200, 650, 550);
+        setBounds(200, 200, 700, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle(Messages.getString("MainWindowApp.0")); //$NON-NLS-1$
 
         JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
         getContentPane().add(tabbedPane, BorderLayout.CENTER);
 
-        ContextModuleAdapter cma = new ContextModuleAdapter(Messages.getString("CMClientDesktop.0") + System.currentTimeMillis()); //$NON-NLS-1$
+        ContextModuleAdapter cma = new ContextModuleAdapter(
+                Messages.getString("CMClientDesktop.0") + System.currentTimeMillis()); //$NON-NLS-1$
 
         GeneralPanel generalPanel = new GeneralPanel();
         TruckPanel truckPanel = new TruckPanel();

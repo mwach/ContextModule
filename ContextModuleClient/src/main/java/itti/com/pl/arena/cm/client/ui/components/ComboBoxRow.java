@@ -7,7 +7,6 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class ComboBoxRow extends JPanel{
@@ -16,24 +15,14 @@ public class ComboBoxRow extends JPanel{
      * 
      */
     private static final long serialVersionUID = 1L;
-    private JLabel textLabel = null;
     private JComboBox<String> comboBox = null;
 
-    public ComboBoxRow(String label, List<String> content)
+    public ComboBoxRow(List<String> content)
     {
-        super(new GridLayout(1, 2));
-        textLabel = new JLabel();
+        super(new GridLayout(1, 1));
         comboBox = new JComboBox<String>();
-        setLabelText(label);
         setComboBoxContent(content);
-        add(textLabel);
         add(comboBox);
-    }
-    
-    public void setLabelText(String label){
-        if(label != null){
-            textLabel.setText(label);
-        }
     }
 
     public void setComboBoxContent(List<String> content){
@@ -53,7 +42,7 @@ public class ComboBoxRow extends JPanel{
     }
 
     public String getSelectedItem() {
-        return StringHelper.toString(comboBox.getSelectedItem());
+        return comboBox.getSelectedItem() != null ? StringHelper.toString(comboBox.getSelectedItem()) : null;
     }
 
 }

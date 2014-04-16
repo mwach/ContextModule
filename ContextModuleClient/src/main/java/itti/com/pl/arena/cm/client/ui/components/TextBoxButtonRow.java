@@ -32,6 +32,6 @@ public class TextBoxButtonRow extends JPanel{
     	textField.setText(text == null ? "" : text);
     }
     public void setButtonText(String buttonText) {
-    	textField.setText(buttonText == null ? "" : buttonText);
+    	button.setText(buttonText == null ? "" : buttonText);
     }
 }

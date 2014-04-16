@@ -67,7 +67,9 @@ public final class ArenaObjectsMapper {
 
 			}else if(feature instanceof RealWorldCoordinate){
 				coordinates.add(ArenaObjectsMapper.fromLocation((RealWorldCoordinate)feature));
-			}
+                        }else if(feature instanceof eu.arena_fp7._1.Location){
+                            coordinates.add(ArenaObjectsMapper.fromLocation((eu.arena_fp7._1.Location)feature));
+                    }
 		}
 
 		Zone zone = new Zone(zoneName);

@@ -6,35 +6,38 @@ import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 import java.util.List;
 
-import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class ComboBoxButtonRow extends JPanel{
+public class LabelComboBoxRow extends JPanel{
 
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
-
+    private JLabel textLabel = null;
     private JComboBox<String> comboBox = null;
-    private JButton button = null;
 
-    public ComboBoxButtonRow(String label, List<String> content)
+    public LabelComboBoxRow(String label, List<String> content)
     {
         super(new GridLayout(1, 2));
-        button = new JButton(label);
+        textLabel = new JLabel();
         comboBox = new JComboBox<String>();
-        if(content != null){
-            for (String item : content) {
-                comboBox.addItem(item);
-            }
-        }
+        setLabelText(label);
+        setComboBoxContent(content);
+        add(textLabel);
         add(comboBox);
-        add(button);
+    }
+    
+    public void setLabelText(String label){
+        if(label != null){
+            textLabel.setText(label);
+        }
     }
 
     public void setComboBoxContent(List<String> content){
+
         comboBox.removeAllItems();
         if(content != null){
             for (String item : content) {
@@ -50,12 +53,7 @@ public class ComboBoxButtonRow extends JPanel{
     }
 
     public String getSelectedItem() {
-        return comboBox.getSelectedItem() != null ? StringHelper.toString(comboBox.getSelectedItem()) : null;
+        return StringHelper.toString(comboBox.getSelectedItem());
     }
 
-	public void setOnClickListener(ActionListener actionListener) {
-		if(actionListener != null){
-			button.addActionListener(actionListener);
-		}
-	}
 }

@@ -50,7 +50,7 @@ public class Zone extends OntologyObject implements Iterable<Location>{
 	 */
 	public void addCoordinates(Collection<Location> coordinates){
 		if(coordinates != null){
-			coordinates.addAll(coordinates);
+			this.coordinates.addAll(coordinates);
 		}
 	}
 

@@ -46,16 +46,16 @@ public class TruckPanel extends ContextModulePanel {
         JPanel panelPlatform = createJPanel();
         panelPlatform.add(createLabelRow(Messages.getString("TruckPanel.2"))); //$NON-NLS-1$
 
-        panelPlatform.add(createTextBoxRow(Messages.getString("TruckPanel.3"))); //$NON-NLS-1$
-        panelPlatform.add(createTextBoxRow(Messages.getString("TruckPanel.4"))); //$NON-NLS-1$
-        panelPlatform.add(createTextBoxRow(Messages.getString("TruckPanel.5"))); //$NON-NLS-1$
+        panelPlatform.add(createTextBoxRow(Messages.getString("TruckPanel.3"), null)); //$NON-NLS-1$
+        panelPlatform.add(createTextBoxRow(Messages.getString("TruckPanel.4"), null)); //$NON-NLS-1$
+        panelPlatform.add(createTextBoxRow(Messages.getString("TruckPanel.5"), null)); //$NON-NLS-1$
 
         panelPlatform.add(createEmptyRow());
 
         panelPlatform.add(createLabelRow(Messages.getString("TruckPanel.6"))); //$NON-NLS-1$
 
-        panelPlatform.add(createTextBoxRow(Messages.getString("TruckPanel.7"))); //$NON-NLS-1$
-        panelPlatform.add(createTextBoxRow(Messages.getString("TruckPanel.8"))); //$NON-NLS-1$
+        panelPlatform.add(createTextBoxRow(Messages.getString("TruckPanel.7"), null)); //$NON-NLS-1$
+        panelPlatform.add(createTextBoxRow(Messages.getString("TruckPanel.8"), null)); //$NON-NLS-1$
 
         return panelPlatform;
     }
@@ -69,14 +69,14 @@ public class TruckPanel extends ContextModulePanel {
 
         panelCamera.add(createEmptyRow());
         panelCamera.add(createLabelRow(Messages.getString("TruckPanel.12"))); //$NON-NLS-1$
-        panelCamera.add(createTextBoxRow(Messages.getString("TruckPanel.13"))); //$NON-NLS-1$
-        panelCamera.add(createTextBoxRow(Messages.getString("TruckPanel.14"))); //$NON-NLS-1$
+        panelCamera.add(createTextBoxRow(Messages.getString("TruckPanel.13"), null)); //$NON-NLS-1$
+        panelCamera.add(createTextBoxRow(Messages.getString("TruckPanel.14"), null)); //$NON-NLS-1$
 
         panelCamera.add(createEmptyRow());
         panelCamera.add(createLabelRow(Messages.getString("TruckPanel.15"))); //$NON-NLS-1$
-        panelCamera.add(createTextBoxRow(Messages.getString("TruckPanel.16"))); //$NON-NLS-1$
-        panelCamera.add(createTextBoxRow(Messages.getString("TruckPanel.17"))); //$NON-NLS-1$
-        panelCamera.add(createTextBoxRow(Messages.getString("TruckPanel.18"))); //$NON-NLS-1$
+        panelCamera.add(createTextBoxRow(Messages.getString("TruckPanel.16"), null)); //$NON-NLS-1$
+        panelCamera.add(createTextBoxRow(Messages.getString("TruckPanel.17"), null)); //$NON-NLS-1$
+        panelCamera.add(createTextBoxRow(Messages.getString("TruckPanel.18"), null)); //$NON-NLS-1$
         
         return panelCamera;
     }

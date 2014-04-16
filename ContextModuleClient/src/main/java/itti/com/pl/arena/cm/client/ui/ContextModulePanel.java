@@ -5,9 +5,10 @@ import itti.com.pl.arena.cm.client.ui.components.ButtonButtonRow;
 import itti.com.pl.arena.cm.client.ui.components.ButtonRow;
 import itti.com.pl.arena.cm.client.ui.components.ComboBoxButtonRow;
 import itti.com.pl.arena.cm.client.ui.components.ComboBoxRow;
+import itti.com.pl.arena.cm.client.ui.components.LabelComboBoxRow;
 import itti.com.pl.arena.cm.client.ui.components.ImagePanel;
 import itti.com.pl.arena.cm.client.ui.components.TextBoxButtonRow;
-import itti.com.pl.arena.cm.client.ui.components.TextBoxRow;
+import itti.com.pl.arena.cm.client.ui.components.LabelTextBoxRow;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -70,7 +71,7 @@ public abstract class ContextModulePanel extends JPanel {
         });
         JButton cancelButton = new JButton(Messages.getString("ContextModulePanel.4")); //$NON-NLS-1$
         cancelButton.addActionListener(new ActionListener() {
-            
+
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 if(getContextModuleAdapter().isConnected()){
@@ -94,9 +95,9 @@ public abstract class ContextModulePanel extends JPanel {
 
     protected abstract void onRefreshClick();
 
-    protected TextBoxRow createTextBoxRow(String labelText) {
+    protected LabelTextBoxRow createTextBoxRow(String labelText, String text) {
 
-        return new TextBoxRow(labelText);
+        return new LabelTextBoxRow(labelText, text);
     }
 
     protected ComboBoxButtonRow createComboBoxButtonRow(String buttonText, List<String> content) {
@@ -104,8 +105,12 @@ public abstract class ContextModulePanel extends JPanel {
         return new ComboBoxButtonRow(buttonText, content);
     }
 
-    protected ComboBoxRow createComboBoxRow(String label, List<String> items) {
-        return new ComboBoxRow(label, items);
+    protected LabelComboBoxRow createLabelComboBoxRow(String label, List<String> items) {
+        return new LabelComboBoxRow(label, items);
+    }
+
+    protected ComboBoxRow createComboBoxRow(List<String> items) {
+        return new ComboBoxRow(items);
     }
 
     protected TextBoxButtonRow createTextBoxButtonRow(String textBoxText, String buttonText) {
