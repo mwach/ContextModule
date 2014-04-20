@@ -237,23 +237,17 @@ public class ContextModuleOntologyManagerTest {
     @Test
     public void testUpdateZoneNullLocations() throws OntologyException {
 
-        //if no locations were specified, zone is not going to be created
-        expectedException.expect(OntologyException.class);
-        expectedException.expectMessage(
-                String.format(ErrorMessages.ONTOLOGY_EMPTY_VALUE_PROVIDED.getMessage(), OntologyConstants.Object_has_GPS_coordinates.name()));
-
-        cmOntologyManager.updateZone(null, null);
+        //if no locations were specified, empty zone is going to be created
+        String zoneName = cmOntologyManager.updateZone(null, null, null);
+        assertNotNull(cmOntologyManager.getZone(zoneName));
     }
 
     @Test
     public void testUpdateZoneEmptyLocations() throws OntologyException {
 
-        //if no locations were specified, zone is not going to be created
-        expectedException.expect(OntologyException.class);
-        expectedException.expectMessage(
-                String.format(ErrorMessages.ONTOLOGY_EMPTY_VALUE_PROVIDED.getMessage(), OntologyConstants.Object_has_GPS_coordinates.name()));
-
-        cmOntologyManager.updateZone(null, new ArrayList<Location>());
+        //if no locations were specified, empty zone is going to be created
+        String zoneName = cmOntologyManager.updateZone(null, null, new ArrayList<Location>());
+        assertNotNull(cmOntologyManager.getZone(zoneName));
     }
 
     // test 'get zone' functionality
@@ -299,7 +293,7 @@ public class ContextModuleOntologyManagerTest {
                     new Location(TestHelper.getCoordinate(), TestHelper.getCoordinate(), 0, TestHelper.getCoordinate()));
         }
         //add new zone to ontology
-        String zoneId = cmOntologyManager.updateZone(null, locations);
+        String zoneId = cmOntologyManager.updateZone(null, null, locations);
         assertNotNull(zoneId);
 
         //now try to get the zone from ontology
@@ -325,10 +319,10 @@ public class ContextModuleOntologyManagerTest {
                     new Location(TestHelper.getCoordinate(), TestHelper.getCoordinate(), 0, TestHelper.getCoordinate()));
 
         //add new zones to ontology
-        String zoneIdA = cmOntologyManager.updateZone(null, locationsZoneA);
+        String zoneIdA = cmOntologyManager.updateZone(null, null, locationsZoneA);
         assertNotNull(zoneIdA);
 
-        String zoneIdB = cmOntologyManager.updateZone(null, locationsZoneB);
+        String zoneIdB = cmOntologyManager.updateZone(null, null, locationsZoneB);
         assertNotNull(zoneIdB);
 
         assertFalse(StringHelper.equalsIgnoreCase(zoneIdA, zoneIdB));

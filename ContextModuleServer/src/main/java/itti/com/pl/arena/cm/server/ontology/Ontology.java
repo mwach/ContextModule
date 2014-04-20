@@ -29,12 +29,13 @@ public interface Ontology {
     public void updatePlatform(Platform platform) throws OntologyException;
 
     /**
-     * Updates last position of the platform in the ontology.
-     * If platform with given ID is not defined in the ontology, then it's going to be created
+     * Updates last position of the platform in the ontology. If platform with given ID is not defined in the ontology,
+     * then it's going to be created
      * 
      * @param platformId
      *            ID of the platform
-     * @param location last location of the platform
+     * @param location
+     *            last location of the platform
      * @throws OntologyException
      *             could not update information about platform
      */
@@ -166,6 +167,8 @@ public interface Ontology {
      * 
      * @param zoneId
      *            predefined ID of the zone
+     * @param parkingLotName
+     *            name of the parking lot
      * 
      * @param locations
      *            zone boundaries (list of zone vertexes stored as {@link Location} objects)
@@ -173,7 +176,8 @@ public interface Ontology {
      * @throws OntologyException
      *             processing exception
      */
-    public String updateZone(String zoneId, List<itti.com.pl.arena.cm.dto.Location> locations) throws OntologyException;
+    public String updateZone(String zoneId, String parkingLotName, List<itti.com.pl.arena.cm.dto.Location> locations)
+            throws OntologyException;
 
     /**
      * Defines a new zone in the ontology
@@ -194,5 +198,13 @@ public interface Ontology {
      * @return list of instances names. If there are no instances, empty list will be returned
      */
     public List<String> getInstances(String className) throws OntologyException;
+
+    /**
+     * Removes instance identified by its name from ontology
+     * 
+     * @param instanceName
+     *            name of the instance to remove
+     */
+    public void remove(String zoneId) throws OntologyException;
 
 }

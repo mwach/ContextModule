@@ -1,6 +1,7 @@
 package itti.com.pl.arena.cm.client.ui.components;
 
 import java.awt.GridLayout;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -31,7 +32,17 @@ public class TextBoxButtonRow extends JPanel{
     public void setText(String text) {
     	textField.setText(text == null ? "" : text);
     }
+    public String getText(){
+        return textField.getText();
+    }
     public void setButtonText(String buttonText) {
     	button.setText(buttonText == null ? "" : buttonText);
     }
+
+    public void setOnButtonClickListener(ActionListener actionListener) {
+        if(actionListener != null){
+                button.addActionListener(actionListener);
+        }
+    }
+
 }

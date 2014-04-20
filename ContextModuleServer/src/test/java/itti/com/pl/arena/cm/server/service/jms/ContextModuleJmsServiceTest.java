@@ -14,7 +14,6 @@ import itti.com.pl.arena.cm.server.ontology.OntologyException;
 import itti.com.pl.arena.cm.server.service.jms.ContextModuleJmsService;
 import itti.com.pl.arena.cm.utils.helper.JsonHelper;
 import itti.com.pl.arena.cm.utils.helper.JsonHelperException;
-import itti.com.pl.arena.cm.utils.helper.StringHelper;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -46,7 +45,7 @@ public class ContextModuleJmsServiceTest {
         BooleanNamedValue response = CMJmsService.updatePlatform(null);
         //request failure returned
         assertEquals(false, response.isFeatureValue());
-        assertEquals(StringHelper.toString(null), response.getFeatureName());
+        assertEquals(null, response.getFeatureName());
 
     }
 
@@ -57,7 +56,7 @@ public class ContextModuleJmsServiceTest {
         BooleanNamedValue response = CMJmsService.updatePlatform(new SimpleNamedValue());
         //request failure returned
         assertEquals(false, response.isFeatureValue());
-        assertEquals(StringHelper.toString(null), response.getFeatureName());
+        assertEquals(null, response.getFeatureName());
 
     }
 
@@ -70,7 +69,7 @@ public class ContextModuleJmsServiceTest {
         BooleanNamedValue response = CMJmsService.updatePlatform(snv);
         //request failure returned
         assertEquals(false, response.isFeatureValue());
-        assertEquals(StringHelper.toString(null), response.getFeatureName());
+        assertEquals(null, response.getFeatureName());
 
     }
 
@@ -88,7 +87,7 @@ public class ContextModuleJmsServiceTest {
         BooleanNamedValue response = CMJmsService.updatePlatform(snv);
         //request failure returned
         assertEquals(true, response.isFeatureValue());
-        assertEquals(StringHelper.toString(platform.getId()), response.getFeatureName());
+        assertEquals(platform.getId(), response.getFeatureName());
 
         //verify ontology was called
         Mockito.verify(ontology).updatePlatform(Mockito.any(Platform.class));
@@ -101,7 +100,7 @@ public class ContextModuleJmsServiceTest {
         BooleanNamedValue response = CMJmsService.updateParkingLot(null);
         //request failure returned
         assertEquals(false, response.isFeatureValue());
-        assertEquals(StringHelper.toString(null), response.getFeatureName());
+        assertEquals(null, response.getFeatureName());
 
     }
 
@@ -112,7 +111,7 @@ public class ContextModuleJmsServiceTest {
         BooleanNamedValue response = CMJmsService.updateParkingLot(new SimpleNamedValue());
         //request failure returned
         assertEquals(false, response.isFeatureValue());
-        assertEquals(StringHelper.toString(null), response.getFeatureName());
+        assertEquals(null, response.getFeatureName());
 
     }
 
@@ -125,7 +124,7 @@ public class ContextModuleJmsServiceTest {
         BooleanNamedValue response = CMJmsService.updateParkingLot(snv);
         //request failure returned
         assertEquals(false, response.isFeatureValue());
-        assertEquals(StringHelper.toString(null), response.getFeatureName());
+        assertEquals(null, response.getFeatureName());
 
     }
 
@@ -143,7 +142,7 @@ public class ContextModuleJmsServiceTest {
         BooleanNamedValue response = CMJmsService.updateParkingLot(snv);
         //request failure returned
         assertEquals(true, response.isFeatureValue());
-        assertEquals(StringHelper.toString(parkingLot.getId()), response.getFeatureName());
+        assertEquals(parkingLot.getId(), response.getFeatureName());
 
         //verify ontology was called
         Mockito.verify(ontology).updateParkingLot(Mockito.any(ParkingLot.class));

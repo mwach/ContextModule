@@ -1,5 +1,7 @@
 package itti.com.pl.arena.cm.server.ontology;
 
+import static org.junit.Assert.*;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -89,6 +91,30 @@ public class OntologyManagerTest {
         Assert.assertEquals(1, ontologyProperties.size());
         // verify value of added property
         Assert.assertEquals(propertyValue, ontologyProperties.get(propertyName)[0]);
+    }
+
+    @Test
+    public void testRemoveInstance() throws OntologyException{
+        //create a new instance in ontology
+        String instanceName = "dummyBuilding_" + System.currentTimeMillis();
+        ontologyManager.createSimpleInstance(OntologyConstants.Building.name(), instanceName, null);
+        //verify, instance was added to ontology
+        assertNotNull(ontologyManager.getInstance(instanceName));
+        //remove it
+        ontologyManager.remove(instanceName);
+        //verify, instance was removed from ontology
+        assertNull(ontologyManager.getInstance(instanceName));
+    }
+
+    @Test
+    public void testRemoveNonExistingInstance() throws OntologyException{
+
+        //try to delete an non-existing instance
+        String instanceName = "dummyBuilding_tt_" + System.currentTimeMillis();
+        
+        expectedException.expect(OntologyException.class);
+        expectedException.expectMessage(String.format(ErrorMessages.ONTOLOGY_INSTANCE_NOT_FOUND.getMessage(), instanceName));
+        ontologyManager.remove(instanceName);
     }
 
 }

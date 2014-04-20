@@ -11,6 +11,7 @@ import itti.com.pl.arena.cm.dto.Location;
 import itti.com.pl.arena.cm.dto.Zone;
 import itti.com.pl.arena.cm.utils.helper.LocationHelper;
 import itti.com.pl.arena.cm.utils.helper.LocationHelperException;
+import itti.com.pl.arena.cm.utils.helper.NumbersHelper;
 import itti.com.pl.arena.cm.utils.helper.StringHelper;
 
 import java.awt.BorderLayout;
@@ -34,6 +35,7 @@ public class ZonesPanel extends ContextModulePanel {
     private ComboBoxButtonRow zonesComboBoxButtonRow = null;
     private TextBoxButtonRow createZoneButtonRow = null;
     private ComboBoxRow zoneCoordinateComboBoxRow = null;
+    private LabelTextBoxRow planceNameRow = null;
     private ButtonRow zoneCoordinateButtonRow = null;
     private LabelTextBoxRow coordinateXRow = null;
     private LabelTextBoxRow coordinateYRow = null;
@@ -71,7 +73,7 @@ public class ZonesPanel extends ContextModulePanel {
 
         // zones combo box
         panelZones.add(createLabelRow(Messages.getString("ZonesPanel.1"))); //$NON-NLS-1$
-        zonesComboBoxButtonRow = createComboBoxButtonRow("Remove zone", null); //$NON-NLS-1$
+        zonesComboBoxButtonRow = createComboBoxButtonRow("Remove zone"  , null); //$NON-NLS-1$
         zonesComboBoxButtonRow.setOnChangeListener(new ActionListener() {
 
             @Override
@@ -83,15 +85,26 @@ public class ZonesPanel extends ContextModulePanel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                deleteSelectedZone();
+                removeSelectedZone();
             }
         });
         panelZones.add(zonesComboBoxButtonRow); //$NON-NLS-1$
 
         createZoneButtonRow = createTextBoxButtonRow(null, Messages.getString("ZonesPanel.3")); //$NON-NLS-1$
+        createZoneButtonRow.setOnButtonClickListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addZone();
+            }
+        });
         panelZones.add(createZoneButtonRow);
         panelZones.add(createEmptyRow());
 
+        planceNameRow = new LabelTextBoxRow("Plane name", null);
+        panelZones.add(planceNameRow);
+
+        panelZones.add(createLabelRow("Zone coordinates"));
         zoneCoordinateComboBoxRow = createComboBoxRow(null);
         zoneCoordinateComboBoxRow.setOnChangeListener(new ActionListener() {
             
@@ -101,8 +114,17 @@ public class ZonesPanel extends ContextModulePanel {
             }
         });
         panelZones.add(zoneCoordinateComboBoxRow);
+
         zoneCoordinateButtonRow = createButtonRow(Messages.getString("ZonesPanel.4")); //$NON-NLS-1$
+        zoneCoordinateButtonRow.setButtonActionListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                removeCoordinate();
+            }
+        });
         panelZones.add(zoneCoordinateButtonRow);
+
         coordinateXRow = createTextBoxRow("X", null);
         coordinateYRow = createTextBoxRow("Y", null);
         coordinateZRow = createTextBoxRow("Z", null);
@@ -111,9 +133,49 @@ public class ZonesPanel extends ContextModulePanel {
         panelZones.add(coordinateZRow);
 
         clearAddCoordinateRow = createButtonButtonRow("Clear", "Add");
+        clearAddCoordinateRow.setOnFirstButtonClickListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                clearCoordinateFields();
+            }
+        });
+        clearAddCoordinateRow.setOnSecondButtonClickListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                addCoordinate();
+            }
+        });
         panelZones.add(clearAddCoordinateRow);
 
         return panelZones;
+    }
+
+    private void clearCoordinateFields() {
+       coordinateXRow.setText(null);
+       coordinateYRow.setText(null);
+       coordinateZRow.setText(null);
+    }
+
+    protected void addCoordinate() {
+        if(!NumbersHelper.isDouble(coordinateXRow.getText())){
+            showMessage("Value for the X coordinate is not a valid number");
+        }
+        if(!NumbersHelper.isDouble(coordinateYRow.getText())){
+            showMessage("Value for the Y coordinate is not a valid number");
+        }
+        if(!NumbersHelper.isDouble(coordinateZRow.getText())){
+            showMessage("Value for the Z coordinate is not a valid number");
+        }
+        zoneCoordinateComboBoxRow.addItem(
+        LocationHelper.createStringFromLocation(new Location(
+                NumbersHelper.getDoubleFromString(coordinateXRow.getText()),
+                NumbersHelper.getDoubleFromString(coordinateYRow.getText()),
+                0,
+                NumbersHelper.getDoubleFromString(coordinateZRow.getText())
+                )));
+        clearCoordinateFields();
     }
 
     @Override
@@ -147,18 +209,22 @@ public class ZonesPanel extends ContextModulePanel {
             if (zone != null) {
                 createZoneButtonRow.setText(zone.getId());
                 String[] locations = LocationHelper.createStringsFromLocations(zone.getLocations());
-                zoneCoordinateComboBoxRow.setComboBoxContent(Arrays.asList(locations));
+                zoneCoordinateComboBoxRow.setItems(Arrays.asList(locations));
             }else{
                 createZoneButtonRow.setText(null);  
-                zoneCoordinateComboBoxRow.setComboBoxContent(null);
+                zoneCoordinateComboBoxRow.setItems(null);
             }
         }else{
             createZoneButtonRow.setText(null);  
-            zoneCoordinateComboBoxRow.setComboBoxContent(null);            
+            zoneCoordinateComboBoxRow.setItems(null);            
         }
     }
 
-    private void deleteSelectedZone() {
+    private void removeSelectedZone() {
+        removeZone();
+    }
+
+    private void removeZone(){
         String selectedZone = zonesComboBoxButtonRow.getSelectedItem();
         if (StringHelper.hasContent(selectedZone)) {
             if (getContextModuleAdapter().removeZone(selectedZone)) {
@@ -169,6 +235,23 @@ public class ZonesPanel extends ContextModulePanel {
                 showMessage("Could not remove zone from ontology");
             }
         }
+    }
+
+    private void addZone() {
+        String parkingLotName = parkingLotsComboBoxRow.getSelectedItem();
+        String zoneName = createZoneButtonRow.getText();
+        if (StringHelper.hasContent(parkingLotName) && StringHelper.hasContent(zoneName)) {
+            if (getContextModuleAdapter().addZone(parkingLotName, zoneName)) {
+                showMessage("Zone successfully added to the ontology");
+            } else {
+                showMessage("Could not add zone to the ontology");
+            }
+        }
+    }
+
+    private void removeCoordinate() {
+        String coordinate = zoneCoordinateComboBoxRow.getSelectedItem();
+        zoneCoordinateComboBoxRow.removeItem(coordinate);
     }
 
     private void coordinateSelectionChanged() {

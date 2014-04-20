@@ -794,25 +794,30 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
     }
 
     @Override
-    public String updateZone(String zoneName, List<Location> locations) throws OntologyException {
-
-        if (locations == null || locations.isEmpty()) {
-            LogHelper.info(ContextModuleOntologyManager.class, "defineZone",
-                    "Zone is not going to be created. No locations specified");
-            throw new OntologyException(ErrorMessages.ONTOLOGY_EMPTY_VALUE_PROVIDED, OntologyConstants.Object_has_GPS_coordinates.name());
-        } 
+    public String updateZone(String zoneName, String parkingLotName, List<Location> locations) throws OntologyException {
 
         //check, if zoneId was defined in the request
         if(!StringHelper.hasContent(zoneName)){
             zoneName = generateZoneName();
         }
+        //add location of the zone
         Map<String, String[]> properties = new HashMap<>();
-        properties.put(OntologyConstants.Object_has_GPS_coordinates.name(),
-                LocationHelper.createStringsFromLocations(locations.toArray(new Location[locations.size()])));
-
+        if(locations != null){
+            properties.put(OntologyConstants.Object_has_GPS_coordinates.name(),
+                    LocationHelper.createStringsFromLocations(locations.toArray(new Location[locations.size()])));
+        }
         OWLIndividual zoneInstance = createSimpleInstance(OntologyConstants.Car_parking_zone.name(), zoneName, properties);
         zoneName = zoneInstance.getName();
 
+        //assign zone to the parking lot
+        if(StringHelper.hasContent(parkingLotName)){
+            ParkingLot parkingLot = getParkingLot(parkingLotName);
+            //check if already assigned
+            if(!parkingLot.getInfrastructure().keySet().contains(zoneName)){
+                parkingLot.addIntrastructure(new Infrastructure(zoneName, itti.com.pl.arena.cm.dto.staticobj.Infrastructure.Type.Car_Parking));
+            }
+            updateParkingLot(parkingLot);
+        }
         return zoneName;
     }
 

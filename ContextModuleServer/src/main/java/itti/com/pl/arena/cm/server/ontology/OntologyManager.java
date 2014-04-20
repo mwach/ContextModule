@@ -290,7 +290,7 @@ public class OntologyManager implements Service {
         // create individual, or get the existing one
         OWLIndividual individual = null;
         if (getInstances(className).contains(instanceName)) {
-            individual = getInstance(className, instanceName);
+            individual = getInstance(instanceName);
         } else {
             individual = createInstanceOnly(className, instanceName);
         }
@@ -312,15 +312,9 @@ public class OntologyManager implements Service {
      * @return true, if class was successfully created, or already existed in the ontology, false otherwise
      * @throws OntologyException
      */
-    public OWLIndividual getInstance(String className, String instanceName) throws OntologyException {
+    public OWLIndividual getInstance(String instanceName) throws OntologyException {
 
-        LogHelper.debug(OntologyManager.class, "getInstance", "Searching for instance '%s' of class '%s'", instanceName,
-                className);
-        OWLNamedClass parentClass = getModel().getOWLNamedClass(className);
-        if (parentClass == null) {
-            LogHelper.warning(OntologyManager.class, "getInstance", "Base class '%s' not found in the ontology", className);
-            throw new OntologyException(ErrorMessages.ONTOLOGY_CLASS_DOESNT_EXIST, className);
-        }
+        LogHelper.debug(OntologyManager.class, "getInstance", "Searching for instance '%s'", instanceName);
         return getModel().getOWLIndividual(instanceName);
     }
 
@@ -442,6 +436,25 @@ public class OntologyManager implements Service {
         }
         return false;
     }
+
+    /**
+     * Removes instance identified by its name from ontology
+     * @param instanceName name of the instance to remove
+     * @throws OntologyException 
+     */
+    public void remove(String instanceName) throws OntologyException{
+        if(StringHelper.hasContent(instanceName)){
+            Instance instance = getInstance(instanceName);
+            if(instance == null){
+                throw new OntologyException(ErrorMessages.ONTOLOGY_INSTANCE_NOT_FOUND, instanceName);
+            }
+            getModel().deleteInstance(instance);
+        }else{
+            throw new OntologyException(ErrorMessages.ONTOLOGY_EMPTY_INSTANCE_NAME);
+        }
+    }
+
+
     /**
      * returns values for single property of an individual stored in the ontology model
      * 
@@ -504,7 +517,7 @@ public class OntologyManager implements Service {
      *             could not update property value
      */
     public void updatePropertyValue(String instanceName, String propertyName, Object propertyValue) throws OntologyException {
-        OWLIndividual instance = getInstance(getInstanceClass(instanceName), instanceName);
+        OWLIndividual instance = getInstance(instanceName);
         RDFProperty property = getModel().getRDFProperty(propertyName);
         removePropertyValues(instance, property);
         setPropertyValue(instance, property, propertyValue);

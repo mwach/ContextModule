@@ -8,12 +8,10 @@ import itti.com.pl.arena.cm.server.geoportal.gov.pl.GeoportalUrls;
 import itti.com.pl.arena.cm.server.geoportal.gov.pl.dto.GeoportalRequestDataObject;
 import itti.com.pl.arena.cm.server.geoportal.gov.pl.dto.GeoportalRequestObject;
 
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-@Ignore
 public class GeoportalServiceTest {
 
     @Rule

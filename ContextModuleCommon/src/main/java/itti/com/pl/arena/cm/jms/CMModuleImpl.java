@@ -37,11 +37,12 @@ public class CMModuleImpl extends ModuleImpl{
      *            value of the object
      * @return object containing provided values
      */
-    public SimpleNamedValue createSimpleNamedValue(String id, String value) {
+    public SimpleNamedValue createSimpleNamedValue(String id, String featureName, String value) {
         SimpleNamedValue snv = getFactory().createSimpleNamedValue();
         snv.setDataSourceId(getModuleName());
         //snv.setId(String.format("CM_RESP_%s", StringHelper.toString(id)));
         snv.setId(StringHelper.toString(id));
+        snv.setFeatureName(featureName);
         snv.setValue(StringHelper.toString(value));
         return snv;
     }
@@ -58,9 +59,9 @@ public class CMModuleImpl extends ModuleImpl{
     public BooleanNamedValue createBooleanNamedValue(String id, String featureName, boolean status) {
         BooleanNamedValue bnv = getFactory().createBooleanNamedValue();
         bnv.setDataSourceId(getModuleName());
+        bnv.setFeatureName(featureName);
         //bnv.setId(String.format("CM_RESP_%s", StringHelper.toString(id)));
         bnv.setId(StringHelper.toString(id));
-        bnv.setFeatureName(featureName);
         bnv.setFeatureValue(status);
         return bnv;
     }
@@ -94,13 +95,12 @@ public class CMModuleImpl extends ModuleImpl{
      *            value of the object
      * @return object containing provided values
      */
-    public Object createObject(String id, String href, List<AbstractNamedValue> vector) {
+    public Object createObject(String id, List<AbstractNamedValue> vector) {
         Object object = getFactory().createObject();
         object.setFeatureVector(getFactory().createFeatureVector());
         //object.setId(String.format("CM_RESP_%s", StringHelper.toString(id)));
         object.setId(StringHelper.toString(id));
         object.setDataSourceId(getModuleName());
-        object.setHref(href);
         object.getFeatureVector().setId(StringHelper.toString(id));
         object.getFeatureVector().setDataSourceId(getModuleName());
         object.getFeatureVector().getFeature().addAll(vector);

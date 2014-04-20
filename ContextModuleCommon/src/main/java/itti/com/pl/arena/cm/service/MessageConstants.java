@@ -111,9 +111,9 @@ public final class MessageConstants {
         Location,
 
         /**
-         * Platform size
+         * Platform
          */
-        Width, Height, Length,
+        Platform, Width, Height, Length, Coordinate,
 
         /**
          * Properties of the Camera node
@@ -123,7 +123,19 @@ public final class MessageConstants {
         /**
          * Properties of the Zones
          */
-        ident, name, plane_name,
+        ParkingLotName, ZoneName, ident, name, plane_name, 
+        /**
+         * geoportal data
+         */
+        GeoportalData, 
+        /**
+         * Error message
+         */
+        Error,
+        /**
+         * Notification message
+         */
+        Notification
         
         ;
 

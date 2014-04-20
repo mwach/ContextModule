@@ -10,7 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
-public class ComboBoxButtonRow extends JPanel{
+public class ComboBoxButtonRow extends JPanel {
 
     /**
      * 
@@ -20,12 +20,11 @@ public class ComboBoxButtonRow extends JPanel{
     private JComboBox<String> comboBox = null;
     private JButton button = null;
 
-    public ComboBoxButtonRow(String label, List<String> content)
-    {
+    public ComboBoxButtonRow(String label, List<String> content) {
         super(new GridLayout(1, 2));
         button = new JButton(label);
         comboBox = new JComboBox<String>();
-        if(content != null){
+        if (content != null) {
             for (String item : content) {
                 comboBox.addItem(item);
             }
@@ -34,9 +33,9 @@ public class ComboBoxButtonRow extends JPanel{
         add(button);
     }
 
-    public void setComboBoxContent(List<String> content){
+    public void setComboBoxContent(List<String> content) {
         comboBox.removeAllItems();
-        if(content != null){
+        if (content != null) {
             for (String item : content) {
                 comboBox.addItem(item);
             }
@@ -44,7 +43,7 @@ public class ComboBoxButtonRow extends JPanel{
     }
 
     public void setOnChangeListener(ActionListener actionListener) {
-        if(actionListener != null){
+        if (actionListener != null) {
             comboBox.addActionListener(actionListener);
         }
     }
@@ -53,9 +52,9 @@ public class ComboBoxButtonRow extends JPanel{
         return comboBox.getSelectedItem() != null ? StringHelper.toString(comboBox.getSelectedItem()) : null;
     }
 
-	public void setOnClickListener(ActionListener actionListener) {
-		if(actionListener != null){
-			button.addActionListener(actionListener);
-		}
-	}
+    public void setOnClickListener(ActionListener actionListener) {
+        if (actionListener != null) {
+            button.addActionListener(actionListener);
+        }
+    }
 }

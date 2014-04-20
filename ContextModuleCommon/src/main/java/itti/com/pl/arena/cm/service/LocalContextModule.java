@@ -14,24 +14,26 @@ import eu.arena_fp7._1.SimpleNamedValue;
  * @author mawa
  * 
  */
-public interface LocalContextModule extends ContextModule{
+public interface LocalContextModule extends ContextModule {
 
     /**
      * Prepares instance of the {@link AbstractNamedValue} class
      * 
      * @param id
      *            ID of the object
+     *            @param featureName name of the feature
      * @param value
      *            value of the object
      * @return object containing provided values
      */
-    SimpleNamedValue createSimpleNamedValue(String id, String value);
+    SimpleNamedValue createSimpleNamedValue(String id, String featureName, String value);
 
     /**
      * Prepares instance of the {@link AbstractNamedValue} class
      * 
      * @param featureName
      *            ID of the object
+     *            @param featureName name of the feature
      * @param value
      *            value of the object
      * @return object containing provided values
@@ -55,11 +57,10 @@ public interface LocalContextModule extends ContextModule{
      * @param id
      *            ID of the object
      * @param vector
-     * @param value
      *            value of the object
      * @return object containing provided values
      */
-    Object createObject(String id, String href, List<AbstractNamedValue> vector);
+    Object createObject(String id, List<AbstractNamedValue> vector);
 
     void setBrokerUrl(String brokerUrl);
 

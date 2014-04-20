@@ -21,11 +21,11 @@ public class ComboBoxRow extends JPanel{
     {
         super(new GridLayout(1, 1));
         comboBox = new JComboBox<String>();
-        setComboBoxContent(content);
+        setItems(content);
         add(comboBox);
     }
 
-    public void setComboBoxContent(List<String> content){
+    public void setItems(List<String> content){
 
         comboBox.removeAllItems();
         if(content != null){
@@ -43,6 +43,14 @@ public class ComboBoxRow extends JPanel{
 
     public String getSelectedItem() {
         return comboBox.getSelectedItem() != null ? StringHelper.toString(comboBox.getSelectedItem()) : null;
+    }
+
+    public void removeItem(String item) {
+        comboBox.removeItem(item);
+    }
+
+    public void addItem(String item) {
+        comboBox.addItem(item);
     }
 
 }
