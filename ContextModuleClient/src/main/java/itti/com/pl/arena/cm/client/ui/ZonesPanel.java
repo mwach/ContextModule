@@ -184,8 +184,14 @@ public class ZonesPanel extends ContextModulePanel {
 
     @Override
     protected void onSaveClick() {
-        // TODO Auto-generated method stub
-
+        String parkingLot = parkingLotsComboBoxRow.getSelectedItem();
+        String zoneName = zonesComboBoxButtonRow.getSelectedItem();
+        if(!StringHelper.hasContent(zoneName)){
+            showMessage("Please specify zone name first");
+        }else{
+            String[] coordinates = zoneCoordinateComboBoxRow.getItems();
+            getContextModuleAdapter().updateZone(zoneName, parkingLot, coordinates);
+        }
     }
 
     @Override
@@ -241,8 +247,9 @@ public class ZonesPanel extends ContextModulePanel {
         String parkingLotName = parkingLotsComboBoxRow.getSelectedItem();
         String zoneName = createZoneButtonRow.getText();
         if (StringHelper.hasContent(parkingLotName) && StringHelper.hasContent(zoneName)) {
-            if (getContextModuleAdapter().addZone(parkingLotName, zoneName)) {
+            if (getContextModuleAdapter().updateZone(zoneName, parkingLotName, null)) {
                 showMessage("Zone successfully added to the ontology");
+                parkingLotSelectionChanged();
             } else {
                 showMessage("Could not add zone to the ontology");
             }

@@ -17,13 +17,17 @@ public class Infrastructure extends GeoObject {
      *
      */
     public enum Type {
-        Cafe_Restaurant_Zone,
-        Car_Parking,
+        Bus_stop_area,
+        Cafe_Restaurant_zone,
+        Car_parking_zone,
+        Car_wash_area,
         Entrance,
         Fence,
+        General_parking_area,
         Lawn,
         LPG_auto_gas_refuelling_area,
         Petrol_refuelling_area,
+        Road,
         Service_area,
         Sidewalk,
         Smoking_zone,

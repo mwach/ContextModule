@@ -8,6 +8,7 @@ import itti.com.pl.arena.cm.service.LocalContextModule;
 import itti.com.pl.arena.cm.service.MessageConstants.ContextModuleRequestProperties;
 import itti.com.pl.arena.cm.utils.helper.ArenaObjectsMapper;
 import itti.com.pl.arena.cm.utils.helper.LocationHelper;
+import itti.com.pl.arena.cm.utils.helper.LocationHelperException;
 import itti.com.pl.arena.cm.utils.helper.StringHelper;
 
 import com.safran.arena.impl.ModuleImpl;
@@ -118,16 +119,29 @@ public class ContextModuleAdapter {
         return response.isFeatureValue();
     }
 
-    public boolean addZone(String parkingLotName, String zoneName) {
+    public boolean updateZone(String zoneName, String parkingLot, String[] coordinates) {
         // prepare a request
         List<AbstractNamedValue> vector = new ArrayList<>();
-        vector.add(contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.ParkingLotName.name(), parkingLotName));
-        vector.add(contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.ZoneName.name(), zoneName));
+        vector.add(contextModule.createSimpleNamedValue(moduleName, 
+                ContextModuleRequestProperties.ParkingLotName.name(), parkingLot));
+        vector.add(contextModule.createSimpleNamedValue(moduleName, 
+                ContextModuleRequestProperties.ZoneName.name(), zoneName));
+        if(coordinates != null){
+            itti.com.pl.arena.cm.dto.Location[] locations = null;
+            try {
+                locations = LocationHelper.getLocationsFromStrings(coordinates);
+            } catch (LocationHelperException e) {
+                return false;
+            }
+            for (itti.com.pl.arena.cm.dto.Location location : locations) {
+                vector.add(ArenaObjectsMapper.toRealWorldCoordinate(location));
+            }
+        }
         eu.arena_fp7._1.Object request = contextModule.createObject(moduleName, vector);
         // send/receive
         SimpleNamedValue response = contextModule.updateZone(request);
         // return parsed response
-        return StringHelper.hasContent(response.getValue());
+        return response != null ? StringHelper.hasContent(response.getValue()) : false;
     }
 
     /**

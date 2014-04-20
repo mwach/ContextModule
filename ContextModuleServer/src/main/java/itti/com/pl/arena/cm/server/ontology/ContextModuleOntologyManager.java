@@ -814,7 +814,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
             ParkingLot parkingLot = getParkingLot(parkingLotName);
             //check if already assigned
             if(!parkingLot.getInfrastructure().keySet().contains(zoneName)){
-                parkingLot.addIntrastructure(new Infrastructure(zoneName, itti.com.pl.arena.cm.dto.staticobj.Infrastructure.Type.Car_Parking));
+                parkingLot.addIntrastructure(new Infrastructure(zoneName, itti.com.pl.arena.cm.dto.staticobj.Infrastructure.Type.Car_parking_zone));
             }
             updateParkingLot(parkingLot);
         }

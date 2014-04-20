@@ -15,6 +15,7 @@ public class ComboBoxRow extends JPanel{
      * 
      */
     private static final long serialVersionUID = 1L;
+
     private JComboBox<String> comboBox = null;
 
     public ComboBoxRow(List<String> content)
@@ -51,6 +52,14 @@ public class ComboBoxRow extends JPanel{
 
     public void addItem(String item) {
         comboBox.addItem(item);
+    }
+
+    public String[] getItems() {
+        String[] items = new String[comboBox.getItemCount()];
+        for(int i=0 ; i<comboBox.getItemCount() ; i++){
+            items[i] = comboBox.getItemAt(i);
+        }
+        return items;
     }
 
 }
