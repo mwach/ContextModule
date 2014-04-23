@@ -6,6 +6,7 @@ import java.util.Set;
 import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.dto.Location;
 import itti.com.pl.arena.cm.dto.OntologyObject;
+import itti.com.pl.arena.cm.dto.Zone;
 import itti.com.pl.arena.cm.dto.coordinates.ArenaObjectCoordinate;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
 import itti.com.pl.arena.cm.dto.staticobj.ParkingLot;
@@ -169,6 +170,7 @@ public interface Ontology {
      *            predefined ID of the zone
      * @param parkingLotName
      *            name of the parking lot
+     *            @param planeName name of the plane
      * 
      * @param locations
      *            zone boundaries (list of zone vertexes stored as {@link Location} objects)
@@ -176,19 +178,19 @@ public interface Ontology {
      * @throws OntologyException
      *             processing exception
      */
-    public String updateZone(String zoneId, String parkingLotName, List<itti.com.pl.arena.cm.dto.Location> locations)
+    public String updateZone(String zoneId, String parkingLotName, String planeName, List<itti.com.pl.arena.cm.dto.Location> locations)
             throws OntologyException;
 
     /**
-     * Defines a new zone in the ontology
+     * Retrieves zone from the ontology
      * 
      * @param zoneId
      *            ID of the zone
-     * @return zone boundaries (list of zone vertexes stored as {@link Location} objects)
+     * @return zone
      * @throws OntologyException
      *             processing exception
      */
-    public List<itti.com.pl.arena.cm.dto.Location> getZone(String zoneId) throws OntologyException;
+    public Zone getZone(String zoneId) throws OntologyException;
 
     /**
      * Returns list of instances of given ontology class

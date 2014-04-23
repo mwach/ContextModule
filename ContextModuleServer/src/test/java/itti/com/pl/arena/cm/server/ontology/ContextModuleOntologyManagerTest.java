@@ -238,7 +238,7 @@ public class ContextModuleOntologyManagerTest {
     public void testUpdateZoneNullLocations() throws OntologyException {
 
         //if no locations were specified, empty zone is going to be created
-        String zoneName = cmOntologyManager.updateZone(null, null, null);
+        String zoneName = cmOntologyManager.updateZone(null, null, "planeName", null);
         assertNotNull(cmOntologyManager.getZone(zoneName));
     }
 
@@ -246,7 +246,7 @@ public class ContextModuleOntologyManagerTest {
     public void testUpdateZoneEmptyLocations() throws OntologyException {
 
         //if no locations were specified, empty zone is going to be created
-        String zoneName = cmOntologyManager.updateZone(null, null, new ArrayList<Location>());
+        String zoneName = cmOntologyManager.updateZone(null, null, "planeName", new ArrayList<Location>());
         assertNotNull(cmOntologyManager.getZone(zoneName));
     }
 
@@ -293,12 +293,12 @@ public class ContextModuleOntologyManagerTest {
                     new Location(TestHelper.getCoordinate(), TestHelper.getCoordinate(), 0, TestHelper.getCoordinate()));
         }
         //add new zone to ontology
-        String zoneId = cmOntologyManager.updateZone(null, null, locations);
+        String zoneId = cmOntologyManager.updateZone(null, null, "planeName", locations);
         assertNotNull(zoneId);
 
         //now try to get the zone from ontology
-        List<Location> response = cmOntologyManager.getZone(zoneId);
-        assertEquals(noOfLocations, response.size());
+        Location[] response = cmOntologyManager.getZone(zoneId).getLocations();
+        assertEquals(noOfLocations, response.length);
 
         //verify returned values
         for (Location location : response) {
@@ -319,21 +319,21 @@ public class ContextModuleOntologyManagerTest {
                     new Location(TestHelper.getCoordinate(), TestHelper.getCoordinate(), 0, TestHelper.getCoordinate()));
 
         //add new zones to ontology
-        String zoneIdA = cmOntologyManager.updateZone(null, null, locationsZoneA);
+        String zoneIdA = cmOntologyManager.updateZone(null, null, "planeNameA", locationsZoneA);
         assertNotNull(zoneIdA);
 
-        String zoneIdB = cmOntologyManager.updateZone(null, null, locationsZoneB);
+        String zoneIdB = cmOntologyManager.updateZone(null, null, "planeNameA", locationsZoneB);
         assertNotNull(zoneIdB);
 
         assertFalse(StringHelper.equalsIgnoreCase(zoneIdA, zoneIdB));
 
         //now try to get the zone from ontology
         //verify returned values
-        List<Location> responseZoneA = cmOntologyManager.getZone(zoneIdA);
-        assertTrue(responseZoneA.get(0).equals(locationsZoneA.get(0)));
+        Location[] responseZoneA = cmOntologyManager.getZone(zoneIdA).getLocations();
+        assertTrue(responseZoneA[0].equals(locationsZoneA.get(0)));
 
-        List<Location> responseZoneB = cmOntologyManager.getZone(zoneIdB);
-        assertTrue(responseZoneB.get(0).equals(locationsZoneB.get(0)));
+        Location[] responseZoneB = cmOntologyManager.getZone(zoneIdB).getLocations();
+        assertTrue(responseZoneB[0].equals(locationsZoneB.get(0)));
     }
 
     @Test

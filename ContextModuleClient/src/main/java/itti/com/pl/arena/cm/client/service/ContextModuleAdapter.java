@@ -103,7 +103,7 @@ public class ContextModuleAdapter {
 
     public Zone getZoneDefinition(String zoneId) {
         // prepare a request
-        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.ZoneName.name(), zoneId);
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(), zoneId);
         // send/receive
         eu.arena_fp7._1.Object response = contextModule.getZone(request);
         // return parsed response
@@ -112,20 +112,22 @@ public class ContextModuleAdapter {
 
     public boolean removeZone(String zoneId) {
         // prepare a request
-        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.ZoneName.name(), zoneId);
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(), zoneId);
         // send/receive
         BooleanNamedValue response = contextModule.removeZone(request);
         // return parsed response
         return response.isFeatureValue();
     }
 
-    public boolean updateZone(String zoneName, String parkingLot, String[] coordinates) {
+    public boolean updateZone(String zoneName, String parkingLot, String planeName, String[] coordinates) {
         // prepare a request
         List<AbstractNamedValue> vector = new ArrayList<>();
         vector.add(contextModule.createSimpleNamedValue(moduleName, 
                 ContextModuleRequestProperties.ParkingLotName.name(), parkingLot));
         vector.add(contextModule.createSimpleNamedValue(moduleName, 
-                ContextModuleRequestProperties.ZoneName.name(), zoneName));
+                ContextModuleRequestProperties.Name.name(), zoneName));
+        vector.add(contextModule.createSimpleNamedValue(moduleName, 
+                ContextModuleRequestProperties.PlaneName.name(), planeName));
         if(coordinates != null){
             itti.com.pl.arena.cm.dto.Location[] locations = null;
             try {

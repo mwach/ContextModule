@@ -123,7 +123,7 @@ public final class MessageConstants {
         /**
          * Properties of the Zones
          */
-        ParkingLotName, ZoneName, ident, name, plane_name, 
+        ParkingLotName, Name, Ident, PlaneName, 
         /**
          * geoportal data
          */

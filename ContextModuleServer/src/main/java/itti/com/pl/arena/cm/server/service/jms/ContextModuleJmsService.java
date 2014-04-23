@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Required;
 
 import itti.com.pl.arena.cm.Constants;
 import itti.com.pl.arena.cm.dto.GeoObject;
+import itti.com.pl.arena.cm.dto.Zone;
 import itti.com.pl.arena.cm.dto.coordinates.ArenaObjectCoordinate;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
 import itti.com.pl.arena.cm.dto.staticobj.ParkingLot;
@@ -636,6 +637,8 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
         String zoneId = null;
         // name of the parking lot correlated with that zone
         String parkingLotName = null;
+        //'plane name' zone attribute
+        String planeName = null;
 
         // get the zone definition
         List<itti.com.pl.arena.cm.dto.Location> locations = new ArrayList<>();
@@ -647,8 +650,11 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
                 if (StringHelper.equalsIgnoreCase(ContextModuleRequestProperties.ParkingLotName.name(), feature.getFeatureName())) {
                     parkingLotName = ((SimpleNamedValue) feature).getValue();
                 } else if (StringHelper
-                        .equalsIgnoreCase(ContextModuleRequestProperties.ZoneName.name(), feature.getFeatureName())) {
+                        .equalsIgnoreCase(ContextModuleRequestProperties.Name.name(), feature.getFeatureName())) {
                     zoneId = ((SimpleNamedValue) feature).getValue();
+                } else if (StringHelper
+                        .equalsIgnoreCase(ContextModuleRequestProperties.PlaneName.name(), feature.getFeatureName())) {
+                    planeName = ((SimpleNamedValue) feature).getValue();
                 }
             } else {
                 LogHelper.warning(ContextModuleJmsService.class, "updateZone",
@@ -656,14 +662,14 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
             }
         }
         try {
-            zoneId = getOntology().updateZone(zoneId, parkingLotName, locations);
+            zoneId = getOntology().updateZone(zoneId, parkingLotName, planeName, locations);
         } catch (OntologyException exc) {
             LogHelper.exception(ContextModuleJmsService.class, "updateZone", "Could not update zone", exc);
         }
 
         // prepare response object
         SimpleNamedValue response = createSimpleNamedValue(zoneDefinition.getId(),
-                ContextModuleRequestProperties.ZoneName.name(), zoneId);
+                ContextModuleRequestProperties.Name.name(), zoneId);
         return response;
     }
 
@@ -674,11 +680,18 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
         // get the zone ID
         String zoneId = zoneMessage.getValue();
         try {
-            List<itti.com.pl.arena.cm.dto.Location> zoneLocations = getOntology().getZone(zoneId);
-            for (itti.com.pl.arena.cm.dto.Location location : zoneLocations) {
-                AbstractNamedValue coordinate = createCoordinate(zoneMessage.getId(), location.getLongitude(),
-                        location.getLatitude(), location.getAltitude());
-                responseVector.add(coordinate);
+            Zone zone = getOntology().getZone(zoneId);
+            if(zone != null)
+            {
+                responseVector.add(createSimpleNamedValue(zoneMessage.getId(), ContextModuleRequestProperties.Name.name(), zone.getId()));
+                if(StringHelper.hasContent(zone.getPlaneName())){
+                    responseVector.add(createSimpleNamedValue(zoneMessage.getId(), ContextModuleRequestProperties.PlaneName.name(), zone.getPlaneName()));
+                }
+                for (itti.com.pl.arena.cm.dto.Location location : zone.getLocations()) {
+                    AbstractNamedValue coordinate = createCoordinate(zoneMessage.getId(), location.getLongitude(),
+                            location.getLatitude(), location.getAltitude());
+                    responseVector.add(coordinate);
+                }
             }
         } catch (OntologyException exc) {
             LogHelper.exception(ContextModuleJmsService.class, "getZone", "Could not retrieve zone from the ontology", exc);
@@ -719,7 +732,7 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
                     OntologyConstants.Car_parking_zone.name());
             for (String zoneName : zoneNames) {
                 AbstractNamedValue zoneObject = createSimpleNamedValue(zoneMessage.getId(),
-                        ContextModuleRequestProperties.ZoneName.name(), zoneName);
+                        ContextModuleRequestProperties.Name.name(), zoneName);
                 responseVector.add(zoneObject);
             }
         } catch (OntologyException exc) {

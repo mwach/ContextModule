@@ -186,11 +186,12 @@ public class ZonesPanel extends ContextModulePanel {
     protected void onSaveClick() {
         String parkingLot = parkingLotsComboBoxRow.getSelectedItem();
         String zoneName = zonesComboBoxButtonRow.getSelectedItem();
+        String planeName = planceNameRow.getText();
         if(!StringHelper.hasContent(zoneName)){
             showMessage("Please specify zone name first");
         }else{
             String[] coordinates = zoneCoordinateComboBoxRow.getItems();
-            getContextModuleAdapter().updateZone(zoneName, parkingLot, coordinates);
+            getContextModuleAdapter().updateZone(zoneName, parkingLot, planeName, coordinates);
         }
     }
 
@@ -214,6 +215,7 @@ public class ZonesPanel extends ContextModulePanel {
             Zone zone = getContextModuleAdapter().getZoneDefinition(selectedZone);
             if (zone != null) {
                 createZoneButtonRow.setText(zone.getId());
+                planceNameRow.setText(zone.getPlaneName());
                 String[] locations = LocationHelper.createStringsFromLocations(zone.getLocations());
                 zoneCoordinateComboBoxRow.setItems(Arrays.asList(locations));
             }else{
@@ -246,8 +248,9 @@ public class ZonesPanel extends ContextModulePanel {
     private void addZone() {
         String parkingLotName = parkingLotsComboBoxRow.getSelectedItem();
         String zoneName = createZoneButtonRow.getText();
+        String planeName = planceNameRow.getText();
         if (StringHelper.hasContent(parkingLotName) && StringHelper.hasContent(zoneName)) {
-            if (getContextModuleAdapter().updateZone(zoneName, parkingLotName, null)) {
+            if (getContextModuleAdapter().updateZone(zoneName, parkingLotName, planeName, null)) {
                 showMessage("Zone successfully added to the ontology");
                 parkingLotSelectionChanged();
             } else {

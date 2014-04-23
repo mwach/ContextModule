@@ -4,6 +4,7 @@ import itti.com.pl.arena.cm.dto.GeoObject;
 //import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.dto.Location;
 import itti.com.pl.arena.cm.dto.OntologyObject;
+import itti.com.pl.arena.cm.dto.Zone;
 import itti.com.pl.arena.cm.dto.coordinates.ArenaObjectCoordinate;
 import itti.com.pl.arena.cm.dto.coordinates.CartesianCoordinate;
 import itti.com.pl.arena.cm.dto.coordinates.RadialCoordinate;
@@ -794,14 +795,22 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
     }
 
     @Override
-    public String updateZone(String zoneName, String parkingLotName, List<Location> locations) throws OntologyException {
+    public String updateZone(String zoneName, String parkingLotName, String planeName, List<Location> locations) throws OntologyException {
 
         //check, if zoneId was defined in the request
         if(!StringHelper.hasContent(zoneName)){
             zoneName = generateZoneName();
         }
-        //add location of the zone
+
         Map<String, String[]> properties = new HashMap<>();
+
+        //add plane name
+        if(StringHelper.hasContent(planeName)){
+            properties.put(OntologyConstants.Plane_name.name(),
+                    new String[]{planeName});
+        }
+
+        //add location of the zone
         if(locations != null){
             properties.put(OntologyConstants.Object_has_GPS_coordinates.name(),
                     LocationHelper.createStringsFromLocations(locations.toArray(new Location[locations.size()])));
@@ -822,24 +831,30 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
     }
 
     @Override
-    public List<Location> getZone(String zoneId) throws OntologyException {
+    public Zone getZone(String zoneId) throws OntologyException {
 
-        List<Location> response = new ArrayList<>();
+        Zone zone = new Zone(zoneId);
+
+        List<Location> coordinates = new ArrayList<>();
         if (!StringHelper.hasContent(zoneId)) {
             LogHelper.info(ContextModuleOntologyManager.class, "getZone",
                     "Null or empty zoneId was provided");
             throw new OntologyException(ErrorMessages.ONTOLOGY_EMPTY_VALUE_PROVIDED, OntologyConstants.Car_parking_zone.name());
-        } else {
-            String[] coordinateStrings = getInstanceProperties(zoneId, OntologyConstants.Object_has_GPS_coordinates.name());
-            if(coordinateStrings != null){
-                try {
-                    response = Arrays.asList(LocationHelper.getLocationsFromStrings(coordinateStrings));
-                } catch (LocationHelperException e) {
-                    LogHelper.error(ContextModuleOntologyManager.class, "getZone", "Could not retrieve information about zone: '%s' from ontology. Details: %s", zoneId, e.getLocalizedMessage());
-                }
+        }
+
+        String[] coordinateStrings = getInstanceProperties(zoneId, OntologyConstants.Object_has_GPS_coordinates.name());
+        if(coordinateStrings != null){
+            try {
+                coordinates = Arrays.asList(LocationHelper.getLocationsFromStrings(coordinateStrings));
+            } catch (LocationHelperException e) {
+                LogHelper.error(ContextModuleOntologyManager.class, "getZone", "Could not retrieve information about zone: '%s' from ontology. Details: %s", zoneId, e.getLocalizedMessage());
             }
         }
-        return response;
+        String[] planeName = getInstanceProperties(zoneId, OntologyConstants.Plane_name.name());
+
+        zone.addCoordinates(coordinates);
+        zone.setPlaneName(planeName != null && planeName.length == 1 ? planeName[0] : null);
+        return zone;
     }
 
     /**

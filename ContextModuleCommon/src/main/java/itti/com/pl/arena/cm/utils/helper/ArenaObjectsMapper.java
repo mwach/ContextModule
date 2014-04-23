@@ -57,11 +57,11 @@ public final class ArenaObjectsMapper {
 			if(feature instanceof SimpleNamedValue){
 				String name = ((SimpleNamedValue)feature).getFeatureName();
 				String value = ((SimpleNamedValue)feature).getValue();
-				if(StringHelper.equalsIgnoreCase(ContextModuleRequestProperties.name.name(), name)){
+				if(StringHelper.equalsIgnoreCase(ContextModuleRequestProperties.Name.name(), name)){
 					zoneName = value;
-				}else if(StringHelper.equalsIgnoreCase(ContextModuleRequestProperties.plane_name.name(), name)){
+				}else if(StringHelper.equalsIgnoreCase(ContextModuleRequestProperties.PlaneName.name(), name)){
 					planeName = value;
-				} else if(StringHelper.equalsIgnoreCase(ContextModuleRequestProperties.ident.name(), name)){
+				} else if(StringHelper.equalsIgnoreCase(ContextModuleRequestProperties.Ident.name(), name)){
 					ident = NumbersHelper.getIntegerFromString(value);
 				}
 

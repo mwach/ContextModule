@@ -28,5 +28,6 @@ public enum OntologyConstants {
     Infrastructure,
     Object_has_distance,
 
-    Car_parking_zone,
+    Car_parking_zone, 
+    Plane_name,
 }
