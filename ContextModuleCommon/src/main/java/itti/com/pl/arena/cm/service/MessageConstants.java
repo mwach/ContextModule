@@ -80,21 +80,29 @@ public final class MessageConstants {
          */
         destinationLeft, 
         /**
-         * Service name used by the 'defineRule' notifier method
+         * Service name used by the 'defineRule' method
          */
         defineRule, 
         /**
-         * Service name used by the 'removeRule' notifier method
+         * Service name used by the 'removeRule' method
          */
         removeRule, 
         /**
-         * Service name used by the 'applyRules' notifier method
+         * Service name used by the 'applyRules' method
          */
         applyRules, 
         /**
-         * Service name used by the 'getListOfRules' notifier method
+         * Service name used by the 'getListOfRules' method
          */
-        getListOfRules,
+        getListOfRules, 
+        /**
+         * Service name used by the 'getListOfPlatforms' method
+         */
+        getListOfPlatforms, 
+        /**
+         * Service name used by the 'removePlatform' method
+         */
+        removePlatform,
 
         ;
     }

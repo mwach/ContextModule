@@ -270,6 +270,12 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getListOfRules.name(), data.getHref())
                         && (data instanceof SimpleNamedValue)) {
                     response = getListOfRules((SimpleNamedValue) data);
+                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getListOfPlatforms.name(), data.getHref())
+                        && (data instanceof SimpleNamedValue)) {
+                    response = getListOfPlatforms((SimpleNamedValue) data);
+                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.removePlatform.name(), data.getHref())
+                        && (data instanceof SimpleNamedValue)) {
+                    response = removePlatform((SimpleNamedValue) data);
 
                 } else if (StringHelper.equalsIgnoreCase(data.getDataSourceId(), dataSourceId)) {
                     // special cases: error, loop detected
@@ -314,7 +320,7 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
         // data retrieved -try to process it
         if (platform != null) {
             try {
-                vector.add(createSimpleNamedValue(platform.getId(), ContextModuleRequestProperties.ParkingLotName.name(),
+                vector.add(createSimpleNamedValue(platform.getId(), ContextModuleRequestProperties.Platform.name(),
                         JsonHelper.toJson(platform)));
             } catch (JsonHelperException exc) {
                 LogHelper.warning(ContextModuleJmsService.class, "getPlatform",
@@ -714,7 +720,7 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
             getOntology().remove(zoneId);
             status = true;
         } catch (OntologyException exc) {
-            LogHelper.exception(ContextModuleJmsService.class, "getZone", "Could not remove zone from the ontology", exc);
+            LogHelper.exception(ContextModuleJmsService.class, "removeZone", "Could not remove zone from the ontology", exc);
         }
         // prepare response object
         BooleanNamedValue response = createBooleanNamedValue(zoneMessage.getId(), zoneId, status);
@@ -767,6 +773,46 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
         return response;
     }
 
+    @Override
+    public Object getListOfPlatforms(SimpleNamedValue request) {
+        List<AbstractNamedValue> responseVector = new ArrayList<>();
+        try {
+            List<String> platformNames = getOntology().getInstances(OntologyConstants.Vehicle_with_cameras.name());
+            for (String platformName : platformNames) {
+                AbstractNamedValue platformObject = createSimpleNamedValue(request.getId(),
+                        ContextModuleRequestProperties.Platform.name(), platformName);
+                responseVector.add(platformObject);
+            }
+        } catch (OntologyException exc) {
+            LogHelper.exception(ContextModuleJmsService.class, "getListOfPlatforms",
+                    "Could not retrieve platform names from the ontology", exc);
+        }
+        // prepare response object
+        Object response = createObject(request.getId(), responseVector);
+
+        // add results to the response
+        return response;
+    }
+
+    @Override
+    public BooleanNamedValue removePlatform(SimpleNamedValue platformMessage) {
+
+        // removal status
+        boolean status = false;
+        // get the zone ID
+        String platformId = platformMessage.getValue();
+        try {
+            getOntology().remove(platformId);
+            status = true;
+        } catch (OntologyException exc) {
+            LogHelper.exception(ContextModuleJmsService.class, "removePlatform", "Could not remove platform from the ontology", exc);
+        }
+        // prepare response object
+        BooleanNamedValue response = createBooleanNamedValue(platformMessage.getId(), platformId, status);
+
+        // add results to the response
+        return response;
+    }
     @Override
     public SimpleNamedValue defineRule(SimpleNamedValue rule) {
         // TODO Auto-generated method stub

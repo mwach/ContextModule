@@ -50,7 +50,7 @@ public class GeneralPanel extends ContextModulePanel {
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.insets = new Insets(3,3,3,3);
 
-        brokerUrlRow = createTextBoxRow(Messages.getString("GeneralPanel.0"), null); //$NON-NLS-1$
+        brokerUrlRow = createLabelTextBoxRow(Messages.getString("GeneralPanel.0"), null); //$NON-NLS-1$
         brokerUrlRow.setText(Messages.getString("GeneralPanel.1")); //$NON-NLS-1$
         gbl.setConstraints(brokerUrlRow, gbc);
         panelGeneral.add(brokerUrlRow);

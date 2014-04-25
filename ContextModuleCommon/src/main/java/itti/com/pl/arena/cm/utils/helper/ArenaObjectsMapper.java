@@ -10,6 +10,7 @@ import eu.arena_fp7._1.RealWorldCoordinate;
 import eu.arena_fp7._1.SimpleNamedValue;
 import itti.com.pl.arena.cm.dto.Location;
 import itti.com.pl.arena.cm.dto.Zone;
+import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
 import itti.com.pl.arena.cm.service.MessageConstants.ContextModuleRequestProperties;
 
 /**
@@ -78,5 +79,21 @@ public final class ArenaObjectsMapper {
 		zone.addCoordinates(coordinates);
 		return zone;
 	}
+
+    public static Platform fromPlatformObject(Object response) {
+
+        Platform platform = null;
+        for (AbstractNamedValue feature : response.getFeatureVector().getFeature()) {
+            if(feature instanceof SimpleNamedValue){
+                String platformJson = ((SimpleNamedValue)feature).getValue();
+                try {
+                    platform = JsonHelper.fromJson(platformJson, Platform.class);
+                } catch (JsonHelperException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return platform;
+    }
 
 }

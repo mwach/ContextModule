@@ -2,6 +2,7 @@ package itti.com.pl.arena.cm.server.service.jms;
 
 import static org.junit.Assert.*;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,6 +11,7 @@ import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
 import itti.com.pl.arena.cm.dto.staticobj.ParkingLot;
 import itti.com.pl.arena.cm.server.TestHelper;
 import itti.com.pl.arena.cm.server.ontology.Ontology;
+import itti.com.pl.arena.cm.server.ontology.OntologyConstants;
 import itti.com.pl.arena.cm.server.ontology.OntologyException;
 import itti.com.pl.arena.cm.server.service.jms.ContextModuleJmsService;
 import itti.com.pl.arena.cm.utils.helper.JsonHelper;
@@ -198,6 +200,20 @@ public class ContextModuleJmsServiceTest {
 
         //verify ontology was called
         Mockito.verify(ontology).calculateArenaDistancesForPlatform(Mockito.anyString());
+    }
+
+    @Test
+    public void testGetListOfPlatformsRequest() throws OntologyException {
+
+        //prepare dummy ontology
+        Ontology ontology = Mockito.mock(Ontology.class);
+        Mockito.when(ontology.getInstances(OntologyConstants.Vehicle_with_cameras.name())).thenReturn(Arrays.asList(new String[]{"a", "b"}));
+        CMJmsService.setOntology(ontology);
+
+        //null request
+        Object response = CMJmsService.getListOfPlatforms(Mockito.mock(SimpleNamedValue.class));
+        //there are some platforms defined
+        assertFalse(response.getFeatureVector().getFeature().isEmpty());
     }
 
 }

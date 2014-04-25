@@ -51,7 +51,7 @@ public class CMClientDesktop extends JFrame {
                 Messages.getString("CMClientDesktop.0") + System.currentTimeMillis()); //$NON-NLS-1$
 
         GeneralPanel generalPanel = new GeneralPanel();
-        TruckPanel truckPanel = new TruckPanel();
+        PlatformPanel truckPanel = new PlatformPanel();
         ParkingLotPanel parkingLotPanel = new ParkingLotPanel();
         ZonesPanel zonesPanel = new ZonesPanel();
         SwrlPanel swrlPanel = new SwrlPanel();

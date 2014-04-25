@@ -95,7 +95,7 @@ public abstract class ContextModulePanel extends JPanel {
 
     protected abstract void onRefreshClick();
 
-    protected LabelTextBoxRow createTextBoxRow(String labelText, String text) {
+    protected LabelTextBoxRow createLabelTextBoxRow(String labelText, String text) {
 
         return new LabelTextBoxRow(labelText, text);
     }

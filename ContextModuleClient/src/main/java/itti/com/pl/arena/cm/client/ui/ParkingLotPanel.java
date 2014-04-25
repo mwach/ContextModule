@@ -38,16 +38,16 @@ public class ParkingLotPanel extends ContextModulePanel {
         panelPlatform.add(createTextBoxButtonRow(null, "Add parking lot")); //$NON-NLS-1$
 
         panelPlatform.add(createLabelRow(Messages.getString("ParkingLotPanel.2"))); //$NON-NLS-1$
-        panelPlatform.add(createTextBoxRow(Messages.getString("ParkingLotPanel.3"), null)); //$NON-NLS-1$
-        panelPlatform.add(createTextBoxRow(Messages.getString("ParkingLotPanel.4"), null)); //$NON-NLS-1$
-        panelPlatform.add(createTextBoxRow(Messages.getString("ParkingLotPanel.5"), null)); //$NON-NLS-1$
-        panelPlatform.add(createTextBoxRow(Messages.getString("ParkingLotPanel.6"), null)); //$NON-NLS-1$
+        panelPlatform.add(createLabelTextBoxRow(Messages.getString("ParkingLotPanel.3"), null)); //$NON-NLS-1$
+        panelPlatform.add(createLabelTextBoxRow(Messages.getString("ParkingLotPanel.4"), null)); //$NON-NLS-1$
+        panelPlatform.add(createLabelTextBoxRow(Messages.getString("ParkingLotPanel.5"), null)); //$NON-NLS-1$
+        panelPlatform.add(createLabelTextBoxRow(Messages.getString("ParkingLotPanel.6"), null)); //$NON-NLS-1$
 
         panelPlatform.add(createEmptyRow());
         panelPlatform.add(createLabelRow(Messages.getString("ParkingLotPanel.7"))); //$NON-NLS-1$
         panelPlatform.add(createComboBoxButtonRow(Messages.getString("ParkingLotPanel.9"), null)); //$NON-NLS-1$
-        panelPlatform.add(createTextBoxRow("X", null)); //$NON-NLS-1$
-        panelPlatform.add(createTextBoxRow("Y", null)); //$NON-NLS-1$
+        panelPlatform.add(createLabelTextBoxRow("X", null)); //$NON-NLS-1$
+        panelPlatform.add(createLabelTextBoxRow("Y", null)); //$NON-NLS-1$
         panelPlatform.add(createButtonRow("Add")); //$NON-NLS-1$
 
         return panelPlatform;
@@ -64,13 +64,13 @@ public class ParkingLotPanel extends ContextModulePanel {
 
             panelCamera.add(createEmptyRow());
             panelCamera.add(createLabelComboBoxRow(Messages.getString("ParkingLotPanel.13"), null)); //$NON-NLS-1$
-            panelCamera.add(createTextBoxRow(Messages.getString("ParkingLotPanel.14"), null)); //$NON-NLS-1$
+            panelCamera.add(createLabelTextBoxRow(Messages.getString("ParkingLotPanel.14"), null)); //$NON-NLS-1$
 
             panelCamera.add(createEmptyRow());
             panelCamera.add(createLabelRow(Messages.getString("ParkingLotPanel.15"))); //$NON-NLS-1$
             panelCamera.add(createComboBoxButtonRow(Messages.getString("ParkingLotPanel.17"), null)); //$NON-NLS-1$
-            panelCamera.add(createTextBoxRow("X", null)); //$NON-NLS-1$
-            panelCamera.add(createTextBoxRow("Y", null)); //$NON-NLS-1$
+            panelCamera.add(createLabelTextBoxRow("X", null)); //$NON-NLS-1$
+            panelCamera.add(createLabelTextBoxRow("Y", null)); //$NON-NLS-1$
             panelCamera.add(createButtonRow("Add")); //$NON-NLS-1$
 
 

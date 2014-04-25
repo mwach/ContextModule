@@ -56,6 +56,7 @@ public class ContextModuleFacade extends CMModuleImpl implements LocalContextMod
 
     /**
      * returns URL of the broker
+     * 
      * @return broker URL
      */
     private String getBrokerUrl() {
@@ -78,6 +79,7 @@ public class ContextModuleFacade extends CMModuleImpl implements LocalContextMod
 
     /**
      * Returns IP of the client
+     * 
      * @return client IP address
      */
     private String getClientIpAddress() {
@@ -100,6 +102,7 @@ public class ContextModuleFacade extends CMModuleImpl implements LocalContextMod
 
     /**
      * returns port of the client
+     * 
      * @return client port
      */
     private int getClientPort() {
@@ -122,6 +125,7 @@ public class ContextModuleFacade extends CMModuleImpl implements LocalContextMod
 
     /**
      * returns maximum response waiting time
+     * 
      * @return response waiting time
      */
     private int getResponseWaitingTime() {
@@ -144,6 +148,7 @@ public class ContextModuleFacade extends CMModuleImpl implements LocalContextMod
 
     /**
      * returns value of the 'debug' flag
+     * 
      * @return debug status
      */
     private boolean isDebug() {
@@ -174,7 +179,9 @@ public class ContextModuleFacade extends CMModuleImpl implements LocalContextMod
 
     /**
      * Initializes the module. This method must be called before any of the CM services will be called
-     * @throws ContextModuleClientException could not initialize client
+     * 
+     * @throws ContextModuleClientException
+     *             could not initialize client
      */
     public void init() {
 
@@ -192,19 +199,19 @@ public class ContextModuleFacade extends CMModuleImpl implements LocalContextMod
             client.registerModule(this);
             client.registerModuleAsDataProvider(this);
             client.registerModuleAsDataConsumer(this, new MessageFilterInterface() {
-                
+
                 @Override
                 public boolean accept(AbstractDataFusionType arg0) {
                     return true;
                 }
             });
         } catch (RuntimeException exc) {
-            //runtime exception handling
+            // runtime exception handling
             LogHelper.error(ContextModuleFacade.class, "init", "Could not initialize client object. Reason: '%s'",
                     exc.getLocalizedMessage());
             throw new ContextModuleRuntimeException(exc.getLocalizedMessage(), exc);
         } catch (NetworkHelperException exc) {
-            //network exception handling
+            // network exception handling
             LogHelper.error(ContextModuleFacade.class, "init", "Could not obtain local IP address. Reason: '%s'",
                     exc.getLocalizedMessage());
             throw new ContextModuleRuntimeException("Could not obtain local IP address during client initialization", exc);
@@ -240,7 +247,7 @@ public class ContextModuleFacade extends CMModuleImpl implements LocalContextMod
      */
     @Override
     public eu.arena_fp7._1.Object getPlatform(SimpleNamedValue object) {
-    	object.setHref(ContextModuleRequests.getPlatform.name());
+        object.setHref(ContextModuleRequests.getPlatform.name());
         return (Object) submitData(object);
     }
 
@@ -251,35 +258,41 @@ public class ContextModuleFacade extends CMModuleImpl implements LocalContextMod
      */
     @Override
     public eu.arena_fp7._1.Object getPlatformNeighborhood(SimpleNamedValue parkingId) {
-    	parkingId.setHref(ContextModuleRequests.getPlatformNeighborhood.name());
+        parkingId.setHref(ContextModuleRequests.getPlatformNeighborhood.name());
         return (Object) submitData(parkingId);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see itti.com.pl.arena.cm.service.ContextModule#updateParkingLot(eu.arena_fp7._1.SimpleNamedValue)
      */
     @Override
     public BooleanNamedValue updateParkingLot(SimpleNamedValue parkingLot) {
-    	parkingLot.setHref(ContextModuleRequests.updateParkingLot.name());
-        return (BooleanNamedValue)submitData(parkingLot);
+        parkingLot.setHref(ContextModuleRequests.updateParkingLot.name());
+        return (BooleanNamedValue) submitData(parkingLot);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see itti.com.pl.arena.cm.service.ContextModule#updateParkingLot(eu.arena_fp7._1.SimpleNamedValue)
      */
     @Override
     public Object getParkingLot(SimpleNamedValue parkingLot) {
-    	parkingLot.setHref(ContextModuleRequests.getParkingLot.name());
-        return (Object)submitData(parkingLot);
+        parkingLot.setHref(ContextModuleRequests.getParkingLot.name());
+        return (Object) submitData(parkingLot);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see itti.com.pl.arena.cm.service.ContextModule#updatePlatform(eu.arena_fp7._1.SimpleNamedValue)
      */
     @Override
     public BooleanNamedValue updatePlatform(SimpleNamedValue platform) {
-    	platform.setHref(ContextModuleRequests.updatePlatform.name());
-        return (BooleanNamedValue)submitData(platform);
+        platform.setHref(ContextModuleRequests.updatePlatform.name());
+        return (BooleanNamedValue) submitData(platform);
     }
 
     /*
@@ -289,7 +302,7 @@ public class ContextModuleFacade extends CMModuleImpl implements LocalContextMod
      */
     @Override
     public Object getPlatforms(Location location) {
-    	location.setHref(ContextModuleRequests.getPlatforms.name());
+        location.setHref(ContextModuleRequests.getPlatforms.name());
         return (Object) submitData(location);
     }
 
@@ -300,7 +313,7 @@ public class ContextModuleFacade extends CMModuleImpl implements LocalContextMod
      */
     @Override
     public Object getGISData(Location location) {
-    	location.setHref(ContextModuleRequests.getGISData.name());
+        location.setHref(ContextModuleRequests.getGISData.name());
         return (Object) submitData(location);
     }
 
@@ -311,7 +324,7 @@ public class ContextModuleFacade extends CMModuleImpl implements LocalContextMod
      */
     @Override
     public Object getGISData(Object parameters) {
-    	parameters.setHref(ContextModuleRequests.getGISData.name());
+        parameters.setHref(ContextModuleRequests.getGISData.name());
         return (Object) submitData(parameters);
     }
 
@@ -322,72 +335,90 @@ public class ContextModuleFacade extends CMModuleImpl implements LocalContextMod
      */
     @Override
     public Object getGeoportalData(Location location) {
-    	location.setHref(ContextModuleRequests.getGeoportalData.name());
+        location.setHref(ContextModuleRequests.getGeoportalData.name());
         return (Object) submitData(location);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see itti.com.pl.arena.cm.service.ContextModule#defineZone(eu.arena_fp7._1.Object)
      */
     @Override
     public SimpleNamedValue updateZone(Object zoneDefinition) {
-    	zoneDefinition.setHref(ContextModuleRequests.updateZone.name());
-        return (SimpleNamedValue)submitData(zoneDefinition);
+        zoneDefinition.setHref(ContextModuleRequests.updateZone.name());
+        return (SimpleNamedValue) submitData(zoneDefinition);
     }
 
-	@Override
-	public BooleanNamedValue removeZone(SimpleNamedValue zoneId) {
-    	zoneId.setHref(ContextModuleRequests.removeZone.name());
-        return (BooleanNamedValue)submitData(zoneId);
-	}
+    @Override
+    public BooleanNamedValue removeZone(SimpleNamedValue zoneId) {
+        zoneId.setHref(ContextModuleRequests.removeZone.name());
+        return (BooleanNamedValue) submitData(zoneId);
+    }
 
-    /* (non-Javadoc)
+    @Override
+    public BooleanNamedValue removePlatform(SimpleNamedValue zoneId) {
+        zoneId.setHref(ContextModuleRequests.removePlatform.name());
+        return (BooleanNamedValue) submitData(zoneId);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see itti.com.pl.arena.cm.service.ContextModule#getZone(eu.arena_fp7._1.SimpleNamedValue)
      */
     @Override
     public Object getZone(SimpleNamedValue zoneId) {
-    	zoneId.setHref(ContextModuleRequests.getZone.name());
-        return (Object)submitData(zoneId);
+        zoneId.setHref(ContextModuleRequests.getZone.name());
+        return (Object) submitData(zoneId);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see itti.com.pl.arena.cm.service.ContextModule#getZone(eu.arena_fp7._1.SimpleNamedValue)
      */
     @Override
     public Object getListOfZones(SimpleNamedValue zoneId) {
-    	zoneId.setHref(ContextModuleRequests.getListOfZones.name());
-        return (Object)submitData(zoneId);
+        zoneId.setHref(ContextModuleRequests.getListOfZones.name());
+        return (Object) submitData(zoneId);
     }
 
     @Override
     public Object getListOfParkingLots(SimpleNamedValue objectId) {
-		objectId.setHref(ContextModuleRequests.getListOfParkingLots.name());
-        return (Object)submitData(objectId);
+        objectId.setHref(ContextModuleRequests.getListOfParkingLots.name());
+        return (Object) submitData(objectId);
     }
 
-	@Override
-	public SimpleNamedValue defineRule(SimpleNamedValue rule) {
-		rule.setHref(ContextModuleRequests.defineRule.name());
-		return (SimpleNamedValue)submitData(rule);
-	}
+    @Override
+    public Object getListOfPlatforms(SimpleNamedValue objectId) {
+        objectId.setHref(ContextModuleRequests.getListOfPlatforms.name());
+        return (Object) submitData(objectId);
+    }
 
-	@Override
-	public BooleanNamedValue removeRule(SimpleNamedValue ruleId) {
-		ruleId.setHref(ContextModuleRequests.removeRule.name());
-		return (BooleanNamedValue)submitData(ruleId);
-	}
+    @Override
+    public SimpleNamedValue defineRule(SimpleNamedValue rule) {
+        rule.setHref(ContextModuleRequests.defineRule.name());
+        return (SimpleNamedValue) submitData(rule);
+    }
 
-	@Override
-	public BooleanNamedValue applyRules(SimpleNamedValue objectId) {
-		objectId.setHref(ContextModuleRequests.applyRules.name());
-		return (BooleanNamedValue)submitData(objectId);	
-	}
+    @Override
+    public BooleanNamedValue removeRule(SimpleNamedValue ruleId) {
+        ruleId.setHref(ContextModuleRequests.removeRule.name());
+        return (BooleanNamedValue) submitData(ruleId);
+    }
 
-	@Override
-	public Object getListOfRules(SimpleNamedValue objectId) {
-		objectId.setHref(ContextModuleRequests.getListOfRules.name());
-		return (Object)submitData(objectId);
-	}
+    @Override
+    public BooleanNamedValue applyRules(SimpleNamedValue objectId) {
+        objectId.setHref(ContextModuleRequests.applyRules.name());
+        return (BooleanNamedValue) submitData(objectId);
+    }
+
+    @Override
+    public Object getListOfRules(SimpleNamedValue objectId) {
+        objectId.setHref(ContextModuleRequests.getListOfRules.name());
+        return (Object) submitData(objectId);
+    }
 
     /**
      * Submits data to the server
@@ -415,15 +446,12 @@ public class ContextModuleFacade extends CMModuleImpl implements LocalContextMod
             response = getRequestsMap().get(requestId);
             LogHelper.debug(ContextModuleFacade.class, "submitData", "returning response data with ID: %s", requestId);
         } catch (RuntimeException exc) {
-            LogHelper.error(
-                    ContextModuleFacade.class,
-                    "submitData",
-                    "Could not retrieve data from %s. Reason: '%s'", Constants.MODULE_NAME,
-                            exc.getLocalizedMessage());
+            LogHelper.error(ContextModuleFacade.class, "submitData", "Could not retrieve data from %s. Reason: '%s'",
+                    Constants.MODULE_NAME, exc.getLocalizedMessage());
 
-        } finally{
-            //remove requestId from the map
-            getRequestsMap().remove(requestId);            
+        } finally {
+            // remove requestId from the map
+            getRequestsMap().remove(requestId);
         }
         return response;
     }

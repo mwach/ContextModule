@@ -4,6 +4,7 @@ import itti.com.pl.arena.cm.dto.Location;
 import itti.com.pl.arena.cm.dto.OntologyObject;
 import itti.com.pl.arena.cm.utils.helper.NumbersHelper;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -138,6 +139,19 @@ public class Platform extends OntologyObject{
     public void addCamera(Camera camera) {
         if(camera != null){
             cameras.put(camera.getId(), camera);
+        }
+    }
+
+    /**
+     * Adds a new camera to the platform
+     * @param camera
+     */
+    public void setCameras(Collection<Camera> cameras) {
+        this.cameras.clear();
+        if(cameras != null){
+            for (Camera camera : cameras) {
+                addCamera(camera);
+            }
         }
     }
 

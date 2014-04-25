@@ -28,6 +28,14 @@ public interface ContextModule {
     Object getPlatform(SimpleNamedValue objectId);
 
     /**
+     * Removes an existing platform from the ontology
+     * 
+     * @param platformId ID of the platform to be removed from ontology
+     * @return removal status (true == platform removed, false otherwise)
+     */
+    BooleanNamedValue removePlatform(SimpleNamedValue platformId);
+
+    /**
      * This method allows to update existing or create new {@link Platform} in the ContextModule
      * 
      * @param platform
@@ -147,6 +155,14 @@ public interface ContextModule {
      * @return list of zone names, or empty list, if no zones were defined for given parking lot in the ontology
      */
     Object getListOfZones(SimpleNamedValue requestId);
+
+    /**
+     * Returns list of platforms defined in application
+     * 
+     * @param requestId request message
+     * @return list of platform names, or empty list, if no platforms were defined
+     */
+    Object getListOfPlatforms(SimpleNamedValue requestId);
 
     /**
      * This method retries a list of parking lots defined in the ontology

@@ -57,6 +57,21 @@ public class NumbersHelper {
     }
 
     /**
+     * Tries to parse given string into double
+     * if parser fail, then default value will be returned
+     * 
+     * @param value
+     *            string representation of double value
+     *            @param defaultValue value to be returned in case of parser failure
+     * @return double value, or default one in case of failure
+     */
+    public static double getDoubleFromString(String value, double defaultValue) {
+        Double result = getDoubleFromString(value);
+        return result == null ? defaultValue  : result.doubleValue();
+    }
+
+
+    /**
      * Checks, if given value represents valid integer value
      * 
      * @param value

@@ -1,12 +1,17 @@
 package itti.com.pl.arena.cm.client.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import itti.com.pl.arena.cm.dto.Zone;
+import itti.com.pl.arena.cm.dto.dynamicobj.Camera;
+import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
 import itti.com.pl.arena.cm.service.LocalContextModule;
 import itti.com.pl.arena.cm.service.MessageConstants.ContextModuleRequestProperties;
 import itti.com.pl.arena.cm.utils.helper.ArenaObjectsMapper;
+import itti.com.pl.arena.cm.utils.helper.JsonHelper;
+import itti.com.pl.arena.cm.utils.helper.JsonHelperException;
 import itti.com.pl.arena.cm.utils.helper.LocationHelper;
 import itti.com.pl.arena.cm.utils.helper.LocationHelperException;
 import itti.com.pl.arena.cm.utils.helper.StringHelper;
@@ -170,5 +175,50 @@ public class ContextModuleAdapter {
             }
         }
         return response;
+    }
+
+    public List<String> getListOfPlatforms() {
+        // prepare a request
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Platform.name(), null);
+        // send/receive
+        eu.arena_fp7._1.Object response = contextModule.getListOfPlatforms(request);
+        // return parsed response
+        return getStringsFromFeatureVector(response == null ? null : response.getFeatureVector());
+    }
+
+    public Platform getPlatformDefinition(String platformName) {
+        // prepare a request
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Platform.name(), platformName);
+        // send/receive
+        eu.arena_fp7._1.Object response = contextModule.getPlatform(request);
+        // return parsed response
+        return ArenaObjectsMapper.fromPlatformObject(response);
+    }
+
+    public boolean removePlatform(String platformId) {
+        // prepare a request
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(), platformId);
+        // send/receive
+        BooleanNamedValue response = contextModule.removePlatform(request);
+        // return parsed response
+        return response.isFeatureValue();
+    }
+
+    public boolean updatePlatform(String platformName, itti.com.pl.arena.cm.dto.Location location, double width, double height,
+            double length, Collection<Camera> cameras) throws JsonHelperException {
+        Platform platform = new Platform(platformName);
+        platform.setLocation(location);
+        platform.setWidth(width);
+        platform.setHeight(height);
+        platform.setLength(length);
+        platform.setCameras(cameras);
+
+        
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Platform.name(), JsonHelper.toJson(platform));
+        // send/receive
+        BooleanNamedValue response = contextModule.updatePlatform(request);
+        // return parsed response
+        return response != null ? response.isFeatureValue() : false;
+
     }
 }

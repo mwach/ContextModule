@@ -125,9 +125,9 @@ public class ZonesPanel extends ContextModulePanel {
         });
         panelZones.add(zoneCoordinateButtonRow);
 
-        coordinateXRow = createTextBoxRow("X", null);
-        coordinateYRow = createTextBoxRow("Y", null);
-        coordinateZRow = createTextBoxRow("Z", null);
+        coordinateXRow = createLabelTextBoxRow("X", null);
+        coordinateYRow = createLabelTextBoxRow("Y", null);
+        coordinateZRow = createLabelTextBoxRow("Z", null);
         panelZones.add(coordinateXRow);
         panelZones.add(coordinateYRow);
         panelZones.add(coordinateZRow);
@@ -238,7 +238,7 @@ public class ZonesPanel extends ContextModulePanel {
             if (getContextModuleAdapter().removeZone(selectedZone)) {
                 showMessage("Zone successfully removed from ontology");
                 // update list of zones
-                parkingLotSelectionChanged();
+                onRefreshClick();
             } else {
                 showMessage("Could not remove zone from ontology");
             }
