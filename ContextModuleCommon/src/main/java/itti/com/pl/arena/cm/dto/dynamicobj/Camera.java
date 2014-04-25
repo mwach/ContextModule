@@ -16,6 +16,10 @@ public class Camera extends OntologyObject {
      */
     private String type;
     /*
+     * name of the platform, where camera is installed
+     */
+    private String platformName;
+    /*
      * Camera horizontal angle (view angle)
      */
     private double angleX;
@@ -51,8 +55,9 @@ public class Camera extends OntologyObject {
      * Point (0,0) of the Cartesian axis should be located at the front of the truck, in the middle width
      * @param directionAngle angle (measured in radians) which determines main camera direction axis against main truck axis (Y)
      */
-    public Camera(String id, String type, double angleX, double angleY, CartesianCoordinate cameraPosition, int directionAngle) {
+    public Camera(String id, String platformName, String type, double angleX, double angleY, CartesianCoordinate cameraPosition, int directionAngle) {
         super(id);
+        this.platformName = platformName;
         this.type = type;
         this.angleX = angleX;
         this.angleY = angleY;
@@ -76,6 +81,24 @@ public class Camera extends OntologyObject {
      */
     public void setType(String type) {
         this.type = type;
+    }
+
+    /**
+     * Returns name of the platform
+     * 
+     * @return name of the platform
+     */
+    public String getPlatformName() {
+        return platformName;
+    }
+
+    /**
+     * Updates name of the platform
+     * 
+     * @param platformName name of the platform
+     */
+    public void setPlatformName(String platformName) {
+        this.platformName = platformName;
     }
 
     /**

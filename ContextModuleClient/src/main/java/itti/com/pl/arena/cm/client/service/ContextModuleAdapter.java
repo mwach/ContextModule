@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import itti.com.pl.arena.cm.dto.Zone;
+import itti.com.pl.arena.cm.dto.coordinates.CartesianCoordinate;
 import itti.com.pl.arena.cm.dto.dynamicobj.Camera;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
 import itti.com.pl.arena.cm.service.LocalContextModule;
@@ -213,12 +214,32 @@ public class ContextModuleAdapter {
         platform.setLength(length);
         platform.setCameras(cameras);
 
-        
         SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Platform.name(), JsonHelper.toJson(platform));
         // send/receive
         BooleanNamedValue response = contextModule.updatePlatform(request);
         // return parsed response
         return response != null ? response.isFeatureValue() : false;
 
+    }
+
+    public boolean updateCamera(String cameraName, String platformName, String cameraType, double horizontalAngle, double verticalAngle,
+            CartesianCoordinate cameraLocationOnTruck, int cameraAngle) throws JsonHelperException {
+
+        Camera camera = new Camera(cameraName, platformName, cameraType, horizontalAngle, verticalAngle, cameraLocationOnTruck, cameraAngle);
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Camera.name(), JsonHelper.toJson(camera));
+        // send/receive
+        BooleanNamedValue response = contextModule.updateCamera(request);
+        // return parsed response
+        return response != null ? response.isFeatureValue() : false;
+
+    }
+
+    public boolean removeCamera(String cameraId) {
+        // prepare a request
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(), cameraId);
+        // send/receive
+        BooleanNamedValue response = contextModule.removeCamera(request);
+        // return parsed response
+        return response.isFeatureValue();
     }
 }

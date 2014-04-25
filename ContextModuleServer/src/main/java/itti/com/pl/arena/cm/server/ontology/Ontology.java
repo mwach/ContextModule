@@ -8,6 +8,7 @@ import itti.com.pl.arena.cm.dto.Location;
 import itti.com.pl.arena.cm.dto.OntologyObject;
 import itti.com.pl.arena.cm.dto.Zone;
 import itti.com.pl.arena.cm.dto.coordinates.ArenaObjectCoordinate;
+import itti.com.pl.arena.cm.dto.dynamicobj.Camera;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
 import itti.com.pl.arena.cm.dto.staticobj.ParkingLot;
 
@@ -208,5 +209,16 @@ public interface Ontology {
      *            name of the instance to remove
      */
     public void remove(String zoneId) throws OntologyException;
+
+    /**
+     * Defines a new, or update an existing camera in the ontology
+     * 
+     * @param camera camera object
+     * 
+     * @return ID of the camera
+     * @throws OntologyException
+     *             processing exception
+     */
+    public void updateCamera(Camera camera) throws OntologyException;
 
 }

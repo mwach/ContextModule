@@ -67,8 +67,8 @@ public class TestHelper {
 
         Platform platform = new Platform(platformName);
         //platform cameras
-        platform.addCamera(createDummyCamera("dummyCamera_" + System.currentTimeMillis()));
-        platform.addCamera(createDummyCamera("anotherDummyCamera_" + System.currentTimeMillis()));
+        platform.addCamera(createDummyCamera("dummyCamera_" + System.currentTimeMillis(), platformName));
+        platform.addCamera(createDummyCamera("anotherDummyCamera_" + System.currentTimeMillis(), platformName));
         //platform dimensions
         platform.setHeight(random.nextInt(3));
         platform.setWidth(random.nextInt(3));
@@ -82,10 +82,10 @@ public class TestHelper {
      * Creates a dummy {@link Camera} object for tests purposes
      * @return camera object with random values
      */
-    private static Camera createDummyCamera(String cameraId) {
+    private static Camera createDummyCamera(String cameraId, String platformName) {
 
         //random camera type is going to be used
-        return new Camera(cameraId, CameraType.values()[random.nextInt(CameraType.values().length)].name(), 
+        return new Camera(cameraId, platformName, CameraType.values()[random.nextInt(CameraType.values().length)].name(), 
                 // camera angles
                 random.nextInt(360), random.nextInt(360), 
                 //position of camera on platform (relative position where middle-front of the platform is marked as (0,0)

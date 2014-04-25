@@ -5,6 +5,7 @@ import itti.com.pl.arena.cm.exception.ErrorMessages;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 
 /**
  * String utilities
@@ -136,5 +137,14 @@ public final class StringHelper {
             return stringOne.equalsIgnoreCase(stringTwo);
         }
         return stringOne.equals(stringTwo);
+    }
+
+    public static boolean arrayContainsItem(String[] items, String item) {
+
+        if(items == null || item == null)
+        {
+            return false;
+        }
+        return Arrays.asList(items).contains(item);
     }
 }

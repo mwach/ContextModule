@@ -21,6 +21,10 @@ public final class MessageConstants {
          */
         updatePlatform,
         /**
+         * Service name used by the {@link ContextModule} 'updateCamera' method
+         */
+        updateCamera,
+        /**
          * Service name used by the {@link ContextModule} 'getParkingLot' method
          */
         getParkingLot,
@@ -103,6 +107,10 @@ public final class MessageConstants {
          * Service name used by the 'removePlatform' method
          */
         removePlatform,
+        /**
+         * Service name used by the 'removeCamera' method
+         */
+        removeCamera,
 
         ;
     }
@@ -126,7 +134,7 @@ public final class MessageConstants {
         /**
          * Properties of the Camera node
          */
-        CameraId, CameraPosition, CameraType, CameraAngleX, CameraAngleY, Bearing,
+        Camera, CameraId, CameraPosition, CameraType, CameraAngleX, CameraAngleY, Bearing,
 
         /**
          * Properties of the Zones

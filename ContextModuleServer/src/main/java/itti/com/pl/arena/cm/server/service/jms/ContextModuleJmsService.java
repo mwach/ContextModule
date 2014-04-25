@@ -11,6 +11,7 @@ import itti.com.pl.arena.cm.Constants;
 import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.dto.Zone;
 import itti.com.pl.arena.cm.dto.coordinates.ArenaObjectCoordinate;
+import itti.com.pl.arena.cm.dto.dynamicobj.Camera;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
 import itti.com.pl.arena.cm.dto.staticobj.ParkingLot;
 import itti.com.pl.arena.cm.jms.CMModuleImpl;
@@ -228,6 +229,9 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.updatePlatform.name(), data.getHref())
                         && (data instanceof SimpleNamedValue)) {
                     response = updatePlatform((SimpleNamedValue) data);
+                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.updateCamera.name(), data.getHref())
+                        && (data instanceof SimpleNamedValue)) {
+                    response = updateCamera((SimpleNamedValue) data);
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getPlatforms.name(), data.getHref())
                         && (data instanceof Location)) {
                     response = getPlatforms((Location) data);
@@ -276,6 +280,9 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.removePlatform.name(), data.getHref())
                         && (data instanceof SimpleNamedValue)) {
                     response = removePlatform((SimpleNamedValue) data);
+                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.removeCamera.name(), data.getHref())
+                        && (data instanceof SimpleNamedValue)) {
+                    response = removeCamera((SimpleNamedValue) data);
 
                 } else if (StringHelper.equalsIgnoreCase(data.getDataSourceId(), dataSourceId)) {
                     // special cases: error, loop detected
@@ -456,6 +463,35 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
         }
         // prepare response object
         BooleanNamedValue response = createBooleanNamedValue(requestId, platformName, status);
+        return response;
+    }
+
+    @Override
+    public BooleanNamedValue updateCamera(SimpleNamedValue platformObject) {
+
+        Camera camera = null;
+        String cameraName = null;
+        boolean status = false;
+        String requestId = null;
+
+        try {
+            verifyRequestObject(platformObject);
+            requestId = platformObject.getId();
+
+            // try to parse JSON into object
+            camera = JsonHelper.fromJson(platformObject.getValue(), Camera.class);
+            // update ontology with provided data
+            ontology.updateCamera(camera);
+            cameraName = camera.getId();
+
+            status = true;
+
+        } catch (JsonHelperException | OntologyException | JmsException exc) {
+            // could not update data
+            LogHelper.exception(ContextModuleJmsService.class, "updatePlatform", "Could not update camera", exc);
+        }
+        // prepare response object
+        BooleanNamedValue response = createBooleanNamedValue(requestId, cameraName, status);
         return response;
     }
 
@@ -868,5 +904,24 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
      */
     private String getDataInDefaultFormat() {
         return DateTimeHelper.formatTime(System.currentTimeMillis(), Constants.TIMESTAMP_FORMAT);
+    }
+
+    @Override
+    public BooleanNamedValue removeCamera(SimpleNamedValue cameraMessage) {
+        // removal status
+        boolean status = false;
+        // get the zone ID
+        String cameraId = cameraMessage.getValue();
+        try {
+            getOntology().remove(cameraId);
+            status = true;
+        } catch (OntologyException exc) {
+            LogHelper.exception(ContextModuleJmsService.class, "removeCamera", "Could not remove camera from the ontology", exc);
+        }
+        // prepare response object
+        BooleanNamedValue response = createBooleanNamedValue(cameraMessage.getId(), cameraId, status);
+
+        // add results to the response
+        return response;    
     }
 }

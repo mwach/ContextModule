@@ -72,6 +72,21 @@ public class NumbersHelper {
 
 
     /**
+     * Tries to parse given string into integer
+     * if parser fail, then default value will be returned
+     * 
+     * @param value
+     *            string representation of integer value
+     *            @param defaultValue value to be returned in case of parser failure
+     * @return integer value, or default one in case of failure
+     */
+    public static int getIntegerFromString(String value, int defaultValue) {
+        Integer result = getIntegerFromString(value);
+        return result == null ? defaultValue  : result.intValue();
+    }
+
+
+    /**
      * Checks, if given value represents valid integer value
      * 
      * @param value

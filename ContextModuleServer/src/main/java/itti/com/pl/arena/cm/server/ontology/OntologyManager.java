@@ -357,18 +357,18 @@ public class OntologyManager implements Service {
                 // find value as an instance
                 OWLIndividual valueInd = getModel().getOWLIndividual(value);
                 if (valueInd != null) {
-                    setPropertyValue(individual, property, valueInd);
+                    addPropertyValue(individual, property, valueInd);
                     // not an instance - try numbers first
                     // try to add value as a string
                 } else if (NumbersHelper.isInteger(value)) {
                     Integer valueInt = NumbersHelper.getIntegerFromString(value);
-                    setPropertyValue(individual, property, valueInt);
+                    addPropertyValue(individual, property, valueInt);
                     // try to add value as a string
                 } else if (NumbersHelper.isDouble(value)) {
                     Float valueFloat = NumbersHelper.getDoubleFromString(value).floatValue();
-                    setPropertyValue(individual, property, valueFloat);
+                    addPropertyValue(individual, property, valueFloat);
                 } else {
-                    setPropertyValue(individual, property, value);
+                    addPropertyValue(individual, property, value);
                 }
             }
         }
@@ -499,9 +499,24 @@ public class OntologyManager implements Service {
      * @param value
      *            value to be set
      */
-    public void setPropertyValue(OWLIndividual instance, RDFProperty property, Object value) {
+    public void addPropertyValue(OWLIndividual instance, RDFProperty property, Object value) {
         // set new value of the property
         instance.addPropertyValue(property, value);
+    }
+
+    /**
+     * Adds a value of the property to the instance
+     * 
+     * @param instanceName
+     *            name of the OWL instance
+     * @param property
+     *            name of the property
+     * @param value
+     *            value to be set
+     * @throws OntologyException 
+     */
+    public void addPropertyValue(String instanceName, String propertyName, Object value) throws OntologyException {
+        addPropertyValue(getInstance(instanceName), getModel().getRDFProperty(propertyName), value);
     }
 
     /**
@@ -517,10 +532,28 @@ public class OntologyManager implements Service {
      *             could not update property value
      */
     public void updatePropertyValue(String instanceName, String propertyName, Object propertyValue) throws OntologyException {
+        updatePropertyValues(instanceName, propertyName, new Object[]{propertyValue});
+    }
+
+    /**
+     * Updates value of the property for given instance. Before update, removes all existing values of that instance
+     * 
+     * @param instanceName
+     *            name of the instance
+     * @param propertyName
+     *            name of the property
+     * @param propertyValue
+     *            new value for the property
+     * @throws OntologyException
+     *             could not update property value
+     */
+    public void updatePropertyValues(String instanceName, String propertyName, Object[] propertyValues) throws OntologyException {
         OWLIndividual instance = getInstance(instanceName);
         RDFProperty property = getModel().getRDFProperty(propertyName);
         removePropertyValues(instance, property);
-        setPropertyValue(instance, property, propertyValue);
+        for (Object propertyValue : propertyValues) {
+            addPropertyValue(instance, property, propertyValue);
+        }
     }
 
     /**

@@ -244,7 +244,10 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
             Double positionY = getDoubleProperty(cameraInstance, OntologyConstants.Camera_has_position_y);
             Integer cameraDirection = getIntProperty(cameraInstance, OntologyConstants.Camera_has_direction);
 
-            cameraInfo = new Camera(cameraId, cameraType, getValue(angleXVal), getValue(angleYVal), 
+            //TODO
+            String platformName = null;
+
+            cameraInfo = new Camera(cameraId, platformName, cameraType, getValue(angleXVal), getValue(angleYVal), 
                     new CartesianCoordinate(getValue(positionX), getValue(positionY)), getValue(cameraDirection));
         }
         return cameraInfo;
@@ -921,4 +924,26 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         return value == null ? 0 : value.intValue();
     }
 
+    @Override
+    public void updateCamera(Camera camera) throws OntologyException {
+
+        Map<String, String[]> properties = new HashMap<>();
+        properties.put(OntologyConstants.Camera_has_angle_x.name(), new String[]{StringHelper.toString(camera.getAngleX())});
+        properties.put(OntologyConstants.Camera_has_angle_y.name(), new String[]{StringHelper.toString(camera.getAngleX())});
+        properties.put(OntologyConstants.Camera_has_direction.name(), new String[]{StringHelper.toString(camera.getDirectionAngle())});
+        properties.put(OntologyConstants.Camera_has_position_x.name(), new String[]{StringHelper.toString(camera.getOnPlatformPosition().getY())});
+        properties.put(OntologyConstants.Camera_has_position_y.name(), new String[]{StringHelper.toString(camera.getOnPlatformPosition().getY())});
+        properties.put(OntologyConstants.Camera_has_type.name(), new String[]{StringHelper.toString(camera.getType())});
+
+        // create instance in the ontology
+        createSimpleInstance(OntologyConstants.Camera.name(), camera.getId(), properties);    
+
+        //update platform with camera
+        if(StringHelper.hasContent(camera.getPlatformName())){
+            String[] cameraNames = getInstanceProperties(camera.getPlatformName(), OntologyConstants.Vehicle_has_cameras.name());
+            if(!StringHelper.arrayContainsItem(cameraNames, camera.getId())){
+                addPropertyValue(camera.getPlatformName(), OntologyConstants.Vehicle_has_cameras.name(), camera.getId());
+            }
+        }
+    }
 }

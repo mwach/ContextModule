@@ -298,6 +298,17 @@ public class ContextModuleFacade extends CMModuleImpl implements LocalContextMod
     /*
      * (non-Javadoc)
      * 
+     * @see itti.com.pl.arena.cm.service.ContextModule#updateCamera(eu.arena_fp7._1.SimpleNamedValue)
+     */
+    @Override
+    public BooleanNamedValue updateCamera(SimpleNamedValue cameraRequest) {
+        cameraRequest.setHref(ContextModuleRequests.updateCamera.name());
+        return (BooleanNamedValue) submitData(cameraRequest);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see itti.com.pl.arena.cm.service.ContextModule#getPlatforms(eu.arena_fp7._1.Location)
      */
     @Override
@@ -409,6 +420,12 @@ public class ContextModuleFacade extends CMModuleImpl implements LocalContextMod
     }
 
     @Override
+    public BooleanNamedValue removeCamera(SimpleNamedValue cameraId) {
+        cameraId.setHref(ContextModuleRequests.removeCamera.name());
+        return (BooleanNamedValue) submitData(cameraId);
+    }
+
+    @Override
     public BooleanNamedValue applyRules(SimpleNamedValue objectId) {
         objectId.setHref(ContextModuleRequests.applyRules.name());
         return (BooleanNamedValue) submitData(objectId);
@@ -492,4 +509,5 @@ public class ContextModuleFacade extends CMModuleImpl implements LocalContextMod
         // response received
         LogHelper.debug(ContextModuleFacade.class, "waitForResponse", "Response received for message with ID: %s", id);
     }
+
 }

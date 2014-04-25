@@ -46,6 +46,16 @@ public interface ContextModule {
     BooleanNamedValue updatePlatform(SimpleNamedValue platform);
 
     /**
+     * This method allows to update existing or create new {@link Camera} in the ContextModule
+     * 
+     * @param camera
+     *            new or updated Camera object. Attribute 'value' of the provided {@link SimpleNamedValue} should contain
+     *            serialized {@link Camera} object
+     * @return update status
+     */
+    BooleanNamedValue updateCamera(SimpleNamedValue camera);
+
+    /**
      * This method allows retrieval of data about platforms found near the given location (i.e. returned Object class
      * will contain Object classes describing each platform).
      * 
@@ -138,6 +148,14 @@ public interface ContextModule {
      * @return removal status (true == zone removed, false otherwise)
      */
     BooleanNamedValue removeZone(SimpleNamedValue zoneId);
+
+    /**
+     * Removes an existing camera from the ontology
+     * 
+     * @param cameraId ID of the camera to be removed from ontology
+     * @return removal status (true == camera removed, false otherwise)
+     */
+    BooleanNamedValue removeCamera(SimpleNamedValue cameraId);
 
     /**
      * Returns zone definition: list of zone vertexes stored as {@link RealWorldCoordinate} objects
