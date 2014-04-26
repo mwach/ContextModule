@@ -4,6 +4,7 @@ import itti.com.pl.arena.cm.utils.helper.StringHelper;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -50,6 +51,22 @@ public class ComboBoxButtonRow extends JPanel {
 
     public String getSelectedItem() {
         return comboBox.getSelectedItem() != null ? StringHelper.toString(comboBox.getSelectedItem()) : null;
+    }
+
+    public void setItem(String item) {
+        if(StringHelper.hasContent(item)){
+            if(getItems().contains(item)){
+                comboBox.setSelectedItem(item);
+            }
+        }
+    }
+
+    public List<String> getItems() {
+        List<String> content = new ArrayList<>();
+        for(int i=0 ; i<comboBox.getItemCount() ; i++){
+            content.add(comboBox.getItemAt(i));
+        }
+        return content;
     }
 
     public void setOnClickListener(ActionListener actionListener) {
