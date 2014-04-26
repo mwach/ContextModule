@@ -242,4 +242,13 @@ public class ContextModuleAdapter {
         // return parsed response
         return response.isFeatureValue();
     }
+
+    public Camera getCameraDefinition(String selectedCamera) {
+        // prepare a request
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Camera.name(), selectedCamera);
+        // send/receive
+        eu.arena_fp7._1.Object response = contextModule.getCamera(request);
+        // return parsed response
+        return ArenaObjectsMapper.fromCameraObject(response);
+    }
 }

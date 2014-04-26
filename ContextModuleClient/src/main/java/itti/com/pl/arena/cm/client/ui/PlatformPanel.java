@@ -6,6 +6,7 @@ import itti.com.pl.arena.cm.client.ui.components.LabelTextBoxRow;
 import itti.com.pl.arena.cm.client.ui.components.TextBoxButtonRow;
 import itti.com.pl.arena.cm.dto.Location;
 import itti.com.pl.arena.cm.dto.coordinates.CartesianCoordinate;
+import itti.com.pl.arena.cm.dto.dynamicobj.Camera;
 import itti.com.pl.arena.cm.dto.dynamicobj.CameraType;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
 import itti.com.pl.arena.cm.utils.helper.JsonHelperException;
@@ -31,6 +32,10 @@ public class PlatformPanel extends ContextModulePanel {
      */
     private static final long serialVersionUID = 1L;
 
+    private JTabbedPane tabbedPane = null;
+    private Component platformPanel = null;
+    private Component cameraPanel = null;
+    
     private Component imageComponent = null;
 
     private ComboBoxButtonRow platformsComboBoxRow = null;
@@ -44,7 +49,7 @@ public class PlatformPanel extends ContextModulePanel {
     private LabelTextBoxRow platformLocationY = null;
     private ButtonRow clearPlatformParamsRow = null;
 
-    private ComboBoxButtonRow camerasListRow = null;
+    private ComboBoxButtonRow camerasComboBoxRow = null;
     private TextBoxButtonRow addCameraTextBox = null;
 
     private LabelTextBoxRow cameraVerticalAngleRow = null;
@@ -62,14 +67,16 @@ public class PlatformPanel extends ContextModulePanel {
     public PlatformPanel() {
         super();
 
-        final JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+        tabbedPane = new JTabbedPane(JTabbedPane.TOP);
         add(tabbedPane, BorderLayout.EAST);
 
         imageComponent = createImagePanel(Messages.getString("TruckPanel.9")); //$NON-NLS-1$
         add(imageComponent, BorderLayout.WEST);
 
-        tabbedPane.addTab(Messages.getString("TruckPanel.0"), createPlatformPanel()); //$NON-NLS-1$
-        tabbedPane.addTab(Messages.getString("TruckPanel.1"), createCameraPanel()); //$NON-NLS-1$
+        platformPanel = createPlatformPanel();
+        cameraPanel = createCameraPanel();
+        tabbedPane.addTab(Messages.getString("TruckPanel.0"), platformPanel); //$NON-NLS-1$
+        tabbedPane.addTab(Messages.getString("TruckPanel.1"), cameraPanel); //$NON-NLS-1$
         tabbedPane.addChangeListener(new ChangeListener() {
 
             @Override
@@ -216,9 +223,9 @@ public class PlatformPanel extends ContextModulePanel {
                     .getLocation().getLatitude()) : null);
 
             if(platform != null && platform.getCameras() != null){
-                camerasListRow.setComboBoxContent(new ArrayList<>(platform.getCameras().keySet()));
+                camerasComboBoxRow.setComboBoxContent(new ArrayList<>(platform.getCameras().keySet()));
             }else{
-                camerasListRow.setComboBoxContent(null);
+                camerasComboBoxRow.setComboBoxContent(null);
             }
         }else{
             clearPlatformForm();
@@ -231,29 +238,29 @@ public class PlatformPanel extends ContextModulePanel {
 
         panelCamera.add(createLabelRow(Messages.getString("TruckPanel.19"))); //$NON-NLS-1$
 
-        camerasListRow = createComboBoxButtonRow(Messages.getString("TruckPanel.20"), null);
-        camerasListRow.setOnChangeListener(new ActionListener() {
+        camerasComboBoxRow = createComboBoxButtonRow(Messages.getString("TruckPanel.20"), null);
+        camerasComboBoxRow.setOnChangeListener(new ActionListener() {
             
             @Override
             public void actionPerformed(ActionEvent e) {
                 cameraSelectionChanged();
             }
         });
-        camerasListRow.setOnClickListener(new ActionListener() {
+        camerasComboBoxRow.setOnClickListener(new ActionListener() {
             
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 removeCamera();
             }
         });
-        panelCamera.add(camerasListRow); //$NON-NLS-1$
+        panelCamera.add(camerasComboBoxRow); //$NON-NLS-1$
 
         addCameraTextBox = createTextBoxButtonRow(null, Messages.getString("TruckPanel.21"));
         addCameraTextBox.setOnButtonClickListener(new ActionListener() {
             
             @Override
             public void actionPerformed(ActionEvent e) {
-                addCamera();
+                addCamera(addCameraTextBox.getText());
             }
         });
         panelCamera.add(addCameraTextBox); //$NON-NLS-1$
@@ -280,7 +287,7 @@ public class PlatformPanel extends ContextModulePanel {
             
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                clearPlatformForm();
+                clearCameraForm();
             }
         });
         panelCamera.add(clearCameraParamsRow);
@@ -288,8 +295,7 @@ public class PlatformPanel extends ContextModulePanel {
         return panelCamera;
     }
 
-    protected void addCamera() {
-        String cameraName = addCameraTextBox.getText();
+    protected void addCamera(String cameraName) {
         if(StringHelper.hasContent(cameraName)){
             String platformName = platformsComboBoxRow.getSelectedItem();
             if(StringHelper.hasContent(platformName)){
@@ -301,7 +307,7 @@ public class PlatformPanel extends ContextModulePanel {
     }
 
     private void removeCamera() {
-        String selectedCamera = camerasListRow.getSelectedItem();
+        String selectedCamera = camerasComboBoxRow.getSelectedItem();
         String selectedPlatform = platformsComboBoxRow.getSelectedItem();
         if (StringHelper.hasContent(selectedCamera)) {
             if (getContextModuleAdapter().removeCamera(selectedCamera)) {
@@ -330,6 +336,7 @@ public class PlatformPanel extends ContextModulePanel {
                 showMessage("Successfully added camera to the ontology");
                 onRefreshClick();
                 platformsComboBoxRow.setItem(platformName);
+                addCameraTextBox.setText(null);
             }else{
                 showMessage("Failed to add camera to the ontology");
             }
@@ -339,9 +346,14 @@ public class PlatformPanel extends ContextModulePanel {
     }
     
     private void cameraSelectionChanged() {
-        String cameraName = camerasListRow.getSelectedItem();
-        if(StringHelper.hasContent(cameraName)){
-            
+        String selectedCamera = camerasComboBoxRow.getSelectedItem();
+        if (StringHelper.hasContent(selectedCamera)) {
+            Camera camera = getContextModuleAdapter().getCameraDefinition(selectedCamera);
+            cameraVerticalAngleRow.setText(camera != null ? StringHelper.toString(camera.getAngleY()) : null);
+            cameraHorizontalAngleRow.setText(camera != null ? StringHelper.toString(camera.getAngleX()) : null);
+            cameraXRow.setText(camera != null ? StringHelper.toString(camera.getOnPlatformPosition().getX()) : null);
+            cameraYRow.setText(camera != null ? StringHelper.toString(camera.getOnPlatformPosition().getY()) : null);
+            cameraAngleRow.setText(camera != null ? StringHelper.toString(camera.getDirectionAngle()) : null);
         }else{
             clearCameraForm();
         }
@@ -353,10 +365,18 @@ public class PlatformPanel extends ContextModulePanel {
 
     @Override
     protected void onSaveClick() {
-        if(StringHelper.hasContent(addPlatformTextBoxButtonRow.getText())){
-            addPlatform(addPlatformTextBoxButtonRow.getText());
-        }else{
-            addPlatform(platformsComboBoxRow.getSelectedItem());            
+        if(tabbedPane.getSelectedComponent() == platformPanel){
+            if(StringHelper.hasContent(addPlatformTextBoxButtonRow.getText())){
+                addPlatform(addPlatformTextBoxButtonRow.getText());
+            }else{
+                addPlatform(platformsComboBoxRow.getSelectedItem());            
+            }
+        }else if(tabbedPane.getSelectedComponent() == cameraPanel){
+            if(StringHelper.hasContent(addCameraTextBox.getText())){
+                addCamera(addCameraTextBox.getText());
+            }else{
+                addCamera(camerasComboBoxRow.getSelectedItem());            
+            }
         }
     }
 
