@@ -1,0 +1,59 @@
+#!/bin/sh
+
+NAME=arenabus
+ARENABUS_PID="/var/run/$NAME.pid"
+
+MAIN_CLASS="com.safran.arena.impl.Server"
+
+LD_LIBRARY_PATH=/usr/local/lib
+export LD_LIBRARY_PATH=/usr/local/lib
+
+start_process()
+{
+	java -cp /home/cm-admin/workspace/ContextModule/resources/libs/arena.jar:/home/cm-admin/workspace/ContextModule/resources/libs/ServicePlatformInterface.jar:/usr/local/share/java/zmq.jar  $MAIN_CLASS &
+	return 0
+}
+
+get_pid()
+{
+	PID=`ps -ef | grep $MAIN_CLASS | grep -v "grep" | awk '{print $2}'`
+	echo $PID
+}
+
+case "$1" in
+  start)
+	pid=$(get_pid)
+	if [ -z "$pid" ]
+	then
+   		start_process
+	fi
+  ;;
+  stop)
+	pid=$(get_pid)
+	if [ ! -z "$pid" ]
+	then
+		kill $pid
+	fi
+
+  ;;
+  restart)
+	$0 stop
+	sleep 1
+        $0 start
+        ;;
+  status)
+	pid=`get_pid`
+	if [ -z "$pid" ]
+	then
+		echo "Process is not running"
+	else
+		echo "Process is running. PID=$pid"
+	fi
+  ;;
+
+  *)
+        echo "Usage: $0 {start|stop|restart|status}"
+        exit 1
+        ;;
+esac
+
