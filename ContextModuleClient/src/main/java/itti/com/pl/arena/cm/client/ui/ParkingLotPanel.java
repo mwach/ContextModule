@@ -2,6 +2,7 @@ package itti.com.pl.arena.cm.client.ui;
 
 import itti.com.pl.arena.cm.client.ui.components.ButtonRow;
 import itti.com.pl.arena.cm.client.ui.components.ComboBoxButtonRow;
+import itti.com.pl.arena.cm.client.ui.components.ComboBoxRow;
 import itti.com.pl.arena.cm.client.ui.components.LabelComboBoxRow;
 import itti.com.pl.arena.cm.client.ui.components.LabelTextBoxRow;
 import itti.com.pl.arena.cm.client.ui.components.TextBoxButtonRow;
@@ -23,7 +24,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
@@ -46,15 +46,20 @@ public class ParkingLotPanel extends ContextModulePanel {
     private LabelTextBoxRow townTextBox = null;
     private LabelTextBoxRow streetTextBox = null;
 
-    private ComboBoxButtonRow removeParkingLotCoordinateComboBox = null;
+    private ComboBoxRow removeParkingLotCoordinateComboBox = null;
+    private ButtonRow removeParkingLotCoordinateButton = null;
     private LabelTextBoxRow parkingLotXCoordinateTextBox = null;
     private LabelTextBoxRow parkingLotYCoordinateTextBox = null;
 
-    private ComboBoxButtonRow removeBuildingComboBox = null;
-    private TextBoxButtonRow addBuildingComboBox = null;
+    private ComboBoxRow removeBuildingComboBox = null;
+    private ButtonRow removeBuildingButton = null;
+    private TextBoxButtonRow addBuildingTextBox = null;
 
     private LabelComboBoxRow typeComboBox = null;
-    private LabelComboBoxRow descriptionComboBox = null;
+
+    private ComboBoxRow removeBuildingCoordinatesComboBox = null;
+    private LabelTextBoxRow buildingCoordinateXRow = null;
+    private LabelTextBoxRow buildingCoordinateYRow = null;
 
     /**
      * Create the dialog.
@@ -123,7 +128,7 @@ public class ParkingLotPanel extends ContextModulePanel {
         streetTextBox.setEnabled(false);
 
         panelParkingLot.add(createLabelRow(Messages.getString("ParkingLotPanel.7"))); //$NON-NLS-1$
-        removeParkingLotCoordinateComboBox = createComboBoxButtonRow(Messages.getString("ParkingLotPanel.9"), null);
+        removeParkingLotCoordinateComboBox = createComboBoxRow(null);
         removeParkingLotCoordinateComboBox.setOnChangeListener(new ActionListener() {
 
             @Override
@@ -131,20 +136,24 @@ public class ParkingLotPanel extends ContextModulePanel {
                 selectedParkingLotCoordinateChanged();
             }
         });
-        removeParkingLotCoordinateComboBox.setOnClickListener(new ActionListener() {
+        panelParkingLot.add(removeParkingLotCoordinateComboBox); //$NON-NLS-1$
+
+        removeParkingLotCoordinateButton = createButtonRow(Messages.getString("ParkingLotPanel.9"));
+        removeParkingLotCoordinateButton.setOnClickListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 removeParkingLotCoordinate();
             }
         });
-        panelParkingLot.add(removeParkingLotCoordinateComboBox); //$NON-NLS-1$
+        panelParkingLot.add(removeParkingLotCoordinateButton); //$NON-NLS-1$
+
         parkingLotXCoordinateTextBox = createLabelTextBoxRow("X", null);
         panelParkingLot.add(parkingLotXCoordinateTextBox); //$NON-NLS-1$
         parkingLotYCoordinateTextBox = createLabelTextBoxRow("Y", null);
         panelParkingLot.add(parkingLotYCoordinateTextBox); //$NON-NLS-1$
         ButtonRow addParkingLotCoordinateButton = createButtonRow("Add");
-        addParkingLotCoordinateButton.setButtonActionListener(new ActionListener() {
+        addParkingLotCoordinateButton.setOnClickListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -154,7 +163,7 @@ public class ParkingLotPanel extends ContextModulePanel {
         panelParkingLot.add(addParkingLotCoordinateButton); //$NON-NLS-1$
 
         ButtonRow clearParkingLotParamsRow = createButtonRow("Clear");
-        clearParkingLotParamsRow.setButtonActionListener(new ActionListener() {
+        clearParkingLotParamsRow.setOnClickListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent arg0) {
@@ -192,18 +201,18 @@ public class ParkingLotPanel extends ContextModulePanel {
             townTextBox.setText(parkingLot != null ? parkingLot.getTown() : null);
             streetTextBox.setText(parkingLot != null ? parkingLot.getStreet() : null);
 
-            removeParkingLotCoordinateComboBox.setComboBoxContent(LocationHelper
-                    .getLocationsFromStrings(parkingLot != null ? parkingLot.getBoundaries() : null));
+            removeParkingLotCoordinateComboBox.setItems(LocationHelper.getStringsFromLocations(parkingLot != null ? parkingLot
+                    .getBoundaries() : null));
 
             if (parkingLot != null) {
                 List<String> parkingObjects = new ArrayList<>();
-                if(parkingLot.getBuildings() != null){
+                if (parkingLot.getBuildings() != null) {
                     parkingObjects.addAll(parkingLot.getBuildings().keySet());
                 }
-                if(parkingLot.getInfrastructure() != null){
+                if (parkingLot.getInfrastructure() != null) {
                     parkingObjects.addAll(parkingLot.getInfrastructure().keySet());
                 }
-                removeBuildingComboBox.setComboBoxContent(parkingObjects);
+                removeBuildingComboBox.setItems(parkingObjects);
             } else {
                 clearBuildingsForm();
             }
@@ -219,13 +228,13 @@ public class ParkingLotPanel extends ContextModulePanel {
         countryTextBox.setText(null);
         townTextBox.setText(null);
         streetTextBox.setText(null);
-        removeParkingLotCoordinateComboBox.setComboBoxContent(null);
+        removeParkingLotCoordinateComboBox.setItems(null);
         parkingLotXCoordinateTextBox.setText(null);
         parkingLotYCoordinateTextBox.setText(null);
     }
 
     private void clearBuildingsForm() {
-        addBuildingComboBox.setText(null);
+        addBuildingTextBox.setText(null);
     }
 
     private void addParkingLotCoordinate() {
@@ -271,7 +280,7 @@ public class ParkingLotPanel extends ContextModulePanel {
                 if (status) {
                     showMessage("Successfully added parking lot to the ontology");
                     onRefreshClick();
-                    removeParkingLotComboBox.setItem(parkingLotName);
+                    removeParkingLotComboBox.setSelectedItem(parkingLotName);
                     addParkingLotComboBox.setText(null);
                 } else {
                     showMessage("Failed to add platform to the ontology");
@@ -292,24 +301,35 @@ public class ParkingLotPanel extends ContextModulePanel {
 
         panelBuildings.add(createLabelRow(Messages.getString("ParkingLotPanel.18"))); //$NON-NLS-1$
 
-        removeBuildingComboBox = createComboBoxButtonRow(Messages.getString("ParkingLotPanel.19"), null);
+        removeBuildingComboBox = createComboBoxRow(null);
         removeBuildingComboBox.setOnChangeListener(new ActionListener() {
-            
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 selectedBuildingSelectionChanged();
             }
         });
-        removeBuildingComboBox.setOnClickListener(new ActionListener() {
-            
+        panelBuildings.add(removeBuildingComboBox); //$NON-NLS-1$
+
+        removeBuildingButton = createButtonRow(Messages.getString("ParkingLotPanel.19"));
+        removeBuildingButton.setOnClickListener(new ActionListener() {
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 removeBuilding();
             }
         });
-        panelBuildings.add(removeBuildingComboBox); //$NON-NLS-1$
-        addBuildingComboBox = createTextBoxButtonRow(null, Messages.getString("ParkingLotPanel.20"));
-        panelBuildings.add(addBuildingComboBox); //$NON-NLS-1$
+        panelBuildings.add(removeBuildingButton);
+
+        addBuildingTextBox = createTextBoxButtonRow(null, Messages.getString("ParkingLotPanel.20"));
+        addBuildingTextBox.setOnButtonClickListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addBuilding();
+            }
+        });
+        panelBuildings.add(addBuildingTextBox); //$NON-NLS-1$
 
         panelBuildings.add(createEmptyRow());
 
@@ -320,24 +340,144 @@ public class ParkingLotPanel extends ContextModulePanel {
         typeComboBox.setComboBoxContent(types);
         panelBuildings.add(typeComboBox); //$NON-NLS-1$
 
-        descriptionComboBox = createLabelComboBoxRow(Messages.getString("ParkingLotPanel.14"), null);
-        panelBuildings.add(descriptionComboBox); //$NON-NLS-1$
+        // descriptionComboBox = createLabelComboBoxRow(Messages.getString("ParkingLotPanel.14"), null);
+        //panelBuildings.add(descriptionComboBox); //$NON-NLS-1$
 
-        panelBuildings.add(createEmptyRow());
         panelBuildings.add(createLabelRow(Messages.getString("ParkingLotPanel.15"))); //$NON-NLS-1$
-        panelBuildings.add(createComboBoxButtonRow(Messages.getString("ParkingLotPanel.17"), null)); //$NON-NLS-1$
-        panelBuildings.add(createLabelTextBoxRow("X", null)); //$NON-NLS-1$
-        panelBuildings.add(createLabelTextBoxRow("Y", null)); //$NON-NLS-1$
-        panelBuildings.add(createButtonRow("Add")); //$NON-NLS-1$
+
+        removeBuildingCoordinatesComboBox = createComboBoxRow(null);
+        removeBuildingCoordinatesComboBox.setOnChangeListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                buildingCoordinateChanged();
+            }
+        });
+        panelBuildings.add(removeBuildingCoordinatesComboBox); //$NON-NLS-1$
+
+        ButtonRow removeBuildingCoordinateButton = createButtonRow(Messages.getString("ParkingLotPanel.17"));
+        removeBuildingCoordinateButton.setOnClickListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                removeBuildingCoordinate();
+            }
+        });
+        panelBuildings.add(removeBuildingCoordinateButton); //$NON-NLS-1$
+
+        buildingCoordinateXRow = createLabelTextBoxRow("X", null);
+        panelBuildings.add(buildingCoordinateXRow); //$NON-NLS-1$
+
+        buildingCoordinateYRow = createLabelTextBoxRow("Y", null);
+        panelBuildings.add(buildingCoordinateYRow); //$NON-NLS-1$
+
+        ButtonRow addBuildingCoordinateRow = createButtonRow("Add");
+        addBuildingCoordinateRow.setOnClickListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addBuildingCoordinate();
+            }
+        });
+        panelBuildings.add(addBuildingCoordinateRow); //$NON-NLS-1$
+
+        ButtonRow clearBuildingCoordinateRow = createButtonRow("Clear");
+        clearBuildingCoordinateRow.setOnClickListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                clearBuildingCoordinates();
+            }
+        });
+        panelBuildings.add(clearBuildingCoordinateRow); //$NON-NLS-1$
 
         return panelBuildings;
     }
 
+    private void addBuilding() {
+        String buildingName = addBuildingTextBox.getText();
+        addBuilding(buildingName);
+    }
+
+    private void addBuilding(String buildingName) {
+        String parkingLotName = removeParkingLotComboBox.getSelectedItem();
+        if (StringHelper.hasContent(parkingLotName)) {
+            if (StringHelper.hasContent(buildingName)) {
+                addBuilding(buildingName, parkingLotName);
+            } else {
+                showMessage("Building name not selected");
+            }
+        } else {
+            showMessage("Parking lot not selected");
+        }
+    }
+
+    private void addBuilding(String buildingName, String parkingLotName) {
+
+        String type = typeComboBox.getSelectedItem();
+
+        try {
+            List<Location> locations = LocationHelper.getLocationsFromStrings(removeBuildingCoordinatesComboBox.getItems());
+
+            boolean status = getContextModuleAdapter().updateBuilding(buildingName, parkingLotName, type,
+                    locations);
+            if (status) {
+                showMessage("Successfully updated building");
+                onRefreshClick();
+                removeParkingLotComboBox.setSelectedItem(parkingLotName);
+                addBuildingTextBox.setText(null);
+            } else {
+                showMessage("Could not update building. \nNote, that type cannot be changed for building");
+            }
+        } catch (JsonHelperException e) {
+            showMessage("Could not update building: Platform serialization error");
+        } catch (LocationHelperException e) {
+            showMessage("Could not parse provided locations");
+        }
+    }
+
+    private void addBuildingCoordinate() {
+        Double x = NumbersHelper.getDoubleFromString(buildingCoordinateXRow.getText());
+        Double y = NumbersHelper.getDoubleFromString(buildingCoordinateYRow.getText());
+        if (x != null && y != null) {
+            removeBuildingCoordinatesComboBox.addItem(LocationHelper.createStringFromLocation(new Location(x, y)));
+        } else {
+            showMessage("Cannot parse provided values into valid location");
+        }
+    }
+
+    private void clearBuildingCoordinates() {
+        buildingCoordinateXRow.setText(null);
+        buildingCoordinateYRow.setText(null);
+    }
+
+    private void buildingCoordinateChanged() {
+        String coordinate = removeBuildingCoordinatesComboBox.getSelectedItem();
+        if (StringHelper.hasContent(coordinate)) {
+            try {
+                Location location = LocationHelper.getLocationFromString(coordinate);
+                buildingCoordinateXRow.setText(StringHelper.toString(location == null ? null : location.getLongitude()));
+                buildingCoordinateYRow.setText(StringHelper.toString(location == null ? null : location.getLatitude()));
+            } catch (LocationHelperException e) {
+                showMessage("Cannot convert given string into coordinates");
+            }
+        }
+    }
+
+    private void removeBuildingCoordinate() {
+        removeBuildingCoordinatesComboBox.removeSelectedItem();
+    }
+
     protected void removeBuilding() {
         String buildingName = removeBuildingComboBox.getSelectedItem();
-        if(StringHelper.hasContent(buildingName)){
-            getContextModuleAdapter().removeBuilding(buildingName);
-            removeParkingLotComboBox.setItem(removeBuildingComboBox.getSelectedItem());
+        if (StringHelper.hasContent(buildingName)) {
+            if (getContextModuleAdapter().removeBuilding(buildingName)) {
+                showMessage("Building successfully removed");
+                parkingLotSelectionChanged();
+            } else {
+                showMessage("Could not remove building");
+                parkingLotSelectionChanged();
+            }
         }
     }
 
@@ -345,17 +485,17 @@ public class ParkingLotPanel extends ContextModulePanel {
         String buildingName = removeBuildingComboBox.getSelectedItem();
         if (StringHelper.hasContent(buildingName)) {
             GeoObject object = getContextModuleAdapter().getBuildingDefinition(buildingName);
-            if(object != null){
+            if (object != null) {
                 Building building = null;
                 Infrastructure infrastructure = null;
-                if(object instanceof Building){
+                if (object instanceof Building) {
                     building = (Building) object;
-                }else{
+                } else {
                     infrastructure = (Infrastructure) object;
-                    JOptionPane.showMessageDialog(null, infrastructure);
                 }
-                typeComboBox.setSelectedItem(building != null ? building.getType().name() : 
-                    (infrastructure != null ? infrastructure.getType().name() : null));
+                typeComboBox.setSelectedItem(building != null ? building.getType().name()
+                        : (infrastructure != null ? infrastructure.getType().name() : null));
+                removeBuildingCoordinatesComboBox.setItems(LocationHelper.getStringsFromLocations(object.getBoundaries()));
             }
         }
     }
@@ -373,18 +513,18 @@ public class ParkingLotPanel extends ContextModulePanel {
                 addParkingLot(removeParkingLotComboBox.getSelectedItem());
             }
         } else if (tabbedPane.getSelectedComponent() == panelBuildings) {
-            // if(StringHelper.hasContent(addCameraTextBox.getText())){
-            // addCamera(addCameraTextBox.getText());
-            // }else{
-            // addCamera(camerasComboBoxRow.getSelectedItem());
-            // }
+             if(StringHelper.hasContent(addBuildingTextBox.getText())){
+                 addBuilding(addBuildingTextBox.getText());
+             }else{
+                 addBuilding(removeBuildingComboBox.getSelectedItem());
+             }
         }
     }
 
     @Override
     protected void onRefreshClick() {
         List<String> parkingLotNames = getContextModuleAdapter().getListOfParkingLots();
-        removeParkingLotComboBox.setComboBoxContent(parkingLotNames);
+        removeParkingLotComboBox.setItems(parkingLotNames);
     }
 
 }

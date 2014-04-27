@@ -34,7 +34,7 @@ public class ComboBoxButtonRow extends JPanel {
         add(button);
     }
 
-    public void setComboBoxContent(List<String> content) {
+    public void setItems(List<String> content) {
         comboBox.removeAllItems();
         if (content != null) {
             for (String item : content) {
@@ -58,7 +58,7 @@ public class ComboBoxButtonRow extends JPanel {
         return comboBox.getSelectedItem() != null ? StringHelper.toString(comboBox.getSelectedItem()) : null;
     }
 
-    public void setItem(String item) {
+    public void setSelectedItem(String item) {
         if(StringHelper.hasContent(item)){
             if(getItems().contains(item)){
                 comboBox.setSelectedItem(item);

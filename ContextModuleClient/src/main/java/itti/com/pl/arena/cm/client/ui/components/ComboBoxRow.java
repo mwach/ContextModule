@@ -4,6 +4,7 @@ import itti.com.pl.arena.cm.utils.helper.StringHelper;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JComboBox;
@@ -54,12 +55,18 @@ public class ComboBoxRow extends JPanel{
         comboBox.addItem(item);
     }
 
-    public String[] getItems() {
-        String[] items = new String[comboBox.getItemCount()];
+    public List<String> getItems() {
+        List<String> items = new ArrayList<>();
         for(int i=0 ; i<comboBox.getItemCount() ; i++){
-            items[i] = comboBox.getItemAt(i);
+            items.add(comboBox.getItemAt(i));
         }
         return items;
+    }
+
+    public void removeSelectedItem() {
+        if(comboBox.getSelectedItem() != null){
+            comboBox.removeItem(comboBox.getSelectedItem());
+        }
     }
 
 }

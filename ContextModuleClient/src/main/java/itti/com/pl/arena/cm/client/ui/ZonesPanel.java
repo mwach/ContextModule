@@ -116,7 +116,7 @@ public class ZonesPanel extends ContextModulePanel {
         panelZones.add(zoneCoordinateComboBoxRow);
 
         zoneCoordinateButtonRow = createButtonRow(Messages.getString("ZonesPanel.4")); //$NON-NLS-1$
-        zoneCoordinateButtonRow.setButtonActionListener(new ActionListener() {
+        zoneCoordinateButtonRow.setOnClickListener(new ActionListener() {
             
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -190,7 +190,7 @@ public class ZonesPanel extends ContextModulePanel {
         if(!StringHelper.hasContent(zoneName)){
             showMessage("Please specify zone name first");
         }else{
-            String[] coordinates = zoneCoordinateComboBoxRow.getItems();
+            List<String> coordinates = zoneCoordinateComboBoxRow.getItems();
             getContextModuleAdapter().updateZone(zoneName, parkingLot, planeName, coordinates);
         }
     }
@@ -205,7 +205,7 @@ public class ZonesPanel extends ContextModulePanel {
         String selectedParkingLot = parkingLotsComboBoxRow.getSelectedItem();
         if (StringHelper.hasContent(selectedParkingLot)) {
             List<String> zones = getContextModuleAdapter().getListOfZones(selectedParkingLot);
-            zonesComboBoxButtonRow.setComboBoxContent(zones);
+            zonesComboBoxButtonRow.setItems(zones);
         }
     }
 

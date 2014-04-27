@@ -109,17 +109,17 @@ public class TestHelper {
         }
         
         //parking infrastructure
-        parkingLot.addBuilding(createDummyBuilding("dummyBuilding1_" + System.currentTimeMillis()));
-        parkingLot.addBuilding(createDummyBuilding("dummyBuilding2_" + System.currentTimeMillis()));
-        parkingLot.addIntrastructure(createDummyInfrastructure("dummyInfrastructure_" + System.currentTimeMillis()));
+        parkingLot.addBuilding(createDummyBuilding("dummyBuilding1_" + System.currentTimeMillis(), parkingLotId));
+        parkingLot.addBuilding(createDummyBuilding("dummyBuilding2_" + System.currentTimeMillis(), parkingLotId));
+        parkingLot.addIntrastructure(createDummyInfrastructure("dummyInfrastructure_" + System.currentTimeMillis(), parkingLotId));
 
         return parkingLot;
     }
 
-    public static Building createDummyBuilding(String buildingId) {
+    public static Building createDummyBuilding(String buildingId, String parkingLotId) {
 
         //new building object
-        Building building = new Building(buildingId, Type.Hotel);
+        Building building = new Building(buildingId, parkingLotId, Type.Hotel);
 
         //building boundaries
         for(int i=0 ; i<4 ; i++){
@@ -129,10 +129,10 @@ public class TestHelper {
         return building;
     }
 
-    public static Infrastructure createDummyInfrastructure(String infrastructureId) {
+    public static Infrastructure createDummyInfrastructure(String infrastructureId, String parkingLotName) {
 
         //new infrastructure object
-        Infrastructure infrastructure = new Infrastructure(infrastructureId, Infrastructure.Type.Fence);
+        Infrastructure infrastructure = new Infrastructure(infrastructureId, parkingLotName, Infrastructure.Type.Fence);
 
         //building boundaries
         for(int i=0 ; i<4 ; i++){

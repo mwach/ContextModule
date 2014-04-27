@@ -60,10 +60,12 @@ public class Building extends GeoObject {
     /**
      * Constructor of that class
      * @param id ID of the object
+     * @param parkingLotName name of the parking lot
      * @param type type of the building
      */
-    public Building(String id, Type type){
+    public Building(String id, String parkingLotName, Type type){
         super(id);
+        setParkingLotName(parkingLotName);
         setType(type);
     }
 
@@ -86,6 +88,16 @@ public class Building extends GeoObject {
      */
     public void setType(Type type) {
         this.type = type;
+    }
+
+    private String parkingLotName = null;
+    
+    public String getParkingLotName() {
+        return parkingLotName;
+    }
+
+    public void setParkingLotName(String parkingLotName) {
+        this.parkingLotName = parkingLotName;
     }
 
     @Override

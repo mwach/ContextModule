@@ -1,7 +1,6 @@
 package itti.com.pl.arena.cm.server.ontology;
 
 import itti.com.pl.arena.cm.server.exception.ErrorMessages;
-import itti.com.pl.arena.cm.server.ontology.OntologyConstants;
 import itti.com.pl.arena.cm.server.service.Service;
 import itti.com.pl.arena.cm.server.utils.helpers.SpringHelper;
 import itti.com.pl.arena.cm.utils.helper.IOHelper;
@@ -136,8 +135,8 @@ public class OntologyManager implements Service {
      *            name of the class
      * @return list of instances names. If there are no instances, empty list will be returned
      */
-    public final List<String> getDirectInstances(OntologyConstants className) {
-        return getInstances(className.name());
+    public final List<String> getDirectInstances(String className) {
+        return getInstances(className);
     }
 
     /**
@@ -704,5 +703,4 @@ public class OntologyManager implements Service {
             IOHelper.closeStream(ontologyOutputStream);
         }
     }
-
 }

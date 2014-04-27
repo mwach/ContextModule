@@ -3,8 +3,6 @@ package itti.com.pl.arena.cm.utils.helper;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JOptionPane;
-
 import eu.arena_fp7._1.AbstractNamedValue;
 import eu.arena_fp7._1.Object;
 import eu.arena_fp7._1.ObjectFactory;
@@ -143,7 +141,6 @@ public final class ArenaObjectsMapper {
         for (AbstractNamedValue feature : response.getFeatureVector().getFeature()) {
             if (feature instanceof SimpleNamedValue) {
                 String buildingJson = ((SimpleNamedValue) feature).getValue();
-                JOptionPane.showMessageDialog(null, buildingJson);
                 try {
                     Building building = JsonHelper.fromJson(buildingJson, Building.class);
                     if(building.getType() == null){
@@ -154,7 +151,6 @@ public final class ArenaObjectsMapper {
                     try {
                         Infrastructure infrastructure = JsonHelper.fromJson(buildingJson, Infrastructure.class);
                         responseObject = infrastructure;
-                        JOptionPane.showMessageDialog(null, "PARSED: " + infrastructure);
 
                     } catch (JsonHelperException exc) {
                         exc.printStackTrace();
@@ -162,7 +158,6 @@ public final class ArenaObjectsMapper {
                 }
             }
         }
-        JOptionPane.showMessageDialog(null, "RESPONSE: " + responseObject);
         return responseObject;
     }
 

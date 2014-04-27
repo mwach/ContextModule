@@ -129,7 +129,7 @@ public abstract class ContextModulePanel extends JPanel {
 
     protected JPanel createJPanel() {
         JPanel panelPlatform = new JPanel();
-        panelPlatform.setLayout(new GridLayout(13, 1, 10, 10));
+        panelPlatform.setLayout(new GridLayout(14, 1, 10, 10));
         panelPlatform.setBorder(new EmptyBorder(10, 10, 10, 10));
         return panelPlatform;
     }

@@ -129,7 +129,7 @@ public class ContextModuleAdapter {
         return response.isFeatureValue();
     }
 
-    public boolean updateZone(String zoneName, String parkingLot, String planeName, String[] coordinates) {
+    public boolean updateZone(String zoneName, String parkingLot, String planeName, List<String> coordinates) {
         // prepare a request
         List<AbstractNamedValue> vector = new ArrayList<>();
         vector.add(contextModule.createSimpleNamedValue(moduleName, 
@@ -141,7 +141,7 @@ public class ContextModuleAdapter {
         if(coordinates != null){
             itti.com.pl.arena.cm.dto.Location[] locations = null;
             try {
-                locations = LocationHelper.getLocationsFromStrings(coordinates);
+                locations = LocationHelper.getLocationsFromStrings(coordinates.toArray(new String[coordinates.size()]));
             } catch (LocationHelperException e) {
                 return false;
             }
@@ -309,6 +309,26 @@ public class ContextModuleAdapter {
         eu.arena_fp7._1.Object response = contextModule.getBuilding(request);
         // return parsed response
         return ArenaObjectsMapper.fromBuildingObject(response);
+    }
+
+    public boolean updateBuilding(String buildingName, String parkingLotName, String type,
+            List<itti.com.pl.arena.cm.dto.Location> locations) throws JsonHelperException {
+
+        GeoObject building = null;
+
+        if(Building.Type.getType(type) != null){
+            building = new Building(buildingName, parkingLotName, Building.Type.getType(type));
+        }else if(Infrastructure.Type.getType(type) != null){
+            building = new Infrastructure(buildingName, parkingLotName, Infrastructure.Type.getType(type));
+        }
+        building.setBoundaries(locations);
+
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(
+                moduleName, ContextModuleRequestProperties.ParkingLot.name(), JsonHelper.toJson(building));
+        // send/receive
+        BooleanNamedValue response = contextModule.updateBuilding(request);
+        // return parsed response
+        return response != null ? response.isFeatureValue() : false;
     }
 
 }

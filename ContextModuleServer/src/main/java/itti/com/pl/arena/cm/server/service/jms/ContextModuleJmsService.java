@@ -297,6 +297,9 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getBuilding.name(), data.getHref())
                         && (data instanceof SimpleNamedValue)) {
                     response = getBuilding((SimpleNamedValue) data);
+                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.updateBuilding.name(), data.getHref())
+                        && (data instanceof SimpleNamedValue)) {
+                    response = updateBuilding((SimpleNamedValue) data);
 
                 } else if (StringHelper.equalsIgnoreCase(data.getDataSourceId(), dataSourceId)) {
                     // special cases: error, loop detected
@@ -543,6 +546,38 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
         }
         // prepare response object
         BooleanNamedValue response = createBooleanNamedValue(requestId, platformName, status);
+        return response;
+    }
+
+    @Override
+    public BooleanNamedValue updateBuilding(SimpleNamedValue buildingRequest) {
+
+        GeoObject building = null;
+        String buildingName = null;
+        boolean status = false;
+        String requestId = null;
+
+        try {
+            verifyRequestObject(buildingRequest);
+            requestId = buildingRequest.getId();
+
+            // try to parse JSON into object
+            building = JsonHelper.fromJson(buildingRequest.getValue(), Building.class);
+            if(((Building)building).getType() == null){
+                building = JsonHelper.fromJson(buildingRequest.getValue(), Infrastructure.class);                
+            }
+            // update ontology with provided data
+            ontology.updateBuilding(building);
+            buildingName = buildingRequest.getId();
+
+            status = true;
+
+        } catch (JsonHelperException | OntologyException | JmsException exc) {
+            // could not update data
+            LogHelper.exception(ContextModuleJmsService.class, "updateBuilding", "Could not update building", exc);
+        }
+        // prepare response object
+        BooleanNamedValue response = createBooleanNamedValue(requestId, buildingName, status);
         return response;
     }
 

@@ -1,6 +1,9 @@
 package itti.com.pl.arena.cm.service;
 
+import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
+import itti.com.pl.arena.cm.dto.staticobj.Building;
+import itti.com.pl.arena.cm.dto.staticobj.Infrastructure;
 import itti.com.pl.arena.cm.dto.staticobj.ParkingLot;
 import eu.arena_fp7._1.BooleanNamedValue;
 import eu.arena_fp7._1.Location;
@@ -109,6 +112,16 @@ public interface ContextModule {
      * @return update status
      */
     BooleanNamedValue updateParkingLot(SimpleNamedValue parkingLot);
+
+    /**
+     * This method allows to update existing or create new building/infrastructure in the ContextModule
+     * 
+     * @param building
+     *            new or updated {@link GeoObject} object. Attribute 'value' of the provided {@link SimpleNamedValue} should contain
+     *            serialized {@link Building} or {@link Infrastructure} object
+     * @return update status
+     */
+    BooleanNamedValue updateBuilding(SimpleNamedValue building);
 
     /**
      * This method retries information about the parking lot (location, boundaries, objects like buildings or infrastructure).

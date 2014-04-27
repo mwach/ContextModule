@@ -10,6 +10,8 @@ import itti.com.pl.arena.cm.dto.Zone;
 import itti.com.pl.arena.cm.dto.coordinates.ArenaObjectCoordinate;
 import itti.com.pl.arena.cm.dto.dynamicobj.Camera;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
+import itti.com.pl.arena.cm.dto.staticobj.Building;
+import itti.com.pl.arena.cm.dto.staticobj.Infrastructure;
 import itti.com.pl.arena.cm.dto.staticobj.ParkingLot;
 
 /**
@@ -240,5 +242,15 @@ public interface Ontology {
      *             processing exception
      */
     public void updateCamera(Camera camera) throws OntologyException;
+
+    /**
+     * Defines a new, or update an existing building in the ontology
+     * 
+     * @param building
+     *            building to be added/updated. Instance of the {@link Building} or {@link Infrastructure}
+     * @throws OntologyException
+     *             processing exception
+     */
+    public void updateBuilding(GeoObject building) throws OntologyException;
 
 }

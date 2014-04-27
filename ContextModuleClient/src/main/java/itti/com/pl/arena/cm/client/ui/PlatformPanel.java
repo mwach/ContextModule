@@ -139,7 +139,7 @@ public class PlatformPanel extends ContextModulePanel {
         panelPlatform.add(platformLocationY); //$NON-NLS-1$
 
         clearPlatformParamsRow = createButtonRow("Clear");
-        clearPlatformParamsRow.setButtonActionListener(new ActionListener() {
+        clearPlatformParamsRow.setOnClickListener(new ActionListener() {
             
             @Override
             public void actionPerformed(ActionEvent arg0) {
@@ -183,7 +183,7 @@ public class PlatformPanel extends ContextModulePanel {
                 if(status){
                     showMessage("Successfully added platform to the ontology");
                     onRefreshClick();
-                    platformsComboBoxRow.setItem(platformName);
+                    platformsComboBoxRow.setSelectedItem(platformName);
                     addPlatformTextBoxButtonRow.setText(null);
                 }else{
                     showMessage("Failed to add platform to the ontology");
@@ -223,9 +223,9 @@ public class PlatformPanel extends ContextModulePanel {
                     .getLocation().getLatitude()) : null);
 
             if(platform != null && platform.getCameras() != null){
-                camerasComboBoxRow.setComboBoxContent(new ArrayList<>(platform.getCameras().keySet()));
+                camerasComboBoxRow.setItems(new ArrayList<>(platform.getCameras().keySet()));
             }else{
-                camerasComboBoxRow.setComboBoxContent(null);
+                camerasComboBoxRow.setItems(null);
             }
         }else{
             clearPlatformForm();
@@ -283,7 +283,7 @@ public class PlatformPanel extends ContextModulePanel {
         panelCamera.add(cameraAngleRow); //$NON-NLS-1$
 
         clearCameraParamsRow = createButtonRow("Clear");
-        clearCameraParamsRow.setButtonActionListener(new ActionListener() {
+        clearCameraParamsRow.setOnClickListener(new ActionListener() {
             
             @Override
             public void actionPerformed(ActionEvent arg0) {
@@ -314,7 +314,7 @@ public class PlatformPanel extends ContextModulePanel {
                 showMessage("Camera successfully removed from ontology");
                 // update list of platform
                 onRefreshClick();
-                platformsComboBoxRow.setItem(selectedPlatform);
+                platformsComboBoxRow.setSelectedItem(selectedPlatform);
             } else {
                 showMessage("Could not remove camera from ontology");
             }
@@ -335,7 +335,7 @@ public class PlatformPanel extends ContextModulePanel {
             if(status){
                 showMessage("Successfully added camera to the ontology");
                 onRefreshClick();
-                platformsComboBoxRow.setItem(platformName);
+                platformsComboBoxRow.setSelectedItem(platformName);
                 addCameraTextBox.setText(null);
             }else{
                 showMessage("Failed to add camera to the ontology");
@@ -383,6 +383,6 @@ public class PlatformPanel extends ContextModulePanel {
     @Override
     protected void onRefreshClick() {
         List<String> platforms = getContextModuleAdapter().getListOfPlatforms();
-        platformsComboBoxRow.setComboBoxContent(platforms);
+        platformsComboBoxRow.setItems(platforms);
     }
 }

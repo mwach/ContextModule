@@ -8,7 +8,7 @@ public final class GeoObjectFactory {
 
     public static GeoObject getGeoObject(String ontologyLayerName, String objectId) {
         if (StringHelper.equalsIgnoreCase(Constants.LAYER_BUILDING, ontologyLayerName)) {
-            return new Building(objectId, null);
+            return new Building(objectId, null, null);
         }
         return null;
     }

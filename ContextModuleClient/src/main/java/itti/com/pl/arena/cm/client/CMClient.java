@@ -132,17 +132,17 @@ public class CMClient {
         parkingLot.addBoundary(new itti.com.pl.arena.cm.dto.Location(-0.94366, 51.43212));
 
         //parking infrastructure
-        parkingLot.addBuilding(createDummyBuilding("dummyBuilding_" + System.currentTimeMillis()));
-        parkingLot.addBuilding(createDummyBuilding("dummyBuilding_" + System.currentTimeMillis()));
-        parkingLot.addIntrastructure(createDummyInfrastructure("dummyBuilding_" + System.currentTimeMillis()));
+        parkingLot.addBuilding(createDummyBuilding("dummyBuilding_" + System.currentTimeMillis(), parkingLotId));
+        parkingLot.addBuilding(createDummyBuilding("dummyBuilding_" + System.currentTimeMillis(), parkingLotId));
+        parkingLot.addIntrastructure(createDummyInfrastructure("dummyBuilding_" + System.currentTimeMillis(), parkingLotId));
 
         return parkingLot;
     }
 
-    private static Building createDummyBuilding(String buildingId) {
+    private static Building createDummyBuilding(String buildingId, String parkingLotName) {
 
         //new building object
-        Building building = new Building(buildingId, Type.Hotel);
+        Building building = new Building(buildingId, parkingLotName, Type.Hotel);
 
         //building boundaries
         building.addBoundary(new itti.com.pl.arena.cm.dto.Location(-0.94334, 51.43234));
@@ -153,10 +153,10 @@ public class CMClient {
         return building;
     }
 
-    private static Infrastructure createDummyInfrastructure(String infrastructureId) {
+    private static Infrastructure createDummyInfrastructure(String infrastructureId, String parkingLotName) {
 
         //new infrastructure object
-        Infrastructure infrastructure = new Infrastructure(infrastructureId, Infrastructure.Type.Fence);
+        Infrastructure infrastructure = new Infrastructure(infrastructureId, parkingLotName, Infrastructure.Type.Fence);
 
         //building boundaries
         infrastructure.addBoundary(new itti.com.pl.arena.cm.dto.Location(-0.94334, 51.43234));

@@ -72,7 +72,7 @@ public final class LocationHelper {
         return locationStrings;
     }
 
-    public static List<String> getLocationsFromStrings(Collection<Location> locations) {
+    public static List<String> getStringsFromLocations(Collection<Location> locations) {
         if(locations == null){
             return null;
         }

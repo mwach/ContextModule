@@ -407,6 +407,12 @@ public class ContextModuleFacade extends CMModuleImpl implements LocalContextMod
         return (Object) submitData(buildingId);
     }
 
+    @Override
+    public BooleanNamedValue updateBuilding(SimpleNamedValue building) {
+        building.setHref(ContextModuleRequests.updateBuilding.name());
+        return (BooleanNamedValue) submitData(building);
+    }
+
 
     /*
      * (non-Javadoc)
@@ -539,4 +545,5 @@ public class ContextModuleFacade extends CMModuleImpl implements LocalContextMod
         // response received
         LogHelper.debug(ContextModuleFacade.class, "waitForResponse", "Response received for message with ID: %s", id);
     }
+
 }

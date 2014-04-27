@@ -35,6 +35,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import edu.stanford.smi.protegex.owl.model.OWLIndividual;
+import edu.stanford.smi.protegex.owl.model.RDFProperty;
 
 /**
  * Extension of the {@link OntologyManager} providing ContextManager-specific services
@@ -427,7 +428,11 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         String[] infrastructureList = properties.get(OntologyConstants.Parking_has_infrastructure.name());
         if (infrastructureList != null) {
             for (String infrastrId : infrastructureList) {
-                parkingLotInformation.addIntrastructure(getInfrastructure(infrastrId));
+                if(getInstance(infrastrId) == null){
+                    removePropertyValues(parkingLotId, OntologyConstants.Parking_has_infrastructure.name(), infrastrId);                    
+                }else{
+                    parkingLotInformation.addIntrastructure(getInfrastructure(infrastrId));
+                }
             }
         }
 
@@ -435,16 +440,33 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         String[] buildingList = properties.get(OntologyConstants.Parking_has_building.name());
         if (buildingList != null) {
             for (String buildingId : buildingList) {
+                if(getInstance(buildingId) == null){
+                    removePropertyValues(parkingLotId, OntologyConstants.Parking_has_building.name(), buildingId);
+                }else{
                 parkingLotInformation.addBuilding(getBuilding(buildingId));
+                }
             }
         }
 
         return parkingLotInformation;
     }
 
+    private void removePropertyValues(String instanceName, String propertyName, String infrastrId) throws OntologyException {
+
+        OWLIndividual instance = getInstance(instanceName);
+        RDFProperty property = getModel().getRDFProperty(propertyName);
+        int propsCount = instance.getPropertyValueCount(property);
+        for (int i = 0; i < propsCount; i++) {
+            Object currentOntValue = instance.getPropertyValue(property);
+            if(currentOntValue.toString().equals(infrastrId)){
+                instance.removePropertyValue(property, currentOntValue);
+            }
+        }
+    }
+
     private Infrastructure getInfrastructure(String infrastructureId) throws OntologyException {
 
-        Infrastructure infrastructure = new Infrastructure(infrastructureId, null);
+        Infrastructure infrastructure = new Infrastructure(infrastructureId, null, null);
 
         Map<String, String[]> infrastrProperties = getInstanceProperties(infrastructureId);
         if (!infrastrProperties.isEmpty()) {
@@ -465,7 +487,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 
     private Building getBuilding(String buildingId) throws OntologyException {
 
-        Building building = new Building(buildingId, null);
+        Building building = new Building(buildingId, null, null);
 
         Map<String, String[]> buildingProperties = getInstanceProperties(buildingId);
         if (!buildingProperties.isEmpty()) {
@@ -833,7 +855,8 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
             ParkingLot parkingLot = getParkingLot(parkingLotName);
             //check if already assigned
             if(!parkingLot.getInfrastructure().keySet().contains(zoneName)){
-                parkingLot.addIntrastructure(new Infrastructure(zoneName, itti.com.pl.arena.cm.dto.staticobj.Infrastructure.Type.Car_parking_zone));
+                parkingLot.addIntrastructure(new Infrastructure(zoneName, parkingLotName, 
+                        itti.com.pl.arena.cm.dto.staticobj.Infrastructure.Type.Car_parking_zone));
             }
             updateParkingLot(parkingLot);
         }
@@ -876,7 +899,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         // zone name format
         String zoneNameFormat = "zone_%d";
         // get all available instances
-        List<String> zones = getDirectInstances(OntologyConstants.Car_parking_zone);
+        List<String> zones = getDirectInstances(OntologyConstants.Car_parking_zone.name());
         // start counting
         int startId = zones.size();
         // search for first, not found zone
@@ -953,4 +976,37 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
             }
         }
     }
+    
+    @Override
+    public void updateBuilding(GeoObject building) throws OntologyException {
+
+        Map<String, String[]> properties = new HashMap<>();
+        properties.put(OntologyConstants.Object_has_GPS_coordinates.name(), 
+                LocationHelper.createStringsFromLocations(building.getBoundaries().toArray(new Location[building.getBoundaries().size()])));
+
+        String parentClassName = null;
+        String parkingLotName = null;
+        String propertyName = null;
+        if(building instanceof Building){
+            parentClassName = ((Building)building).getType().name();
+            parkingLotName = ((Building)building).getParkingLotName();
+            propertyName = OntologyConstants.Parking_has_building.name();
+        }else{
+            parentClassName = ((Infrastructure)building).getType().name();
+            parkingLotName = ((Infrastructure)building).getParkingLotName();
+            propertyName = OntologyConstants.Parking_has_infrastructure.name();
+        }
+
+        // create instance in the ontology
+        createSimpleInstance(parentClassName, building.getId(), properties);    
+
+        //update platform with camera
+        if(StringHelper.hasContent(parkingLotName)){
+            String[] buildings = getInstanceProperties(parkingLotName, propertyName);
+            if(!StringHelper.arrayContainsItem(buildings, building.getId())){
+                addPropertyValue(parkingLotName, propertyName, building.getId());
+            }
+        }
+    }
+
 }

@@ -24,7 +24,7 @@ public class ButtonRow extends JPanel{
         add(button);
     }
 
-    public void setButtonActionListener(ActionListener listener) {
+    public void setOnClickListener(ActionListener listener) {
         button.addActionListener(listener);;
     }
 

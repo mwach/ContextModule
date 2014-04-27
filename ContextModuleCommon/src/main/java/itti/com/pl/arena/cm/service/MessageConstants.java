@@ -126,7 +126,11 @@ public final class MessageConstants {
         /**
          * Service name used by the 'getBuilding' method
          */
-        getBuilding,
+        getBuilding, 
+        /**
+         * Service name used by the 'updateBuilding' method
+         */
+        updateBuilding,
 
         ;
     }

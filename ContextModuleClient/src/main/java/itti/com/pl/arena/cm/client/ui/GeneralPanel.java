@@ -58,7 +58,7 @@ public class GeneralPanel extends ContextModulePanel {
         connectRow = createButtonRow(Messages.getString("GeneralPanel.2")); //$NON-NLS-1$
         gbl.setConstraints(connectRow, gbc);
         panelGeneral.add(connectRow);
-        connectRow.setButtonActionListener(new ActionListener() {
+        connectRow.setOnClickListener(new ActionListener() {
             
             @Override
             public void actionPerformed(ActionEvent arg0) {
