@@ -8,6 +8,9 @@ import itti.com.pl.arena.cm.dto.Zone;
 import itti.com.pl.arena.cm.dto.coordinates.CartesianCoordinate;
 import itti.com.pl.arena.cm.dto.dynamicobj.Camera;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
+import itti.com.pl.arena.cm.dto.staticobj.Building;
+import itti.com.pl.arena.cm.dto.staticobj.Infrastructure;
+import itti.com.pl.arena.cm.dto.staticobj.ParkingLot;
 import itti.com.pl.arena.cm.service.LocalContextModule;
 import itti.com.pl.arena.cm.service.MessageConstants.ContextModuleRequestProperties;
 import itti.com.pl.arena.cm.utils.helper.ArenaObjectsMapper;
@@ -251,4 +254,42 @@ public class ContextModuleAdapter {
         // return parsed response
         return ArenaObjectsMapper.fromCameraObject(response);
     }
+
+    public boolean removeParkingLot(String parkingLotId) {
+        // prepare a request
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(), parkingLotId);
+        // send/receive
+        BooleanNamedValue response = contextModule.removeParkingLot(request);
+        // return parsed response
+        return response.isFeatureValue();
+    }
+
+    public boolean updateParkingLot(String name, String description, String country,
+            String town, String street, Collection<itti.com.pl.arena.cm.dto.Location> locations, List<Building> buildings, List<Infrastructure> infrastructure) throws JsonHelperException {
+
+        ParkingLot parkingLot = new ParkingLot(name);
+        parkingLot.setCountry(country);
+        parkingLot.setTown(town);
+        parkingLot.setStreet(street);
+        parkingLot.setBoundaries(locations);
+        if(locations != null  && !locations.isEmpty()){
+            parkingLot.setLocation(locations.iterator().next());
+        }
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.ParkingLot.name(), JsonHelper.toJson(parkingLot));
+        // send/receive
+        BooleanNamedValue response = contextModule.updateParkingLot(request);
+        // return parsed response
+        return response != null ? response.isFeatureValue() : false;
+
+    }
+
+    public ParkingLot getParkingLotDefinition(String parkingLotName) {
+        // prepare a request
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.ParkingLot.name(), parkingLotName);
+        // send/receive
+        eu.arena_fp7._1.Object response = contextModule.getParkingLot(request);
+        // return parsed response
+        return ArenaObjectsMapper.fromParkingLotObject(response);
+    }
+
 }

@@ -42,6 +42,11 @@ public class ComboBoxButtonRow extends JPanel {
             }
         }
     }
+    public void addItem(String item){
+        if(StringHelper.hasContent(item)){
+            comboBox.addItem(item);
+        }
+    }
 
     public void setOnChangeListener(ActionListener actionListener) {
         if (actionListener != null) {
@@ -72,6 +77,12 @@ public class ComboBoxButtonRow extends JPanel {
     public void setOnClickListener(ActionListener actionListener) {
         if (actionListener != null) {
             button.addActionListener(actionListener);
+        }
+    }
+
+    public void removeSelectedItem() {
+        if(comboBox.getSelectedItem() != null){
+            comboBox.removeItem(comboBox.getSelectedItem());
         }
     }
 }

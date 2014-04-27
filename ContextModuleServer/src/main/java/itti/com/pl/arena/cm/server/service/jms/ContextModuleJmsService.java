@@ -283,6 +283,12 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.removeCamera.name(), data.getHref())
                         && (data instanceof SimpleNamedValue)) {
                     response = removeCamera((SimpleNamedValue) data);
+                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getCamera.name(), data.getHref())
+                        && (data instanceof SimpleNamedValue)) {
+                    response = getCamera((SimpleNamedValue) data);
+                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.removeParkingLot.name(), data.getHref())
+                        && (data instanceof SimpleNamedValue)) {
+                    response = removeParkingLot((SimpleNamedValue) data);
 
                 } else if (StringHelper.equalsIgnoreCase(data.getDataSourceId(), dataSourceId)) {
                     // special cases: error, loop detected
@@ -336,6 +342,34 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
         }
         // prepare response object
         Object response = createObject(objectId.getId(), vector);
+        return response;
+    }
+
+    @Override
+    public Object getCamera(SimpleNamedValue cameraRequest) {
+
+        List<AbstractNamedValue> vector = new ArrayList<>();
+
+        String cameraId = cameraRequest.getValue();
+        Camera camera = null;
+        // try to retrieve data from ontology
+        try {
+            camera = getOntology().getOntologyObject(cameraId, Camera.class);
+        } catch (OntologyException e) {
+            LogHelper.exception(ContextModuleJmsService.class, "getPlatform", "Could not retrieve data from ontology", e);
+        }
+        // data retrieved -try to process it
+        if (camera != null) {
+            try {
+                vector.add(createSimpleNamedValue(camera.getId(), ContextModuleRequestProperties.Platform.name(),
+                        JsonHelper.toJson(camera)));
+            } catch (JsonHelperException exc) {
+                LogHelper.warning(ContextModuleJmsService.class, "getPlatform",
+                        "Could not add given object to the response: '%s'. Details: %s", camera, exc.getLocalizedMessage());
+            }
+        }
+        // prepare response object
+        Object response = createObject(cameraRequest.getId(), vector);
         return response;
     }
 
@@ -920,6 +954,25 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
         }
         // prepare response object
         BooleanNamedValue response = createBooleanNamedValue(cameraMessage.getId(), cameraId, status);
+
+        // add results to the response
+        return response;    
+    }
+
+    @Override
+    public BooleanNamedValue removeParkingLot(SimpleNamedValue parkingLotRequest) {
+        // removal status
+        boolean status = false;
+        // get the zone ID
+        String parkingLotId = parkingLotRequest.getValue();
+        try {
+            getOntology().remove(parkingLotId);
+            status = true;
+        } catch (OntologyException exc) {
+            LogHelper.exception(ContextModuleJmsService.class, "removeParkingLot", "Could not remove parking lot from the ontology", exc);
+        }
+        // prepare response object
+        BooleanNamedValue response = createBooleanNamedValue(parkingLotRequest.getId(), parkingLotId, status);
 
         // add results to the response
         return response;    

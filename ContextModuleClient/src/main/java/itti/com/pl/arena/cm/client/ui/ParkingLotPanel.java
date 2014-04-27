@@ -1,7 +1,22 @@
 package itti.com.pl.arena.cm.client.ui;
 
+import itti.com.pl.arena.cm.client.ui.components.ButtonRow;
+import itti.com.pl.arena.cm.client.ui.components.ComboBoxButtonRow;
+import itti.com.pl.arena.cm.client.ui.components.LabelTextBoxRow;
+import itti.com.pl.arena.cm.client.ui.components.TextBoxButtonRow;
+import itti.com.pl.arena.cm.dto.Location;
+import itti.com.pl.arena.cm.dto.staticobj.ParkingLot;
+import itti.com.pl.arena.cm.utils.helper.JsonHelperException;
+import itti.com.pl.arena.cm.utils.helper.LocationHelper;
+import itti.com.pl.arena.cm.utils.helper.LocationHelperException;
+import itti.com.pl.arena.cm.utils.helper.NumbersHelper;
+import itti.com.pl.arena.cm.utils.helper.StringHelper;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -13,6 +28,22 @@ public class ParkingLotPanel extends ContextModulePanel {
      */
     private static final long serialVersionUID = 1L;
 
+    private JTabbedPane tabbedPane = null;
+    private Component panelParkingLot = null;
+    private Component panelBuildings = null;
+
+    private ComboBoxButtonRow removeParkingLotComboBox = null;
+    private TextBoxButtonRow addParkingLotComboBox = null;
+
+    private LabelTextBoxRow descriptionTextBox = null;
+    private LabelTextBoxRow countryTextBox = null;
+    private LabelTextBoxRow townTextBox = null;
+    private LabelTextBoxRow streetTextBox = null;
+
+    private ComboBoxButtonRow removeParkingLotCoordinateComboBox = null;
+    private LabelTextBoxRow parkingLotXCoordinateTextBox = null;
+    private LabelTextBoxRow parkingLotYCoordinateTextBox = null;
+
     /**
      * Create the dialog.
      */
@@ -23,58 +54,240 @@ public class ParkingLotPanel extends ContextModulePanel {
         Component imageComponent = createImagePanel(Messages.getString("ParkingLotPanel.10")); //$NON-NLS-1$
         add(imageComponent, BorderLayout.WEST);
 
-        JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+        tabbedPane = new JTabbedPane(JTabbedPane.TOP);
         add(tabbedPane, BorderLayout.EAST);
 
-        tabbedPane.addTab(Messages.getString("ParkingLotPanel.0"), createPanelGeneral()); //$NON-NLS-1$
-        tabbedPane.addTab(Messages.getString("ParkingLotPanel.1"), createPanelBuildings()); //$NON-NLS-1$
+        panelParkingLot = createPanelParkingLot();
+        panelBuildings = createPanelBuildings();
+        tabbedPane.addTab(Messages.getString("ParkingLotPanel.0"), panelParkingLot); //$NON-NLS-1$
+        tabbedPane.addTab(Messages.getString("ParkingLotPanel.1"), panelBuildings); //$NON-NLS-1$
     }
 
-    private Component createPanelGeneral() {
+    private Component createPanelParkingLot() {
 
-        JPanel panelPlatform = createJPanel();
+        JPanel panelParkingLot = createJPanel();
 
-        panelPlatform.add(createComboBoxButtonRow("Delete parking lot", null)); //$NON-NLS-1$
-        panelPlatform.add(createTextBoxButtonRow(null, "Add parking lot")); //$NON-NLS-1$
+        removeParkingLotComboBox = createComboBoxButtonRow("Remove", null);
+        panelParkingLot.add(removeParkingLotComboBox); //$NON-NLS-1$
+        removeParkingLotComboBox.setOnClickListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                removeParkingLot();
+            }
+        });
+        removeParkingLotComboBox.setOnChangeListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                parkingLotSelectionChanged();
+            }
+        });
+        
+        addParkingLotComboBox = createTextBoxButtonRow(null, "Add parking lot");
+        addParkingLotComboBox.setOnButtonClickListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String parkingLotName = addParkingLotComboBox.getText();
+                addParkingLot(parkingLotName);
+            }
+        });
+        panelParkingLot.add(addParkingLotComboBox); //$NON-NLS-1$
 
-        panelPlatform.add(createLabelRow(Messages.getString("ParkingLotPanel.2"))); //$NON-NLS-1$
-        panelPlatform.add(createLabelTextBoxRow(Messages.getString("ParkingLotPanel.3"), null)); //$NON-NLS-1$
-        panelPlatform.add(createLabelTextBoxRow(Messages.getString("ParkingLotPanel.4"), null)); //$NON-NLS-1$
-        panelPlatform.add(createLabelTextBoxRow(Messages.getString("ParkingLotPanel.5"), null)); //$NON-NLS-1$
-        panelPlatform.add(createLabelTextBoxRow(Messages.getString("ParkingLotPanel.6"), null)); //$NON-NLS-1$
+        panelParkingLot.add(createLabelRow(Messages.getString("ParkingLotPanel.2"))); //$NON-NLS-1$
+        descriptionTextBox = createLabelTextBoxRow(Messages.getString("ParkingLotPanel.3"), null);
+        panelParkingLot.add(descriptionTextBox); //$NON-NLS-1$
+        countryTextBox = createLabelTextBoxRow(Messages.getString("ParkingLotPanel.4"), null);
+        panelParkingLot.add(countryTextBox); //$NON-NLS-1$
+        townTextBox = createLabelTextBoxRow(Messages.getString("ParkingLotPanel.5"), null);
+        panelParkingLot.add(townTextBox); //$NON-NLS-1$
+        streetTextBox = createLabelTextBoxRow(Messages.getString("ParkingLotPanel.6"), null);
+        panelParkingLot.add(streetTextBox); //$NON-NLS-1$
 
-        panelPlatform.add(createEmptyRow());
-        panelPlatform.add(createLabelRow(Messages.getString("ParkingLotPanel.7"))); //$NON-NLS-1$
-        panelPlatform.add(createComboBoxButtonRow(Messages.getString("ParkingLotPanel.9"), null)); //$NON-NLS-1$
-        panelPlatform.add(createLabelTextBoxRow("X", null)); //$NON-NLS-1$
-        panelPlatform.add(createLabelTextBoxRow("Y", null)); //$NON-NLS-1$
-        panelPlatform.add(createButtonRow("Add")); //$NON-NLS-1$
+        descriptionTextBox.setEnabled(false);
+        countryTextBox.setEnabled(false);
+        townTextBox.setEnabled(false);
+        streetTextBox.setEnabled(false);
 
-        return panelPlatform;
+        panelParkingLot.add(createLabelRow(Messages.getString("ParkingLotPanel.7"))); //$NON-NLS-1$
+        removeParkingLotCoordinateComboBox = createComboBoxButtonRow(Messages.getString("ParkingLotPanel.9"), null);
+        removeParkingLotCoordinateComboBox.setOnChangeListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                selectedParkingLotCoordinateChanged();
+            }
+        });
+        removeParkingLotCoordinateComboBox.setOnClickListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                removeParkingLotCoordinate();
+            }
+        });
+        panelParkingLot.add(removeParkingLotCoordinateComboBox); //$NON-NLS-1$
+        parkingLotXCoordinateTextBox = createLabelTextBoxRow("X", null);
+        panelParkingLot.add(parkingLotXCoordinateTextBox); //$NON-NLS-1$
+        parkingLotYCoordinateTextBox = createLabelTextBoxRow("Y", null);
+        panelParkingLot.add(parkingLotYCoordinateTextBox); //$NON-NLS-1$
+        ButtonRow addParkingLotCoordinateButton = createButtonRow("Add");
+        addParkingLotCoordinateButton.setButtonActionListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addParkingLotCoordinate();
+            }
+        });
+        panelParkingLot.add(addParkingLotCoordinateButton); //$NON-NLS-1$
+
+        ButtonRow clearParkingLotParamsRow = createButtonRow("Clear");
+        clearParkingLotParamsRow.setButtonActionListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                parkingLotXCoordinateTextBox.setText(null);
+                parkingLotYCoordinateTextBox.setText(null);
+            }
+        });
+        panelParkingLot.add(clearParkingLotParamsRow);
+
+        return panelParkingLot;
+    }
+
+    private void selectedParkingLotCoordinateChanged() {
+        if(StringHelper.hasContent(removeParkingLotCoordinateComboBox.getSelectedItem())){
+            try {
+                Location location = LocationHelper.getLocationFromString(removeParkingLotCoordinateComboBox.getSelectedItem());
+                parkingLotXCoordinateTextBox.setText(StringHelper.toString(location.getLongitude()));
+                parkingLotYCoordinateTextBox.setText(StringHelper.toString(location.getLatitude()));
+            } catch (LocationHelperException e) {
+                showMessage("Could not parse selected location");
+            }
+        }
+    }
+
+    private void removeParkingLotCoordinate() {
+        removeParkingLotCoordinateComboBox.removeSelectedItem();
+    }
+
+    private void parkingLotSelectionChanged() {
+        String selectedParkingLot = removeParkingLotComboBox.getSelectedItem();
+        if (StringHelper.hasContent(selectedParkingLot)) {
+            ParkingLot parkingLot = getContextModuleAdapter().getParkingLotDefinition(selectedParkingLot);
+            descriptionTextBox.setText(parkingLot != null ? null : null);
+            countryTextBox.setText(parkingLot != null ? parkingLot.getCountry() : null);
+            townTextBox.setText(parkingLot != null ? parkingLot.getTown() : null);
+            streetTextBox.setText(parkingLot != null ? parkingLot.getStreet() : null);                
+
+            removeParkingLotCoordinateComboBox.setComboBoxContent(LocationHelper.getLocationsFromStrings(
+                    parkingLot != null ? parkingLot.getBoundaries() : null));
+
+            if(parkingLot != null && parkingLot.getBuildings() != null){
+            }else{
+            }
+        }else{
+            clearParkingLotForm();
+            clearBuildingsForm();
+        }
+    }
+
+    private void clearParkingLotForm() {
+        addParkingLotComboBox.setText(null);
+        descriptionTextBox.setText(null);
+        countryTextBox.setText(null);
+        townTextBox.setText(null);
+        streetTextBox.setText(null);
+        removeParkingLotCoordinateComboBox.setComboBoxContent(null);
+        parkingLotXCoordinateTextBox.setText(null);
+        parkingLotYCoordinateTextBox.setText(null);
+    }
+
+    private void clearBuildingsForm() {
+        // TODO Auto-generated method stub        
+    }
+
+    private void addParkingLotCoordinate() {
+        Double locationX = NumbersHelper.getDoubleFromString(parkingLotXCoordinateTextBox.getText());
+        Double locationY = NumbersHelper.getDoubleFromString(parkingLotYCoordinateTextBox.getText());
+        if(locationX == null || locationY == null){
+            showMessage("Invalid coordinates specified");
+        }else{
+            removeParkingLotCoordinateComboBox.addItem(
+                    LocationHelper.createStringFromLocation(new Location(
+                    locationX, locationY
+             )));
+            parkingLotXCoordinateTextBox.setText(null);
+            parkingLotYCoordinateTextBox.setText(null);
+        }
+    }
+
+    private void removeParkingLot() {
+        String parkingLot = removeParkingLotComboBox.getSelectedItem();
+        if(StringHelper.hasContent(parkingLot)){
+            if (getContextModuleAdapter().removeParkingLot(parkingLot)) {
+                showMessage("Parking lot successfully removed from ontology");
+                // update list of platform
+                onRefreshClick();
+            } else {
+                showMessage("Could not remove parking lot from ontology");
+            }
+        }
+    }
+
+    private void addParkingLot(String parkingLotName) {
+
+        if (StringHelper.hasContent(parkingLotName)) {
+
+            String parkingLotDesc = descriptionTextBox.getText();
+            String parkingLotCountry = countryTextBox.getText();
+            String parkingLotTown = townTextBox.getText();
+            String parkingLotStreet = streetTextBox.getText();
+
+            List<String> locationStrings = removeParkingLotCoordinateComboBox.getItems();
+            try {
+                List<Location> locations = LocationHelper.getLocationsFromStrings(locationStrings);
+                boolean status = getContextModuleAdapter().updateParkingLot(parkingLotName, parkingLotDesc, parkingLotCountry, parkingLotTown, parkingLotStreet, locations, null, null);
+                if(status){
+                    showMessage("Successfully added parking lot to the ontology");
+                    onRefreshClick();
+                    removeParkingLotComboBox.setItem(parkingLotName);
+                    addParkingLotComboBox.setText(null);
+                }else{
+                    showMessage("Failed to add platform to the ontology");
+                }
+            } catch (JsonHelperException e) {
+                showMessage("Could not update platform: Platform serialization error");
+            } catch (LocationHelperException e) {
+                showMessage("Could not update platform: invalid format of parking lot coordinates");
+            }
+        }else{
+            showMessage("Parking Lot name was not specified");
+        }
     }
 
     private Component createPanelBuildings() {
 
-        JPanel panelCamera = createJPanel();
+        JPanel panelBuildings = createJPanel();
 
-        panelCamera.add(createLabelRow(Messages.getString("ParkingLotPanel.18"))); //$NON-NLS-1$
+        panelBuildings.add(createLabelRow(Messages.getString("ParkingLotPanel.18"))); //$NON-NLS-1$
 
-        panelCamera.add(createComboBoxButtonRow(Messages.getString("ParkingLotPanel.19"), null)); //$NON-NLS-1$
-            panelCamera.add(createTextBoxButtonRow(null, Messages.getString("ParkingLotPanel.20"))); //$NON-NLS-1$
+        panelBuildings.add(createComboBoxButtonRow(Messages.getString("ParkingLotPanel.19"), null)); //$NON-NLS-1$
+            panelBuildings.add(createTextBoxButtonRow(null, Messages.getString("ParkingLotPanel.20"))); //$NON-NLS-1$
 
-            panelCamera.add(createEmptyRow());
-            panelCamera.add(createLabelComboBoxRow(Messages.getString("ParkingLotPanel.13"), null)); //$NON-NLS-1$
-            panelCamera.add(createLabelTextBoxRow(Messages.getString("ParkingLotPanel.14"), null)); //$NON-NLS-1$
+            panelBuildings.add(createEmptyRow());
+            panelBuildings.add(createLabelComboBoxRow(Messages.getString("ParkingLotPanel.13"), null)); //$NON-NLS-1$
+            panelBuildings.add(createLabelTextBoxRow(Messages.getString("ParkingLotPanel.14"), null)); //$NON-NLS-1$
 
-            panelCamera.add(createEmptyRow());
-            panelCamera.add(createLabelRow(Messages.getString("ParkingLotPanel.15"))); //$NON-NLS-1$
-            panelCamera.add(createComboBoxButtonRow(Messages.getString("ParkingLotPanel.17"), null)); //$NON-NLS-1$
-            panelCamera.add(createLabelTextBoxRow("X", null)); //$NON-NLS-1$
-            panelCamera.add(createLabelTextBoxRow("Y", null)); //$NON-NLS-1$
-            panelCamera.add(createButtonRow("Add")); //$NON-NLS-1$
+            panelBuildings.add(createEmptyRow());
+            panelBuildings.add(createLabelRow(Messages.getString("ParkingLotPanel.15"))); //$NON-NLS-1$
+            panelBuildings.add(createComboBoxButtonRow(Messages.getString("ParkingLotPanel.17"), null)); //$NON-NLS-1$
+            panelBuildings.add(createLabelTextBoxRow("X", null)); //$NON-NLS-1$
+            panelBuildings.add(createLabelTextBoxRow("Y", null)); //$NON-NLS-1$
+            panelBuildings.add(createButtonRow("Add")); //$NON-NLS-1$
 
 
-            return panelCamera;
+            return panelBuildings;
     }
 
     @Override
@@ -85,14 +298,25 @@ public class ParkingLotPanel extends ContextModulePanel {
 
     @Override
     protected void onSaveClick() {
-        // TODO Auto-generated method stub
-        
+        if(tabbedPane.getSelectedComponent() == panelParkingLot){
+            if(StringHelper.hasContent(addParkingLotComboBox.getText())){
+                addParkingLot(addParkingLotComboBox.getText());
+            }else{
+                addParkingLot(removeParkingLotComboBox.getSelectedItem());            
+            }
+        }else if(tabbedPane.getSelectedComponent() == panelBuildings){
+//            if(StringHelper.hasContent(addCameraTextBox.getText())){
+//                addCamera(addCameraTextBox.getText());
+//            }else{
+//                addCamera(camerasComboBoxRow.getSelectedItem());            
+//            }
+        }        
     }
 
     @Override
     protected void onRefreshClick() {
-        // TODO Auto-generated method stub
-        
+        List<String> parkingLotNames = getContextModuleAdapter().getListOfParkingLots();
+        removeParkingLotComboBox.setComboBoxContent(parkingLotNames);
     }
 
 }

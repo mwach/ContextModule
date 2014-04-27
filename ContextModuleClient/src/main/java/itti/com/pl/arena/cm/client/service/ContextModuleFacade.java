@@ -257,6 +257,17 @@ public class ContextModuleFacade extends CMModuleImpl implements LocalContextMod
      * @see itti.com.pl.arena.cm.service.ContextModule#getPlatform(eu.arena_fp7._1.SimpleNamedValue)
      */
     @Override
+    public eu.arena_fp7._1.Object getCamera(SimpleNamedValue object) {
+        object.setHref(ContextModuleRequests.getCamera.name());
+        return (Object) submitData(object);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see itti.com.pl.arena.cm.service.ContextModule#getPlatform(eu.arena_fp7._1.SimpleNamedValue)
+     */
+    @Override
     public eu.arena_fp7._1.Object getPlatformNeighborhood(SimpleNamedValue parkingId) {
         parkingId.setHref(ContextModuleRequests.getPlatformNeighborhood.name());
         return (Object) submitData(parkingId);
@@ -370,6 +381,12 @@ public class ContextModuleFacade extends CMModuleImpl implements LocalContextMod
     @Override
     public BooleanNamedValue removePlatform(SimpleNamedValue zoneId) {
         zoneId.setHref(ContextModuleRequests.removePlatform.name());
+        return (BooleanNamedValue) submitData(zoneId);
+    }
+
+    @Override
+    public BooleanNamedValue removeParkingLot(SimpleNamedValue zoneId) {
+        zoneId.setHref(ContextModuleRequests.removeParkingLot.name());
         return (BooleanNamedValue) submitData(zoneId);
     }
 

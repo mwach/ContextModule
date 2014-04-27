@@ -1,5 +1,9 @@
 package itti.com.pl.arena.cm.utils.helper;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import itti.com.pl.arena.cm.dto.Location;
 import itti.com.pl.arena.cm.exception.ErrorMessages;
 
@@ -68,6 +72,17 @@ public final class LocationHelper {
         return locationStrings;
     }
 
+    public static List<String> getLocationsFromStrings(Collection<Location> locations) {
+        if(locations == null){
+            return null;
+        }
+        List<String> locationStrings = new ArrayList<>();
+        for (Location location : locations) {
+            locationStrings.add(createStringFromLocation(location));
+        }
+        return locationStrings;
+    }
+
     public static Location[] getLocationsFromStrings(String[] locationStrings) throws LocationHelperException {
         if(locationStrings == null){
             return null;
@@ -75,6 +90,17 @@ public final class LocationHelper {
         Location[] locations = new Location[locationStrings.length];
         for (int i=0 ; i<locationStrings.length ; i++) {
             locations[i] = getLocationFromString(locationStrings[i]);
+        }
+        return locations;
+    }
+
+    public static List<Location> getLocationsFromStrings(List<String> locationStrings) throws LocationHelperException {
+        if(locationStrings == null){
+            return null;
+        }
+        List<Location> locations = new ArrayList<>();
+        for (String locationString : locationStrings) {
+            locations.add(getLocationFromString(locationString));
         }
         return locations;
     }

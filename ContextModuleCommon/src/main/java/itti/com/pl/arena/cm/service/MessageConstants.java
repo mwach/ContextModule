@@ -110,7 +110,15 @@ public final class MessageConstants {
         /**
          * Service name used by the 'removeCamera' method
          */
-        removeCamera,
+        removeCamera, 
+        /**
+         * Service name used by the 'getCamera' method
+         */
+        getCamera, 
+        /**
+         * Service name used by the 'removeParkingLot' method
+         */
+        removeParkingLot,
 
         ;
     }
@@ -135,7 +143,10 @@ public final class MessageConstants {
          * Properties of the Camera node
          */
         Camera, CameraId, CameraPosition, CameraType, CameraAngleX, CameraAngleY, Bearing,
-
+        /**
+         * Properties of the Parking lot
+         */
+        ParkingLot,
         /**
          * Properties of the Zones
          */

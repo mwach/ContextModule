@@ -26,6 +26,7 @@ import itti.com.pl.arena.cm.utils.helper.StringHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -230,7 +231,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
      * @return camera object
      * @throws OntologyException
      */
-    private Camera getCameraInformation(String cameraId) throws OntologyException {
+    private Camera getCamera(String cameraId) throws OntologyException {
 
         Camera cameraInfo = null;
 
@@ -356,8 +357,10 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
             response = (T) getPlatform(id);
         } else if (objectclass == ParkingLot.class) {
             response = (T) getParkingLot(id);
+        } else if (objectclass == Camera.class) {
+            response = (T) getCamera(id);
         }
-
+        
         return response;
     }
 
@@ -374,7 +377,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         String[] cameras = properties.get(OntologyConstants.Vehicle_has_cameras.name());
         if (cameras != null) {
             for (String cameraId : cameras) {
-                Camera cameraInfo = getCameraInformation(cameraId);
+                Camera cameraInfo = getCamera(cameraId);
                 platform.addCamera(cameraInfo);
 
             }
@@ -625,7 +628,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
 
         for (String parkingLotName : availableParkings) {
             ParkingLot parkingLot = getOntologyObject(parkingLotName, ParkingLot.class);
-            Set<Location> parkingLotBoundaries = parkingLot.getBoundaries();
+            Collection<Location> parkingLotBoundaries = parkingLot.getBoundaries();
             //in case, there are no boundaries for parking, use its location
             parkingLotBoundaries.add(parkingLot.getLocation());
             

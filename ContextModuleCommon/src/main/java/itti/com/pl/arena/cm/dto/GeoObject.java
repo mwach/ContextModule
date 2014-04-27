@@ -1,8 +1,8 @@
 package itti.com.pl.arena.cm.dto;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 
 
 /**
@@ -33,7 +33,7 @@ public abstract class GeoObject extends OntologyObject {
     /*
      * Boundaries of the objects
      */
-    private Set<Location> boundaries = new HashSet<>();
+    private Collection<Location> boundaries = new HashSet<>();
 
     /**
      * Creates new object with given ID
@@ -69,7 +69,7 @@ public abstract class GeoObject extends OntologyObject {
      * Returns information about object boundaries
      * @return list of the object boundaries
      */
-    public Set<Location> getBoundaries() {
+    public Collection<Location> getBoundaries() {
         return new HashSet<>(boundaries);
     }
 
@@ -77,7 +77,7 @@ public abstract class GeoObject extends OntologyObject {
      * Sets new boundaries of the object
      * @param boundaries
      */
-    public void setBoundaries(Set<Location> boundaries) {
+    public void setBoundaries(Collection<Location> boundaries) {
         this.boundaries.clear();
         if (boundaries != null) {
             this.boundaries.addAll(boundaries);

@@ -36,6 +36,14 @@ public interface ContextModule {
     BooleanNamedValue removePlatform(SimpleNamedValue platformId);
 
     /**
+     * Removes an existing parking lot from the ontology
+     * 
+     * @param parkingLotId ID of the parking lot to be removed from ontology
+     * @return removal status (true == parking lot removed, false otherwise)
+     */
+    BooleanNamedValue removeParkingLot(SimpleNamedValue parkingLotId);
+
+    /**
      * This method allows to update existing or create new {@link Platform} in the ContextModule
      * 
      * @param platform
@@ -54,6 +62,15 @@ public interface ContextModule {
      * @return update status
      */
     BooleanNamedValue updateCamera(SimpleNamedValue camera);
+
+    /**
+     * This method allows retrieval of information about the camera (its parameters)
+     * 
+     * @param cameraId
+     *            ID of the camera
+     * @return information about camera stored in Object’s featureVector
+     */
+    Object getCamera(SimpleNamedValue cameraId);
 
     /**
      * This method allows retrieval of data about platforms found near the given location (i.e. returned Object class
