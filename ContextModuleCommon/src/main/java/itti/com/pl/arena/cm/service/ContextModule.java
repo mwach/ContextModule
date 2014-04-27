@@ -28,12 +28,29 @@ public interface ContextModule {
     Object getPlatform(SimpleNamedValue objectId);
 
     /**
+     * This method allows retrieval of information about the building/infrastructure (location, type, boundaries).
+     * 
+     * @param buildingId
+     *            ID of the building/infrastructure
+     * @return information about building/infrastructure stored in Object’s featureVector
+     */
+    Object getBuilding(SimpleNamedValue buildingId);
+
+    /**
      * Removes an existing platform from the ontology
      * 
      * @param platformId ID of the platform to be removed from ontology
      * @return removal status (true == platform removed, false otherwise)
      */
     BooleanNamedValue removePlatform(SimpleNamedValue platformId);
+
+    /**
+     * Removes an existing building/infrastructure from the ontology
+     * 
+     * @param request ID of the building/infrastructure to be removed from ontology
+     * @return removal status (true == building/infrastructure removed, false otherwise)
+     */
+    BooleanNamedValue removeBuilding(SimpleNamedValue request);
 
     /**
      * Removes an existing parking lot from the ontology

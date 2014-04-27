@@ -118,7 +118,15 @@ public final class MessageConstants {
         /**
          * Service name used by the 'removeParkingLot' method
          */
-        removeParkingLot,
+        removeParkingLot, 
+        /**
+         * Service name used by the 'removeBuilding' method
+         */
+        removeBuilding, 
+        /**
+         * Service name used by the 'getBuilding' method
+         */
+        getBuilding,
 
         ;
     }
@@ -146,7 +154,7 @@ public final class MessageConstants {
         /**
          * Properties of the Parking lot
          */
-        ParkingLot,
+        ParkingLot, Building,
         /**
          * Properties of the Zones
          */

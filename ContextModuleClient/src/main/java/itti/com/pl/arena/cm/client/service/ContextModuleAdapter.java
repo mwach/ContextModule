@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.dto.Zone;
 import itti.com.pl.arena.cm.dto.coordinates.CartesianCoordinate;
 import itti.com.pl.arena.cm.dto.dynamicobj.Camera;
@@ -290,6 +291,24 @@ public class ContextModuleAdapter {
         eu.arena_fp7._1.Object response = contextModule.getParkingLot(request);
         // return parsed response
         return ArenaObjectsMapper.fromParkingLotObject(response);
+    }
+
+    public boolean removeBuilding(String buildingName) {
+        // prepare a request
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(), buildingName);
+        // send/receive
+        BooleanNamedValue response = contextModule.removeBuilding(request);
+        // return parsed response
+        return response.isFeatureValue();
+    }
+
+    public GeoObject getBuildingDefinition(String buildingName) {
+        // prepare a request
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(), buildingName);
+        // send/receive
+        eu.arena_fp7._1.Object response = contextModule.getBuilding(request);
+        // return parsed response
+        return ArenaObjectsMapper.fromBuildingObject(response);
     }
 
 }

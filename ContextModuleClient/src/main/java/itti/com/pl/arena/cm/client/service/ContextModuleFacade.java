@@ -401,6 +401,13 @@ public class ContextModuleFacade extends CMModuleImpl implements LocalContextMod
         return (Object) submitData(zoneId);
     }
 
+    @Override
+    public Object getBuilding(SimpleNamedValue buildingId) {
+        buildingId.setHref(ContextModuleRequests.getBuilding.name());
+        return (Object) submitData(buildingId);
+    }
+
+
     /*
      * (non-Javadoc)
      * 
@@ -440,6 +447,12 @@ public class ContextModuleFacade extends CMModuleImpl implements LocalContextMod
     public BooleanNamedValue removeCamera(SimpleNamedValue cameraId) {
         cameraId.setHref(ContextModuleRequests.removeCamera.name());
         return (BooleanNamedValue) submitData(cameraId);
+    }
+
+    @Override
+    public BooleanNamedValue removeBuilding(SimpleNamedValue buildingId) {
+        buildingId.setHref(ContextModuleRequests.removeBuilding.name());
+        return (BooleanNamedValue) submitData(buildingId);
     }
 
     @Override
@@ -526,5 +539,4 @@ public class ContextModuleFacade extends CMModuleImpl implements LocalContextMod
         // response received
         LogHelper.debug(ContextModuleFacade.class, "waitForResponse", "Response received for message with ID: %s", id);
     }
-
 }

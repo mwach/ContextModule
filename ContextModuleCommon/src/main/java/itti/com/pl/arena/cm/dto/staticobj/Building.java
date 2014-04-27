@@ -1,5 +1,8 @@
 package itti.com.pl.arena.cm.dto.staticobj;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.utils.helper.StringHelper;
 
@@ -23,8 +26,8 @@ public class Building extends GeoObject {
         Car_services_facilities, 
         Caretaker_cabin, 
         Hotel, 
-        Other_undefined, 
-        Pertrol_station, 
+        Other_building,
+        Pertrol_station,
         Toilets
         ;
 
@@ -38,6 +41,14 @@ public class Building extends GeoObject {
                 }
             }
             return null;
+        }
+
+        public static List<String> asList() {
+            List<String> list = new ArrayList<>();
+            for (Type type : values()) {
+                list.add(type.name());
+            }
+            return list;
         }
     }
 
@@ -101,5 +112,9 @@ public class Building extends GeoObject {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "Building [type=" + type + ", getId()=" + getId() + "]";
+    }
     
 }

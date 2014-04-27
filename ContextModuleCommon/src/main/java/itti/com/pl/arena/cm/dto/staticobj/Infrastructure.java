@@ -1,5 +1,8 @@
 package itti.com.pl.arena.cm.dto.staticobj;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.utils.helper.StringHelper;
 
@@ -46,6 +49,14 @@ public class Infrastructure extends GeoObject {
                 }
             }
             return null;
+        }
+
+        public static List<String> asList() {
+            List<String> list = new ArrayList<>();
+            for (Type type : values()) {
+                list.add(type.name());
+            }
+            return list;
         }
     }
 
@@ -109,5 +120,10 @@ public class Infrastructure extends GeoObject {
         return true;
     }
 
-    
+    @Override
+    public String toString() {
+        return "Infrastructure [type=" + type + ", getId()=" + getId() + "]";
+    }
+
+
 }

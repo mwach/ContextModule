@@ -13,6 +13,8 @@ import itti.com.pl.arena.cm.dto.Zone;
 import itti.com.pl.arena.cm.dto.coordinates.ArenaObjectCoordinate;
 import itti.com.pl.arena.cm.dto.dynamicobj.Camera;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
+import itti.com.pl.arena.cm.dto.staticobj.Building;
+import itti.com.pl.arena.cm.dto.staticobj.Infrastructure;
 import itti.com.pl.arena.cm.dto.staticobj.ParkingLot;
 import itti.com.pl.arena.cm.jms.CMModuleImpl;
 import itti.com.pl.arena.cm.server.exception.ErrorMessages;
@@ -289,6 +291,12 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.removeParkingLot.name(), data.getHref())
                         && (data instanceof SimpleNamedValue)) {
                     response = removeParkingLot((SimpleNamedValue) data);
+                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.removeBuilding.name(), data.getHref())
+                        && (data instanceof SimpleNamedValue)) {
+                    response = removeBuilding((SimpleNamedValue) data);
+                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getBuilding.name(), data.getHref())
+                        && (data instanceof SimpleNamedValue)) {
+                    response = getBuilding((SimpleNamedValue) data);
 
                 } else if (StringHelper.equalsIgnoreCase(data.getDataSourceId(), dataSourceId)) {
                     // special cases: error, loop detected
@@ -370,6 +378,44 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
         }
         // prepare response object
         Object response = createObject(cameraRequest.getId(), vector);
+        return response;
+    }
+
+    @Override
+    public Object getBuilding(SimpleNamedValue buildingRequest) {
+
+        List<AbstractNamedValue> vector = new ArrayList<>();
+
+        String buildingId = buildingRequest.getValue();
+        GeoObject building = null;
+        // try to retrieve data from ontology
+        try {
+            String instanceClass = getOntology().getInstanceClass(buildingId);
+            Building.Type buildingType = Building.Type.getType(instanceClass);
+            Infrastructure.Type infrastructureType = Infrastructure.Type.getType(instanceClass);
+
+            if(buildingType != null){
+                building = getOntology().getOntologyObject(buildingId, Building.class);
+            }else if(infrastructureType != null){
+                building = getOntology().getOntologyObject(buildingId, Infrastructure.class);                
+            }else{
+                throw new OntologyException(ErrorMessages.ONTOLOGY_COULD_NOT_FIND_PARENT_CLASS, buildingId);
+            }
+        } catch (OntologyException e) {
+            LogHelper.exception(ContextModuleJmsService.class, "getBuilding", "Could not retrieve data from ontology", e);
+        }
+        // data retrieved -try to process it
+        if (building != null) {
+            try {
+                vector.add(createSimpleNamedValue(building.getId(), ContextModuleRequestProperties.Building.name(),
+                        JsonHelper.toJson(building)));
+            } catch (JsonHelperException exc) {
+                LogHelper.warning(ContextModuleJmsService.class, "getBuilding",
+                        "Could not add given object to the response: '%s'. Details: %s", building, exc.getLocalizedMessage());
+            }
+        }
+        // prepare response object
+        Object response = createObject(buildingRequest.getId(), vector);
         return response;
     }
 
@@ -977,4 +1023,24 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
         // add results to the response
         return response;    
     }
+
+    @Override
+    public BooleanNamedValue removeBuilding(SimpleNamedValue buildingRequest) {
+        // removal status
+        boolean status = false;
+        // get the zone ID
+        String buildingId = buildingRequest.getValue();
+        try {
+            getOntology().remove(buildingId);
+            status = true;
+        } catch (OntologyException exc) {
+            LogHelper.exception(ContextModuleJmsService.class, "removeBuilding", "Could not remove building/infrastructure from the ontology", exc);
+        }
+        // prepare response object
+        BooleanNamedValue response = createBooleanNamedValue(buildingRequest.getId(), buildingId, status);
+
+        // add results to the response
+        return response;    
+    }
+
 }

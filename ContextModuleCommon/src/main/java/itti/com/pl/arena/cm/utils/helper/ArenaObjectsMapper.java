@@ -3,16 +3,22 @@ package itti.com.pl.arena.cm.utils.helper;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import eu.arena_fp7._1.AbstractNamedValue;
 import eu.arena_fp7._1.Object;
 import eu.arena_fp7._1.ObjectFactory;
 import eu.arena_fp7._1.RealWorldCoordinate;
 import eu.arena_fp7._1.SimpleNamedValue;
+import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.dto.Location;
 import itti.com.pl.arena.cm.dto.Zone;
 import itti.com.pl.arena.cm.dto.dynamicobj.Camera;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
+import itti.com.pl.arena.cm.dto.staticobj.Building;
+import itti.com.pl.arena.cm.dto.staticobj.Infrastructure;
 import itti.com.pl.arena.cm.dto.staticobj.ParkingLot;
+import itti.com.pl.arena.cm.exception.ErrorMessages;
 import itti.com.pl.arena.cm.service.MessageConstants.ContextModuleRequestProperties;
 
 /**
@@ -130,6 +136,34 @@ public final class ArenaObjectsMapper {
             }
         }
         return parkingLot;
+    }
+
+    public static GeoObject fromBuildingObject(Object response) {
+        GeoObject responseObject = null;
+        for (AbstractNamedValue feature : response.getFeatureVector().getFeature()) {
+            if (feature instanceof SimpleNamedValue) {
+                String buildingJson = ((SimpleNamedValue) feature).getValue();
+                JOptionPane.showMessageDialog(null, buildingJson);
+                try {
+                    Building building = JsonHelper.fromJson(buildingJson, Building.class);
+                    if(building.getType() == null){
+                        throw new JsonHelperException(ErrorMessages.JSON_HELPER_CANNOT_DESERIALIZE, buildingJson,"Empty type: probably a Infrastructure");
+                    }
+                    responseObject = building;
+                } catch (JsonHelperException e) {
+                    try {
+                        Infrastructure infrastructure = JsonHelper.fromJson(buildingJson, Infrastructure.class);
+                        responseObject = infrastructure;
+                        JOptionPane.showMessageDialog(null, "PARSED: " + infrastructure);
+
+                    } catch (JsonHelperException exc) {
+                        exc.printStackTrace();
+                    }
+                }
+            }
+        }
+        JOptionPane.showMessageDialog(null, "RESPONSE: " + responseObject);
+        return responseObject;
     }
 
 }

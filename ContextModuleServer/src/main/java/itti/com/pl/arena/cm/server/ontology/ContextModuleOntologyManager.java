@@ -359,6 +359,10 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
             response = (T) getParkingLot(id);
         } else if (objectclass == Camera.class) {
             response = (T) getCamera(id);
+        } else if (objectclass == Building.class) {
+            response = (T) getBuilding(id);
+        } else if (objectclass == Infrastructure.class) {
+            response = (T) getInfrastructure(id);
         }
         
         return response;

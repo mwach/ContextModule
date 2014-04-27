@@ -203,6 +203,26 @@ public interface Ontology {
     public List<String> getInstances(String className) throws OntologyException;
 
     /**
+     * Returns list of non-direct (second and further levels) instances of given ontology class
+     * 
+     * @param className
+     *            name of the class
+     * @return list of instances names. If there are no instances, empty list will be returned
+     */
+    public List<String> getNonDirectInstances(String className) throws OntologyException;
+
+    /**
+     * Returns parent class of given instance
+     * 
+     * @param instanceName
+     *            name of the instance
+     * @return parent class name.
+     * @exception OntologyExceptiont
+     *                could not find object
+     */
+    public String getInstanceClass(String instanceName) throws OntologyException;
+
+    /**
      * Removes instance identified by its name from ontology
      * 
      * @param instanceName

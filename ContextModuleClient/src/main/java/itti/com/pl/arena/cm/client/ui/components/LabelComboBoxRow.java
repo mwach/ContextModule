@@ -4,6 +4,7 @@ import itti.com.pl.arena.cm.utils.helper.StringHelper;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JComboBox;
@@ -41,7 +42,7 @@ public class LabelComboBoxRow extends JPanel{
         comboBox.removeAllItems();
         if(content != null){
             for (String item : content) {
-                comboBox.addItem(item);
+                comboBox.addItem(item.length() > 20 ? item.substring(0,20) : item);
             }
         }
     }
@@ -54,6 +55,20 @@ public class LabelComboBoxRow extends JPanel{
 
     public String getSelectedItem() {
         return StringHelper.toString(comboBox.getSelectedItem());
+    }
+
+    public List<String> getItems() {
+        List<String> items = new ArrayList<>();
+        for(int i=0 ; i<comboBox.getItemCount(); i++){
+            items.add(comboBox.getItemAt(i));
+        }
+        return items;
+    }
+
+    public void setSelectedItem(String item) {
+        if(StringHelper.hasContent(item) && getItems().contains(item)){
+            comboBox.setSelectedItem(item);
+        }
     }
 
 }
