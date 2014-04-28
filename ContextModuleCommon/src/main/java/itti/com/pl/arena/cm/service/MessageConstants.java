@@ -172,14 +172,17 @@ public final class MessageConstants {
          */
         GeoportalData, 
         /**
+         * SWRL data
+         */
+        SwrlRule,
+        /**
          * Error message
          */
         Error,
         /**
          * Notification message
          */
-        Notification
-        
+        Notification, 
         ;
 
     }

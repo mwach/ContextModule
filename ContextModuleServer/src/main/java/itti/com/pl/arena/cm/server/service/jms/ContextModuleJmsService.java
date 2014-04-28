@@ -967,10 +967,18 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
         // add results to the response
         return response;
     }
+
     @Override
     public BooleanNamedValue updateRule(SimpleNamedValue rule) {
-        // TODO Auto-generated method stub
-        return null;
+
+        boolean status = false;
+        try {
+            getOntology().addSwrlRules(rule.getFeatureName(), rule.getValue());
+            status = true;
+        } catch (OntologyException exc) {
+            LogHelper.exception(ContextModuleJmsService.class, "updateRule", "Could not update rule", exc);
+        }
+        return createBooleanNamedValue(rule.getId(), rule.getFeatureName(), status);
     }
 
     @Override
@@ -986,15 +994,37 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
     }
 
     @Override
-    public BooleanNamedValue applyRules(SimpleNamedValue objectId) {
-        // TODO Auto-generated method stub
-        return null;
+    public BooleanNamedValue applyRules(SimpleNamedValue request) {
+        boolean status = false;
+        try {
+            getOntology().runSwrlEngine();;
+            status = true;
+        } catch (OntologyException exc) {
+            LogHelper.exception(ContextModuleJmsService.class, "applyRules", "Could not run engine", exc);
+        }
+        return createBooleanNamedValue(request.getId(), request.getFeatureName(), status);
     }
 
     @Override
-    public Object getListOfRules(SimpleNamedValue objectId) {
-        // TODO Auto-generated method stub
-        return null;
+    public Object getListOfRules(SimpleNamedValue request) {
+        List<AbstractNamedValue> responseVector = new ArrayList<>();
+        try {
+            List<String> ruleNames = getOntology().getSwrlRules();
+            for (String ruleName : ruleNames) {
+                AbstractNamedValue ruleObject = createSimpleNamedValue(request.getId(),
+                        ContextModuleRequestProperties.SwrlRule.name(), ruleName);
+                responseVector.add(ruleObject);
+            }
+
+        } catch (OntologyException exc) {
+            LogHelper.exception(ContextModuleJmsService.class, "getListOfRules",
+                    "Could not retrieve rule names from the ontology", exc);
+        }
+        // prepare response object
+        Object response = createObject(request.getId(), responseVector);
+
+        // add results to the response
+        return response;    
     }
 
     @Override

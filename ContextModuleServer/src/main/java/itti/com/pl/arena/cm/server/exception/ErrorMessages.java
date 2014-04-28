@@ -49,7 +49,12 @@ public enum ErrorMessages {
     JMS_CLIENT_IP_NOT_PROVIDED(701, "ClientIpAddress not provided"),
     JMS_CLIENT_PORT_NOT_PROVIDED(702, "ClientPort not provided"), 
     JMS_NULL_REQUEST_OBJECT(703, "NULL request object provided"),
-    JMS_NULL_VALUE_REQUEST_OBJECT(704, "NULL value in the request object provided"),
+    JMS_NULL_VALUE_REQUEST_OBJECT(704, "NULL value in the request object provided"), 
+    
+    SWRL_CANNOT_ADD_RULE(800, "Cannot add SWRL rule to the ontology.Details: %s"), 
+    SWRL_EMPTY_RULE(801, "An attempt to add empty rule to ontology"), 
+    SWRL_ENGINE_FAILED(802, "Could not run SWRL engine. Details: %s"), 
+    SWRL_CANNOT_COLLECT_RULES(803, "Could not collect rule names from ontology. Details: %s"),
 
     ;
 

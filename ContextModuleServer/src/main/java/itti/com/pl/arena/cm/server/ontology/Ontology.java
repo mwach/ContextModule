@@ -253,4 +253,23 @@ public interface Ontology {
      */
     public void updateBuilding(GeoObject building) throws OntologyException;
 
+    /**
+     * Adds a new rule to the ontology
+     * @param ruleName name of the rule
+     * @param ruleContent content of the rule
+     * @throws OntologyException 
+     */
+    public void addSwrlRules(String ruleName, String ruleContent) throws OntologyException;
+
+    /**
+     * Runs SWRL engine on existing model
+     */
+    public void runSwrlEngine() throws OntologyException;
+
+    /**
+     * Returns list of SWRL rules defined in the ontology
+     * 
+     * @return list of SWRL rules. If there are no rules, empty list will be returned
+     */
+    public List<String> getSwrlRules() throws OntologyException;
 }

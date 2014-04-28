@@ -33,7 +33,6 @@ import edu.stanford.smi.protegex.owl.model.impl.DefaultRDFSLiteral;
 import edu.stanford.smi.protegex.owl.model.query.QueryResults;
 import edu.stanford.smi.protegex.owl.swrl.bridge.BridgeFactory;
 import edu.stanford.smi.protegex.owl.swrl.bridge.SWRLRuleEngineBridge;
-import edu.stanford.smi.protegex.owl.swrl.bridge.exceptions.SWRLRuleEngineBridgeException;
 import edu.stanford.smi.protegex.owl.swrl.model.SWRLFactory;
 import edu.stanford.smi.protegex.owl.swrl.model.SWRLNames;
 import edu.stanford.smi.protegex.owl.swrl.parser.SWRLParseException;
@@ -400,8 +399,8 @@ public class OntologyManager implements Service {
         for (RDFProperty rdfProperty : instanceProperties) {
             String propertyName = rdfProperty.getName();
 
-            //check, if property is ignored
-            if(ignoredProperties.contains(propertyName)){
+            // check, if property is ignored
+            if (ignoredProperties.contains(propertyName)) {
                 continue;
             }
             @SuppressWarnings("rawtypes")
@@ -424,13 +423,15 @@ public class OntologyManager implements Service {
 
     /**
      * Checks, if instance with given name exists in the ontology
-     * @param instanceName name of the instance
+     * 
+     * @param instanceName
+     *            name of the instance
      * @return true if instance with given name was found in the ontology, false otherwise
      */
-    public boolean hasInstance(String instanceName){
-        //check, if name was provided
-        if(StringHelper.hasContent(instanceName)){
-            //check if instance exist in the model
+    public boolean hasInstance(String instanceName) {
+        // check, if name was provided
+        if (StringHelper.hasContent(instanceName)) {
+            // check if instance exist in the model
             return getModel().getOWLIndividual(instanceName) != null;
         }
         return false;
@@ -438,21 +439,22 @@ public class OntologyManager implements Service {
 
     /**
      * Removes instance identified by its name from ontology
-     * @param instanceName name of the instance to remove
-     * @throws OntologyException 
+     * 
+     * @param instanceName
+     *            name of the instance to remove
+     * @throws OntologyException
      */
-    public void remove(String instanceName) throws OntologyException{
-        if(StringHelper.hasContent(instanceName)){
+    public void remove(String instanceName) throws OntologyException {
+        if (StringHelper.hasContent(instanceName)) {
             Instance instance = getInstance(instanceName);
-            if(instance == null){
+            if (instance == null) {
                 throw new OntologyException(ErrorMessages.ONTOLOGY_INSTANCE_NOT_FOUND, instanceName);
             }
             getModel().deleteInstance(instance);
-        }else{
+        } else {
             throw new OntologyException(ErrorMessages.ONTOLOGY_EMPTY_INSTANCE_NAME);
         }
     }
-
 
     /**
      * returns values for single property of an individual stored in the ontology model
@@ -512,7 +514,7 @@ public class OntologyManager implements Service {
      *            name of the property
      * @param value
      *            value to be set
-     * @throws OntologyException 
+     * @throws OntologyException
      */
     public void addPropertyValue(String instanceName, String propertyName, Object value) throws OntologyException {
         addPropertyValue(getInstance(instanceName), getModel().getRDFProperty(propertyName), value);
@@ -531,7 +533,7 @@ public class OntologyManager implements Service {
      *             could not update property value
      */
     public void updatePropertyValue(String instanceName, String propertyName, Object propertyValue) throws OntologyException {
-        updatePropertyValues(instanceName, propertyName, new Object[]{propertyValue});
+        updatePropertyValues(instanceName, propertyName, new Object[] { propertyValue });
     }
 
     /**
@@ -583,36 +585,73 @@ public class OntologyManager implements Service {
         saveModel(getModel(), fileName);
     }
 
-    public void addSwrlRules(String[] swrlRules) {
+    /**
+     * Adds a new rule to the ontology
+     * 
+     * @param ruleName
+     *            name of the rule
+     * @param ruleContent
+     *            content of the rule
+     * @throws OntologyException
+     */
+    public void addSwrlRules(String ruleName, String ruleContent) throws OntologyException {
 
-        LogHelper.info(OntologyManager.class, "addSwrlRules", "Upading models with SWRL rules");
+        LogHelper.info(OntologyManager.class, "addSwrlRule", "Upading models with SWRL rule '%s'", ruleName);
 
-        if (swrlRules != null) {
+        if (StringHelper.hasContent(ruleName) && StringHelper.hasContent(ruleContent)) {
 
             // create rule factory
             SWRLFactory factory = new SWRLFactory(model);
 
             try {
 
-                for (String rule : swrlRules) {
-                    // add rule to the model
-                    factory.createImp(rule);
-                    LogHelper.debug(OntologyManager.class, "addSwrlRules", "Rule '%s' added suffessfully", rule);
-                }
-            } catch (SWRLParseException e) {
-                LogHelper.error(OntologyManager.class, "addSwrlRules", "Failed to add rule: %s", e.getLocalizedMessage());
+                // add rule to the model
+                factory.createImp(ruleName, ruleContent);
+                LogHelper.debug(OntologyManager.class, "addSwrlRule", "Rule '%s' added suffessfully. Content of the rule: %s",
+                        ruleName, ruleContent);
+            } catch (SWRLParseException | RuntimeException exc) {
+                LogHelper.exception(OntologyManager.class, "addSwrlRules", "Failed to add rule: %s", exc);
+                throw new OntologyException(ErrorMessages.SWRL_CANNOT_ADD_RULE, exc.getLocalizedMessage());
             }
 
         } else {
-            LogHelper.warning(OntologyManager.class, "addSwrlRules",
-                    "Cannot update model with swrl rules. There are no rules provided");
+            LogHelper.warning(OntologyManager.class, "addSwrlRule", "Cannot update model with swrl rule. Empty rule provided");
+            throw new OntologyException(ErrorMessages.SWRL_EMPTY_RULE);
         }
+    }
+
+    /**
+     * Returns a list of rules defined in the ontology
+     * 
+     * @throws OntologyException
+     */
+    public List<String> getSwrlRules() throws OntologyException {
+
+        LogHelper.info(OntologyManager.class, "getSwrlRules", "Collecting list of rules defined for given model");
+        List<String> rules = new ArrayList<>();
+
+        // create rule factory
+        SWRLFactory factory = new SWRLFactory(model);
+
+        try {
+
+            // get list of imps
+            for (Object imp : factory.getImps()){
+                rules.add(imp.toString());
+            }
+            LogHelper.debug(OntologyManager.class, "getSwrlRules", "Suffessfully colleted rule names. Defined rules: %s",
+                    rules);
+        } catch (RuntimeException exc) {
+            LogHelper.exception(OntologyManager.class, "getSwrlRules", "Failed to collect rule names: %s", exc);
+            throw new OntologyException(ErrorMessages.SWRL_CANNOT_COLLECT_RULES, exc.getLocalizedMessage());
+        }
+        return rules;
     }
 
     /**
      * Runs SWRL engine on existing model
      */
-    public void runSwrlEngine() {
+    public void runSwrlEngine() throws OntologyException {
 
         LogHelper.info(OntologyManager.class, "runSwrlEngine", "Swrl Rule bridge will be run now");
 
@@ -629,12 +668,10 @@ public class OntologyManager implements Service {
 
             model = (JenaOWLModel) bridge.getOWLModel();
 
-        } catch (Exception exc) {
-            LogHelper.exception(OntologyManager.class, "runSwrlEngine",
-                    String.format("Error during running SWRL engine: %s", exc.toString()), exc);
-        } catch (SWRLRuleEngineBridgeException exc) {
+        } catch (Throwable exc) {
             LogHelper.exception(OntologyManager.class, "runSwrlEngine",
                     String.format("Error during using SWRL bridge: %s", exc.toString()), exc);
+            throw new OntologyException(ErrorMessages.SWRL_ENGINE_FAILED, exc.getLocalizedMessage());
         }
     }
 
@@ -657,7 +694,8 @@ public class OntologyManager implements Service {
             ontologyInputStream = SpringHelper.getResourceInputStream(ontologyLocation);
             model = ProtegeOWL.createJenaOWLModelFromInputStream(ontologyInputStream);
         } catch (Exception exc) {
-            LogHelper.error(OntologyManager.class, "loadModel", "Cannot load ontlogy using given location. Details: %s", exc.getLocalizedMessage());
+            LogHelper.error(OntologyManager.class, "loadModel", "Cannot load ontlogy using given location. Details: %s",
+                    exc.getLocalizedMessage());
             throw new OntologyException(ErrorMessages.ONTOLOGY_CANNOT_LOAD, exc, ontologyLocation, exc.getLocalizedMessage());
         } finally {
             IOHelper.closeStream(ontologyInputStream);
