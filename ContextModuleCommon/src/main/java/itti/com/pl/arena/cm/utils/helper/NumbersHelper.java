@@ -158,7 +158,7 @@ public class NumbersHelper {
             return false;
         }
         double delta = Math.abs(valueA - valueB);
-        return  delta < 0.001;
+        return  delta < 0.000001;
     }
 
     public static boolean equals(Integer valueA, Integer valueB){

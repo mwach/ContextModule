@@ -235,6 +235,7 @@ public class ParkingLotPanel extends ContextModulePanel {
 
     private void clearBuildingsForm() {
         addBuildingTextBox.setText(null);
+        removeBuildingCoordinatesComboBox.setItems(null);
     }
 
     private void addParkingLotCoordinate() {
@@ -275,8 +276,18 @@ public class ParkingLotPanel extends ContextModulePanel {
             List<String> locationStrings = removeParkingLotCoordinateComboBox.getItems();
             try {
                 List<Location> locations = LocationHelper.getLocationsFromStrings(locationStrings);
+                
+                ParkingLot existingParkingLot = null;
+                if(removeParkingLotComboBox.containsItem(parkingLotName)) 
+                {
+                    existingParkingLot = getContextModuleAdapter().getParkingLotDefinition(parkingLotName);
+                }
+                
                 boolean status = getContextModuleAdapter().updateParkingLot(parkingLotName, parkingLotDesc, parkingLotCountry,
-                        parkingLotTown, parkingLotStreet, locations, null, null);
+                        parkingLotTown, parkingLotStreet, locations, 
+                        existingParkingLot != null ? existingParkingLot.getBuildings().values() : null, 
+                                existingParkingLot != null ? existingParkingLot.getInfrastructure().values() : null);
+                
                 if (status) {
                     showMessage("Successfully added parking lot to the ontology");
                     onRefreshClick();
@@ -460,7 +471,10 @@ public class ParkingLotPanel extends ContextModulePanel {
                 buildingCoordinateYRow.setText(StringHelper.toString(location == null ? null : location.getLatitude()));
             } catch (LocationHelperException e) {
                 showMessage("Cannot convert given string into coordinates");
+                clearBuildingCoordinates();
             }
+        }else{
+            clearBuildingCoordinates();
         }
     }
 
@@ -496,7 +510,11 @@ public class ParkingLotPanel extends ContextModulePanel {
                 typeComboBox.setSelectedItem(building != null ? building.getType().name()
                         : (infrastructure != null ? infrastructure.getType().name() : null));
                 removeBuildingCoordinatesComboBox.setItems(LocationHelper.getStringsFromLocations(object.getBoundaries()));
+            }else{
+                removeBuildingCoordinatesComboBox.setItems(null);
             }
+        }else{
+            removeBuildingCoordinatesComboBox.setItems(null);
         }
     }
 

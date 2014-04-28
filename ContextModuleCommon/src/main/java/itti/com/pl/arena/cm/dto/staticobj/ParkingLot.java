@@ -2,6 +2,7 @@ package itti.com.pl.arena.cm.dto.staticobj;
 
 import itti.com.pl.arena.cm.dto.GeoObject;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -78,6 +79,34 @@ public class ParkingLot extends GeoObject {
      */
     public void addBuilding(Building building) {
         this.buildings.put(building.getId(), building);
+    }
+
+    /**
+     * Sets a new list of buildings for given parking
+     * 
+     * @param buildings list of buildings
+     */
+    public void setBuildings(Collection<Building> buildings) {
+        this.buildings.clear();
+        if(buildings != null){
+            for (Building building : buildings) {
+                addBuilding(building);
+            }
+        }
+    }
+
+    /**
+     * Sets a new list of infrastructures for given parking
+     * 
+     * @param infrastructures list of infrastructures
+     */
+    public void setInfrastructures(Collection<Infrastructure> infrastructures) {
+        this.infrastructures.clear();
+        if(infrastructures != null){
+            for (Infrastructure infrastructure : infrastructures) {
+                addIntrastructure(infrastructure);
+            }
+        }
     }
 
     /**

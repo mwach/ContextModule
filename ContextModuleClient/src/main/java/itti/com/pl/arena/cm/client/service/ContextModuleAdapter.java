@@ -266,7 +266,7 @@ public class ContextModuleAdapter {
     }
 
     public boolean updateParkingLot(String name, String description, String country,
-            String town, String street, Collection<itti.com.pl.arena.cm.dto.Location> locations, List<Building> buildings, List<Infrastructure> infrastructure) throws JsonHelperException {
+            String town, String street, Collection<itti.com.pl.arena.cm.dto.Location> locations, Collection<Building> buildings, Collection<Infrastructure> infrastructures) throws JsonHelperException {
 
         ParkingLot parkingLot = new ParkingLot(name);
         parkingLot.setCountry(country);
@@ -276,6 +276,8 @@ public class ContextModuleAdapter {
         if(locations != null  && !locations.isEmpty()){
             parkingLot.setLocation(locations.iterator().next());
         }
+        parkingLot.setBuildings(buildings);
+        parkingLot.setInfrastructures(infrastructures);
         SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.ParkingLot.name(), JsonHelper.toJson(parkingLot));
         // send/receive
         BooleanNamedValue response = contextModule.updateParkingLot(request);

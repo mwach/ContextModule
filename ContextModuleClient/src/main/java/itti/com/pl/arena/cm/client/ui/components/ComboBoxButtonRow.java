@@ -85,4 +85,8 @@ public class ComboBoxButtonRow extends JPanel {
             comboBox.removeItem(comboBox.getSelectedItem());
         }
     }
+
+    public boolean containsItem(String item) {
+        return StringHelper.hasContent(item) ? getItems().contains(item) : null;
+    }
 }
