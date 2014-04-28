@@ -266,10 +266,13 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
                     response = getListOfParkingLots((SimpleNamedValue) data);
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.defineRule.name(), data.getHref())
                         && (data instanceof SimpleNamedValue)) {
-                    response = defineRule((SimpleNamedValue) data);
+                    response = updateRule((SimpleNamedValue) data);
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.removeRule.name(), data.getHref())
                         && (data instanceof SimpleNamedValue)) {
                     response = removeRule((SimpleNamedValue) data);
+                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getRule.name(), data.getHref())
+                        && (data instanceof SimpleNamedValue)) {
+                    response = getRule((SimpleNamedValue) data);
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.applyRules.name(), data.getHref())
                         && (data instanceof SimpleNamedValue)) {
                     response = applyRules((SimpleNamedValue) data);
@@ -965,7 +968,13 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
         return response;
     }
     @Override
-    public SimpleNamedValue defineRule(SimpleNamedValue rule) {
+    public BooleanNamedValue updateRule(SimpleNamedValue rule) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public SimpleNamedValue getRule(SimpleNamedValue rule) {
         // TODO Auto-generated method stub
         return null;
     }

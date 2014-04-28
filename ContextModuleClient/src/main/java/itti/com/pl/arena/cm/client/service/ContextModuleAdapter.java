@@ -333,4 +333,46 @@ public class ContextModuleAdapter {
         return response != null ? response.isFeatureValue() : false;
     }
 
+    public boolean updateRule(String ruleName, String ruleContent) {
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ruleName, ruleContent);
+        // send/receive
+        BooleanNamedValue response = contextModule.updateRule(request);
+        // return parsed response
+        return response != null ? response.isFeatureValue() : false;
+    }
+
+    public boolean removeRule(String ruleName) {
+        // prepare a request
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(), ruleName);
+        // send/receive
+        BooleanNamedValue response = contextModule.removeRule(request);
+        // return parsed response
+        return response.isFeatureValue();
+    }
+
+    public String getRule(String ruleName) {
+        // prepare a request
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(), ruleName);
+        // send/receive
+        SimpleNamedValue response = contextModule.getRule(request);
+        // return parsed response
+        return response.getValue();
+    }
+
+    public List<String> getListOfRules() {
+        // prepare a request
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(), null);
+        // send/receive
+        eu.arena_fp7._1.Object response = contextModule.getListOfRules(request);
+        // return parsed response
+        return getStringsFromFeatureVector(response == null ? null : response.getFeatureVector());
+    }
+
+    public boolean applyRules() {
+        // prepare a request
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(), null);
+        // send/receive
+        BooleanNamedValue response = contextModule.applyRules(request);
+     // return parsed response
+        return response.isFeatureValue();    }
 }

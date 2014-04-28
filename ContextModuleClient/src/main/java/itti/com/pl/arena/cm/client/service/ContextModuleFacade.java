@@ -438,8 +438,14 @@ public class ContextModuleFacade extends CMModuleImpl implements LocalContextMod
     }
 
     @Override
-    public SimpleNamedValue defineRule(SimpleNamedValue rule) {
+    public BooleanNamedValue updateRule(SimpleNamedValue rule) {
         rule.setHref(ContextModuleRequests.defineRule.name());
+        return (BooleanNamedValue) submitData(rule);
+    }
+
+    @Override
+    public SimpleNamedValue getRule(SimpleNamedValue rule) {
+        rule.setHref(ContextModuleRequests.getRule.name());
         return (SimpleNamedValue) submitData(rule);
     }
 

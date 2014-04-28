@@ -92,6 +92,10 @@ public final class MessageConstants {
          */
         removeRule, 
         /**
+         * Service name used by the 'getRule' method
+         */
+        getRule,
+        /**
          * Service name used by the 'applyRules' method
          */
         applyRules, 

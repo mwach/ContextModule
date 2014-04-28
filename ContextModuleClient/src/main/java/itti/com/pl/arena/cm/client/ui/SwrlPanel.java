@@ -2,13 +2,17 @@ package itti.com.pl.arena.cm.client.ui;
 
 import itti.com.pl.arena.cm.client.ui.components.ButtonRow;
 import itti.com.pl.arena.cm.client.ui.components.ComboBoxButtonRow;
-import itti.com.pl.arena.cm.client.ui.components.TextBoxButtonRow;
+import itti.com.pl.arena.cm.client.ui.components.LabelTextBoxRow;
+import itti.com.pl.arena.cm.utils.helper.StringHelper;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
@@ -22,8 +26,10 @@ public class SwrlPanel extends ContextModulePanel {
     private static final long serialVersionUID = 1L;
 
     private ComboBoxButtonRow swrlComboBoxRow = null;
-    private TextBoxButtonRow addRuleComboBoxRow = null;
+    private LabelTextBoxRow ruleNameTextBoxRow = null;
+    private ButtonRow addRuleRow = null;
     private ButtonRow applyRuleBox = null;
+    private JTextArea ruleContentBox = null;
 
     /**
      * Create the dialog.
@@ -51,20 +57,52 @@ public class SwrlPanel extends ContextModulePanel {
         gbc.insets = new Insets(3,3,3,3);
 
         swrlComboBoxRow = createComboBoxButtonRow(Messages.getString("SwrlPanel.0"), null); //$NON-NLS-1$
+        swrlComboBoxRow.setOnChangeListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ruleSelectionChanged();
+            }
+        });
+        swrlComboBoxRow.setOnClickListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                removeRule();
+            }
+        });
         gbl.setConstraints(swrlComboBoxRow, gbc);
         swrlPanel.add(swrlComboBoxRow); //$NON-NLS-1$
 
-        addRuleComboBoxRow = createTextBoxButtonRow(null, Messages.getString("SwrlPanel.1")); //$NON-NLS-1$
-        gbl.setConstraints(addRuleComboBoxRow, gbc);
-        swrlPanel.add(addRuleComboBoxRow); //$NON-NLS-1$
+        ruleNameTextBoxRow = createLabelTextBoxRow("Rule name", null); //$NON-NLS-1$
+        gbl.setConstraints(ruleNameTextBoxRow, gbc);
+        swrlPanel.add(ruleNameTextBoxRow); //$NON-NLS-1$
+
+        addRuleRow = createButtonRow("Add rule"); //$NON-NLS-1$
+        gbl.setConstraints(addRuleRow, gbc);
+        addRuleRow.setOnClickListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addRule();
+            }
+        });
+        swrlPanel.add(addRuleRow); //$NON-NLS-1$
 
         gbc.weighty = 10.0;
-        Component logComponent = new JTextArea(30, 100);
-        gbl.setConstraints(logComponent, gbc);
-        swrlPanel.add(logComponent);
+        ruleContentBox = new JTextArea(30, 100);
+        gbl.setConstraints(ruleContentBox, gbc);
+        swrlPanel.add(ruleContentBox);
 
         gbc.weighty = 1;
         applyRuleBox = createButtonRow(Messages.getString("SwrlPanel.2")); //$NON-NLS-1$
+        applyRuleBox.setOnClickListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                applyRules();
+            }
+        });
         gbl.setConstraints(applyRuleBox, gbc);
         swrlPanel.add(applyRuleBox); //$NON-NLS-1$
 
@@ -74,17 +112,86 @@ public class SwrlPanel extends ContextModulePanel {
         return swrlPanel;
     }
 
+    protected void applyRules() {
+        if(getContextModuleAdapter().applyRules()){
+            showMessage("Rules successfully applied");
+        }else{
+            showMessage("Could not apply rules");
+        }
+    }
+
+    protected void addRule() {
+
+        String ruleName = ruleNameTextBoxRow.getText();
+        updateRule(ruleName);
+    }
+
+    private void updateRule(String ruleName){
+
+        String ruleContent = ruleContentBox.getText();
+
+        if(StringHelper.hasContent(ruleName)){
+            if(StringHelper.hasContent(ruleContent)){
+                if(getContextModuleAdapter().updateRule(ruleName, ruleContent)){
+
+                    showMessage("Rule added");
+                    clearRuleForm();
+                }else{
+                    showMessage("Could not add rule");
+                }
+            }else{
+                showMessage("Rule content not specified");
+            }
+        }else{
+            showMessage("Rule name not specified");
+        }
+
+    }
+
+    private void clearRuleForm() {
+        ruleContentBox.setText("");
+        ruleNameTextBoxRow.setText(null);
+    }
+
+    protected void removeRule() {
+        String ruleName = swrlComboBoxRow.getSelectedItem();
+        if(StringHelper.hasContent(ruleName)){
+            if(getContextModuleAdapter().removeRule(ruleName)){
+                showMessage("Rule successfully removed");
+                onRefreshClick();
+            }else{
+                showMessage("Could not remove rule");
+            }
+        }else{
+            showMessage("No rule selected");
+        }
+
+    }
+
+    protected void ruleSelectionChanged() {
+        String ruleName = swrlComboBoxRow.getSelectedItem();
+        if(StringHelper.hasContent(ruleName)){
+            ruleContentBox.setText(getContextModuleAdapter().getRule(ruleName));
+        }
+    }
+
     @Override
     protected void onCancelClick() {
     }
 
     @Override
     protected void onSaveClick() {
-        // TODO Auto-generated method stub
-
+        if(StringHelper.hasContent(ruleNameTextBoxRow.getText())){
+            updateRule(ruleNameTextBoxRow.getText());
+        }else{
+            updateRule(swrlComboBoxRow.getSelectedItem());
+        }
     }
 
     @Override
     protected void onRefreshClick() {
+        List<String> listOfRules = getContextModuleAdapter().getListOfRules();
+        clearRuleForm();
+        swrlComboBoxRow.setItems(listOfRules);
     }
 }

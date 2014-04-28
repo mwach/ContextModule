@@ -239,13 +239,13 @@ public interface ContextModule {
     Object getListOfParkingLots(SimpleNamedValue objectId);
 
     /**
-     * This method adds a new SWRL rule to the ontology
+     * This method adds a new one, or updates existing SWRL rule to the ontology
      * 
      * @param rule
-     *            rule to be added to ontology
-     * @return ID of the rule
+     *            rule to be added to /updated in ontology
+     * @return update status
      */
-    SimpleNamedValue defineRule(SimpleNamedValue rule);
+    BooleanNamedValue updateRule(SimpleNamedValue rule);
 
     /**
      * This method removes existing SWRL rule from the ontology
@@ -255,6 +255,15 @@ public interface ContextModule {
      * @return removal status
      */
     BooleanNamedValue removeRule(SimpleNamedValue ruleId);
+
+    /**
+     * This method returns existing SWRL rule from the ontology
+     * 
+     * @param ruleId
+     *            ID of the rule
+     * @return rule content
+     */
+    SimpleNamedValue getRule(SimpleNamedValue ruleId);
 
     /**
      * This method executes existing SWRL rule on the ontology
