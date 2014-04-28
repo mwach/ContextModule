@@ -973,7 +973,7 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
 
         boolean status = false;
         try {
-            getOntology().addSwrlRules(rule.getFeatureName(), rule.getValue());
+            getOntology().addSwrlRule(rule.getFeatureName(), rule.getValue());
             status = true;
         } catch (OntologyException exc) {
             LogHelper.exception(ContextModuleJmsService.class, "updateRule", "Could not update rule", exc);
@@ -982,15 +982,26 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
     }
 
     @Override
-    public SimpleNamedValue getRule(SimpleNamedValue rule) {
-        // TODO Auto-generated method stub
-        return null;
+    public SimpleNamedValue getRule(SimpleNamedValue request) {
+        String content = null;
+        try {
+            content = getOntology().getSwrlRule(request.getValue());
+        } catch (OntologyException exc) {
+            LogHelper.exception(ContextModuleJmsService.class, "getRule", "Could not retrieve rule", exc);
+        }
+        return createSimpleNamedValue(request.getId(), request.getFeatureName(), content);    
     }
 
     @Override
-    public BooleanNamedValue removeRule(SimpleNamedValue ruleId) {
-        // TODO Auto-generated method stub
-        return null;
+    public BooleanNamedValue removeRule(SimpleNamedValue request) {
+        boolean status = false;
+        try {
+            getOntology().removeSwrlRule(request.getValue());
+            status = true;
+        } catch (OntologyException exc) {
+            LogHelper.exception(ContextModuleJmsService.class, "removeRule", "Could not remove rule", exc);
+        }
+        return createBooleanNamedValue(request.getId(), request.getFeatureName(), status);    
     }
 
     @Override

@@ -259,7 +259,22 @@ public interface Ontology {
      * @param ruleContent content of the rule
      * @throws OntologyException 
      */
-    public void addSwrlRules(String ruleName, String ruleContent) throws OntologyException;
+    public void addSwrlRule(String ruleName, String ruleContent) throws OntologyException;
+
+    /**
+     * Returns rule identified by its name from the ontology
+     * @param ruleName name of the rule
+     * @return rule definition
+     * @throws OntologyException
+     */
+    public String getSwrlRule(String ruleName) throws OntologyException;
+
+    /**
+     * Removes rule identified by its name from the ontology
+     * @param ruleName name of the rule
+     * @throws OntologyException
+     */
+    public void removeSwrlRule(String ruleName) throws OntologyException;
 
     /**
      * Runs SWRL engine on existing model

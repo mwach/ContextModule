@@ -55,7 +55,7 @@ public enum ErrorMessages {
     SWRL_EMPTY_RULE(801, "An attempt to add empty rule to ontology"), 
     SWRL_ENGINE_FAILED(802, "Could not run SWRL engine. Details: %s"), 
     SWRL_CANNOT_COLLECT_RULES(803, "Could not collect rule names from ontology. Details: %s"),
-
+    SWRL_CANNOT_GET_RULE(804, "Cannot find SWRL rule identified by it's name: '%s'"),
     ;
 
     /*

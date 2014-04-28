@@ -594,7 +594,7 @@ public class OntologyManager implements Service {
      *            content of the rule
      * @throws OntologyException
      */
-    public void addSwrlRules(String ruleName, String ruleContent) throws OntologyException {
+    public void addSwrlRule(String ruleName, String ruleContent) throws OntologyException {
 
         LogHelper.info(OntologyManager.class, "addSwrlRule", "Upading models with SWRL rule '%s'", ruleName);
 
@@ -610,7 +610,7 @@ public class OntologyManager implements Service {
                 LogHelper.debug(OntologyManager.class, "addSwrlRule", "Rule '%s' added suffessfully. Content of the rule: %s",
                         ruleName, ruleContent);
             } catch (SWRLParseException | RuntimeException exc) {
-                LogHelper.exception(OntologyManager.class, "addSwrlRules", "Failed to add rule: %s", exc);
+                LogHelper.exception(OntologyManager.class, "addSwrlRules", "Failed to add rule", exc);
                 throw new OntologyException(ErrorMessages.SWRL_CANNOT_ADD_RULE, exc.getLocalizedMessage());
             }
 
@@ -621,7 +621,78 @@ public class OntologyManager implements Service {
     }
 
     /**
+     * Returns rule identified by its name from the ontology
+     * @param ruleName name of the rule
+     * @return rule definition
+     * @throws OntologyException
+     */
+    public String getSwrlRule(String ruleName) throws OntologyException {
+
+        LogHelper.info(OntologyManager.class, "getSwrlRule", "Trying to retrieve rule with ID: %s", ruleName);
+        String ruleContent = null;
+
+        // create rule factory
+        SWRLFactory factory = new SWRLFactory(model);
+
+        try {
+
+            // get list of imps
+            for (Object imp : factory.getImps()){
+                if(StringHelper.equals(ruleName, imp.toString())){
+                    ruleContent = imp.toString();
+                }
+            }
+            if(!StringHelper.hasContent(ruleContent)){
+                throw new OntologyException(ErrorMessages.SWRL_CANNOT_GET_RULE, ruleName);
+            }
+            LogHelper.debug(OntologyManager.class, "getSwrlRules", "Suffessfully colleted rule. Rule content: %s",
+                    ruleContent);
+        } catch (RuntimeException exc) {
+            LogHelper.exception(OntologyManager.class, "getSwrlRule", "Failed to collect rule", exc);
+            throw new OntologyException(ErrorMessages.SWRL_CANNOT_COLLECT_RULES, exc.getLocalizedMessage());
+        }
+        return ruleContent;
+    }
+
+    /**
+     * Removes rule identified by its name from the ontology
+     * @param ruleName name of the rule
+     * @throws OntologyException
+     */
+    public void removeSwrlRule(String ruleName) throws OntologyException {
+
+        LogHelper.info(OntologyManager.class, "removeSwrlRule", "Trying to remove rule with ID: %s", ruleName);
+        boolean found = false;
+
+        // create rule factory
+        SWRLFactory factory = new SWRLFactory(model);
+
+        try {
+
+            // get list of imps
+            Collection imps = factory.getImps();
+            for (Object imp : imps){
+                if(StringHelper.equals(ruleName, imp.toString())){
+                    factory.deleteImps();
+                    factory.createImp();
+                    found = true;
+                    break;
+                }
+            }
+            if(!found){
+                throw new OntologyException(ErrorMessages.SWRL_CANNOT_GET_RULE, ruleName);
+            }
+            LogHelper.debug(OntologyManager.class, "removeSwrlRule", "Suffessfully removed rule. Rule name: %s",
+                    ruleName);
+        } catch (RuntimeException exc) {
+            LogHelper.exception(OntologyManager.class, "removeSwrlRule", "Failed to collect rule", exc);
+            throw new OntologyException(ErrorMessages.SWRL_CANNOT_GET_RULE, exc.getLocalizedMessage());
+        }
+    }
+
+    /**
      * Returns a list of rules defined in the ontology
+     * @return list of rules
      * 
      * @throws OntologyException
      */
@@ -642,7 +713,7 @@ public class OntologyManager implements Service {
             LogHelper.debug(OntologyManager.class, "getSwrlRules", "Suffessfully colleted rule names. Defined rules: %s",
                     rules);
         } catch (RuntimeException exc) {
-            LogHelper.exception(OntologyManager.class, "getSwrlRules", "Failed to collect rule names: %s", exc);
+            LogHelper.exception(OntologyManager.class, "getSwrlRules", "Failed to collect rule names", exc);
             throw new OntologyException(ErrorMessages.SWRL_CANNOT_COLLECT_RULES, exc.getLocalizedMessage());
         }
         return rules;
