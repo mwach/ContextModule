@@ -233,7 +233,7 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
                     response = updatePlatform((SimpleNamedValue) data);
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.updateCamera.name(), data.getHref())
                         && (data instanceof SimpleNamedValue)) {
-                    response = updateCamera((SimpleNamedValue) data);
+                    response = updateCamera((Object) data);
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getPlatforms.name(), data.getHref())
                         && (data instanceof Location)) {
                     response = getPlatforms((Location) data);
@@ -246,6 +246,9 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getGeoportalData.name(), data.getHref())
                         && (data instanceof Location)) {
                     response = getGeoportalData((Location) data);
+                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getCameraFieldOfView.name(), data.getHref())
+                        && (data instanceof SimpleNamedValue)) {
+                    response = getCameraFieldOfView((SimpleNamedValue) data);
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getPlatformNeighborhood.name(), data.getHref())
                         && (data instanceof SimpleNamedValue)) {
                     response = getPlatformNeighborhood((SimpleNamedValue) data);
@@ -495,6 +498,47 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
     }
 
     @Override
+    public Object getCameraFieldOfView(SimpleNamedValue cameraIdRequestObject) {
+
+        List<AbstractNamedValue> vector = new ArrayList<>();
+        String requestId = null;
+
+        try {
+            verifyRequestObject(cameraIdRequestObject);
+
+            requestId = StringHelper.toString(cameraIdRequestObject.getId());
+
+            String cameraId = cameraIdRequestObject.getValue();
+            // try to retrieve data from ontology
+            Set<ArenaObjectCoordinate> objects = getOntology().getCameraFieldOfView(cameraId);
+
+            // data retrieved -create response message
+            if (objects != null) {
+                for (ArenaObjectCoordinate objectCoordinate : objects) {
+                    // if any of the response objects fail, ignore it
+                    try {
+                        vector.add(createSimpleNamedValue(cameraIdRequestObject.getId(),
+                                ContextModuleRequestProperties.Building.name(), JsonHelper.toJson(objectCoordinate)));
+                    } catch (JsonHelperException e) {
+                        LogHelper.warning(ContextModuleJmsService.class, "getCameraFieldOfView",
+                                "Could not serialize object coordinate: '%s'. Details: %s", objectCoordinate,
+                                e.getLocalizedMessage());
+                    }
+                }
+            }
+
+        } catch (OntologyException | JmsException exc) {
+            // could not update data
+            LogHelper.exception(ContextModuleJmsService.class, "getCameraFieldOfView",
+                    "Could not retrieve data from ontology", exc);
+        }
+
+        // prepare response object
+        Object response = createObject(requestId, vector);
+        return response;
+    }
+
+    @Override
     public BooleanNamedValue updateParkingLot(SimpleNamedValue platformObject) {
 
         ParkingLot parkingLot = null;
@@ -585,7 +629,7 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
     }
 
     @Override
-    public BooleanNamedValue updateCamera(SimpleNamedValue platformObject) {
+    public BooleanNamedValue updateCamera(Object cameraObject) {
 
         Camera camera = null;
         String cameraName = null;
@@ -593,13 +637,27 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
         String requestId = null;
 
         try {
-            verifyRequestObject(platformObject);
-            requestId = platformObject.getId();
+            verifyRequestObject(cameraObject);
+            requestId = cameraObject.getId();
 
+            String cameraJson = null;
+            String platformName = null;
+
+            for (AbstractNamedValue parameter : cameraObject.getFeatureVector().getFeature()) {
+
+                if (parameter instanceof SimpleNamedValue) {
+                    SimpleNamedValue snv = (SimpleNamedValue)parameter;
+                    if(StringHelper.equals(ContextModuleRequestProperties.Camera.name(), snv.getFeatureName())){
+                        cameraJson = snv.getValue();
+                    }else if(StringHelper.equals(ContextModuleRequestProperties.PlatformName.name(), snv.getFeatureName())){
+                        platformName = snv.getValue();
+                    }
+                }
+            }
             // try to parse JSON into object
-            camera = JsonHelper.fromJson(platformObject.getValue(), Camera.class);
+            camera = JsonHelper.fromJson(cameraJson, Camera.class);
             // update ontology with provided data
-            ontology.updateCamera(camera);
+            ontology.updateCamera(camera, platformName);
             cameraName = camera.getId();
 
             status = true;
@@ -621,7 +679,7 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
      * @throws JmsException
      *             validation failed
      */
-    private void verifyRequestObject(SimpleNamedValue requestObject) throws JmsException {
+    private void verifyRequestObject(AbstractDataFusionType requestObject) throws JmsException {
 
         // null object provided
         if (requestObject == null) {
@@ -629,7 +687,7 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
         }
 
         // no value in the object
-        if (!StringHelper.hasContent(requestObject.getValue())) {
+        if (requestObject instanceof SimpleNamedValue && (!StringHelper.hasContent(((SimpleNamedValue)requestObject).getValue()))) {
             throw new JmsException(ErrorMessages.JMS_NULL_VALUE_REQUEST_OBJECT);
         }
 

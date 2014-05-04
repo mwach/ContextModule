@@ -42,7 +42,8 @@ public interface ContextModule {
     /**
      * Removes an existing platform from the ontology
      * 
-     * @param platformId ID of the platform to be removed from ontology
+     * @param platformId
+     *            ID of the platform to be removed from ontology
      * @return removal status (true == platform removed, false otherwise)
      */
     BooleanNamedValue removePlatform(SimpleNamedValue platformId);
@@ -50,7 +51,8 @@ public interface ContextModule {
     /**
      * Removes an existing building/infrastructure from the ontology
      * 
-     * @param request ID of the building/infrastructure to be removed from ontology
+     * @param request
+     *            ID of the building/infrastructure to be removed from ontology
      * @return removal status (true == building/infrastructure removed, false otherwise)
      */
     BooleanNamedValue removeBuilding(SimpleNamedValue request);
@@ -58,7 +60,8 @@ public interface ContextModule {
     /**
      * Removes an existing parking lot from the ontology
      * 
-     * @param parkingLotId ID of the parking lot to be removed from ontology
+     * @param parkingLotId
+     *            ID of the parking lot to be removed from ontology
      * @return removal status (true == parking lot removed, false otherwise)
      */
     BooleanNamedValue removeParkingLot(SimpleNamedValue parkingLotId);
@@ -67,8 +70,8 @@ public interface ContextModule {
      * This method allows to update existing or create new {@link Platform} in the ContextModule
      * 
      * @param platform
-     *            new or updated Platform object. Attribute 'value' of the provided {@link SimpleNamedValue} should contain
-     *            serialized {@link Platform} object
+     *            new or updated Platform object. Attribute 'value' of the provided {@link SimpleNamedValue} should
+     *            contain serialized {@link Platform} object
      * @return update status
      */
     BooleanNamedValue updatePlatform(SimpleNamedValue platform);
@@ -77,11 +80,12 @@ public interface ContextModule {
      * This method allows to update existing or create new {@link Camera} in the ContextModule
      * 
      * @param camera
-     *            new or updated Camera object. Attribute 'value' of the provided {@link SimpleNamedValue} should contain
-     *            serialized {@link Camera} object
+     *            new or updated Camera object. Two features are expected in the object's feature vector:
+     *            {@link SimpleNamedValue} containing camera definition ('Camera' feature) and {@link SimpleNamedValue}
+     *            containing platform name ('PlatformName' feature)
      * @return update status
      */
-    BooleanNamedValue updateCamera(SimpleNamedValue camera);
+    BooleanNamedValue updateCamera(Object camera);
 
     /**
      * This method allows retrieval of information about the camera (its parameters)
@@ -107,8 +111,8 @@ public interface ContextModule {
      * This method allows to update existing or create new parking lot in the ContextModule
      * 
      * @param parkingLot
-     *            new or updated {@link ParkingLot} object. Attribute 'value' of the provided {@link SimpleNamedValue} should contain
-     *            serialized {@link ParkingLot} object
+     *            new or updated {@link ParkingLot} object. Attribute 'value' of the provided {@link SimpleNamedValue}
+     *            should contain serialized {@link ParkingLot} object
      * @return update status
      */
     BooleanNamedValue updateParkingLot(SimpleNamedValue parkingLot);
@@ -117,14 +121,15 @@ public interface ContextModule {
      * This method allows to update existing or create new building/infrastructure in the ContextModule
      * 
      * @param building
-     *            new or updated {@link GeoObject} object. Attribute 'value' of the provided {@link SimpleNamedValue} should contain
-     *            serialized {@link Building} or {@link Infrastructure} object
+     *            new or updated {@link GeoObject} object. Attribute 'value' of the provided {@link SimpleNamedValue}
+     *            should contain serialized {@link Building} or {@link Infrastructure} object
      * @return update status
      */
     BooleanNamedValue updateBuilding(SimpleNamedValue building);
 
     /**
-     * This method retries information about the parking lot (location, boundaries, objects like buildings or infrastructure).
+     * This method retries information about the parking lot (location, boundaries, objects like buildings or
+     * infrastructure).
      * 
      * @param objectId
      *            ID of the object
@@ -133,10 +138,10 @@ public interface ContextModule {
     Object getParkingLot(SimpleNamedValue objectId);
 
     /**
-     * This method allows retrieval of available GIS data for specified location (i.e. creates Object class with
-     * Objects having capabilities stored in their featureVectors) Object class contains other Object classes describing
-     * GIS features (e.g. buildings, roads, etc.) with appropriate featureVectors (e.g. number of lanes for roads or
-     * height for buildings). The type of that data depends on GIS data source capabilities
+     * This method allows retrieval of available GIS data for specified location (i.e. creates Object class with Objects
+     * having capabilities stored in their featureVectors) Object class contains other Object classes describing GIS
+     * features (e.g. buildings, roads, etc.) with appropriate featureVectors (e.g. number of lanes for roads or height
+     * for buildings). The type of that data depends on GIS data source capabilities
      * 
      * @param location
      *            location
@@ -145,17 +150,17 @@ public interface ContextModule {
     Object getGISData(Location location);
 
     /**
-     * This method allows retrieval of available GIS data for specified location (i.e. creates Object class with
-     * Objects having capabilities stored in their featureVectors) Object class contains other Object classes describing
-     * GIS features (e.g. buildings, roads, etc.) with appropriate featureVectors (e.g. number of lanes for roads or
-     * height for buildings). The type of that data depends on GIS data source capabilities
+     * This method allows retrieval of available GIS data for specified location (i.e. creates Object class with Objects
+     * having capabilities stored in their featureVectors) Object class contains other Object classes describing GIS
+     * features (e.g. buildings, roads, etc.) with appropriate featureVectors (e.g. number of lanes for roads or height
+     * for buildings). The type of that data depends on GIS data source capabilities
      * 
-     * @param parameters complex object containing parameters:
-     *          - location information about searched location (instance of the {@link Location}
-     *          - radius (instance of the double object), measured in kilometers
-     *          - filters (instance of the String[] object) array containing names of the ontology classes
-     *                  which should be used to filter results
-     * All parameters are stored as {@link Location} and {@link SimpleNamedValue} objects inside {@link Object} vector
+     * @param parameters
+     *            complex object containing parameters: - location information about searched location (instance of the
+     *            {@link Location} - radius (instance of the double object), measured in kilometers - filters (instance
+     *            of the String[] object) array containing names of the ontology classes which should be used to filter
+     *            results All parameters are stored as {@link Location} and {@link SimpleNamedValue} objects inside
+     *            {@link Object} vector
      * @return available GIS data for specified location
      */
     Object getGISData(Object parameters);
@@ -170,13 +175,24 @@ public interface ContextModule {
     Object getGeoportalData(Location location);
 
     /**
-     * returns information about platform neighborhood in the ContextModule-specific Cartesian coordinate system
-     * Point (0,0) of that system is located in the driver's cabin, default unit is calibrated to one meter
-     * and axis are compatible with the main truck axis
-     * @param platformId ID of the platform
+     * returns information about platform neighborhood in the ContextModule-specific Cartesian coordinate system Point
+     * (0,0) of that system is located in the driver's cabin, default unit is calibrated to one meter and axis are
+     * compatible with the main truck axis
+     * 
+     * @param platformId
+     *            ID of the platform
      * @return information about platform neighborhood (surrounding buildings or parking infrastructure)
      */
     Object getPlatformNeighborhood(SimpleNamedValue platformId);
+
+    /**
+     * Returns information about camera field of view
+     * 
+     * @param cameraId
+     *            ID of the camera
+     * @return information about camera field of view
+     */
+    Object getCameraFieldOfView(SimpleNamedValue cameraId);
 
     /**
      * Defines a new, or updates an existing zone in the ontology
@@ -191,7 +207,8 @@ public interface ContextModule {
     /**
      * Removes an existing zone from the ontology
      * 
-     * @param zoneId ID of the zone to be removed from ontology
+     * @param zoneId
+     *            ID of the zone to be removed from ontology
      * @return removal status (true == zone removed, false otherwise)
      */
     BooleanNamedValue removeZone(SimpleNamedValue zoneId);
@@ -199,7 +216,8 @@ public interface ContextModule {
     /**
      * Removes an existing camera from the ontology
      * 
-     * @param cameraId ID of the camera to be removed from ontology
+     * @param cameraId
+     *            ID of the camera to be removed from ontology
      * @return removal status (true == camera removed, false otherwise)
      */
     BooleanNamedValue removeCamera(SimpleNamedValue cameraId);
@@ -216,7 +234,8 @@ public interface ContextModule {
     /**
      * Returns list of zones defined for given parking lot
      * 
-     * @param requestId request message containing parking lot name
+     * @param requestId
+     *            request message containing parking lot name
      * @return list of zone names, or empty list, if no zones were defined for given parking lot in the ontology
      */
     Object getListOfZones(SimpleNamedValue requestId);
@@ -224,7 +243,8 @@ public interface ContextModule {
     /**
      * Returns list of platforms defined in application
      * 
-     * @param requestId request message
+     * @param requestId
+     *            request message
      * @return list of platform names, or empty list, if no platforms were defined
      */
     Object getListOfPlatforms(SimpleNamedValue requestId);

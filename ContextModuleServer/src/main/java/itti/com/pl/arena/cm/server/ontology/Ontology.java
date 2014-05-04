@@ -160,11 +160,22 @@ public interface Ontology {
      * 
      * @param platformId
      *            ID of the platform, calculations should be done
-     * @return list of
+     * @return list of arena coordinates representing objects in the platform neighborhood
      * @throws OntologyException
      *             processing exception
      */
     public Set<ArenaObjectCoordinate> calculateArenaDistancesForPlatform(String platformId) throws OntologyException;
+
+    /**
+     * Calculates camera field of view
+     * 
+     * @param cameraId
+     *            ID of the camera, for which calculations should be done
+     * @return list of arena coordinates representing camera field of view
+     * @throws OntologyException
+     *             processing exception
+     */
+    public Set<ArenaObjectCoordinate> getCameraFieldOfView(String cameraId) throws OntologyException;
 
     /**
      * Defines a new, or update an existing zone in the ontology
@@ -236,12 +247,13 @@ public interface Ontology {
      * Defines a new, or update an existing camera in the ontology
      * 
      * @param camera camera object
+     * @param platformName ID of the platform, camera is installed
      * 
      * @return ID of the camera
      * @throws OntologyException
      *             processing exception
      */
-    public void updateCamera(Camera camera) throws OntologyException;
+    public void updateCamera(Camera camera, String platformName) throws OntologyException;
 
     /**
      * Defines a new, or update an existing building in the ontology

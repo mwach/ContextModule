@@ -73,9 +73,9 @@ public class CartesianCoordinate implements Serializable{
         if (getClass() != obj.getClass())
             return false;
         CartesianCoordinate other = (CartesianCoordinate) obj;
-        if (!NumbersHelper.equals(x, other.x))
+        if (!NumbersHelper.equals(x, other.x, 0.001))
             return false;
-        if (!NumbersHelper.equals(y, other.y))
+        if (!NumbersHelper.equals(y, other.y, 0.001))
             return false;
         return true;
     }

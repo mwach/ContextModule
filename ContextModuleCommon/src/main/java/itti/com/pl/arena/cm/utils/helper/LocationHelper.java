@@ -108,7 +108,26 @@ public final class LocationHelper {
     public static double calculateDistance(Location locationOne, Location locationTwo){
         return HaversineAlgorithm.HaversineInM(locationOne.getLatitude(), locationOne.getLongitude(), locationTwo.getLatitude(), locationTwo.getLongitude());
     }
-    
+
+    /**
+     * Calculates angle between two locations stored as  {@link Location} objects. 
+     * Calculation was implemented based on instructions from: http://stackoverflow.com/questions/7586063
+     * 
+     * @param baseLocation
+     *            first coordinate
+     * @param referenceLocation
+     *            second coordinate
+     * @return angle between two locations measured radians
+     */
+    public static Double calculateAngle(Location baseLocation, Location referenceLocation) {
+
+        double deltaLongitude = referenceLocation.getLongitude() - baseLocation.getLongitude();
+        double deltaLatitude = referenceLocation.getLatitude() - baseLocation.getLatitude();
+
+        double angle = Math.atan2(deltaLatitude, deltaLongitude) * 180 / Math.PI;
+        return angle;
+    }
+
     private static class HaversineAlgorithm {
 
         static final double _eQuatorialEarthRadius = 6378.1370D;

@@ -250,11 +250,11 @@ public class Platform extends OntologyObject{
                 return false;
         } else if (!cameras.equals(other.cameras))
             return false;
-        if (!NumbersHelper.equals(height, other.height))
+        if (!NumbersHelper.equals(height, other.height, 0.001))
             return false;
-        if (!NumbersHelper.equals(length, other.length))
+        if (!NumbersHelper.equals(length, other.length, 0.001))
             return false;
-        if (!NumbersHelper.equals(width, other.width))
+        if (!NumbersHelper.equals(width, other.width, 0.001))
             return false;
         if (location == null) {
             if (other.location != null)

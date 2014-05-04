@@ -12,6 +12,10 @@
 # Description:       Start the ArenaBus engine.
 ### END INIT INFO
 
+
+#how to run
+#sudo update-rc.d -f arenabus defaults
+
 NAME=arenabus
 ARENABUS_PID="/var/run/$NAME.pid"
 

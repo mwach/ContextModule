@@ -66,27 +66,27 @@ public class CMClient {
             // initialize the client
             client.init();
             
-//            Platform platform = createDummyPlatform("Vehicle_Ford_Focus");
-//            parseUpdatePlatformResponse(client.updatePlatform(platform));
-//
-//            client.getZone("Car_parking_zone_P3");
-//            // call all available CM public services
-//            // get the platform info
-//            parseGetPlatformServiceResponse(client.getPlatformService("Vehicle_Ford_Focus"));
-//            // get all the platforms from given location
-//            parseGetPlatformsServiceResponse(client.getPlatformsService(18.128888541832566, 53.143207943066955));
-//            // get GIS data from the ontology
-//            parseGetGISDataServiceResponse(client.getGISDataService(18.128888541832566, 53.143207943066955));
-//            // get GIS data from the ontology using additional filters
-//            parseGetGISDataServiceResponse(client.getGISDataService(18.128888541832566, 53.143207943066955, 1.0, "Parking"));
-//            parseGetGISDataServiceResponse(client.getGISDataService(18.128888541832566, 53.143207943066955, 1.0, "Building"));
-//            // retrieve data from the external service (geoportal) and add it to ontology
-//            parseGetGeoportalDataServiceResponse(client.getGeoportalDataService(17.972946559166793, 53.124318916278824));
-//            // retrieve info about platform neighborhood
-//            parseGetCameraFieldOfViewResponse(client.getPlatformNeighborhood("Vehicle_Ford_Focus"));
-//
-//            ParkingLot parkingLot = createDummyParkingLot("dummyParkingLot_" + System.currentTimeMillis());
-//            parseUpdatePlatformResponse(client.updateParkingLot(parkingLot));
+            Platform platform = createDummyPlatform("Vehicle_Ford_Focus");
+            parseUpdatePlatformResponse(client.updatePlatform(platform));
+
+            client.getZone("Car_parking_zone_P3");
+            // call all available CM public services
+            // get the platform info
+            parseGetPlatformServiceResponse(client.getPlatformService("Vehicle_Ford_Focus"));
+            // get all the platforms from given location
+            parseGetPlatformsServiceResponse(client.getPlatformsService(18.128888541832566, 53.143207943066955));
+            // get GIS data from the ontology
+            parseGetGISDataServiceResponse(client.getGISDataService(18.128888541832566, 53.143207943066955));
+            // get GIS data from the ontology using additional filters
+            parseGetGISDataServiceResponse(client.getGISDataService(18.128888541832566, 53.143207943066955, 1.0, "Parking"));
+            parseGetGISDataServiceResponse(client.getGISDataService(18.128888541832566, 53.143207943066955, 1.0, "Building"));
+            // retrieve data from the external service (geoportal) and add it to ontology
+            parseGetGeoportalDataServiceResponse(client.getGeoportalDataService(17.972946559166793, 53.124318916278824));
+            // retrieve info about platform neighborhood
+            parseGetCameraFieldOfViewResponse(client.getPlatformNeighborhood("Vehicle_Ford_Focus"));
+
+            ParkingLot parkingLot = createDummyParkingLot("dummyParkingLot_" + System.currentTimeMillis());
+            parseUpdatePlatformResponse(client.updateParkingLot(parkingLot));
 
             String parkingLotName = "Parking_Paris";
             parseObjectResponse(client.getParkingLot(parkingLotName));
@@ -170,8 +170,8 @@ public class CMClient {
     private static Platform createDummyPlatform(String platformId) {
         Platform platform = new Platform(platformId);
         //platform cameras
-        platform.addCamera(createDummyCamera(platformId, "dummyCamera_" + System.currentTimeMillis()));
-        platform.addCamera(createDummyCamera(platformId, "anotherDummyCamera_" + System.currentTimeMillis()));
+        platform.addCamera(createDummyCamera("dummyCamera_" + System.currentTimeMillis()));
+        platform.addCamera(createDummyCamera("anotherDummyCamera_" + System.currentTimeMillis()));
         //platform dimensions
         platform.setHeight(3);
         platform.setWidth(3);
@@ -181,10 +181,10 @@ public class CMClient {
         return platform;
     }
 
-    private static Camera createDummyCamera(String platformName, String cameraId) {
+    private static Camera createDummyCamera(String cameraId) {
         //thermal camera located on the right side of the truck (X coordinate is set to '2'), 5m back from the front
         //angle is 0.5 rad (90 degree), which means, camera is directed to the right side of the truck
-        return new Camera(cameraId, platformName, CameraType.Thermal.name(), 120, 90, new CartesianCoordinate(2, -5), 90);
+        return new Camera(cameraId, CameraType.Thermal.name(), 120, 90, new CartesianCoordinate(2, -5), 90);
     }
 
     /**

@@ -229,8 +229,11 @@ public class ContextModuleAdapter {
     public boolean updateCamera(String cameraName, String platformName, String cameraType, double horizontalAngle, double verticalAngle,
             CartesianCoordinate cameraLocationOnTruck, int cameraAngle) throws JsonHelperException {
 
-        Camera camera = new Camera(cameraName, platformName, cameraType, horizontalAngle, verticalAngle, cameraLocationOnTruck, cameraAngle);
-        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Camera.name(), JsonHelper.toJson(camera));
+        Camera camera = new Camera(cameraName, cameraType, horizontalAngle, verticalAngle, cameraLocationOnTruck, cameraAngle);
+        List<AbstractNamedValue> vector = new ArrayList<>();
+        vector.add(contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Camera.name(), JsonHelper.toJson(camera)));
+        vector.add(contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.PlatformName.name(), platformName));
+        eu.arena_fp7._1.Object request = contextModule.createObject(moduleName, vector);
         // send/receive
         BooleanNamedValue response = contextModule.updateCamera(request);
         // return parsed response

@@ -85,7 +85,7 @@ public class TestHelper {
     private static Camera createDummyCamera(String cameraId, String platformName) {
 
         //random camera type is going to be used
-        return new Camera(cameraId, platformName, CameraType.values()[random.nextInt(CameraType.values().length)].name(), 
+        return new Camera(cameraId, CameraType.values()[random.nextInt(CameraType.values().length)].name(), 
                 // camera angles
                 random.nextInt(360), random.nextInt(360), 
                 //position of camera on platform (relative position where middle-front of the platform is marked as (0,0)

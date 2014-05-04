@@ -276,6 +276,17 @@ public class ContextModuleFacade extends CMModuleImpl implements LocalContextMod
     /*
      * (non-Javadoc)
      * 
+     * @see itti.com.pl.arena.cm.service.ContextModule#getCameraFieldOfView(eu.arena_fp7._1.SimpleNamedValue)
+     */
+    @Override
+    public eu.arena_fp7._1.Object getCameraFieldOfView(SimpleNamedValue parkingId) {
+        parkingId.setHref(ContextModuleRequests.getCameraFieldOfView.name());
+        return (Object) submitData(parkingId);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see itti.com.pl.arena.cm.service.ContextModule#updateParkingLot(eu.arena_fp7._1.SimpleNamedValue)
      */
     @Override
@@ -312,7 +323,7 @@ public class ContextModuleFacade extends CMModuleImpl implements LocalContextMod
      * @see itti.com.pl.arena.cm.service.ContextModule#updateCamera(eu.arena_fp7._1.SimpleNamedValue)
      */
     @Override
-    public BooleanNamedValue updateCamera(SimpleNamedValue cameraRequest) {
+    public BooleanNamedValue updateCamera(Object cameraRequest) {
         cameraRequest.setHref(ContextModuleRequests.updateCamera.name());
         return (BooleanNamedValue) submitData(cameraRequest);
     }

@@ -53,8 +53,8 @@ public class CameraFieldOfView extends Camera{
      * @param angleX camera horizontal angle
      * @param angleY camera vertical angle
      */
-    public CameraFieldOfView(String id, String platformName, String type, double angleX, double angleY) {
-        super(id, platformName, type, angleX, angleY, new CartesianCoordinate(0, 0), 0);
+    public CameraFieldOfView(String id, String type, double angleX, double angleY) {
+        super(id, type, angleX, angleY, new CartesianCoordinate(0, 0), 0);
     }
 
     @Override

@@ -14,6 +14,8 @@ import org.junit.rules.ExpectedException;
 
 import itti.com.pl.arena.cm.dto.Location;
 import itti.com.pl.arena.cm.dto.coordinates.ArenaObjectCoordinate;
+import itti.com.pl.arena.cm.dto.coordinates.CartesianCoordinate;
+import itti.com.pl.arena.cm.dto.dynamicobj.Camera;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform.Type;
 import itti.com.pl.arena.cm.dto.staticobj.ParkingLot;
@@ -362,6 +364,23 @@ public class ContextModuleOntologyManagerTest {
         ontoPlatform = cmOntologyManager.getOntologyObject(platformId, Platform.class);
         assertEquals(platformId, ontoPlatform.getId());
         assertEquals(newDummyLocation, ontoPlatform.getLocation());
+    }
+
+    @Test
+    public void testCreateGetCamera() throws OntologyException {
+        //first, create platform
+        String platformName = "platform_" + System.currentTimeMillis();
+        cmOntologyManager.updatePlatformPosition(platformName, new Location());
+
+        //now, create camera
+        String cameraName = "camera_" + System.currentTimeMillis();
+        Camera camera = new Camera(cameraName, "fisheye", TestHelper.getBearing(), TestHelper.getBearing(), 
+                new CartesianCoordinate(random.nextDouble(), random.nextDouble()), TestHelper.getBearing());
+        cmOntologyManager.updateCamera(camera, platformName);
+
+        //now get the camera from ontology
+        Camera ontoCamera = cmOntologyManager.getOntologyObject(cameraName, Camera.class);
+        assertEquals(camera, ontoCamera);
     }
 
 }

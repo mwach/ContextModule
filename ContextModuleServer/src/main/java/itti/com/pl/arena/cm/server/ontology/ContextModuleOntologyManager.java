@@ -246,13 +246,28 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
             Double positionY = getDoubleProperty(cameraInstance, OntologyConstants.Camera_has_position_y);
             Integer cameraDirection = getIntProperty(cameraInstance, OntologyConstants.Camera_has_direction);
 
-            //TODO
-            String platformName = null;
-
-            cameraInfo = new Camera(cameraId, platformName, cameraType, getValue(angleXVal), getValue(angleYVal), 
+            cameraInfo = new Camera(cameraId, cameraType, getValue(angleXVal), getValue(angleYVal), 
                     new CartesianCoordinate(getValue(positionX), getValue(positionY)), getValue(cameraDirection));
         }
         return cameraInfo;
+    }
+
+    /**
+     * Returns name of the platform holding the camera with given Id
+     * @param cameraId ID of the camera
+     * @return ID of the platform, where camera is installed
+     * @throws OntologyException 
+     */
+    public String getPlatformWithCamera(String cameraId) throws OntologyException {
+        //get all the available platforms
+        List<String> platformNames = getInstances(OntologyConstants.Vehicle_with_cameras.name());
+        //for each of them, search for camera
+        for (String platformName : platformNames) {
+            if(getPlatform(platformName).getCameras().containsKey(cameraId)){
+                return platformName;
+            }
+        }
+        return null;
     }
 
     private OWLIndividual updateCameraInformation(Camera camera) throws OntologyException {
@@ -804,7 +819,68 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
                     try {
                         coordinate = LocationHelper.getLocationFromString(coordinateStr);
                         double radius = LocationHelper.calculateDistance(coordinate, referenceLocation);
-                        double angle = calculateAngle(coordinate, referenceLocation);
+                        double angle = LocationHelper.calculateAngle(coordinate, referenceLocation);
+                        objectCoordinate.addRadialCoordinates(radius, angle);
+                    } catch (LocationHelperException e) {
+                        LogHelper.warning(ContextModuleOntologyManager.class, "calculateArenaDistancesForPlatform", "Could not parse '%s' into location. Details: %s", coordinateStr, e.getLocalizedMessage());
+                    }
+                }
+            } else {
+                LogHelper.info(ContextModuleOntologyManager.class, "calculateDistanceForObject",
+                        "No GPS coordinates found for instance: '%s'", buildingId);
+            }
+            objectCoordinates.add(objectCoordinate);
+        }
+
+        // now update objects angle with the platform bearing
+        for (ArenaObjectCoordinate objectCoordinate : objectCoordinates) {
+            for (RadialCoordinate radialCoordinate : objectCoordinate) {
+                radialCoordinate.updateAngle(referenceLocation.getBearing());
+            }
+        }
+        return objectCoordinates;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see itti.com.pl.arena.cm.ontology.Ontology#getCameraFieldOfView(java.lang.String)
+     */
+    @Override
+    public Set<ArenaObjectCoordinate> getCameraFieldOfView(String cameraId) throws OntologyException {
+        LogHelper.debug(ContextModuleOntologyManager.class, "getCameraFieldOfView",
+                "Calculating field of view for camera %s", cameraId);
+
+        // get the platform data from ontology
+        Camera camera = getCamera(cameraId);
+        String platformId = getPlatformWithCamera(camera.getId());
+        Location referenceLocation = getPlatform(platformId).getLocation();
+
+        // use closest parking as a default one
+        String parkingLotId = findNearestParkingLot(referenceLocation,
+                Range.Km1.getRangeInKms());
+        if (!StringHelper.hasContent(parkingLotId)) {
+            LogHelper.warning(ContextModuleOntologyManager.class, "calculateDistancesForPlatform",
+                    "There are no parkings for platform %s in location %s and radius %f", platformId, referenceLocation,
+                    Range.Km1.getRangeInKms());
+            return null;
+        }
+
+        Set<String> buildings = getParkingLotInfrastructure(parkingLotId);
+        Set<ArenaObjectCoordinate> objectCoordinates = new HashSet<>();
+        for (String buildingId : buildings) {
+            // get the coordinates of the building
+            ArenaObjectCoordinate objectCoordinate = new ArenaObjectCoordinate(buildingId);
+            String[] buildingCoordinates = getInstanceProperties(buildingId, OntologyConstants.Object_has_GPS_coordinates.name());
+            // try to parse them into doubles
+            if (objectCoordinates != null) {
+                // calculate radius coordinates
+                for (String coordinateStr : buildingCoordinates) {
+                    Location coordinate = null;
+                    try {
+                        coordinate = LocationHelper.getLocationFromString(coordinateStr);
+                        double radius = LocationHelper.calculateDistance(coordinate, referenceLocation);
+                        double angle = LocationHelper.calculateAngle(coordinate, referenceLocation);
                         objectCoordinate.addRadialCoordinates(radius, angle);
                     } catch (LocationHelperException e) {
                         LogHelper.warning(ContextModuleOntologyManager.class, "calculateArenaDistancesForPlatform", "Could not parse '%s' into location. Details: %s", coordinateStr, e.getLocalizedMessage());
@@ -908,26 +984,6 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         return String.format(zoneNameFormat, startId--);
     }
 
-    /**
-     * Calculates angle between two locations. One is stored as a string: 'xPos, yPos', the second one is stored as a
-     * {@link Location} object. Calculation was implemented based on instructions from:
-     * http://stackoverflow.com/questions/7586063
-     * 
-     * @param coordinateString
-     *            first coordinate in string form
-     * @param referenceLocation
-     *            second coordinate
-     * @return distance between two locations measured in meters
-     */
-    private Double calculateAngle(Location baseLocation, Location referenceLocation) {
-
-        double deltaLongitude = Math.toRadians(baseLocation.getLongitude() - referenceLocation.getLongitude());
-        double deltaLatitude = Math.toRadians(baseLocation.getLatitude() - referenceLocation.getLatitude());
-
-        double angle = Math.atan(deltaLatitude / deltaLongitude) * 100 / Math.PI;
-        return angle;
-    }
-
     private String getStringProperty(Map<String, String[]> properties, OntologyConstants propertyName) {
 
         if (properties == null || propertyName == null) {
@@ -955,13 +1011,13 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
     }
 
     @Override
-    public void updateCamera(Camera camera) throws OntologyException {
+    public void updateCamera(Camera camera, String platformName) throws OntologyException {
 
         Map<String, String[]> properties = new HashMap<>();
         properties.put(OntologyConstants.Camera_has_angle_x.name(), new String[]{StringHelper.toString(camera.getAngleX())});
-        properties.put(OntologyConstants.Camera_has_angle_y.name(), new String[]{StringHelper.toString(camera.getAngleX())});
+        properties.put(OntologyConstants.Camera_has_angle_y.name(), new String[]{StringHelper.toString(camera.getAngleY())});
         properties.put(OntologyConstants.Camera_has_direction.name(), new String[]{StringHelper.toString(camera.getDirectionAngle())});
-        properties.put(OntologyConstants.Camera_has_position_x.name(), new String[]{StringHelper.toString(camera.getOnPlatformPosition().getY())});
+        properties.put(OntologyConstants.Camera_has_position_x.name(), new String[]{StringHelper.toString(camera.getOnPlatformPosition().getX())});
         properties.put(OntologyConstants.Camera_has_position_y.name(), new String[]{StringHelper.toString(camera.getOnPlatformPosition().getY())});
         properties.put(OntologyConstants.Camera_has_type.name(), new String[]{StringHelper.toString(camera.getType())});
 
@@ -969,10 +1025,10 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         createSimpleInstance(OntologyConstants.Camera.name(), camera.getId(), properties);    
 
         //update platform with camera
-        if(StringHelper.hasContent(camera.getPlatformName())){
-            String[] cameraNames = getInstanceProperties(camera.getPlatformName(), OntologyConstants.Vehicle_has_cameras.name());
+        if(StringHelper.hasContent(platformName)){
+            String[] cameraNames = getInstanceProperties(platformName, OntologyConstants.Vehicle_has_cameras.name());
             if(!StringHelper.arrayContainsItem(cameraNames, camera.getId())){
-                addPropertyValue(camera.getPlatformName(), OntologyConstants.Vehicle_has_cameras.name(), camera.getId());
+                addPropertyValue(platformName, OntologyConstants.Vehicle_has_cameras.name(), camera.getId());
             }
         }
     }

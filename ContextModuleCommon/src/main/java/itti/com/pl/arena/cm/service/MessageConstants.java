@@ -47,9 +47,14 @@ public final class MessageConstants {
         getGeoportalData,
         
         /**
-         * Service name used by the {@link ContextModule} 'getCameraFieldOfView' method
+         * Service name used by the {@link ContextModule} 'getPlatformNeighborhood' method
          */
         getPlatformNeighborhood,
+
+        /**
+         * Service name used by the {@link ContextModule} 'getCameraFieldOfView' method
+         */
+        getCameraFieldOfView,
 
         /**
          * Service name used by the {@link ContextModule} 'updateZone' method
@@ -153,7 +158,7 @@ public final class MessageConstants {
         /**
          * Platform
          */
-        Platform, Width, Height, Length, Coordinate,
+        Platform, PlatformName, Width, Height, Length, Coordinate,
 
         /**
          * Properties of the Camera node

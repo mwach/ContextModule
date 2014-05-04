@@ -151,14 +151,14 @@ public class NumbersHelper {
         return output;
     }
 
-    public static boolean equals(Double valueA, Double valueB){
+    public static boolean equals(Double valueA, Double valueB, double delta){
         if(valueA == null && valueB == null){
             return true;
         }else if(valueA == null || valueB == null){
             return false;
         }
-        double delta = Math.abs(valueA - valueB);
-        return  delta < 0.000001;
+        double localDelta = Math.abs(valueA - valueB);
+        return  localDelta <= delta;
     }
 
     public static boolean equals(Integer valueA, Integer valueB){

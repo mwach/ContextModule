@@ -1,10 +1,11 @@
 package itti.com.pl.arena.cm.utils.helper;
 
+import static org.junit.Assert.*;
+
 import java.util.Random;
 
 import itti.com.pl.arena.cm.dto.Location;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -19,13 +20,13 @@ public class LocationHelperTest {
     @Test
     public void testEmptyLocation(){
         Location location = new Location();
-        Assert.assertEquals("0.0, 0.0, 0.0", LocationHelper.createStringFromLocation(location));
+        assertEquals("0.0, 0.0, 0.0", LocationHelper.createStringFromLocation(location));
     }
 
     @Test
     public void testLonLatLocation(){
         Location location = new Location(random.nextDouble(), random.nextDouble());
-        Assert.assertEquals(
+        assertEquals(
                 String.format("%s, %s, 0.0", location.getLongitude(), location.getLatitude()), 
                 LocationHelper.createStringFromLocation(location));
     }
@@ -35,7 +36,7 @@ public class LocationHelperTest {
         //bearing is going to be ignored
         Location location = new Location(random.nextDouble(), random.nextDouble(), random.nextInt(360));
         String expectedFormat = String.format("%s, %s, 0.0", location.getLongitude(), location.getLatitude());
-        Assert.assertEquals(
+        assertEquals(
                 expectedFormat, LocationHelper.createStringFromLocation(location));
     }
 
@@ -44,7 +45,7 @@ public class LocationHelperTest {
         //bearing is going to be ignored
         Location location = new Location(random.nextDouble(), random.nextDouble(), random.nextInt(360), random.nextDouble());
         String expectedFormat = String.format("%s, %s, %s", location.getLongitude(), location.getLatitude(), location.getAltitude());
-        Assert.assertEquals(
+        assertEquals(
                 expectedFormat, LocationHelper.createStringFromLocation(location));
     }
 
@@ -52,7 +53,7 @@ public class LocationHelperTest {
     public void testLocationEndDecode() throws LocationHelperException{
         //bearing is going to be ignored
         Location location = new Location(random.nextDouble(), random.nextDouble(), 0, random.nextDouble());
-        Assert.assertEquals(
+        assertEquals(
                 location, LocationHelper.getLocationFromString(LocationHelper.createStringFromLocation(location)));
     }
 
@@ -64,8 +65,36 @@ public class LocationHelperTest {
         arrayOfLocations[1] = new Location(random.nextDouble(), random.nextDouble(), 0, random.nextDouble());
         arrayOfLocations[2] = new Location(random.nextDouble(), random.nextDouble(), 0, random.nextDouble());
 
-        Assert.assertArrayEquals(
+        assertArrayEquals(
                 arrayOfLocations, LocationHelper.getLocationsFromStrings(LocationHelper.createStringsFromLocations(arrayOfLocations)));
     }
 
+    @Test
+    public void testCalculateAngle(){
+        Location locationA = new Location(0, 0);
+        Location locationB = new Location(1, 1);
+        double angle = LocationHelper.calculateAngle(locationA, locationB);
+        assertEquals(45.0, angle, 0.0001);
+
+        locationB = new Location(1, 0);
+        angle = LocationHelper.calculateAngle(locationA, locationB);
+        assertEquals(0.0, angle, 0.0001);
+
+        locationB = new Location(0, 1);
+        angle = LocationHelper.calculateAngle(locationA, locationB);
+        assertEquals(90.0, angle, 0.0001);
+
+        locationB = new Location(0, -1);
+        angle = LocationHelper.calculateAngle(locationA, locationB);
+        assertEquals(-90.0, angle, 0.0001);
+
+        locationB = new Location(-1, 0);
+        angle = LocationHelper.calculateAngle(locationA, locationB);
+        assertEquals(180.0, angle, 0.0001);
+                
+        locationB = new Location(-1, -1);
+        angle = LocationHelper.calculateAngle(locationA, locationB);
+        assertEquals(-135.0, angle, 0.0001);
+
+    }
 }

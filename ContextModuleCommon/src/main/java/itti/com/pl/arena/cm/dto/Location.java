@@ -201,17 +201,17 @@ public class Location implements Serializable {
             return false;
         Location other = (Location) obj;
 
-        if (!NumbersHelper.equals(accuracy, other.accuracy))
+        if (!NumbersHelper.equals(accuracy, other.accuracy, 0.001))
             return false;
-        if (!NumbersHelper.equals(altitude, other.altitude))
+        if (!NumbersHelper.equals(altitude, other.altitude, 0.001))
             return false;
         if (!NumbersHelper.equals(bearing, other.bearing))
             return false;
-        if (!NumbersHelper.equals(latitude, other.latitude))
+        if (!NumbersHelper.equals(latitude, other.latitude, 0.001))
             return false;
-        if (!NumbersHelper.equals(longitude, other.longitude))
+        if (!NumbersHelper.equals(longitude, other.longitude, 0.001))
             return false;
-        if (!NumbersHelper.equals(speed, other.speed))
+        if (!NumbersHelper.equals(speed, other.speed, 0.001))
             return false;
         //time is not used for location comparison
         //        if (NumbersHelper.equals(time, other.time))
