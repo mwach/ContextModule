@@ -8,6 +8,7 @@ import itti.com.pl.arena.cm.dto.Location;
 import itti.com.pl.arena.cm.dto.OntologyObject;
 import itti.com.pl.arena.cm.dto.Zone;
 import itti.com.pl.arena.cm.dto.coordinates.ArenaObjectCoordinate;
+import itti.com.pl.arena.cm.dto.coordinates.FieldOfViewObject;
 import itti.com.pl.arena.cm.dto.dynamicobj.Camera;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
 import itti.com.pl.arena.cm.dto.staticobj.Building;
@@ -175,7 +176,7 @@ public interface Ontology {
      * @throws OntologyException
      *             processing exception
      */
-    public Set<ArenaObjectCoordinate> getCameraFieldOfView(String cameraId) throws OntologyException;
+    public Set<FieldOfViewObject> getCameraFieldOfView(String cameraId) throws OntologyException;
 
     /**
      * Defines a new, or update an existing zone in the ontology

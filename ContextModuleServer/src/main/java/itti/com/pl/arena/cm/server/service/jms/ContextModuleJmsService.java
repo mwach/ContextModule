@@ -11,6 +11,7 @@ import itti.com.pl.arena.cm.Constants;
 import itti.com.pl.arena.cm.dto.GeoObject;
 import itti.com.pl.arena.cm.dto.Zone;
 import itti.com.pl.arena.cm.dto.coordinates.ArenaObjectCoordinate;
+import itti.com.pl.arena.cm.dto.coordinates.FieldOfViewObject;
 import itti.com.pl.arena.cm.dto.dynamicobj.Camera;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
 import itti.com.pl.arena.cm.dto.staticobj.Building;
@@ -510,11 +511,11 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
 
             String cameraId = cameraIdRequestObject.getValue();
             // try to retrieve data from ontology
-            Set<ArenaObjectCoordinate> objects = getOntology().getCameraFieldOfView(cameraId);
+            Set<FieldOfViewObject> objects = getOntology().getCameraFieldOfView(cameraId);
 
             // data retrieved -create response message
             if (objects != null) {
-                for (ArenaObjectCoordinate objectCoordinate : objects) {
+                for (FieldOfViewObject objectCoordinate : objects) {
                     // if any of the response objects fail, ignore it
                     try {
                         vector.add(createSimpleNamedValue(cameraIdRequestObject.getId(),
