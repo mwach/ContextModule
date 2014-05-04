@@ -187,7 +187,7 @@ public class ContextModuleJmsServiceTest {
         //object found, ontology is going to return it
         Set<ArenaObjectCoordinate> coordinates = new HashSet<>();
         coordinates.add(new ArenaObjectCoordinate("ID"));
-        Mockito.when(ontology.calculateArenaDistancesForPlatform(Mockito.anyString())).thenReturn(
+        Mockito.when(ontology.getPlatformNeighborhood(Mockito.anyString())).thenReturn(
                 coordinates);
         CMJmsService.setOntology(ontology);
 
@@ -199,7 +199,7 @@ public class ContextModuleJmsServiceTest {
         assertTrue(!response.getFeatureVector().getFeature().isEmpty());
 
         //verify ontology was called
-        Mockito.verify(ontology).calculateArenaDistancesForPlatform(Mockito.anyString());
+        Mockito.verify(ontology).getPlatformNeighborhood(Mockito.anyString());
     }
 
     @Test

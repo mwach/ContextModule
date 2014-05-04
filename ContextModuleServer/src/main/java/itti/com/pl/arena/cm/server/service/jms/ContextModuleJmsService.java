@@ -469,7 +469,7 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
 
             String platformId = platformIdRequestObject.getValue();
             // try to retrieve data from ontology
-            Set<ArenaObjectCoordinate> objects = getOntology().calculateArenaDistancesForPlatform(platformId);
+            Set<ArenaObjectCoordinate> objects = getOntology().getPlatformNeighborhood(platformId);
 
             // data retrieved -create response message
             if (objects != null) {

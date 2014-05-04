@@ -784,10 +784,10 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
     /*
      * (non-Javadoc)
      * 
-     * @see itti.com.pl.arena.cm.ontology.Ontology#calculateArenaDistancesForPlatform(java.lang.String)
+     * @see itti.com.pl.arena.cm.ontology.Ontology#getPlatformNeighborhood(java.lang.String)
      */
     @Override
-    public Set<ArenaObjectCoordinate> calculateArenaDistancesForPlatform(String platformId) throws OntologyException {
+    public Set<ArenaObjectCoordinate> getPlatformNeighborhood(String platformId) throws OntologyException {
         LogHelper.debug(ContextModuleOntologyManager.class, "calculateArenaDistancesForPlatform",
                 "Calculating distance for platform %s", platformId);
 
@@ -854,52 +854,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         // get the platform data from ontology
         Camera camera = getCamera(cameraId);
         String platformId = getPlatformWithCamera(camera.getId());
-        Location referenceLocation = getPlatform(platformId).getLocation();
-
-        // use closest parking as a default one
-        String parkingLotId = findNearestParkingLot(referenceLocation,
-                Range.Km1.getRangeInKms());
-        if (!StringHelper.hasContent(parkingLotId)) {
-            LogHelper.warning(ContextModuleOntologyManager.class, "calculateDistancesForPlatform",
-                    "There are no parkings for platform %s in location %s and radius %f", platformId, referenceLocation,
-                    Range.Km1.getRangeInKms());
-            return null;
-        }
-
-        Set<String> buildings = getParkingLotInfrastructure(parkingLotId);
-        Set<ArenaObjectCoordinate> objectCoordinates = new HashSet<>();
-        for (String buildingId : buildings) {
-            // get the coordinates of the building
-            ArenaObjectCoordinate objectCoordinate = new ArenaObjectCoordinate(buildingId);
-            String[] buildingCoordinates = getInstanceProperties(buildingId, OntologyConstants.Object_has_GPS_coordinates.name());
-            // try to parse them into doubles
-            if (objectCoordinates != null) {
-                // calculate radius coordinates
-                for (String coordinateStr : buildingCoordinates) {
-                    Location coordinate = null;
-                    try {
-                        coordinate = LocationHelper.getLocationFromString(coordinateStr);
-                        double radius = LocationHelper.calculateDistance(coordinate, referenceLocation);
-                        double angle = LocationHelper.calculateAngle(coordinate, referenceLocation);
-                        objectCoordinate.addRadialCoordinates(radius, angle);
-                    } catch (LocationHelperException e) {
-                        LogHelper.warning(ContextModuleOntologyManager.class, "calculateArenaDistancesForPlatform", "Could not parse '%s' into location. Details: %s", coordinateStr, e.getLocalizedMessage());
-                    }
-                }
-            } else {
-                LogHelper.info(ContextModuleOntologyManager.class, "calculateDistanceForObject",
-                        "No GPS coordinates found for instance: '%s'", buildingId);
-            }
-            objectCoordinates.add(objectCoordinate);
-        }
-
-        // now update objects angle with the platform bearing
-        for (ArenaObjectCoordinate objectCoordinate : objectCoordinates) {
-            for (RadialCoordinate radialCoordinate : objectCoordinate) {
-                radialCoordinate.updateAngle(referenceLocation.getBearing());
-            }
-        }
-        return objectCoordinates;
+        return getPlatformNeighborhood(platformId);
     }
 
     @Override
@@ -966,50 +921,6 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         return zone;
     }
 
-    /**
-     * generates zone name in form of 'zone_%id', where 'id' is an unique zone identifier
-     * 
-     * @return zone name
-     */
-    private String generateZoneName() {
-        // zone name format
-        String zoneNameFormat = "zone_%d";
-        // get all available instances
-        List<String> zones = getDirectInstances(OntologyConstants.Car_parking_zone.name());
-        // start counting
-        int startId = zones.size();
-        // search for first, not found zone
-        while (zones.contains(String.format(zoneNameFormat, startId++)))
-            ;
-        return String.format(zoneNameFormat, startId--);
-    }
-
-    private String getStringProperty(Map<String, String[]> properties, OntologyConstants propertyName) {
-
-        if (properties == null || propertyName == null) {
-            return null;
-        }
-        String[] values = properties.get(propertyName.name());
-        String stringValue = (values != null && values.length > 0 ? values[0] : null);
-        return stringValue;
-    }
-
-    private Integer getIntProperty(Map<String, String[]> properties, OntologyConstants propertyName) {
-        return NumbersHelper.getIntegerFromString(getStringProperty(properties, propertyName));
-    }
-
-    private Double getDoubleProperty(Map<String, String[]> properties, OntologyConstants propertyName) {
-        return NumbersHelper.getDoubleFromString(getStringProperty(properties, propertyName));
-    }
-
-    private double getValue(Double value){
-        return value == null ? 0 : value.doubleValue();
-    }
-
-    private int getValue(Integer value){
-        return value == null ? 0 : value.intValue();
-    }
-
     @Override
     public void updateCamera(Camera camera, String platformName) throws OntologyException {
 
@@ -1065,4 +976,47 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         }
     }
 
+    /**
+     * generates zone name in form of 'zone_%id', where 'id' is an unique zone identifier
+     * 
+     * @return zone name
+     */
+    private String generateZoneName() {
+        // zone name format
+        String zoneNameFormat = "zone_%d";
+        // get all available instances
+        List<String> zones = getDirectInstances(OntologyConstants.Car_parking_zone.name());
+        // start counting
+        int startId = zones.size();
+        // search for first, not found zone
+        while (zones.contains(String.format(zoneNameFormat, startId++)))
+            ;
+        return String.format(zoneNameFormat, startId--);
+    }
+
+    private String getStringProperty(Map<String, String[]> properties, OntologyConstants propertyName) {
+
+        if (properties == null || propertyName == null) {
+            return null;
+        }
+        String[] values = properties.get(propertyName.name());
+        String stringValue = (values != null && values.length > 0 ? values[0] : null);
+        return stringValue;
+    }
+
+    private Integer getIntProperty(Map<String, String[]> properties, OntologyConstants propertyName) {
+        return NumbersHelper.getIntegerFromString(getStringProperty(properties, propertyName));
+    }
+
+    private Double getDoubleProperty(Map<String, String[]> properties, OntologyConstants propertyName) {
+        return NumbersHelper.getDoubleFromString(getStringProperty(properties, propertyName));
+    }
+
+    private double getValue(Double value){
+        return value == null ? 0 : value.doubleValue();
+    }
+
+    private int getValue(Integer value){
+        return value == null ? 0 : value.intValue();
+    }
 }

@@ -157,27 +157,27 @@ public class ContextModuleOntologyManagerTest {
 
     // test for complex functionality for retrieving information about platform neighborhood
     @Test
-    public void testCalculateArenaDistancesForPlatformNullId() throws OntologyException {
+    public void testGetPlatformNeighborhoodNullId() throws OntologyException {
 
         //null platformId provided
         expectedException.expect(OntologyException.class);
         expectedException.expectMessage(ErrorMessages.ONTOLOGY_EMPTY_INSTANCE_NAME.getMessage());
 
-        cmOntologyManager.calculateArenaDistancesForPlatform(null);
+        cmOntologyManager.getPlatformNeighborhood(null);
     }
 
     @Test
-    public void testCalculateArenaDistancesForPlatforEmptyId() throws OntologyException {
+    public void testGetPlatformNeighborhoodEmptyId() throws OntologyException {
 
         //empty platformId provided
         expectedException.expect(OntologyException.class);
         expectedException.expectMessage(ErrorMessages.ONTOLOGY_EMPTY_INSTANCE_NAME.getMessage());
 
-        cmOntologyManager.calculateArenaDistancesForPlatform("");
+        cmOntologyManager.getPlatformNeighborhood("");
     }
 
     @Test
-    public void testCalculateArenaDistancesForPlatformInvalidId() throws OntologyException {
+    public void testGetPlatformNeighborhoodInvalidId() throws OntologyException {
 
         //invalid platformId provided
         String platformId = "nonExistingPlatformId";
@@ -186,7 +186,7 @@ public class ContextModuleOntologyManagerTest {
         expectedException.expectMessage(String.format(
                 ErrorMessages.ONTOLOGY_INSTANCE_NOT_FOUND.getMessage(), platformId));
 
-        cmOntologyManager.calculateArenaDistancesForPlatform(platformId);
+        cmOntologyManager.getPlatformNeighborhood(platformId);
     }
 
     @Test
@@ -219,7 +219,7 @@ public class ContextModuleOntologyManagerTest {
         assertEquals(parkingLotTwo, ontoParkingLotTwo);
 
         //later, try to retrieve parking data
-        Set<ArenaObjectCoordinate> coordinates = cmOntologyManager.calculateArenaDistancesForPlatform(platformId);
+        Set<ArenaObjectCoordinate> coordinates = cmOntologyManager.getPlatformNeighborhood(platformId);
 
         //verify data was returned
         assertFalse(coordinates.isEmpty());

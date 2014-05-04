@@ -164,7 +164,7 @@ public interface Ontology {
      * @throws OntologyException
      *             processing exception
      */
-    public Set<ArenaObjectCoordinate> calculateArenaDistancesForPlatform(String platformId) throws OntologyException;
+    public Set<ArenaObjectCoordinate> getPlatformNeighborhood(String platformId) throws OntologyException;
 
     /**
      * Calculates camera field of view
