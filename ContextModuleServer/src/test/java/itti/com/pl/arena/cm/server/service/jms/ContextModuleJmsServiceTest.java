@@ -41,10 +41,14 @@ public class ContextModuleJmsServiceTest {
     }
 
     @Test
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings(
+            value="NP_NULL_PARAM_DEREF", 
+            justification="Intentionally testing code can handle null value")
     public void testUpdatePlatformServiceNullRequest() {
 
         //null request
-        BooleanNamedValue response = CMJmsService.updatePlatform(null);
+        SimpleNamedValue request = null;
+        BooleanNamedValue response = CMJmsService.updatePlatform(request);
         //request failure returned
         assertEquals(false, response.isFeatureValue());
         assertEquals(null, response.getFeatureName());
@@ -96,10 +100,14 @@ public class ContextModuleJmsServiceTest {
     }
 
     @Test
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings(
+            value="NP_NULL_PARAM_DEREF", 
+            justification="Intentionally testing code can handle null value")
     public void testUpdateParkingLotServiceNullRequest() {
 
         //null request
-        BooleanNamedValue response = CMJmsService.updateParkingLot(null);
+        SimpleNamedValue request = null;
+        BooleanNamedValue response = CMJmsService.updateParkingLot(request);
         //request failure returned
         assertEquals(false, response.isFeatureValue());
         assertEquals(null, response.getFeatureName());
@@ -151,10 +159,14 @@ public class ContextModuleJmsServiceTest {
     }
 
     @Test
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings(
+            value="NP_NULL_PARAM_DEREF", 
+            justification="Intentionally testing code can handle null value")
     public void testGetPlatformNeighborhoodNullRequest() {
 
         //null request
-        Object response = CMJmsService.getPlatformNeighborhood(null);
+        SimpleNamedValue request = null;
+        Object response = CMJmsService.getPlatformNeighborhood(request);
         //empty response returned
         assertTrue(response.getFeatureVector().getFeature().isEmpty());
     }

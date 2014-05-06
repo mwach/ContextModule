@@ -1,5 +1,6 @@
 package itti.com.pl.arena.cm.client.ui;
 
+import itti.com.pl.arena.cm.client.service.ContextModuleClientException;
 import itti.com.pl.arena.cm.client.ui.components.ButtonRow;
 import itti.com.pl.arena.cm.client.ui.components.ComboBoxButtonRow;
 import itti.com.pl.arena.cm.client.ui.components.ComboBoxRow;
@@ -196,7 +197,7 @@ public class ParkingLotPanel extends ContextModulePanel {
         String selectedParkingLot = removeParkingLotComboBox.getSelectedItem();
         if (StringHelper.hasContent(selectedParkingLot)) {
             ParkingLot parkingLot = getContextModuleAdapter().getParkingLotDefinition(selectedParkingLot);
-            descriptionTextBox.setText(parkingLot != null ? null : null);
+            descriptionTextBox.setText(null);
             countryTextBox.setText(parkingLot != null ? parkingLot.getCountry() : null);
             townTextBox.setText(parkingLot != null ? parkingLot.getTown() : null);
             streetTextBox.setText(parkingLot != null ? parkingLot.getStreet() : null);
@@ -442,6 +443,8 @@ public class ParkingLotPanel extends ContextModulePanel {
             }
         } catch (JsonHelperException e) {
             showMessage("Could not update building: Platform serialization error");
+        } catch (ContextModuleClientException e) {
+            showMessage(String.format("Could not update building: %s", e.getLocalizedMessage()));
         } catch (LocationHelperException e) {
             showMessage("Could not parse provided locations");
         }

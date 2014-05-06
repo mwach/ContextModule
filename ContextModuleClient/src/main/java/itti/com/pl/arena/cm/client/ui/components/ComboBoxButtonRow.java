@@ -87,6 +87,6 @@ public class ComboBoxButtonRow extends JPanel {
     }
 
     public boolean containsItem(String item) {
-        return StringHelper.hasContent(item) ? getItems().contains(item) : null;
+        return (StringHelper.hasContent(item) && getItems() != null) ? getItems().contains(item) : null;
     }
 }

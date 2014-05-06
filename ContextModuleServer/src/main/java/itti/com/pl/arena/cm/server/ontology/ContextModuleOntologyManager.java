@@ -820,7 +820,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
             ArenaObjectCoordinate objectCoordinate = new ArenaObjectCoordinate(buildingId);
             String[] buildingCoordinates = getInstanceProperties(buildingId, OntologyConstants.Object_has_GPS_coordinates.name());
             // try to parse them into doubles
-            if (objectCoordinates != null) {
+            if (buildingCoordinates != null) {
                 // calculate radius coordinates
                 for (String coordinateStr : buildingCoordinates) {
                     Location coordinate = null;

@@ -127,7 +127,10 @@ public class Infrastructure extends GeoObject {
         Infrastructure other = (Infrastructure) obj;
         if (type != other.type)
             return false;
-        if(getId() != other.getId())
+        if (getId() == null) {
+            if (other.getId() != null)
+                return false;
+        } else if (!getId().equals(other.getId()))
             return false;
         return true;
     }

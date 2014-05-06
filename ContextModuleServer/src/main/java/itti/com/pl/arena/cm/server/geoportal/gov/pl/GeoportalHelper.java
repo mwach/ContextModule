@@ -144,7 +144,7 @@ public final class GeoportalHelper {
         for (String layerId : geoportalData.getLayersIds()) {
             for (int itemId = 0; itemId < geoportalData.getLayerElementsCount(layerId); itemId++) {
                 String layerName = geoportalData.getValue(layerId, itemId, Constants.LAYER_NAME);
-                // TODO: don't have to be a building
+                // TODO: doesn't have to be a building
                 String objectId = String.format("Building_%f_%f_%d", location.getLongitude(), location.getLatitude(), itemId);
                 GeoObject object = GeoObjectFactory.getGeoObject(layerName, objectId);
                 if (object != null) {

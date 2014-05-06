@@ -136,7 +136,10 @@ public class ParkingLot extends GeoObject {
         if (getClass() != obj.getClass())
             return false;
         ParkingLot other = (ParkingLot) obj;
-        if(getId() != other.getId())
+        if (getId() == null) {
+            if (other.getId() != null)
+                return false;
+        } else if (!getId().equals(other.getId()))
             return false;
         if (buildings == null) {
             if (other.buildings != null)

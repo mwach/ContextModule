@@ -1,6 +1,7 @@
 package itti.com.pl.arena.cm.server.service.jms;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -233,7 +234,7 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
                         && (data instanceof SimpleNamedValue)) {
                     response = updatePlatform((SimpleNamedValue) data);
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.updateCamera.name(), data.getHref())
-                        && (data instanceof SimpleNamedValue)) {
+                        && (data instanceof Object)) {
                     response = updateCamera((Object) data);
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getPlatforms.name(), data.getHref())
                         && (data instanceof Location)) {
@@ -317,8 +318,7 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
                     // invalid service name provided
                     LogHelper.info(ContextModuleJmsService.class, "onDataChanged", "Invalid method requested: '%s'",
                             data.getHref());
-                    SimpleNamedValue invalidRequestResponse = createSimpleNamedValue(data.getId(),
-                            ContextModuleRequestProperties.Error.name(),
+                    SimpleNamedValue invalidRequestResponse = prepareErrorResponse(data.getId(),
                             String.format("Unsupprted service name specified: '%s'", data.getHref()));
                     response = invalidRequestResponse;
                 }
@@ -772,6 +772,13 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
             LogHelper.exception(ContextModuleJmsService.class, "getGISData", "Could not parse request data", exc);
         }
 
+        if(requestLocation == null){
+            LogHelper.error(ContextModuleJmsService.class, "getGISData", String.format("No location found in the request with ID: %s", parameters.getId()));
+            //prepare error response
+            return createObject(parameters.getId(), Arrays.asList(new AbstractNamedValue[]{
+                    prepareErrorResponse(parameters.getId(),
+                    String.format("No location provided in the request: '%s'", parameters.getHref()))}));
+        }
         return getGeoObjects(requestLocation, requestRange, requestClasses);
     }
 
@@ -1187,4 +1194,10 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
         return response;    
     }
 
+    private SimpleNamedValue prepareErrorResponse(String id, String message){
+        return createSimpleNamedValue(id,
+                ContextModuleRequestProperties.Error.name(),
+                message
+        );
+    }
 }

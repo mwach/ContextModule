@@ -317,7 +317,7 @@ public class ContextModuleAdapter {
     }
 
     public boolean updateBuilding(String buildingName, String parkingLotName, String type,
-            List<itti.com.pl.arena.cm.dto.Location> locations) throws JsonHelperException {
+            List<itti.com.pl.arena.cm.dto.Location> locations) throws JsonHelperException, ContextModuleClientException {
 
         GeoObject building = null;
 
@@ -325,6 +325,8 @@ public class ContextModuleAdapter {
             building = new Building(buildingName, parkingLotName, Building.Type.getType(type));
         }else if(Infrastructure.Type.getType(type) != null){
             building = new Infrastructure(buildingName, parkingLotName, Infrastructure.Type.getType(type));
+        }else{
+            throw new ContextModuleClientException(String.format("Invalid building type specified: %s", type));
         }
         building.setBoundaries(locations);
 
