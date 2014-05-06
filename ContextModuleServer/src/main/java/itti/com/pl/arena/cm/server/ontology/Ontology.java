@@ -242,15 +242,14 @@ public interface Ontology {
      * @param instanceName
      *            name of the instance to remove
      */
-    public void remove(String zoneId) throws OntologyException;
+    public void remove(String instanceName) throws OntologyException;
 
     /**
      * Defines a new, or update an existing camera in the ontology
      * 
      * @param camera camera object
-     * @param platformName ID of the platform, camera is installed
+     * @param platformName ID of the platform, on which camera is installed
      * 
-     * @return ID of the camera
      * @throws OntologyException
      *             processing exception
      */

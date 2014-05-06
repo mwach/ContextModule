@@ -21,7 +21,8 @@ public interface LocalContextModule extends ContextModule {
      * 
      * @param id
      *            ID of the object
-     *            @param featureName name of the feature
+     * @param featureName
+     *            name of the feature
      * @param value
      *            value of the object
      * @return object containing provided values
@@ -31,11 +32,12 @@ public interface LocalContextModule extends ContextModule {
     /**
      * Prepares instance of the {@link AbstractNamedValue} class
      * 
-     * @param featureName
+     * @param id
      *            ID of the object
-     *            @param featureName name of the feature
-     * @param value
-     *            value of the object
+     * @param featureName
+     *            name of the feature
+     * @param status
+     *            status of the feature
      * @return object containing provided values
      */
     BooleanNamedValue createBooleanNamedValue(String id, String featureName, boolean status);
@@ -45,8 +47,10 @@ public interface LocalContextModule extends ContextModule {
      * 
      * @param id
      *            ID of the object
-     * @param value
-     *            value of the object
+     * @param x value of the longitude
+     * @param y value of the latitude
+     * @param z value of the altitude
+     *            
      * @return object containing provided values
      */
     AbstractNamedValue createCoordinate(String id, double x, double y, double z);

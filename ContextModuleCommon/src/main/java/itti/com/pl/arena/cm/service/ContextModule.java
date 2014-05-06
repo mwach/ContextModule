@@ -1,6 +1,7 @@
 package itti.com.pl.arena.cm.service;
 
 import itti.com.pl.arena.cm.dto.GeoObject;
+import itti.com.pl.arena.cm.dto.dynamicobj.Camera;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
 import itti.com.pl.arena.cm.dto.staticobj.Building;
 import itti.com.pl.arena.cm.dto.staticobj.Infrastructure;

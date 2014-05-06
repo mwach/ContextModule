@@ -305,9 +305,9 @@ public class OntologyManager implements Service {
     /**
      * Creates a new class in the ontology model
      * 
-     * @param className
-     *            name of the class
-     * @return true, if class was successfully created, or already existed in the ontology, false otherwise
+     * @param instanceName
+     *            name of the instance
+     * @return ontology object with given name
      * @throws OntologyException
      */
     public OWLIndividual getInstance(String instanceName) throws OntologyException {
@@ -510,7 +510,7 @@ public class OntologyManager implements Service {
      * 
      * @param instanceName
      *            name of the OWL instance
-     * @param property
+     * @param propertyName
      *            name of the property
      * @param value
      *            value to be set
@@ -543,8 +543,8 @@ public class OntologyManager implements Service {
      *            name of the instance
      * @param propertyName
      *            name of the property
-     * @param propertyValue
-     *            new value for the property
+     * @param propertyValues
+     *            list of values for property
      * @throws OntologyException
      *             could not update property value
      */

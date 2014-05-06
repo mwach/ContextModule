@@ -143,8 +143,8 @@ public class Platform extends OntologyObject{
     }
 
     /**
-     * Adds a new camera to the platform
-     * @param camera
+     * Sets a collection of cameras to the platform
+     * @param cameras collection of cameras
      */
     public void setCameras(Collection<Camera> cameras) {
         this.cameras.clear();

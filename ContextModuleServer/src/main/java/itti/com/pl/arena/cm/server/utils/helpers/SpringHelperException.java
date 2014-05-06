@@ -4,7 +4,7 @@ import itti.com.pl.arena.cm.exception.ContextModuleException;
 import itti.com.pl.arena.cm.server.exception.ErrorMessages;
 
 /**
- * Exception thrown by the {@link IOHelper} class
+ * Exception thrown by the {@link SpringHelper} class
  * 
  * @author mawa
  * 
@@ -17,7 +17,7 @@ public class SpringHelperException extends ContextModuleException {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Exception, which may be thrown by the {@link IOHelper} class
+     * Exception, which may be thrown by the {@link SpringHelper} class
      * 
      * @param reason
      *            base exception
@@ -31,7 +31,7 @@ public class SpringHelperException extends ContextModuleException {
     }
 
     /**
-     * Exception, which may be thrown by the {@link IOHelper} class
+     * Exception, which may be thrown by the {@link SpringHelper} class
      * 
      * @param errorMsg
      *            exception details
