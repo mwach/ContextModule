@@ -73,7 +73,7 @@ public class ZonesPanel extends ContextModulePanel {
 
         // zones combo box
         panelZones.add(createLabelRow(Messages.getString("ZonesPanel.1"))); //$NON-NLS-1$
-        zonesComboBoxButtonRow = createComboBoxButtonRow("Remove zone"  , null); //$NON-NLS-1$
+        zonesComboBoxButtonRow = createComboBoxButtonRow("Remove zone", null); //$NON-NLS-1$
         zonesComboBoxButtonRow.setOnChangeListener(new ActionListener() {
 
             @Override
@@ -92,7 +92,7 @@ public class ZonesPanel extends ContextModulePanel {
 
         createZoneButtonRow = createTextBoxButtonRow(null, Messages.getString("ZonesPanel.3")); //$NON-NLS-1$
         createZoneButtonRow.setOnButtonClickListener(new ActionListener() {
-            
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 addZone();
@@ -101,13 +101,13 @@ public class ZonesPanel extends ContextModulePanel {
         panelZones.add(createZoneButtonRow);
         panelZones.add(createEmptyRow());
 
-        planceNameRow = new LabelTextBoxRow("Plane name", null);
+        planceNameRow = new LabelTextBoxRow(Messages.getString("ZonesPanel.0"), null); //$NON-NLS-1$
         panelZones.add(planceNameRow);
 
-        panelZones.add(createLabelRow("Zone coordinates"));
+        panelZones.add(createLabelRow(Messages.getString("ZonesPanel.2"))); //$NON-NLS-1$
         zoneCoordinateComboBoxRow = createComboBoxRow(null);
         zoneCoordinateComboBoxRow.setOnChangeListener(new ActionListener() {
-            
+
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 coordinateSelectionChanged();
@@ -117,7 +117,7 @@ public class ZonesPanel extends ContextModulePanel {
 
         zoneCoordinateButtonRow = createButtonRow(Messages.getString("ZonesPanel.4")); //$NON-NLS-1$
         zoneCoordinateButtonRow.setOnClickListener(new ActionListener() {
-            
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 removeCoordinate();
@@ -125,23 +125,23 @@ public class ZonesPanel extends ContextModulePanel {
         });
         panelZones.add(zoneCoordinateButtonRow);
 
-        coordinateXRow = createLabelTextBoxRow("X", null);
-        coordinateYRow = createLabelTextBoxRow("Y", null);
-        coordinateZRow = createLabelTextBoxRow("Z", null);
+        coordinateXRow = createLabelTextBoxRow(Messages.getString("ZonesPanel.5"), null); //$NON-NLS-1$
+        coordinateYRow = createLabelTextBoxRow(Messages.getString("ZonesPanel.9"), null); //$NON-NLS-1$
+        coordinateZRow = createLabelTextBoxRow(Messages.getString("ZonesPanel.10"), null); //$NON-NLS-1$
         panelZones.add(coordinateXRow);
         panelZones.add(coordinateYRow);
         panelZones.add(coordinateZRow);
 
-        clearAddCoordinateRow = createButtonButtonRow("Clear", "Add");
+        clearAddCoordinateRow = createButtonButtonRow(Messages.getString("ZonesPanel.11"), Messages.getString("ZonesPanel.12")); //$NON-NLS-1$ //$NON-NLS-2$
         clearAddCoordinateRow.setOnFirstButtonClickListener(new ActionListener() {
-            
+
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 clearCoordinateFields();
             }
         });
         clearAddCoordinateRow.setOnSecondButtonClickListener(new ActionListener() {
-            
+
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 addCoordinate();
@@ -153,28 +153,24 @@ public class ZonesPanel extends ContextModulePanel {
     }
 
     private void clearCoordinateFields() {
-       coordinateXRow.setText(null);
-       coordinateYRow.setText(null);
-       coordinateZRow.setText(null);
+        coordinateXRow.setText(null);
+        coordinateYRow.setText(null);
+        coordinateZRow.setText(null);
     }
 
     protected void addCoordinate() {
-        if(!NumbersHelper.isDouble(coordinateXRow.getText())){
-            showMessage("Value for the X coordinate is not a valid number");
+        if (!NumbersHelper.isDouble(coordinateXRow.getText())) {
+            showMessage(Messages.getString("ZonesPanel.13")); //$NON-NLS-1$
         }
-        if(!NumbersHelper.isDouble(coordinateYRow.getText())){
-            showMessage("Value for the Y coordinate is not a valid number");
+        if (!NumbersHelper.isDouble(coordinateYRow.getText())) {
+            showMessage(Messages.getString("ZonesPanel.14")); //$NON-NLS-1$
         }
-        if(!NumbersHelper.isDouble(coordinateZRow.getText())){
-            showMessage("Value for the Z coordinate is not a valid number");
+        if (!NumbersHelper.isDouble(coordinateZRow.getText())) {
+            showMessage(Messages.getString("ZonesPanel.15")); //$NON-NLS-1$
         }
-        zoneCoordinateComboBoxRow.addItem(
-        LocationHelper.createStringFromLocation(new Location(
-                NumbersHelper.getDoubleFromString(coordinateXRow.getText()),
-                NumbersHelper.getDoubleFromString(coordinateYRow.getText()),
-                0,
-                NumbersHelper.getDoubleFromString(coordinateZRow.getText())
-                )));
+        zoneCoordinateComboBoxRow.addItem(LocationHelper.createStringFromLocation(new Location(NumbersHelper
+                .getDoubleFromString(coordinateXRow.getText()), NumbersHelper.getDoubleFromString(coordinateYRow.getText()), 0,
+                NumbersHelper.getDoubleFromString(coordinateZRow.getText()))));
         clearCoordinateFields();
     }
 
@@ -187,9 +183,9 @@ public class ZonesPanel extends ContextModulePanel {
         String parkingLot = parkingLotsComboBoxRow.getSelectedItem();
         String zoneName = zonesComboBoxButtonRow.getSelectedItem();
         String planeName = planceNameRow.getText();
-        if(!StringHelper.hasContent(zoneName)){
-            showMessage("Please specify zone name first");
-        }else{
+        if (!StringHelper.hasContent(zoneName)) {
+            showMessage(Messages.getString("ZonesPanel.16")); //$NON-NLS-1$
+        } else {
             List<String> coordinates = zoneCoordinateComboBoxRow.getItems();
             getContextModuleAdapter().updateZone(zoneName, parkingLot, planeName, coordinates);
         }
@@ -218,13 +214,13 @@ public class ZonesPanel extends ContextModulePanel {
                 planceNameRow.setText(zone.getPlaneName());
                 String[] locations = LocationHelper.createStringsFromLocations(zone.getLocations());
                 zoneCoordinateComboBoxRow.setItems(Arrays.asList(locations));
-            }else{
-                createZoneButtonRow.setText(null);  
+            } else {
+                createZoneButtonRow.setText(null);
                 zoneCoordinateComboBoxRow.setItems(null);
             }
-        }else{
-            createZoneButtonRow.setText(null);  
-            zoneCoordinateComboBoxRow.setItems(null);            
+        } else {
+            createZoneButtonRow.setText(null);
+            zoneCoordinateComboBoxRow.setItems(null);
         }
     }
 
@@ -232,15 +228,15 @@ public class ZonesPanel extends ContextModulePanel {
         removeZone();
     }
 
-    private void removeZone(){
+    private void removeZone() {
         String selectedZone = zonesComboBoxButtonRow.getSelectedItem();
         if (StringHelper.hasContent(selectedZone)) {
             if (getContextModuleAdapter().removeZone(selectedZone)) {
-                showMessage("Zone successfully removed from ontology");
+                showMessage(Messages.getString("ZonesPanel.17")); //$NON-NLS-1$
                 // update list of zones
                 onRefreshClick();
             } else {
-                showMessage("Could not remove zone from ontology");
+                showMessage(Messages.getString("ZonesPanel.18")); //$NON-NLS-1$
             }
         }
     }
@@ -251,10 +247,10 @@ public class ZonesPanel extends ContextModulePanel {
         String planeName = planceNameRow.getText();
         if (StringHelper.hasContent(parkingLotName) && StringHelper.hasContent(zoneName)) {
             if (getContextModuleAdapter().updateZone(zoneName, parkingLotName, planeName, null)) {
-                showMessage("Zone successfully added to the ontology");
+                showMessage(Messages.getString("ZonesPanel.19")); //$NON-NLS-1$
                 parkingLotSelectionChanged();
             } else {
-                showMessage("Could not add zone to the ontology");
+                showMessage(Messages.getString("ZonesPanel.20")); //$NON-NLS-1$
             }
         }
     }
@@ -277,7 +273,7 @@ public class ZonesPanel extends ContextModulePanel {
                 y = location.getLatitude();
                 z = location.getAltitude();
             } catch (LocationHelperException e) {
-                showMessage("Cannot parse selected value into location");
+                showMessage(Messages.getString("ZonesPanel.21")); //$NON-NLS-1$
             }
         }
         coordinateXRow.setText(x == null ? null : StringHelper.toString(x));

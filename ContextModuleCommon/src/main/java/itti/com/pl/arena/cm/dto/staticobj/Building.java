@@ -21,21 +21,13 @@ public class Building extends GeoObject {
      * 
      */
     public enum Type {
-        ATM, 
-        Cafe_Restaurant, 
-        Car_services_facilities, 
-        Caretaker_cabin, 
-        Hotel, 
-        Other_building,
-        Pertrol_station,
-        Toilets
-        ;
+        ATM, Cafe_Restaurant, Car_services_facilities, Caretaker_cabin, Hotel, Other_building, Pertrol_station, Toilets;
 
-        public static Type getType(String type){
-            if(StringHelper.hasContent(type)){
-                
+        public static Type getType(String type) {
+            if (StringHelper.hasContent(type)) {
+
                 for (Type typeEnum : Type.values()) {
-                    if(StringHelper.equalsIgnoreCase(typeEnum.name(), type)){
+                    if (StringHelper.equalsIgnoreCase(typeEnum.name(), type)) {
                         return typeEnum;
                     }
                 }
@@ -59,11 +51,15 @@ public class Building extends GeoObject {
 
     /**
      * Constructor of that class
-     * @param id ID of the object
-     * @param parkingLotName name of the parking lot
-     * @param type type of the building
+     * 
+     * @param id
+     *            ID of the object
+     * @param parkingLotName
+     *            name of the parking lot
+     * @param type
+     *            type of the building
      */
-    public Building(String id, String parkingLotName, Type type){
+    public Building(String id, String parkingLotName, Type type) {
         super(id);
         setParkingLotName(parkingLotName);
         setType(type);
@@ -76,6 +72,7 @@ public class Building extends GeoObject {
 
     /**
      * returns type of the building
+     * 
      * @return type of the building
      */
     public Type getType() {
@@ -84,6 +81,7 @@ public class Building extends GeoObject {
 
     /**
      * updates type of the building
+     * 
      * @param type
      */
     public void setType(Type type) {
@@ -91,7 +89,7 @@ public class Building extends GeoObject {
     }
 
     private String parkingLotName = null;
-    
+
     public String getParkingLotName() {
         return parkingLotName;
     }
@@ -131,5 +129,5 @@ public class Building extends GeoObject {
     public String toString() {
         return "Building [type=" + type + ", getId()=" + getId() + "]";
     }
-    
+
 }

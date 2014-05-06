@@ -29,11 +29,10 @@ public class Camera extends OntologyObject {
     private CartesianCoordinate onPlatformPosition;
 
     /*
-     * angle (measured in degrees) is used to determine camera angle against main truck axis (Y)
-     * - if camera is directed to the front, then angle is 0
-     * - if camera is directed to the back, then angle is 180
-     * - if camera is directed to the left side of the scene, then angle is 270
-     * - if camera is directed to the right side of the scene, then angle is 90
+     * angle (measured in degrees) is used to determine camera angle against main truck axis (Y) - if camera is directed
+     * to the front, then angle is 0 - if camera is directed to the back, then angle is 180 - if camera is directed to
+     * the left side of the scene, then angle is 270 - if camera is directed to the right side of the scene, then angle
+     * is 90
      */
     private int directionAngle;
 
@@ -45,11 +44,15 @@ public class Camera extends OntologyObject {
      * @param type
      *            type of the camera (any string accepted but should be some common, easy to recognize value like
      *            infrared, fisheye)
-     * @param angleX camera horizontal angle 
-     * @param angleY camera vertical angle
-     * @param cameraPosition position of the camera on truck measured in meters. 
-     * Point (0,0) of the Cartesian axis should be located at the front of the truck, in the middle width
-     * @param directionAngle angle (measured in radians) which determines main camera direction axis against main truck axis (Y)
+     * @param angleX
+     *            camera horizontal angle
+     * @param angleY
+     *            camera vertical angle
+     * @param cameraPosition
+     *            position of the camera on truck measured in meters. Point (0,0) of the Cartesian axis should be
+     *            located at the front of the truck, in the middle width
+     * @param directionAngle
+     *            angle (measured in radians) which determines main camera direction axis against main truck axis (Y)
      */
     public Camera(String id, String type, double angleX, double angleY, CartesianCoordinate cameraPosition, int directionAngle) {
         super(id);
@@ -99,7 +102,8 @@ public class Camera extends OntologyObject {
     /**
      * Updates horizontal angle of the camera (area of view in X axis)
      * 
-     * @param angleX vertical angle
+     * @param angleX
+     *            vertical angle
      */
     public void setAngleX(double angleX) {
         this.angleX = angleX;
@@ -117,7 +121,8 @@ public class Camera extends OntologyObject {
     /**
      * Updates vertical angle of the camera (area of view in Y axis)
      * 
-     * @param angleY vertical angle
+     * @param angleY
+     *            vertical angle
      */
     public void setAngleY(double angleY) {
         this.angleY = angleY;
@@ -133,9 +138,10 @@ public class Camera extends OntologyObject {
     }
 
     /**
-     * Updates main camera direction axis 
+     * Updates main camera direction axis
      * 
-     * @param directionAngle vertical angle
+     * @param directionAngle
+     *            vertical angle
      */
     public void setDirectionAngle(int directionAngle) {
         this.directionAngle = directionAngle;
@@ -153,7 +159,8 @@ public class Camera extends OntologyObject {
     /**
      * Updates position of the camera on platform
      * 
-     * @param onPlatformPosition position on platform
+     * @param onPlatformPosition
+     *            position on platform
      */
     public void setOnPlatformPosition(CartesianCoordinate onPlatformPosition) {
         this.onPlatformPosition = onPlatformPosition;

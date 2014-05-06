@@ -64,8 +64,8 @@ public class Location implements Serializable {
     }
 
     /**
-     * Constructor for basic location object containing information about longitude, latitude, altitude and bearing This is a
-     * basic location object used by zone-defining ContenxtModule functionalities
+     * Constructor for basic location object containing information about longitude, latitude, altitude and bearing This
+     * is a basic location object used by zone-defining ContenxtModule functionalities
      * 
      * @param longitude
      *            longitude
@@ -110,6 +110,7 @@ public class Location implements Serializable {
 
     /**
      * returns value of the longitude
+     * 
      * @return longitude
      */
     public double getLongitude() {
@@ -118,6 +119,7 @@ public class Location implements Serializable {
 
     /**
      * returns value of the latitude
+     * 
      * @return latitude
      */
     public double getLatitude() {
@@ -126,6 +128,7 @@ public class Location implements Serializable {
 
     /**
      * returns value of the altitude
+     * 
      * @return altitude
      */
     public double getAltitude() {
@@ -134,6 +137,7 @@ public class Location implements Serializable {
 
     /**
      * returns value of the bearing
+     * 
      * @return bearing
      */
     public int getBearing() {
@@ -142,6 +146,7 @@ public class Location implements Serializable {
 
     /**
      * returns value of the speed
+     * 
      * @return speed
      */
     public double getSpeed() {
@@ -150,6 +155,7 @@ public class Location implements Serializable {
 
     /**
      * returns value of the location update timestamp
+     * 
      * @return time
      */
     public long getTime() {
@@ -158,6 +164,7 @@ public class Location implements Serializable {
 
     /**
      * returns value of the accuracy
+     * 
      * @return accuracy
      */
     public double getAccuracy() {
@@ -166,9 +173,9 @@ public class Location implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("Location [longitude=%f, latitude=%f, altitude=%f, "
-                + "bearing=%d, speed=%f, time=%d, accuracy=%f]", getLongitude(), getLatitude(), getAltitude(),
-                getBearing(), getSpeed(), getTime(), getAccuracy());
+        return String.format(
+                "Location [longitude=%f, latitude=%f, altitude=%f, " + "bearing=%d, speed=%f, time=%d, accuracy=%f]",
+                getLongitude(), getLatitude(), getAltitude(), getBearing(), getSpeed(), getTime(), getAccuracy());
     }
 
     @Override
@@ -187,7 +194,7 @@ public class Location implements Serializable {
         result = prime * result + (int) (temp ^ (temp >>> 32));
         temp = Double.doubleToLongBits(NumbersHelper.changePrecision(speed));
         result = prime * result + (int) (temp ^ (temp >>> 32));
-//        result = prime * result + (int) (time ^ (time >>> 32));
+        // result = prime * result + (int) (time ^ (time >>> 32));
         return result;
     }
 
@@ -213,9 +220,9 @@ public class Location implements Serializable {
             return false;
         if (!NumbersHelper.equals(speed, other.speed, 0.001))
             return false;
-        //time is not used for location comparison
-        //        if (NumbersHelper.equals(time, other.time))
-        //            return false;
+        // time is not used for location comparison
+        // if (NumbersHelper.equals(time, other.time))
+        // return false;
         return true;
     }
 

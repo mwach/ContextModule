@@ -35,7 +35,6 @@ public class GeoportalHelperTest {
 
     private Random random = new Random();
 
-
     @Test
     public void testToFromObjectValid() throws GeoportalException, JsonHelperException {
 

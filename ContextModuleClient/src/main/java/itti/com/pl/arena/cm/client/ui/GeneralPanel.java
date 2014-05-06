@@ -48,7 +48,7 @@ public class GeneralPanel extends ContextModulePanel {
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 1.0;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
-        gbc.insets = new Insets(3,3,3,3);
+        gbc.insets = new Insets(3, 3, 3, 3);
 
         brokerUrlRow = createLabelTextBoxRow(Messages.getString("GeneralPanel.0"), null); //$NON-NLS-1$
         brokerUrlRow.setText(Messages.getString("GeneralPanel.1")); //$NON-NLS-1$
@@ -59,7 +59,7 @@ public class GeneralPanel extends ContextModulePanel {
         gbl.setConstraints(connectRow, gbc);
         panelGeneral.add(connectRow);
         connectRow.setOnClickListener(new ActionListener() {
-            
+
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 connectToCM();
@@ -83,12 +83,9 @@ public class GeneralPanel extends ContextModulePanel {
     }
 
     private void connectToCM() {
-        if(!getContextModuleAdapter().isConnected())
-        {
+        if (!getContextModuleAdapter().isConnected()) {
             connect();
-        }
-        else
-        {
+        } else {
             disconnect();
         }
     }
@@ -96,12 +93,12 @@ public class GeneralPanel extends ContextModulePanel {
     private void connect() {
 
         String brokerUrl = brokerUrlRow.getText();
-        try{
+        try {
             getContextModuleAdapter().connect(brokerUrl);
             addLogMessage(Messages.getString("GeneralPanel.4")); //$NON-NLS-1$
             connectRow.setButtonText(Messages.getString("GeneralPanel.5")); //$NON-NLS-1$
-        }catch(RuntimeException exc){
-            addLogMessage(Messages.getString("GeneralPanel.6") + exc.getLocalizedMessage());             //$NON-NLS-1$
+        } catch (RuntimeException exc) {
+            addLogMessage(Messages.getString("GeneralPanel.6") + exc.getLocalizedMessage()); //$NON-NLS-1$
         }
     }
 
@@ -116,8 +113,8 @@ public class GeneralPanel extends ContextModulePanel {
         }
     }
 
-    private void addLogMessage(String message){
-        logComponent.append(message + Messages.getString("GeneralPanel.10"));         //$NON-NLS-1$
+    private void addLogMessage(String message) {
+        logComponent.append(message + Messages.getString("GeneralPanel.10")); //$NON-NLS-1$
     }
 
     @Override

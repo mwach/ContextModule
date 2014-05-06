@@ -53,7 +53,7 @@ public class CMClient {
      * client main class
      * 
      * @param args
-     * @throws JsonHelperException 
+     * @throws JsonHelperException
      */
     public static void main(String[] args) throws JsonHelperException {
 
@@ -65,7 +65,7 @@ public class CMClient {
             client.loadProperties(propertiesFileName);
             // initialize the client
             client.init();
-            
+
             Platform platform = createDummyPlatform("Vehicle_Ford_Focus");
             parseUpdatePlatformResponse(client.updatePlatform(platform));
 
@@ -99,7 +99,6 @@ public class CMClient {
             // retrieves zone information from the ontology
             parseGetZoneResponse(client.getZone(zoneId));
 
-            
         } catch (ContextModuleClientException exc) {
             // CM exception e.g. properties file parsing
             LogHelper.error(CMClient.class, "main", "Could not perform operation. Details: %s", exc.getMessage());
@@ -118,20 +117,20 @@ public class CMClient {
     private static ParkingLot createDummyParkingLot(String parkingLotId) {
         ParkingLot parkingLot = new ParkingLot(parkingLotId);
 
-        //general information about parking
+        // general information about parking
         parkingLot.setCountry("UK");
         parkingLot.setLocation(new itti.com.pl.arena.cm.dto.Location(-0.94, 51.43));
         parkingLot.setTown("Reading");
         parkingLot.setStreet("London Street");
         parkingLot.setStreetNumber(23);
 
-        //add parking boundaries
+        // add parking boundaries
         parkingLot.addBoundary(new itti.com.pl.arena.cm.dto.Location(-0.94334, 51.43234));
         parkingLot.addBoundary(new itti.com.pl.arena.cm.dto.Location(-0.94345, 51.43233));
         parkingLot.addBoundary(new itti.com.pl.arena.cm.dto.Location(-0.94332, 51.43245));
         parkingLot.addBoundary(new itti.com.pl.arena.cm.dto.Location(-0.94366, 51.43212));
 
-        //parking infrastructure
+        // parking infrastructure
         parkingLot.addBuilding(createDummyBuilding("dummyBuilding_" + System.currentTimeMillis(), parkingLotId));
         parkingLot.addBuilding(createDummyBuilding("dummyBuilding_" + System.currentTimeMillis(), parkingLotId));
         parkingLot.addIntrastructure(createDummyInfrastructure("dummyBuilding_" + System.currentTimeMillis(), parkingLotId));
@@ -141,10 +140,10 @@ public class CMClient {
 
     private static Building createDummyBuilding(String buildingId, String parkingLotName) {
 
-        //new building object
+        // new building object
         Building building = new Building(buildingId, parkingLotName, Type.Hotel);
 
-        //building boundaries
+        // building boundaries
         building.addBoundary(new itti.com.pl.arena.cm.dto.Location(-0.94334, 51.43234));
         building.addBoundary(new itti.com.pl.arena.cm.dto.Location(-0.94345, 51.43233));
         building.addBoundary(new itti.com.pl.arena.cm.dto.Location(-0.94332, 51.43245));
@@ -155,10 +154,10 @@ public class CMClient {
 
     private static Infrastructure createDummyInfrastructure(String infrastructureId, String parkingLotName) {
 
-        //new infrastructure object
+        // new infrastructure object
         Infrastructure infrastructure = new Infrastructure(infrastructureId, parkingLotName, Infrastructure.Type.Fence);
 
-        //building boundaries
+        // building boundaries
         infrastructure.addBoundary(new itti.com.pl.arena.cm.dto.Location(-0.94334, 51.43234));
         infrastructure.addBoundary(new itti.com.pl.arena.cm.dto.Location(-0.94345, 51.43233));
         infrastructure.addBoundary(new itti.com.pl.arena.cm.dto.Location(-0.94332, 51.43245));
@@ -169,21 +168,21 @@ public class CMClient {
 
     private static Platform createDummyPlatform(String platformId) {
         Platform platform = new Platform(platformId);
-        //platform cameras
+        // platform cameras
         platform.addCamera(createDummyCamera("dummyCamera_" + System.currentTimeMillis()));
         platform.addCamera(createDummyCamera("anotherDummyCamera_" + System.currentTimeMillis()));
-        //platform dimensions
+        // platform dimensions
         platform.setHeight(3);
         platform.setWidth(3);
         platform.setLength(15);
-        //platform location
-        platform.setLocation(new itti.com.pl.arena.cm.dto.Location(18.130637,53.147105));
+        // platform location
+        platform.setLocation(new itti.com.pl.arena.cm.dto.Location(18.130637, 53.147105));
         return platform;
     }
 
     private static Camera createDummyCamera(String cameraId) {
-        //thermal camera located on the right side of the truck (X coordinate is set to '2'), 5m back from the front
-        //angle is 0.5 rad (90 degree), which means, camera is directed to the right side of the truck
+        // thermal camera located on the right side of the truck (X coordinate is set to '2'), 5m back from the front
+        // angle is 0.5 rad (90 degree), which means, camera is directed to the right side of the truck
         return new Camera(cameraId, CameraType.Thermal.name(), 120, 90, new CartesianCoordinate(2, -5), 90);
     }
 
@@ -313,7 +312,7 @@ public class CMClient {
             parseBooleanNamedValue(updatePlatformResponse);
         }
     }
-    
+
     /**
      * Parses response stored inside {@link FeatureVector} object
      * 
@@ -461,12 +460,12 @@ public class CMClient {
                 .valueOf(Constants.UNDEFINED_VALUE));
 
         Object data = null;
-        try{
+        try {
             SimpleNamedValue classesObject = createSimpleNamedValue(JsonHelper.toJson(classes));
             Object requestData = createObject(locationObject, radiusObject, classesObject);
             data = contextModule.getGISData(requestData);
 
-        }catch(JsonHelperException exc){
+        } catch (JsonHelperException exc) {
             exc.printStackTrace();
         }
 
@@ -531,7 +530,6 @@ public class CMClient {
         LogHelper.info(CMClient.class, "defineZone", "Server response received: %s", String.valueOf(data));
         return data;
     }
-    
 
     /**
      * Returns information about zone
@@ -549,9 +547,9 @@ public class CMClient {
 
     private BooleanNamedValue updateParkingLot(ParkingLot parkingLot) throws ContextModuleClientException {
         String serializedObject = null;
-        try{
+        try {
             serializedObject = JsonHelper.toJson(parkingLot);
-        }catch(JsonHelperException exc){
+        } catch (JsonHelperException exc) {
             throw new ContextModuleClientException(exc.getLocalizedMessage());
         }
         SimpleNamedValue platformRequest = createSimpleNamedValue(serializedObject);
@@ -570,9 +568,9 @@ public class CMClient {
 
     private BooleanNamedValue updatePlatform(Platform platform) throws ContextModuleClientException {
         String serializedObject = null;
-        try{
+        try {
             serializedObject = JsonHelper.toJson(platform);
-        }catch(JsonHelperException exc){
+        } catch (JsonHelperException exc) {
             throw new ContextModuleClientException(exc.getLocalizedMessage());
         }
         SimpleNamedValue platformRequest = createSimpleNamedValue(serializedObject);
@@ -580,7 +578,6 @@ public class CMClient {
         LogHelper.debug(CMClient.class, "updatePlatform", "Server response received: %s", String.valueOf(data));
         return data;
     }
-
 
     /**
      * Prints command usage
@@ -591,7 +588,9 @@ public class CMClient {
 
     /**
      * Initializes client module. Connects to the Arena bus
-     * @throws ContextModuleClientException could not initialize client
+     * 
+     * @throws ContextModuleClientException
+     *             could not initialize client
      */
     public void init() throws ContextModuleClientException {
 

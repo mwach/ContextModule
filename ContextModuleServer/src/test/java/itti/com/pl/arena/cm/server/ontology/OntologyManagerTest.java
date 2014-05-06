@@ -62,7 +62,7 @@ public class OntologyManagerTest {
         Assert.assertTrue(ontologyManager.createOwlClass(className));
         // now add some basic instance to newly create class
         ontologyManager.createSimpleInstance(className, instanceName, null);
-        
+
         List<String> instances = ontologyManager.getInstances(className);
         // verify, instance was added to given class
         Assert.assertEquals(1, instances.size());
@@ -94,24 +94,24 @@ public class OntologyManagerTest {
     }
 
     @Test
-    public void testRemoveInstance() throws OntologyException{
-        //create a new instance in ontology
+    public void testRemoveInstance() throws OntologyException {
+        // create a new instance in ontology
         String instanceName = "dummyBuilding_" + System.currentTimeMillis();
         ontologyManager.createSimpleInstance(OntologyConstants.Building.name(), instanceName, null);
-        //verify, instance was added to ontology
+        // verify, instance was added to ontology
         assertNotNull(ontologyManager.getInstance(instanceName));
-        //remove it
+        // remove it
         ontologyManager.remove(instanceName);
-        //verify, instance was removed from ontology
+        // verify, instance was removed from ontology
         assertNull(ontologyManager.getInstance(instanceName));
     }
 
     @Test
-    public void testRemoveNonExistingInstance() throws OntologyException{
+    public void testRemoveNonExistingInstance() throws OntologyException {
 
-        //try to delete an non-existing instance
+        // try to delete an non-existing instance
         String instanceName = "dummyBuilding_tt_" + System.currentTimeMillis();
-        
+
         expectedException.expect(OntologyException.class);
         expectedException.expectMessage(String.format(ErrorMessages.ONTOLOGY_INSTANCE_NOT_FOUND.getMessage(), instanceName));
         ontologyManager.remove(instanceName);

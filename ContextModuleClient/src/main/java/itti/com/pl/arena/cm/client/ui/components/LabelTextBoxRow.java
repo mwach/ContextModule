@@ -6,7 +6,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class LabelTextBoxRow extends JPanel{
+public class LabelTextBoxRow extends JPanel {
 
     /**
      * 
@@ -16,14 +16,13 @@ public class LabelTextBoxRow extends JPanel{
     private JLabel label;
     private JTextField textField;
 
-    public LabelTextBoxRow(String labelText, String text)
-    {
+    public LabelTextBoxRow(String labelText, String text) {
         super(new GridLayout(1, 2));
         label = new JLabel();
         add(label);
         textField = new JTextField();
         add(textField);
-        
+
         setLabelText(labelText);
         setText(text);
     }
@@ -31,10 +30,12 @@ public class LabelTextBoxRow extends JPanel{
     public String getText() {
         return textField.getText();
     }
+
     public void setLabelText(String text) {
         label.setText(text != null ? text : "");
-}
+    }
+
     public void setText(String text) {
-   		textField.setText(text != null ? text : "");
+        textField.setText(text != null ? text : "");
     }
 }

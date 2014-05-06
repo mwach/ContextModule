@@ -424,7 +424,6 @@ public class ContextModuleFacade extends CMModuleImpl implements LocalContextMod
         return (BooleanNamedValue) submitData(building);
     }
 
-
     /*
      * (non-Javadoc)
      * 

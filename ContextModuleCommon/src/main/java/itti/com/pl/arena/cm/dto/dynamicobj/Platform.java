@@ -11,10 +11,11 @@ import java.util.Set;
 
 /**
  * Class representing ContextModule platform (like Truck or Vehicle)
+ * 
  * @author cm-admin
- *
+ * 
  */
-public class Platform extends OntologyObject{
+public class Platform extends OntologyObject {
 
     /**
      * 
@@ -23,21 +24,23 @@ public class Platform extends OntologyObject{
 
     /**
      * Supported types of platforms
+     * 
      * @author cm-admin
-     *
+     * 
      */
     public enum Type {
 
         /**
-         * Vehicle with cameras installed on it - default (and currently the only one) Platform Type used by the ContextModule
+         * Vehicle with cameras installed on it - default (and currently the only one) Platform Type used by the
+         * ContextModule
          */
-        Vehicle_with_cameras,
-        ;
+        Vehicle_with_cameras, ;
         /**
          * Returns default type of the {@link Platform} used by the module
+         * 
          * @return default type of the platform
          */
-        public static Type getDefaultType(){
+        public static Type getDefaultType() {
             return Vehicle_with_cameras;
         }
     }
@@ -66,10 +69,12 @@ public class Platform extends OntologyObject{
      * Length of the platform
      */
     private double length;
-    
+
     /**
      * Creates a new basic platform object
-     * @param id ID of the platform
+     * 
+     * @param id
+     *            ID of the platform
      */
     public Platform(String id) {
         super(id);
@@ -77,10 +82,15 @@ public class Platform extends OntologyObject{
 
     /**
      * Creates a new complete platform object
-     * @param id ID of the platform
-     * @param location last known location of the platform
-     * @param platformType type of the platform
-     * @param cameras list of cameras installed on the platform
+     * 
+     * @param id
+     *            ID of the platform
+     * @param location
+     *            last known location of the platform
+     * @param platformType
+     *            type of the platform
+     * @param cameras
+     *            list of cameras installed on the platform
      */
     public Platform(String id, Location location, Type platformType, Set<Camera> cameras) {
         this(id);
@@ -95,14 +105,17 @@ public class Platform extends OntologyObject{
     }
 
     /**
-     * Return last know location of the platform 
+     * Return last know location of the platform
+     * 
      * @return location
      */
     public Location getLocation() {
         return location;
     }
+
     /**
-     * Updates last know location of the platform 
+     * Updates last know location of the platform
+     * 
      * @param location
      */
     public void setLocation(Location location) {
@@ -111,21 +124,25 @@ public class Platform extends OntologyObject{
 
     /**
      * Returns type of the platform
+     * 
      * @return type
      */
-    public Type getType(){
+    public Type getType() {
         return type;
     }
+
     /**
      * Updates type of the platform
+     * 
      * @param type
      */
-    public void setType(Type type){
+    public void setType(Type type) {
         this.type = type;
     }
 
     /**
      * Returns list of cameras installed on the platform
+     * 
      * @return list of cameras
      */
     public Map<String, Camera> getCameras() {
@@ -134,21 +151,24 @@ public class Platform extends OntologyObject{
 
     /**
      * Adds a new camera to the platform
+     * 
      * @param camera
      */
     public void addCamera(Camera camera) {
-        if(camera != null){
+        if (camera != null) {
             cameras.put(camera.getId(), camera);
         }
     }
 
     /**
      * Sets a collection of cameras to the platform
-     * @param cameras collection of cameras
+     * 
+     * @param cameras
+     *            collection of cameras
      */
     public void setCameras(Collection<Camera> cameras) {
         this.cameras.clear();
-        if(cameras != null){
+        if (cameras != null) {
             for (Camera camera : cameras) {
                 addCamera(camera);
             }
@@ -157,16 +177,19 @@ public class Platform extends OntologyObject{
 
     /**
      * Removes camera from the platform
-     * @param cameraId ID of the camera
+     * 
+     * @param cameraId
+     *            ID of the camera
      */
     public void removeCamera(String cameraId) {
-        if(cameraId != null){
+        if (cameraId != null) {
             cameras.remove(cameraId);
         }
     }
-    
+
     /**
      * Returns width of the platform
+     * 
      * @return width width
      */
     public double getWidth() {
@@ -175,6 +198,7 @@ public class Platform extends OntologyObject{
 
     /**
      * Sets width of the platform
+     * 
      * @param width
      */
     public void setWidth(double width) {
@@ -183,6 +207,7 @@ public class Platform extends OntologyObject{
 
     /**
      * Returns height of the platform
+     * 
      * @return height height
      */
     public double getHeight() {
@@ -191,6 +216,7 @@ public class Platform extends OntologyObject{
 
     /**
      * Sets height of the platform
+     * 
      * @param height
      */
     public void setHeight(double height) {
@@ -199,6 +225,7 @@ public class Platform extends OntologyObject{
 
     /**
      * Returns length of the platform
+     * 
      * @return length
      */
     public double getLength() {
@@ -207,6 +234,7 @@ public class Platform extends OntologyObject{
 
     /**
      * Sets length of the platform
+     * 
      * @param length
      */
     public void setLength(double length) {
@@ -266,5 +294,4 @@ public class Platform extends OntologyObject{
         return true;
     }
 
-    
 }

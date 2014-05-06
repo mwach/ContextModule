@@ -10,14 +10,15 @@ import itti.com.pl.arena.cm.utils.helper.StringHelper;
  * Implementation of the {@link GeoObject} representing infrastructure object
  * 
  * @author cm-admin
- *
+ * 
  */
 public class Infrastructure extends GeoObject {
 
     /**
      * Available infrastructure types
+     * 
      * @author cm-admin
-     *
+     * 
      */
     public enum Type {
         Bus_stop_area,
@@ -36,14 +37,13 @@ public class Infrastructure extends GeoObject {
         Smoking_zone,
         Toilets_zone,
         Track_and_lorry_parking,
-        Trees
-        ;
-        
-        public static Type getType(String type){
-            if(StringHelper.hasContent(type)){
-                
+        Trees;
+
+        public static Type getType(String type) {
+            if (StringHelper.hasContent(type)) {
+
                 for (Type typeEnum : Type.values()) {
-                    if(StringHelper.equalsIgnoreCase(typeEnum.name(), type)){
+                    if (StringHelper.equalsIgnoreCase(typeEnum.name(), type)) {
                         return typeEnum;
                     }
                 }
@@ -67,11 +67,15 @@ public class Infrastructure extends GeoObject {
 
     /**
      * Constructor of that class
-     * @param id ID of the object
-     * @param parkingLotName name of the parking lot
-     * @param type type of the infrastructure
+     * 
+     * @param id
+     *            ID of the object
+     * @param parkingLotName
+     *            name of the parking lot
+     * @param type
+     *            type of the infrastructure
      */
-    public Infrastructure(String id, String parkingLotName, Type type){
+    public Infrastructure(String id, String parkingLotName, Type type) {
         super(id);
         setParkingLotName(parkingLotName);
         setType(type);
@@ -84,6 +88,7 @@ public class Infrastructure extends GeoObject {
 
     /**
      * returns type of the infrastructure
+     * 
      * @return type of the infrastructure
      */
     public Type getType() {
@@ -92,6 +97,7 @@ public class Infrastructure extends GeoObject {
 
     /**
      * updates type of the infrastructure
+     * 
      * @param type
      */
     public void setType(Type type) {
@@ -99,7 +105,7 @@ public class Infrastructure extends GeoObject {
     }
 
     private String parkingLotName = null;
-    
+
     public String getParkingLotName() {
         return parkingLotName;
     }
@@ -139,6 +145,5 @@ public class Infrastructure extends GeoObject {
     public String toString() {
         return "Infrastructure [type=" + type + ", getId()=" + getId() + "]";
     }
-
 
 }

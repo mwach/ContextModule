@@ -7,7 +7,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class ButtonRow extends JPanel{
+public class ButtonRow extends JPanel {
 
     /**
      * 
@@ -16,8 +16,7 @@ public class ButtonRow extends JPanel{
 
     private JButton button = null;
 
-    public ButtonRow(String buttonText)
-    {
+    public ButtonRow(String buttonText) {
         super(new GridLayout(1, 2));
         button = new JButton(buttonText);
         add(new JLabel());
@@ -25,7 +24,8 @@ public class ButtonRow extends JPanel{
     }
 
     public void setOnClickListener(ActionListener listener) {
-        button.addActionListener(listener);;
+        button.addActionListener(listener);
+        ;
     }
 
     public void setButtonText(String buttonText) {

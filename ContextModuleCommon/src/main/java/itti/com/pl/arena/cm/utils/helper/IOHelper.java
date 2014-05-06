@@ -192,7 +192,8 @@ public final class IOHelper {
      *            content of the file
      * @param outputFileName
      *            name of the file to write text data to
-     * @param append append or overwrite existing file
+     * @param append
+     *            append or overwrite existing file
      * @throws IOHelperException
      *             could not read data from the file
      */

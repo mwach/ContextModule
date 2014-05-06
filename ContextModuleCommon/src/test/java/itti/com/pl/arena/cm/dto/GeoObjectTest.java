@@ -11,29 +11,28 @@ import org.junit.Test;
 public class GeoObjectTest {
 
     @Test
-    public void testSetBoundaries(){
-        //check default value
+    public void testSetBoundaries() {
+        // check default value
         GeoObject geoObject = new TestGeoObject(UUID.randomUUID().toString());
         Assert.assertEquals(new HashSet<>(), geoObject.getBoundaries());
 
-        //verify, cannot be overwrite by null
-        geoObject.setBoundaries((Set<Location>)null);
+        // verify, cannot be overwrite by null
+        geoObject.setBoundaries((Set<Location>) null);
         Assert.assertEquals(new HashSet<>(), geoObject.getBoundaries());
 
-        //verify getter
-        Location[] locations = new Location[]{new Location(1.11, 2.22), new Location(3.33, 4.44)};
+        // verify getter
+        Location[] locations = new Location[] { new Location(1.11, 2.22), new Location(3.33, 4.44) };
         geoObject.setBoundaries(locations);
         Assert.assertEquals(new HashSet<>(Arrays.asList(locations)), geoObject.getBoundaries());
     }
 
-
-    private static class TestGeoObject extends GeoObject{
+    private static class TestGeoObject extends GeoObject {
         /**
          * 
          */
         private static final long serialVersionUID = 1L;
 
-        public TestGeoObject(String id){
+        public TestGeoObject(String id) {
             super(id);
         }
     }

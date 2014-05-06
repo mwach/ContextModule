@@ -18,8 +18,8 @@ public final class LocationHelper {
     /**
      * Private contructor
      */
-    private LocationHelper(){}
-
+    private LocationHelper() {
+    }
 
     /**
      * Parses given string into location object
@@ -37,43 +37,39 @@ public final class LocationHelper {
         }
         // validation: check data format
         String[] locationSplit = locationString.split(",");
-        //2 and 3 params are allowed: (x,y) or (x,y,z)
+        // 2 and 3 params are allowed: (x,y) or (x,y,z)
         if (locationSplit.length != 2 && locationSplit.length != 3) {
             throw new LocationHelperException(ErrorMessages.LOCATION_HELPER_INVALID_FORMAT, locationString);
         }
-        //check if all are numbers
-        for(int i=0 ; i<locationSplit.length ; i++){
+        // check if all are numbers
+        for (int i = 0; i < locationSplit.length; i++) {
             if (!NumbersHelper.isDouble(locationSplit[i])) {
                 throw new LocationHelperException(ErrorMessages.LOCATION_HELPER_INVALID_FORMAT, locationString);
             }
         }
         // create and return location object
-        return new Location(
-                NumbersHelper.getDoubleFromString(locationSplit[0]),
-                NumbersHelper.getDoubleFromString(locationSplit[1]),
-                0,
-                locationSplit.length == 3 ? NumbersHelper.getDoubleFromString(locationSplit[2]): 0
-        );
+        return new Location(NumbersHelper.getDoubleFromString(locationSplit[0]),
+                NumbersHelper.getDoubleFromString(locationSplit[1]), 0,
+                locationSplit.length == 3 ? NumbersHelper.getDoubleFromString(locationSplit[2]) : 0);
     }
-
 
     public static String createStringFromLocation(Location location) {
         return String.format("%s, %s, %s", location.getLongitude(), location.getLatitude(), location.getAltitude());
     }
 
     public static String[] createStringsFromLocations(Location[] locations) {
-        if(locations == null){
+        if (locations == null) {
             return null;
         }
         String[] locationStrings = new String[locations.length];
-        for (int i=0 ; i<locations.length ; i++) {
+        for (int i = 0; i < locations.length; i++) {
             locationStrings[i] = createStringFromLocation(locations[i]);
         }
         return locationStrings;
     }
 
     public static List<String> getStringsFromLocations(Collection<Location> locations) {
-        if(locations == null){
+        if (locations == null) {
             return null;
         }
         List<String> locationStrings = new ArrayList<>();
@@ -84,18 +80,18 @@ public final class LocationHelper {
     }
 
     public static Location[] getLocationsFromStrings(String[] locationStrings) throws LocationHelperException {
-        if(locationStrings == null){
+        if (locationStrings == null) {
             return null;
         }
         Location[] locations = new Location[locationStrings.length];
-        for (int i=0 ; i<locationStrings.length ; i++) {
+        for (int i = 0; i < locationStrings.length; i++) {
             locations[i] = getLocationFromString(locationStrings[i]);
         }
         return locations;
     }
 
     public static List<Location> getLocationsFromStrings(List<String> locationStrings) throws LocationHelperException {
-        if(locationStrings == null){
+        if (locationStrings == null) {
             return null;
         }
         List<Location> locations = new ArrayList<>();
@@ -105,13 +101,14 @@ public final class LocationHelper {
         return locations;
     }
 
-    public static double calculateDistance(Location locationOne, Location locationTwo){
-        return HaversineAlgorithm.HaversineInM(locationOne.getLatitude(), locationOne.getLongitude(), locationTwo.getLatitude(), locationTwo.getLongitude());
+    public static double calculateDistance(Location locationOne, Location locationTwo) {
+        return HaversineAlgorithm.HaversineInM(locationOne.getLatitude(), locationOne.getLongitude(), locationTwo.getLatitude(),
+                locationTwo.getLongitude());
     }
 
     /**
-     * Calculates angle between two locations stored as  {@link Location} objects. 
-     * Calculation was implemented based on instructions from: http://stackoverflow.com/questions/7586063
+     * Calculates angle between two locations stored as {@link Location} objects. Calculation was implemented based on
+     * instructions from: http://stackoverflow.com/questions/7586063
      * 
      * @param baseLocation
      *            first coordinate

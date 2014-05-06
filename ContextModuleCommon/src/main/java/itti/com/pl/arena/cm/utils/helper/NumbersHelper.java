@@ -57,34 +57,32 @@ public class NumbersHelper {
     }
 
     /**
-     * Tries to parse given string into double
-     * if parser fail, then default value will be returned
+     * Tries to parse given string into double if parser fail, then default value will be returned
      * 
      * @param value
      *            string representation of double value
-     *            @param defaultValue value to be returned in case of parser failure
+     * @param defaultValue
+     *            value to be returned in case of parser failure
      * @return double value, or default one in case of failure
      */
     public static double getDoubleFromString(String value, double defaultValue) {
         Double result = getDoubleFromString(value);
-        return result == null ? defaultValue  : result.doubleValue();
+        return result == null ? defaultValue : result.doubleValue();
     }
 
-
     /**
-     * Tries to parse given string into integer
-     * if parser fail, then default value will be returned
+     * Tries to parse given string into integer if parser fail, then default value will be returned
      * 
      * @param value
      *            string representation of integer value
-     *            @param defaultValue value to be returned in case of parser failure
+     * @param defaultValue
+     *            value to be returned in case of parser failure
      * @return integer value, or default one in case of failure
      */
     public static int getIntegerFromString(String value, int defaultValue) {
         Integer result = getIntegerFromString(value);
-        return result == null ? defaultValue  : result.intValue();
+        return result == null ? defaultValue : result.intValue();
     }
-
 
     /**
      * Checks, if given value represents valid integer value
@@ -151,40 +149,40 @@ public class NumbersHelper {
         return output;
     }
 
-    public static boolean equals(Double valueA, Double valueB, double delta){
-        if(valueA == null && valueB == null){
+    public static boolean equals(Double valueA, Double valueB, double delta) {
+        if (valueA == null && valueB == null) {
             return true;
-        }else if(valueA == null || valueB == null){
+        } else if (valueA == null || valueB == null) {
             return false;
         }
         double localDelta = Math.abs(valueA - valueB);
-        return  localDelta <= delta;
+        return localDelta <= delta;
     }
 
-    public static boolean equals(Integer valueA, Integer valueB){
-        if(valueA == null && valueB == null){
+    public static boolean equals(Integer valueA, Integer valueB) {
+        if (valueA == null && valueB == null) {
             return true;
-        }else if(valueA == null || valueB == null){
+        } else if (valueA == null || valueB == null) {
             return false;
         }
         return valueA.intValue() == valueB.intValue();
     }
 
-    public static boolean equals(Long valueA, Long valueB){
-        if(valueA == null && valueB == null){
+    public static boolean equals(Long valueA, Long valueB) {
+        if (valueA == null && valueB == null) {
             return true;
-        }else if(valueA == null || valueB == null){
+        } else if (valueA == null || valueB == null) {
             return false;
         }
         return valueA.longValue() == valueB.longValue();
     }
 
-    public static Double changePrecision(Double value){
-        if(value == null){
+    public static Double changePrecision(Double value) {
+        if (value == null) {
             return value;
         }
         long longValue = value.longValue();
         long fractionValue = (long) ((value - longValue) * Math.pow(10, 3));
-        return (double)longValue + (((double)fractionValue) / Math.pow(10, 3));
+        return (double) longValue + (((double) fractionValue) / Math.pow(10, 3));
     }
 }

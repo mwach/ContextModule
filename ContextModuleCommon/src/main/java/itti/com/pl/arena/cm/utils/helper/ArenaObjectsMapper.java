@@ -143,8 +143,9 @@ public final class ArenaObjectsMapper {
                 String buildingJson = ((SimpleNamedValue) feature).getValue();
                 try {
                     Building building = JsonHelper.fromJson(buildingJson, Building.class);
-                    if(building.getType() == null){
-                        throw new JsonHelperException(ErrorMessages.JSON_HELPER_CANNOT_DESERIALIZE, buildingJson,"Empty type: probably a Infrastructure");
+                    if (building.getType() == null) {
+                        throw new JsonHelperException(ErrorMessages.JSON_HELPER_CANNOT_DESERIALIZE, buildingJson,
+                                "Empty type: probably a Infrastructure");
                     }
                     responseObject = building;
                 } catch (JsonHelperException e) {

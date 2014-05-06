@@ -20,8 +20,7 @@ public enum Range {
     /**
      * One hundred meters
      */
-    Km01(0.00091),
-    ;
+    Km01(0.00091), ;
 
     private double rangeInKms = 0;
 
@@ -33,7 +32,7 @@ public enum Range {
         return rangeInKms;
     }
 
-    public static Range getClosestRange(){
+    public static Range getClosestRange() {
         return Km01;
     }
 }

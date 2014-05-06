@@ -94,7 +94,8 @@ public class ContextModuleAdapter {
     public List<String> getListOfParkingLots() {
 
         // prepare a request
-        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.ParkingLotName.name(), null);
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName,
+                ContextModuleRequestProperties.ParkingLotName.name(), null);
         // send/receive
         eu.arena_fp7._1.Object response = contextModule.getListOfParkingLots(request);
         // return parsed response
@@ -104,7 +105,8 @@ public class ContextModuleAdapter {
     public List<String> getListOfZones(String parkingLot) {
 
         // prepare a request
-        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.ParkingLotName.name(), parkingLot);
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName,
+                ContextModuleRequestProperties.ParkingLotName.name(), parkingLot);
         // send/receive
         eu.arena_fp7._1.Object response = contextModule.getListOfZones(request);
         // return parsed response
@@ -113,7 +115,8 @@ public class ContextModuleAdapter {
 
     public Zone getZoneDefinition(String zoneId) {
         // prepare a request
-        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(), zoneId);
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(),
+                zoneId);
         // send/receive
         eu.arena_fp7._1.Object response = contextModule.getZone(request);
         // return parsed response
@@ -122,7 +125,8 @@ public class ContextModuleAdapter {
 
     public boolean removeZone(String zoneId) {
         // prepare a request
-        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(), zoneId);
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(),
+                zoneId);
         // send/receive
         BooleanNamedValue response = contextModule.removeZone(request);
         // return parsed response
@@ -132,13 +136,11 @@ public class ContextModuleAdapter {
     public boolean updateZone(String zoneName, String parkingLot, String planeName, List<String> coordinates) {
         // prepare a request
         List<AbstractNamedValue> vector = new ArrayList<>();
-        vector.add(contextModule.createSimpleNamedValue(moduleName, 
-                ContextModuleRequestProperties.ParkingLotName.name(), parkingLot));
-        vector.add(contextModule.createSimpleNamedValue(moduleName, 
-                ContextModuleRequestProperties.Name.name(), zoneName));
-        vector.add(contextModule.createSimpleNamedValue(moduleName, 
-                ContextModuleRequestProperties.PlaneName.name(), planeName));
-        if(coordinates != null){
+        vector.add(contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.ParkingLotName.name(),
+                parkingLot));
+        vector.add(contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(), zoneName));
+        vector.add(contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.PlaneName.name(), planeName));
+        if (coordinates != null) {
             itti.com.pl.arena.cm.dto.Location[] locations = null;
             try {
                 locations = LocationHelper.getLocationsFromStrings(coordinates.toArray(new String[coordinates.size()]));
@@ -184,7 +186,8 @@ public class ContextModuleAdapter {
 
     public List<String> getListOfPlatforms() {
         // prepare a request
-        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Platform.name(), null);
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName,
+                ContextModuleRequestProperties.Platform.name(), null);
         // send/receive
         eu.arena_fp7._1.Object response = contextModule.getListOfPlatforms(request);
         // return parsed response
@@ -193,7 +196,8 @@ public class ContextModuleAdapter {
 
     public Platform getPlatformDefinition(String platformName) {
         // prepare a request
-        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Platform.name(), platformName);
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName,
+                ContextModuleRequestProperties.Platform.name(), platformName);
         // send/receive
         eu.arena_fp7._1.Object response = contextModule.getPlatform(request);
         // return parsed response
@@ -202,7 +206,8 @@ public class ContextModuleAdapter {
 
     public boolean removePlatform(String platformId) {
         // prepare a request
-        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(), platformId);
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(),
+                platformId);
         // send/receive
         BooleanNamedValue response = contextModule.removePlatform(request);
         // return parsed response
@@ -218,7 +223,8 @@ public class ContextModuleAdapter {
         platform.setLength(length);
         platform.setCameras(cameras);
 
-        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Platform.name(), JsonHelper.toJson(platform));
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName,
+                ContextModuleRequestProperties.Platform.name(), JsonHelper.toJson(platform));
         // send/receive
         BooleanNamedValue response = contextModule.updatePlatform(request);
         // return parsed response
@@ -226,13 +232,15 @@ public class ContextModuleAdapter {
 
     }
 
-    public boolean updateCamera(String cameraName, String platformName, String cameraType, double horizontalAngle, double verticalAngle,
-            CartesianCoordinate cameraLocationOnTruck, int cameraAngle) throws JsonHelperException {
+    public boolean updateCamera(String cameraName, String platformName, String cameraType, double horizontalAngle,
+            double verticalAngle, CartesianCoordinate cameraLocationOnTruck, int cameraAngle) throws JsonHelperException {
 
         Camera camera = new Camera(cameraName, cameraType, horizontalAngle, verticalAngle, cameraLocationOnTruck, cameraAngle);
         List<AbstractNamedValue> vector = new ArrayList<>();
-        vector.add(contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Camera.name(), JsonHelper.toJson(camera)));
-        vector.add(contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.PlatformName.name(), platformName));
+        vector.add(contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Camera.name(),
+                JsonHelper.toJson(camera)));
+        vector.add(contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.PlatformName.name(),
+                platformName));
         eu.arena_fp7._1.Object request = contextModule.createObject(moduleName, vector);
         // send/receive
         BooleanNamedValue response = contextModule.updateCamera(request);
@@ -243,7 +251,8 @@ public class ContextModuleAdapter {
 
     public boolean removeCamera(String cameraId) {
         // prepare a request
-        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(), cameraId);
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(),
+                cameraId);
         // send/receive
         BooleanNamedValue response = contextModule.removeCamera(request);
         // return parsed response
@@ -252,7 +261,8 @@ public class ContextModuleAdapter {
 
     public Camera getCameraDefinition(String selectedCamera) {
         // prepare a request
-        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Camera.name(), selectedCamera);
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Camera.name(),
+                selectedCamera);
         // send/receive
         eu.arena_fp7._1.Object response = contextModule.getCamera(request);
         // return parsed response
@@ -261,27 +271,30 @@ public class ContextModuleAdapter {
 
     public boolean removeParkingLot(String parkingLotId) {
         // prepare a request
-        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(), parkingLotId);
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(),
+                parkingLotId);
         // send/receive
         BooleanNamedValue response = contextModule.removeParkingLot(request);
         // return parsed response
         return response.isFeatureValue();
     }
 
-    public boolean updateParkingLot(String name, String description, String country,
-            String town, String street, Collection<itti.com.pl.arena.cm.dto.Location> locations, Collection<Building> buildings, Collection<Infrastructure> infrastructures) throws JsonHelperException {
+    public boolean updateParkingLot(String name, String description, String country, String town, String street,
+            Collection<itti.com.pl.arena.cm.dto.Location> locations, Collection<Building> buildings,
+            Collection<Infrastructure> infrastructures) throws JsonHelperException {
 
         ParkingLot parkingLot = new ParkingLot(name);
         parkingLot.setCountry(country);
         parkingLot.setTown(town);
         parkingLot.setStreet(street);
         parkingLot.setBoundaries(locations);
-        if(locations != null  && !locations.isEmpty()){
+        if (locations != null && !locations.isEmpty()) {
             parkingLot.setLocation(locations.iterator().next());
         }
         parkingLot.setBuildings(buildings);
         parkingLot.setInfrastructures(infrastructures);
-        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.ParkingLot.name(), JsonHelper.toJson(parkingLot));
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName,
+                ContextModuleRequestProperties.ParkingLot.name(), JsonHelper.toJson(parkingLot));
         // send/receive
         BooleanNamedValue response = contextModule.updateParkingLot(request);
         // return parsed response
@@ -291,7 +304,8 @@ public class ContextModuleAdapter {
 
     public ParkingLot getParkingLotDefinition(String parkingLotName) {
         // prepare a request
-        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.ParkingLot.name(), parkingLotName);
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName,
+                ContextModuleRequestProperties.ParkingLot.name(), parkingLotName);
         // send/receive
         eu.arena_fp7._1.Object response = contextModule.getParkingLot(request);
         // return parsed response
@@ -300,7 +314,8 @@ public class ContextModuleAdapter {
 
     public boolean removeBuilding(String buildingName) {
         // prepare a request
-        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(), buildingName);
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(),
+                buildingName);
         // send/receive
         BooleanNamedValue response = contextModule.removeBuilding(request);
         // return parsed response
@@ -309,7 +324,8 @@ public class ContextModuleAdapter {
 
     public GeoObject getBuildingDefinition(String buildingName) {
         // prepare a request
-        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(), buildingName);
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(),
+                buildingName);
         // send/receive
         eu.arena_fp7._1.Object response = contextModule.getBuilding(request);
         // return parsed response
@@ -321,17 +337,17 @@ public class ContextModuleAdapter {
 
         GeoObject building = null;
 
-        if(Building.Type.getType(type) != null){
+        if (Building.Type.getType(type) != null) {
             building = new Building(buildingName, parkingLotName, Building.Type.getType(type));
-        }else if(Infrastructure.Type.getType(type) != null){
+        } else if (Infrastructure.Type.getType(type) != null) {
             building = new Infrastructure(buildingName, parkingLotName, Infrastructure.Type.getType(type));
-        }else{
+        } else {
             throw new ContextModuleClientException(String.format("Invalid building type specified: %s", type));
         }
         building.setBoundaries(locations);
 
-        SimpleNamedValue request = contextModule.createSimpleNamedValue(
-                moduleName, ContextModuleRequestProperties.ParkingLot.name(), JsonHelper.toJson(building));
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName,
+                ContextModuleRequestProperties.ParkingLot.name(), JsonHelper.toJson(building));
         // send/receive
         BooleanNamedValue response = contextModule.updateBuilding(request);
         // return parsed response
@@ -348,7 +364,8 @@ public class ContextModuleAdapter {
 
     public boolean removeRule(String ruleName) {
         // prepare a request
-        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(), ruleName);
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(),
+                ruleName);
         // send/receive
         BooleanNamedValue response = contextModule.removeRule(request);
         // return parsed response
@@ -357,7 +374,8 @@ public class ContextModuleAdapter {
 
     public String getRule(String ruleName) {
         // prepare a request
-        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(), ruleName);
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(),
+                ruleName);
         // send/receive
         SimpleNamedValue response = contextModule.getRule(request);
         // return parsed response
@@ -366,7 +384,8 @@ public class ContextModuleAdapter {
 
     public List<String> getListOfRules() {
         // prepare a request
-        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(), null);
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(),
+                null);
         // send/receive
         eu.arena_fp7._1.Object response = contextModule.getListOfRules(request);
         // return parsed response
@@ -375,9 +394,11 @@ public class ContextModuleAdapter {
 
     public boolean applyRules() {
         // prepare a request
-        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(), null);
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(),
+                null);
         // send/receive
         BooleanNamedValue response = contextModule.applyRules(request);
-     // return parsed response
-        return response.isFeatureValue();    }
+        // return parsed response
+        return response.isFeatureValue();
+    }
 }

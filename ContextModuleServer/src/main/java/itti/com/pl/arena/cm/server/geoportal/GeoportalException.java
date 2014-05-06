@@ -18,8 +18,11 @@ public class GeoportalException extends ContextModuleException {
 
     /**
      * Exception constructor
-     * @param message exception message
-     * @param args optional arguments
+     * 
+     * @param message
+     *            exception message
+     * @param args
+     *            optional arguments
      */
     public GeoportalException(ErrorMessages message, Object... args) {
         super(message.getMessage(), args);
@@ -27,9 +30,13 @@ public class GeoportalException extends ContextModuleException {
 
     /**
      * Exception constructor
-     * @param message exception message
-     * @param throwables base exception
-     * @param args optional arguments
+     * 
+     * @param message
+     *            exception message
+     * @param throwables
+     *            base exception
+     * @param args
+     *            optional arguments
      */
     public GeoportalException(ErrorMessages message, Throwable throwables, Object... args) {
         super(message.getMessage(), throwables, args);

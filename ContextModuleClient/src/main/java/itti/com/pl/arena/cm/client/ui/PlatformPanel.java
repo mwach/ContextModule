@@ -35,7 +35,7 @@ public class PlatformPanel extends ContextModulePanel {
     private JTabbedPane tabbedPane = null;
     private Component platformPanel = null;
     private Component cameraPanel = null;
-    
+
     private Component imageComponent = null;
 
     private ComboBoxButtonRow platformsComboBoxRow = null;
@@ -60,7 +60,6 @@ public class PlatformPanel extends ContextModulePanel {
     private LabelTextBoxRow cameraAngleRow = null;
     private ButtonRow clearCameraParamsRow = null;
 
-    
     /**
      * Create the dialog.
      */
@@ -92,7 +91,7 @@ public class PlatformPanel extends ContextModulePanel {
     private Component createPlatformPanel() {
         JPanel panelPlatform = createJPanel();
 
-        platformsComboBoxRow = createComboBoxButtonRow("Remove", null);
+        platformsComboBoxRow = createComboBoxButtonRow(Messages.getString("PlatformPanel.0"), null); //$NON-NLS-1$
         platformsComboBoxRow.setOnChangeListener(new ActionListener() {
 
             @Override
@@ -109,7 +108,7 @@ public class PlatformPanel extends ContextModulePanel {
         });
         panelPlatform.add(platformsComboBoxRow);
 
-        addPlatformTextBoxButtonRow = createTextBoxButtonRow(null, "Add platform");
+        addPlatformTextBoxButtonRow = createTextBoxButtonRow(null, Messages.getString("PlatformPanel.1")); //$NON-NLS-1$
         addPlatformTextBoxButtonRow.setOnButtonClickListener(new ActionListener() {
 
             @Override
@@ -121,9 +120,9 @@ public class PlatformPanel extends ContextModulePanel {
 
         panelPlatform.add(createLabelRow(Messages.getString("TruckPanel.2"))); //$NON-NLS-1$
 
-        platformWidthRow = createLabelTextBoxRow(Messages.getString("TruckPanel.3"), null);
-        platformHeightRow = createLabelTextBoxRow(Messages.getString("TruckPanel.4"), null);
-        platformLengthRow = createLabelTextBoxRow(Messages.getString("TruckPanel.5"), null);
+        platformWidthRow = createLabelTextBoxRow(Messages.getString(Messages.getString("PlatformPanel.2")), null); //$NON-NLS-1$
+        platformHeightRow = createLabelTextBoxRow(Messages.getString(Messages.getString("PlatformPanel.3")), null); //$NON-NLS-1$
+        platformLengthRow = createLabelTextBoxRow(Messages.getString(Messages.getString("PlatformPanel.4")), null); //$NON-NLS-1$
 
         panelPlatform.add(platformWidthRow); //$NON-NLS-1$
         panelPlatform.add(platformHeightRow); //$NON-NLS-1$
@@ -133,14 +132,14 @@ public class PlatformPanel extends ContextModulePanel {
 
         panelPlatform.add(createLabelRow(Messages.getString("TruckPanel.6"))); //$NON-NLS-1$
 
-        platformLocationX = createLabelTextBoxRow(Messages.getString("TruckPanel.7"), null);
-        platformLocationY = createLabelTextBoxRow(Messages.getString("TruckPanel.8"), null);
+        platformLocationX = createLabelTextBoxRow(Messages.getString(Messages.getString("PlatformPanel.5")), null); //$NON-NLS-1$
+        platformLocationY = createLabelTextBoxRow(Messages.getString(Messages.getString("PlatformPanel.6")), null); //$NON-NLS-1$
         panelPlatform.add(platformLocationX); //$NON-NLS-1$
         panelPlatform.add(platformLocationY); //$NON-NLS-1$
 
-        clearPlatformParamsRow = createButtonRow("Clear");
+        clearPlatformParamsRow = createButtonRow(Messages.getString("PlatformPanel.7")); //$NON-NLS-1$
         clearPlatformParamsRow.setOnClickListener(new ActionListener() {
-            
+
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 clearPlatformForm();
@@ -179,20 +178,21 @@ public class PlatformPanel extends ContextModulePanel {
             double locationY = NumbersHelper.getDoubleFromString(platformLocationY.getText(), 0);
 
             try {
-                boolean status = getContextModuleAdapter().updatePlatform(platformName, new Location(locationX, locationY), width, height, length, null);
-                if(status){
-                    showMessage("Successfully added platform to the ontology");
+                boolean status = getContextModuleAdapter().updatePlatform(platformName, new Location(locationX, locationY),
+                        width, height, length, null);
+                if (status) {
+                    showMessage(Messages.getString("PlatformPanel.8")); //$NON-NLS-1$
                     onRefreshClick();
                     platformsComboBoxRow.setSelectedItem(platformName);
                     addPlatformTextBoxButtonRow.setText(null);
-                }else{
-                    showMessage("Failed to add platform to the ontology");
+                } else {
+                    showMessage(Messages.getString("PlatformPanel.9")); //$NON-NLS-1$
                 }
             } catch (JsonHelperException e) {
-                showMessage("Could not update platform: Platform serialization error");
+                showMessage(Messages.getString("PlatformPanel.10")); //$NON-NLS-1$
             }
-        }else{
-            showMessage("Platform name was not specified");
+        } else {
+            showMessage(Messages.getString("PlatformPanel.11")); //$NON-NLS-1$
         }
     }
 
@@ -200,11 +200,11 @@ public class PlatformPanel extends ContextModulePanel {
         String selectedPlatform = platformsComboBoxRow.getSelectedItem();
         if (StringHelper.hasContent(selectedPlatform)) {
             if (getContextModuleAdapter().removePlatform(selectedPlatform)) {
-                showMessage("Platform successfully removed from ontology");
+                showMessage(Messages.getString("PlatformPanel.12")); //$NON-NLS-1$
                 // update list of platform
                 onRefreshClick();
             } else {
-                showMessage("Could not remove platform from ontology");
+                showMessage(Messages.getString("PlatformPanel.13")); //$NON-NLS-1$
             }
         }
     }
@@ -222,12 +222,12 @@ public class PlatformPanel extends ContextModulePanel {
             platformLocationY.setText((platform != null && platform.getLocation() != null) ? StringHelper.toString(platform
                     .getLocation().getLatitude()) : null);
 
-            if(platform != null && platform.getCameras() != null){
+            if (platform != null && platform.getCameras() != null) {
                 camerasComboBoxRow.setItems(new ArrayList<>(platform.getCameras().keySet()));
-            }else{
+            } else {
                 camerasComboBoxRow.setItems(null);
             }
-        }else{
+        } else {
             clearPlatformForm();
             clearCameraForm();
         }
@@ -238,16 +238,16 @@ public class PlatformPanel extends ContextModulePanel {
 
         panelCamera.add(createLabelRow(Messages.getString("TruckPanel.19"))); //$NON-NLS-1$
 
-        camerasComboBoxRow = createComboBoxButtonRow(Messages.getString("TruckPanel.20"), null);
+        camerasComboBoxRow = createComboBoxButtonRow(Messages.getString(Messages.getString("PlatformPanel.14")), null); //$NON-NLS-1$
         camerasComboBoxRow.setOnChangeListener(new ActionListener() {
-            
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 cameraSelectionChanged();
             }
         });
         camerasComboBoxRow.setOnClickListener(new ActionListener() {
-            
+
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 removeCamera();
@@ -255,9 +255,9 @@ public class PlatformPanel extends ContextModulePanel {
         });
         panelCamera.add(camerasComboBoxRow); //$NON-NLS-1$
 
-        addCameraTextBox = createTextBoxButtonRow(null, Messages.getString("TruckPanel.21"));
+        addCameraTextBox = createTextBoxButtonRow(null, Messages.getString(Messages.getString("PlatformPanel.15"))); //$NON-NLS-1$
         addCameraTextBox.setOnButtonClickListener(new ActionListener() {
-            
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 addCamera(addCameraTextBox.getText());
@@ -267,24 +267,24 @@ public class PlatformPanel extends ContextModulePanel {
 
         panelCamera.add(createLabelRow(Messages.getString("TruckPanel.12"))); //$NON-NLS-1$
 
-        cameraVerticalAngleRow = createLabelTextBoxRow(Messages.getString("TruckPanel.13"), null);
-        cameraHorizontalAngleRow = createLabelTextBoxRow(Messages.getString("TruckPanel.14"), null);
+        cameraVerticalAngleRow = createLabelTextBoxRow(Messages.getString(Messages.getString("PlatformPanel.16")), null); //$NON-NLS-1$
+        cameraHorizontalAngleRow = createLabelTextBoxRow(Messages.getString(Messages.getString("PlatformPanel.17")), null); //$NON-NLS-1$
         panelCamera.add(cameraVerticalAngleRow); //$NON-NLS-1$
         panelCamera.add(cameraHorizontalAngleRow); //$NON-NLS-1$
 
         panelCamera.add(createEmptyRow());
         panelCamera.add(createLabelRow(Messages.getString("TruckPanel.15"))); //$NON-NLS-1$
 
-        cameraXRow = createLabelTextBoxRow(Messages.getString("TruckPanel.16"), null);
-        cameraYRow = createLabelTextBoxRow(Messages.getString("TruckPanel.17"), null);
-        cameraAngleRow = createLabelTextBoxRow(Messages.getString("TruckPanel.18"), null);
+        cameraXRow = createLabelTextBoxRow(Messages.getString(Messages.getString("PlatformPanel.18")), null); //$NON-NLS-1$
+        cameraYRow = createLabelTextBoxRow(Messages.getString(Messages.getString("PlatformPanel.19")), null); //$NON-NLS-1$
+        cameraAngleRow = createLabelTextBoxRow(Messages.getString(Messages.getString("PlatformPanel.20")), null); //$NON-NLS-1$
         panelCamera.add(cameraXRow); //$NON-NLS-1$
         panelCamera.add(cameraYRow); //$NON-NLS-1$
         panelCamera.add(cameraAngleRow); //$NON-NLS-1$
 
-        clearCameraParamsRow = createButtonRow("Clear");
+        clearCameraParamsRow = createButtonRow(Messages.getString("PlatformPanel.21")); //$NON-NLS-1$
         clearCameraParamsRow.setOnClickListener(new ActionListener() {
-            
+
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 clearCameraForm();
@@ -296,12 +296,12 @@ public class PlatformPanel extends ContextModulePanel {
     }
 
     protected void addCamera(String cameraName) {
-        if(StringHelper.hasContent(cameraName)){
+        if (StringHelper.hasContent(cameraName)) {
             String platformName = platformsComboBoxRow.getSelectedItem();
-            if(StringHelper.hasContent(platformName)){
+            if (StringHelper.hasContent(platformName)) {
                 addCamera(cameraName, platformName);
-            }else{
-                showMessage("Please select a platform first");
+            } else {
+                showMessage(Messages.getString("PlatformPanel.22")); //$NON-NLS-1$
             }
         }
     }
@@ -311,18 +311,18 @@ public class PlatformPanel extends ContextModulePanel {
         String selectedPlatform = platformsComboBoxRow.getSelectedItem();
         if (StringHelper.hasContent(selectedCamera)) {
             if (getContextModuleAdapter().removeCamera(selectedCamera)) {
-                showMessage("Camera successfully removed from ontology");
+                showMessage(Messages.getString("PlatformPanel.23")); //$NON-NLS-1$
                 // update list of platform
                 onRefreshClick();
                 platformsComboBoxRow.setSelectedItem(selectedPlatform);
             } else {
-                showMessage("Could not remove camera from ontology");
+                showMessage(Messages.getString("PlatformPanel.24")); //$NON-NLS-1$
             }
         }
     }
 
     private void addCamera(String cameraName, String platformName) {
-        
+
         double cameraX = NumbersHelper.getDoubleFromString(cameraXRow.getText(), 0);
         double cameraY = NumbersHelper.getDoubleFromString(cameraYRow.getText(), 0);
         int cameraAngle = NumbersHelper.getIntegerFromString(cameraAngleRow.getText(), 0);
@@ -331,20 +331,21 @@ public class PlatformPanel extends ContextModulePanel {
         double verticalAngle = NumbersHelper.getDoubleFromString(cameraVerticalAngleRow.getText(), 0);
 
         try {
-            boolean status = getContextModuleAdapter().updateCamera(cameraName, platformName, CameraType.Other.name(), horizontalAngle, verticalAngle, new CartesianCoordinate(cameraX, cameraY), cameraAngle);
-            if(status){
-                showMessage("Successfully added camera to the ontology");
+            boolean status = getContextModuleAdapter().updateCamera(cameraName, platformName, CameraType.Other.name(),
+                    horizontalAngle, verticalAngle, new CartesianCoordinate(cameraX, cameraY), cameraAngle);
+            if (status) {
+                showMessage(Messages.getString("PlatformPanel.25")); //$NON-NLS-1$
                 onRefreshClick();
                 platformsComboBoxRow.setSelectedItem(platformName);
                 addCameraTextBox.setText(null);
-            }else{
-                showMessage("Failed to add camera to the ontology");
+            } else {
+                showMessage(Messages.getString("PlatformPanel.26")); //$NON-NLS-1$
             }
         } catch (JsonHelperException e) {
-            showMessage("Could not update camera: Platform serialization error");
+            showMessage(Messages.getString("PlatformPanel.27")); //$NON-NLS-1$
         }
     }
-    
+
     private void cameraSelectionChanged() {
         String selectedCamera = camerasComboBoxRow.getSelectedItem();
         if (StringHelper.hasContent(selectedCamera)) {
@@ -354,7 +355,7 @@ public class PlatformPanel extends ContextModulePanel {
             cameraXRow.setText(camera != null ? StringHelper.toString(camera.getOnPlatformPosition().getX()) : null);
             cameraYRow.setText(camera != null ? StringHelper.toString(camera.getOnPlatformPosition().getY()) : null);
             cameraAngleRow.setText(camera != null ? StringHelper.toString(camera.getDirectionAngle()) : null);
-        }else{
+        } else {
             clearCameraForm();
         }
     }
@@ -365,17 +366,17 @@ public class PlatformPanel extends ContextModulePanel {
 
     @Override
     protected void onSaveClick() {
-        if(tabbedPane.getSelectedComponent() == platformPanel){
-            if(StringHelper.hasContent(addPlatformTextBoxButtonRow.getText())){
+        if (tabbedPane.getSelectedComponent() == platformPanel) {
+            if (StringHelper.hasContent(addPlatformTextBoxButtonRow.getText())) {
                 addPlatform(addPlatformTextBoxButtonRow.getText());
-            }else{
-                addPlatform(platformsComboBoxRow.getSelectedItem());            
+            } else {
+                addPlatform(platformsComboBoxRow.getSelectedItem());
             }
-        }else if(tabbedPane.getSelectedComponent() == cameraPanel){
-            if(StringHelper.hasContent(addCameraTextBox.getText())){
+        } else if (tabbedPane.getSelectedComponent() == cameraPanel) {
+            if (StringHelper.hasContent(addCameraTextBox.getText())) {
                 addCamera(addCameraTextBox.getText());
-            }else{
-                addCamera(camerasComboBoxRow.getSelectedItem());            
+            } else {
+                addCamera(camerasComboBoxRow.getSelectedItem());
             }
         }
     }

@@ -74,7 +74,7 @@ public class ContextModuleOntologyManagerTest {
         cmOntologyManager.updatePlatform(information);
         assertEquals(information, cmOntologyManager.getOntologyObject(information.getId(), Platform.class));
 
-        //then modifies it and updates one more time
+        // then modifies it and updates one more time
         Platform updatedPlatform = TestHelper.createDummyPlatform(information.getId());
         cmOntologyManager.updatePlatform(updatedPlatform);
         assertEquals(updatedPlatform, cmOntologyManager.getOntologyObject(information.getId(), Platform.class));
@@ -125,11 +125,11 @@ public class ContextModuleOntologyManagerTest {
     }
 
     @Test
-    public void testUpdateParkingLot() throws OntologyException{
-        //creates a new parking lot
+    public void testUpdateParkingLot() throws OntologyException {
+        // creates a new parking lot
         ParkingLot parkingLot = TestHelper.createDummyParkingLot("MyParkingLot_" + System.currentTimeMillis());
 
-        //add to ontology, then try to retrieve it back
+        // add to ontology, then try to retrieve it back
         cmOntologyManager.updateParkingLot(parkingLot);
         ParkingLot returnedParkingLot = cmOntologyManager.getOntologyObject(parkingLot.getId(), ParkingLot.class);
         assertEquals(parkingLot, returnedParkingLot);
@@ -159,7 +159,7 @@ public class ContextModuleOntologyManagerTest {
     @Test
     public void testGetPlatformNeighborhoodNullId() throws OntologyException {
 
-        //null platformId provided
+        // null platformId provided
         expectedException.expect(OntologyException.class);
         expectedException.expectMessage(ErrorMessages.ONTOLOGY_EMPTY_INSTANCE_NAME.getMessage());
 
@@ -169,7 +169,7 @@ public class ContextModuleOntologyManagerTest {
     @Test
     public void testGetPlatformNeighborhoodEmptyId() throws OntologyException {
 
-        //empty platformId provided
+        // empty platformId provided
         expectedException.expect(OntologyException.class);
         expectedException.expectMessage(ErrorMessages.ONTOLOGY_EMPTY_INSTANCE_NAME.getMessage());
 
@@ -179,12 +179,11 @@ public class ContextModuleOntologyManagerTest {
     @Test
     public void testGetPlatformNeighborhoodInvalidId() throws OntologyException {
 
-        //invalid platformId provided
+        // invalid platformId provided
         String platformId = "nonExistingPlatformId";
 
         expectedException.expect(OntologyException.class);
-        expectedException.expectMessage(String.format(
-                ErrorMessages.ONTOLOGY_INSTANCE_NOT_FOUND.getMessage(), platformId));
+        expectedException.expectMessage(String.format(ErrorMessages.ONTOLOGY_INSTANCE_NOT_FOUND.getMessage(), platformId));
 
         cmOntologyManager.getPlatformNeighborhood(platformId);
     }
@@ -192,25 +191,25 @@ public class ContextModuleOntologyManagerTest {
     @Test
     public void testCalculateArenaDistancesForPlatformValidId() throws OntologyException {
 
-        //valid platformId provided
+        // valid platformId provided
         String platformId = "platformId_" + System.currentTimeMillis();
-        //valid parkingLotId provided
+        // valid parkingLotId provided
         String parkingLotOneId = "parkingLotOne_" + System.currentTimeMillis();
         String parkingLotTwoId = "parkingLotTwo_" + System.currentTimeMillis();
 
-        //create dummy objects for test purposes
+        // create dummy objects for test purposes
         ParkingLot parkingLotOne = TestHelper.createDummyParkingLot(parkingLotOneId);
         ParkingLot parkingLotTwo = TestHelper.createDummyParkingLot(parkingLotTwoId);
         Platform platform = TestHelper.createDummyPlatform(platformId);
 
-        //make sure, their locations match
+        // make sure, their locations match
         platform.setLocation(parkingLotTwo.getLocation());
-        //now add them to the ontology
+        // now add them to the ontology
         cmOntologyManager.updatePlatform(platform);
         cmOntologyManager.updateParkingLot(parkingLotOne);
         cmOntologyManager.updateParkingLot(parkingLotTwo);
 
-        //verify stored objects
+        // verify stored objects
         Platform ontoPlatform = cmOntologyManager.getOntologyObject(platformId, Platform.class);
         ParkingLot ontoParkingLotOne = cmOntologyManager.getOntologyObject(parkingLotOneId, ParkingLot.class);
         ParkingLot ontoParkingLotTwo = cmOntologyManager.getOntologyObject(parkingLotTwoId, ParkingLot.class);
@@ -218,20 +217,18 @@ public class ContextModuleOntologyManagerTest {
         assertEquals(parkingLotOne, ontoParkingLotOne);
         assertEquals(parkingLotTwo, ontoParkingLotTwo);
 
-        //later, try to retrieve parking data
+        // later, try to retrieve parking data
         Set<ArenaObjectCoordinate> coordinates = cmOntologyManager.getPlatformNeighborhood(platformId);
 
-        //verify data was returned
+        // verify data was returned
         assertFalse(coordinates.isEmpty());
-        //data is from added parking lots
+        // data is from added parking lots
         for (ArenaObjectCoordinate arenaObjectCoordinate : coordinates) {
             String objectId = arenaObjectCoordinate.getId();
-            assertTrue(
-                    parkingLotOne.getBuildings().containsKey(objectId) ||
-                    parkingLotOne.getInfrastructure().containsKey(objectId) ||
-                    parkingLotTwo.getBuildings().containsKey(objectId) ||
-                    parkingLotTwo.getInfrastructure().containsKey(objectId)
-            );
+            assertTrue(parkingLotOne.getBuildings().containsKey(objectId)
+                    || parkingLotOne.getInfrastructure().containsKey(objectId)
+                    || parkingLotTwo.getBuildings().containsKey(objectId)
+                    || parkingLotTwo.getInfrastructure().containsKey(objectId));
         }
     }
 
@@ -239,7 +236,7 @@ public class ContextModuleOntologyManagerTest {
     @Test
     public void testUpdateZoneNullLocations() throws OntologyException {
 
-        //if no locations were specified, empty zone is going to be created
+        // if no locations were specified, empty zone is going to be created
         String zoneName = cmOntologyManager.updateZone(null, null, "planeName", null);
         assertNotNull(cmOntologyManager.getZone(zoneName));
     }
@@ -247,7 +244,7 @@ public class ContextModuleOntologyManagerTest {
     @Test
     public void testUpdateZoneEmptyLocations() throws OntologyException {
 
-        //if no locations were specified, empty zone is going to be created
+        // if no locations were specified, empty zone is going to be created
         String zoneName = cmOntologyManager.updateZone(null, null, "planeName", new ArrayList<Location>());
         assertNotNull(cmOntologyManager.getZone(zoneName));
     }
@@ -257,9 +254,9 @@ public class ContextModuleOntologyManagerTest {
     public void testGetZoneNullId() throws OntologyException {
 
         expectedException.expect(OntologyException.class);
-        expectedException.expectMessage(
-                String.format(ErrorMessages.ONTOLOGY_EMPTY_VALUE_PROVIDED.getMessage(), OntologyConstants.Car_parking_zone.name()));
-        //if invalid zoneId was specified, nothing is going to be returned
+        expectedException.expectMessage(String.format(ErrorMessages.ONTOLOGY_EMPTY_VALUE_PROVIDED.getMessage(),
+                OntologyConstants.Car_parking_zone.name()));
+        // if invalid zoneId was specified, nothing is going to be returned
         cmOntologyManager.getZone(null);
     }
 
@@ -267,9 +264,9 @@ public class ContextModuleOntologyManagerTest {
     public void testGetZoneEmptyId() throws OntologyException {
 
         expectedException.expect(OntologyException.class);
-        expectedException.expectMessage(
-                String.format(ErrorMessages.ONTOLOGY_EMPTY_VALUE_PROVIDED.getMessage(), OntologyConstants.Car_parking_zone.name()));
-        //if invalid zoneId was specified, nothing is going to be returned
+        expectedException.expectMessage(String.format(ErrorMessages.ONTOLOGY_EMPTY_VALUE_PROVIDED.getMessage(),
+                OntologyConstants.Car_parking_zone.name()));
+        // if invalid zoneId was specified, nothing is going to be returned
         cmOntologyManager.getZone("");
     }
 
@@ -278,10 +275,8 @@ public class ContextModuleOntologyManagerTest {
 
         String instanceName = "someDummyZoneName";
         expectedException.expect(OntologyException.class);
-        expectedException.expectMessage(
-                String.format(ErrorMessages.ONTOLOGY_INSTANCE_NOT_FOUND.getMessage(), 
-                        instanceName));
-        //if invalid zoneId was specified, nothing is going to be returned
+        expectedException.expectMessage(String.format(ErrorMessages.ONTOLOGY_INSTANCE_NOT_FOUND.getMessage(), instanceName));
+        // if invalid zoneId was specified, nothing is going to be returned
         cmOntologyManager.getZone(instanceName);
     }
 
@@ -290,19 +285,18 @@ public class ContextModuleOntologyManagerTest {
 
         List<Location> locations = new ArrayList<>();
         int noOfLocations = 5;
-        for(int i=0;i<noOfLocations ; i++){
-            locations.add(
-                    new Location(TestHelper.getCoordinate(), TestHelper.getCoordinate(), 0, TestHelper.getCoordinate()));
+        for (int i = 0; i < noOfLocations; i++) {
+            locations.add(new Location(TestHelper.getCoordinate(), TestHelper.getCoordinate(), 0, TestHelper.getCoordinate()));
         }
-        //add new zone to ontology
+        // add new zone to ontology
         String zoneId = cmOntologyManager.updateZone(null, null, "planeName", locations);
         assertNotNull(zoneId);
 
-        //now try to get the zone from ontology
+        // now try to get the zone from ontology
         Location[] response = cmOntologyManager.getZone(zoneId).getLocations();
         assertEquals(noOfLocations, response.length);
 
-        //verify returned values
+        // verify returned values
         for (Location location : response) {
             assertTrue(locations.contains(location));
             locations.remove(location);
@@ -312,15 +306,13 @@ public class ContextModuleOntologyManagerTest {
     @Test
     public void testUpdateGetMultipleZones() throws OntologyException {
 
-        //update/get more than one zone at once
+        // update/get more than one zone at once
         List<Location> locationsZoneA = new ArrayList<>();
-            locationsZoneA.add(
-                    new Location(TestHelper.getCoordinate(), TestHelper.getCoordinate(), 0, TestHelper.getCoordinate()));
+        locationsZoneA.add(new Location(TestHelper.getCoordinate(), TestHelper.getCoordinate(), 0, TestHelper.getCoordinate()));
         List<Location> locationsZoneB = new ArrayList<>();
-        locationsZoneB.add(
-                    new Location(TestHelper.getCoordinate(), TestHelper.getCoordinate(), 0, TestHelper.getCoordinate()));
+        locationsZoneB.add(new Location(TestHelper.getCoordinate(), TestHelper.getCoordinate(), 0, TestHelper.getCoordinate()));
 
-        //add new zones to ontology
+        // add new zones to ontology
         String zoneIdA = cmOntologyManager.updateZone(null, null, "planeNameA", locationsZoneA);
         assertNotNull(zoneIdA);
 
@@ -329,8 +321,8 @@ public class ContextModuleOntologyManagerTest {
 
         assertFalse(StringHelper.equalsIgnoreCase(zoneIdA, zoneIdB));
 
-        //now try to get the zone from ontology
-        //verify returned values
+        // now try to get the zone from ontology
+        // verify returned values
         Location[] responseZoneA = cmOntologyManager.getZone(zoneIdA).getLocations();
         assertTrue(responseZoneA[0].equals(locationsZoneA.get(0)));
 
@@ -341,26 +333,24 @@ public class ContextModuleOntologyManagerTest {
     @Test
     public void testUpdatePlatformPosition() throws OntologyException {
 
-        //create dummyPlatform
+        // create dummyPlatform
         String platformId = "platform-" + random.nextInt(1000);
-        Location dummyLocation = new Location(
-                random.nextDouble(), random.nextDouble(), 0);
+        Location dummyLocation = new Location(random.nextDouble(), random.nextDouble(), 0);
 
-        //add new zone platform to the ontology
+        // add new zone platform to the ontology
         cmOntologyManager.updatePlatformPosition(platformId, dummyLocation);
 
-        //get platform from the ontology
+        // get platform from the ontology
         Platform ontoPlatform = cmOntologyManager.getOntologyObject(platformId, Platform.class);
         assertEquals(platformId, ontoPlatform.getId());
         assertEquals(dummyLocation, ontoPlatform.getLocation());
 
-        //simulate platform position update
-        Location newDummyLocation =  new Location(
-                random.nextDouble(), random.nextDouble());
-        //add new zone platform to the ontology
+        // simulate platform position update
+        Location newDummyLocation = new Location(random.nextDouble(), random.nextDouble());
+        // add new zone platform to the ontology
         cmOntologyManager.updatePlatformPosition(platformId, newDummyLocation);
 
-        //get platform from the ontology
+        // get platform from the ontology
         ontoPlatform = cmOntologyManager.getOntologyObject(platformId, Platform.class);
         assertEquals(platformId, ontoPlatform.getId());
         assertEquals(newDummyLocation, ontoPlatform.getLocation());
@@ -368,17 +358,17 @@ public class ContextModuleOntologyManagerTest {
 
     @Test
     public void testCreateGetCamera() throws OntologyException {
-        //first, create platform
+        // first, create platform
         String platformName = "platform_" + System.currentTimeMillis();
         cmOntologyManager.updatePlatformPosition(platformName, new Location());
 
-        //now, create camera
+        // now, create camera
         String cameraName = "camera_" + System.currentTimeMillis();
-        Camera camera = new Camera(cameraName, "fisheye", TestHelper.getBearing(), TestHelper.getBearing(), 
+        Camera camera = new Camera(cameraName, "fisheye", TestHelper.getBearing(), TestHelper.getBearing(),
                 new CartesianCoordinate(random.nextDouble(), random.nextDouble()), TestHelper.getBearing());
         cmOntologyManager.updateCamera(camera, platformName);
 
-        //now get the camera from ontology
+        // now get the camera from ontology
         Camera ontoCamera = cmOntologyManager.getOntologyObject(cameraName, Camera.class);
         assertEquals(camera, ontoCamera);
     }

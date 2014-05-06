@@ -4,11 +4,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 
-
 /**
  * Abstract class representing geoportal objects (like buildings, infrastructure or vehicles)
+ * 
  * @author cm-admin
- *
+ * 
  */
 public abstract class GeoObject extends OntologyObject {
 
@@ -37,29 +37,35 @@ public abstract class GeoObject extends OntologyObject {
 
     /**
      * Creates new object with given ID
-     * @param id ID of the object
+     * 
+     * @param id
+     *            ID of the object
      */
-    public GeoObject(String id){
+    public GeoObject(String id) {
         super(id);
     }
 
     /**
      * Adds a new boundary
-     * @param boundary new object boundary
+     * 
+     * @param boundary
+     *            new object boundary
      */
     public void addBoundary(Location boundary) {
-        if(boundary != null){
+        if (boundary != null) {
             boundaries.add(boundary);
         }
     }
 
     /**
      * Deletes an existing boundary from object
-     * @param boundary boundary to remove
+     * 
+     * @param boundary
+     *            boundary to remove
      * @return true if boundary was removed, false otherwise
      */
     public boolean deleteBoundary(Location boundary) {
-        if(boundary != null){
+        if (boundary != null) {
             return boundaries.remove(boundary);
         }
         return false;
@@ -67,6 +73,7 @@ public abstract class GeoObject extends OntologyObject {
 
     /**
      * Returns information about object boundaries
+     * 
      * @return list of the object boundaries
      */
     public Collection<Location> getBoundaries() {
@@ -75,6 +82,7 @@ public abstract class GeoObject extends OntologyObject {
 
     /**
      * Sets new boundaries of the object
+     * 
      * @param boundaries
      */
     public void setBoundaries(Collection<Location> boundaries) {
@@ -86,6 +94,7 @@ public abstract class GeoObject extends OntologyObject {
 
     /**
      * Sets new boundaries of the object
+     * 
      * @param boundaries
      */
     public void setBoundaries(Location[] boundaries) {
@@ -97,6 +106,7 @@ public abstract class GeoObject extends OntologyObject {
 
     /**
      * Returns information about object location of the object
+     * 
      * @return location of the object
      */
     public Location getLocation() {
@@ -105,7 +115,9 @@ public abstract class GeoObject extends OntologyObject {
 
     /**
      * Updates information about object location of the object
-     * @param location location of the object
+     * 
+     * @param location
+     *            location of the object
      */
     public void setLocation(Location location) {
         this.location = location;
@@ -113,6 +125,7 @@ public abstract class GeoObject extends OntologyObject {
 
     /**
      * Returns administrative information about the object (country)
+     * 
      * @return country name
      */
     public String getCountry() {
@@ -121,7 +134,9 @@ public abstract class GeoObject extends OntologyObject {
 
     /**
      * Updates administrative information about the object (country)
-     * @param country name
+     * 
+     * @param country
+     *            name
      */
     public void setCountry(String country) {
         this.country = country;
@@ -129,6 +144,7 @@ public abstract class GeoObject extends OntologyObject {
 
     /**
      * Returns administrative information about the object (town/city)
+     * 
      * @return town name
      */
     public String getTown() {
@@ -137,7 +153,9 @@ public abstract class GeoObject extends OntologyObject {
 
     /**
      * Updates administrative information about the object (town/city)
-     * @param town town name
+     * 
+     * @param town
+     *            town name
      */
     public void setTown(String town) {
         this.town = town;
@@ -145,6 +163,7 @@ public abstract class GeoObject extends OntologyObject {
 
     /**
      * Returns administrative information about the object (street)
+     * 
      * @return street name
      */
     public String getStreet() {
@@ -153,7 +172,9 @@ public abstract class GeoObject extends OntologyObject {
 
     /**
      * Updates administrative information about the object (street)
-     * @param street street name
+     * 
+     * @param street
+     *            street name
      */
     public void setStreet(String street) {
         this.street = street;
@@ -161,6 +182,7 @@ public abstract class GeoObject extends OntologyObject {
 
     /**
      * Returns administrative information about the object (number)
+     * 
      * @return street number
      */
     public int getStreetNumber() {
@@ -169,7 +191,9 @@ public abstract class GeoObject extends OntologyObject {
 
     /**
      * Updates administrative information about the object (number)
-     * @param streetNumber street number
+     * 
+     * @param streetNumber
+     *            street number
      */
     public void setStreetNumber(int streetNumber) {
         this.streetNumber = streetNumber;
@@ -177,6 +201,7 @@ public abstract class GeoObject extends OntologyObject {
 
     @Override
     public String toString() {
-        return String.format("GeoObject [objectId=%s, location=%s, boundaries size=%d]", getId(), getLocation(), getBoundaries().size());
+        return String.format("GeoObject [objectId=%s, location=%s, boundaries size=%d]", getId(), getLocation(), getBoundaries()
+                .size());
     }
 }

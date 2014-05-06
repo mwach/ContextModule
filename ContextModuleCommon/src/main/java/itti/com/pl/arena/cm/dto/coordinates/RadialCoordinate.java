@@ -4,25 +4,29 @@ import java.io.Serializable;
 
 /**
  * Class representing single point in the radius 2-D space
+ * 
  * @author cm-admin
- *
+ * 
  */
-public class RadialCoordinate implements Serializable{
+public class RadialCoordinate implements Serializable {
 
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
 
-    //radius (distance between points)
+    // radius (distance between points)
     private double radius;
-    //angle between points
+    // angle between points
     private double angle;
 
     /**
      * Default constructor
-     * @param radius radius
-     * @param angle angle
+     * 
+     * @param radius
+     *            radius
+     * @param angle
+     *            angle
      */
     public RadialCoordinate(double radius, double angle) {
         this.radius = radius;
@@ -31,6 +35,7 @@ public class RadialCoordinate implements Serializable{
 
     /**
      * Updates angle with the new value (new value is going to be added to the existing one)
+     * 
      * @param angle
      */
     public void updateAngle(double angle) {
@@ -39,6 +44,7 @@ public class RadialCoordinate implements Serializable{
 
     /**
      * Returns value of the radius
+     * 
      * @return radius
      */
     public double getRadius() {
@@ -47,6 +53,7 @@ public class RadialCoordinate implements Serializable{
 
     /**
      * Returns value of the angle
+     * 
      * @return angle
      */
     public double getAngle() {

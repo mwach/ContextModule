@@ -104,10 +104,11 @@ public final class StringHelper {
     }
 
     /**
-     * Safe, null-verifying method to call 'toString' on provided objects
-     * For not-null objects returns value of the object 'toString()' method
-     * Otherwise string with '(null)' value is going to be returned
-     * @param object object, on which 'toString' method should be called
+     * Safe, null-verifying method to call 'toString' on provided objects For not-null objects returns value of the
+     * object 'toString()' method Otherwise string with '(null)' value is going to be returned
+     * 
+     * @param object
+     *            object, on which 'toString' method should be called
      * @return value of the object 'toString' or '(null') string for null objects
      */
     public static String toString(Object object) {
@@ -141,8 +142,7 @@ public final class StringHelper {
 
     public static boolean arrayContainsItem(String[] items, String item) {
 
-        if(items == null || item == null)
-        {
+        if (items == null || item == null) {
             return false;
         }
         return Arrays.asList(items).contains(item);

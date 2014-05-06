@@ -72,10 +72,13 @@ public class CMModuleImpl extends ModuleImpl {
      * 
      * @param id
      *            ID of the object
-     * @param x value of the longitude 
-     * @param y value of the latitude
-     * @param z value of the altitude
-     *            
+     * @param x
+     *            value of the longitude
+     * @param y
+     *            value of the latitude
+     * @param z
+     *            value of the altitude
+     * 
      * @return object containing provided values
      */
     public AbstractNamedValue createCoordinate(String id, double x, double y, double z) {
@@ -93,7 +96,8 @@ public class CMModuleImpl extends ModuleImpl {
      * 
      * @param id
      *            ID of the object
-     * @param vector list of features
+     * @param vector
+     *            list of features
      * @return object containing provided values
      */
     public Object createObject(String id, List<AbstractNamedValue> vector) {

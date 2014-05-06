@@ -27,14 +27,13 @@ public enum ErrorMessages {
     PROPERTIES_HELPER_COULD_NOT_PARSE("Failed to load properties file '%s' Details: '%s'"),
     STRING_HELPER_CANNOT_ENCODE("Could not encode string '%s' using default charsed. Details: %s"),
 
-    JSON_HELPER_CANNOT_SERIALIZE("Cannot serialize given object: %s into object. Details: %s"), 
-    JSON_HELPER_CANNOT_DESERIALIZE("Cannot deserialize given string: %s into object. Details: %s"), 
-    JSON_HELPER_CANNOT_GET_PROPERTY_VALUE_NULL_INPUT("Could not retrieve property value. Null or empty input string provided: %s"), 
-    JSON_HELPER_CANNOT_GET_PROPERTY_VALUE_NULL_PROP("Could not retrieve property value. Null or empty property name provided: %s"), 
-    
+    JSON_HELPER_CANNOT_SERIALIZE("Cannot serialize given object: %s into object. Details: %s"),
+    JSON_HELPER_CANNOT_DESERIALIZE("Cannot deserialize given string: %s into object. Details: %s"),
+    JSON_HELPER_CANNOT_GET_PROPERTY_VALUE_NULL_INPUT("Could not retrieve property value. Null or empty input string provided: %s"),
+    JSON_HELPER_CANNOT_GET_PROPERTY_VALUE_NULL_PROP("Could not retrieve property value. Null or empty property name provided: %s"),
+
     LOCATION_HELPER_NULL_LOCATION("Null or empty location string provided"),
-    LOCATION_HELPER_INVALID_FORMAT("invalid format of location string: '%s'. Should be: 'longitude,latitude'"),
-    ;
+    LOCATION_HELPER_INVALID_FORMAT("invalid format of location string: '%s'. Should be: 'longitude,latitude'"), ;
 
     /*
      * Descriptive error description

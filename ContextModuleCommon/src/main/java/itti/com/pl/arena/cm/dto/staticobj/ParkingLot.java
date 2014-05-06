@@ -40,6 +40,7 @@ public class ParkingLot extends GeoObject {
 
     /**
      * Returns list of infrastructure objects located on given parking lot
+     * 
      * @return list of the infrastructure objects detected on the parking lot
      */
     public Map<String, Infrastructure> getInfrastructure() {
@@ -48,7 +49,9 @@ public class ParkingLot extends GeoObject {
 
     /**
      * Adds a new infrastructure object located on given parking
-     * @param infrastructure adds a new infrastructure object to the parking lot object
+     * 
+     * @param infrastructure
+     *            adds a new infrastructure object to the parking lot object
      */
     public void addIntrastructure(Infrastructure infrastructure) {
         this.infrastructures.put(infrastructure.getId(), infrastructure);
@@ -75,7 +78,8 @@ public class ParkingLot extends GeoObject {
     /**
      * Adds a new building object located on given parking
      * 
-     * @param building building
+     * @param building
+     *            building
      */
     public void addBuilding(Building building) {
         this.buildings.put(building.getId(), building);
@@ -84,11 +88,12 @@ public class ParkingLot extends GeoObject {
     /**
      * Sets a new list of buildings for given parking
      * 
-     * @param buildings list of buildings
+     * @param buildings
+     *            list of buildings
      */
     public void setBuildings(Collection<Building> buildings) {
         this.buildings.clear();
-        if(buildings != null){
+        if (buildings != null) {
             for (Building building : buildings) {
                 addBuilding(building);
             }
@@ -98,11 +103,12 @@ public class ParkingLot extends GeoObject {
     /**
      * Sets a new list of infrastructures for given parking
      * 
-     * @param infrastructures list of infrastructures
+     * @param infrastructures
+     *            list of infrastructures
      */
     public void setInfrastructures(Collection<Infrastructure> infrastructures) {
         this.infrastructures.clear();
-        if(infrastructures != null){
+        if (infrastructures != null) {
             for (Infrastructure infrastructure : infrastructures) {
                 addIntrastructure(infrastructure);
             }

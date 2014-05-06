@@ -4,14 +4,14 @@ import itti.com.pl.arena.cm.Constants;
 
 /**
  * Current status of the platform
+ * 
  * @author cm-admin
- *
+ * 
  */
 public enum PlatformStatus {
 
     /*
-     * Status of the platform is unknown. 
-     * This is the default status after system initialization
+     * Status of the platform is unknown. This is the default status after system initialization
      */
     Unknown(Constants.UNDEFINED_VALUE),
     /*
@@ -36,17 +36,20 @@ public enum PlatformStatus {
 
     /**
      * Default private constructor
-     * @param statusCode ID of the status code
+     * 
+     * @param statusCode
+     *            ID of the status code
      */
-    private PlatformStatus(int statusCode){
+    private PlatformStatus(int statusCode) {
         this.statusCode = statusCode;
     }
 
     /**
      * returns numeric representation of the current status
+     * 
      * @return status code as int
      */
-    public int getStatusCode(){
+    public int getStatusCode() {
         return statusCode;
     }
 }

@@ -4,8 +4,9 @@ import itti.com.pl.arena.cm.exception.ContextModuleException;
 
 /**
  * Client-side exception
+ * 
  * @author cm-admin
- *
+ * 
  */
 public class ContextModuleClientException extends ContextModuleException {
 

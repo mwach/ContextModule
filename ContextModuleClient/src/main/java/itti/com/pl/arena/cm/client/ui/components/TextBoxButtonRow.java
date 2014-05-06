@@ -7,7 +7,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class TextBoxButtonRow extends JPanel{
+public class TextBoxButtonRow extends JPanel {
 
     /**
      * 
@@ -16,32 +16,33 @@ public class TextBoxButtonRow extends JPanel{
 
     private JTextField textField = null;
     private JButton button = null;
-    
-    public TextBoxButtonRow(String textFieldText, String buttonText)
-    {
+
+    public TextBoxButtonRow(String textFieldText, String buttonText) {
         super(new GridLayout(1, 2));
         textField = new JTextField();
         add(textField);
         button = new JButton(buttonText);
         add(button);
-        
+
         setText(textFieldText);
         setButtonText(buttonText);
     }
 
     public void setText(String text) {
-    	textField.setText(text == null ? "" : text);
+        textField.setText(text == null ? "" : text);
     }
-    public String getText(){
+
+    public String getText() {
         return textField.getText();
     }
+
     public void setButtonText(String buttonText) {
-    	button.setText(buttonText == null ? "" : buttonText);
+        button.setText(buttonText == null ? "" : buttonText);
     }
 
     public void setOnButtonClickListener(ActionListener actionListener) {
-        if(actionListener != null){
-                button.addActionListener(actionListener);
+        if (actionListener != null) {
+            button.addActionListener(actionListener);
         }
     }
 

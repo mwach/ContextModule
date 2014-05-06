@@ -10,7 +10,7 @@ import java.util.List;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
-public class ComboBoxRow extends JPanel{
+public class ComboBoxRow extends JPanel {
 
     /**
      * 
@@ -19,18 +19,17 @@ public class ComboBoxRow extends JPanel{
 
     private JComboBox<String> comboBox = null;
 
-    public ComboBoxRow(List<String> content)
-    {
+    public ComboBoxRow(List<String> content) {
         super(new GridLayout(1, 1));
         comboBox = new JComboBox<String>();
         setItems(content);
         add(comboBox);
     }
 
-    public void setItems(List<String> content){
+    public void setItems(List<String> content) {
 
         comboBox.removeAllItems();
-        if(content != null){
+        if (content != null) {
             for (String item : content) {
                 comboBox.addItem(item);
             }
@@ -38,7 +37,7 @@ public class ComboBoxRow extends JPanel{
     }
 
     public void setOnChangeListener(ActionListener actionListener) {
-        if(actionListener != null){
+        if (actionListener != null) {
             comboBox.addActionListener(actionListener);
         }
     }
@@ -57,14 +56,14 @@ public class ComboBoxRow extends JPanel{
 
     public List<String> getItems() {
         List<String> items = new ArrayList<>();
-        for(int i=0 ; i<comboBox.getItemCount() ; i++){
+        for (int i = 0; i < comboBox.getItemCount(); i++) {
             items.add(comboBox.getItemAt(i));
         }
         return items;
     }
 
     public void removeSelectedItem() {
-        if(comboBox.getSelectedItem() != null){
+        if (comboBox.getSelectedItem() != null) {
             comboBox.removeItem(comboBox.getSelectedItem());
         }
     }

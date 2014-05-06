@@ -45,7 +45,7 @@ public final class MessageConstants {
          * Service name used by the {@link ContextModule} 'getGeoportalData' method
          */
         getGeoportalData,
-        
+
         /**
          * Service name used by the {@link ContextModule} 'getPlatformNeighborhood' method
          */
@@ -87,15 +87,15 @@ public final class MessageConstants {
         /**
          * Service name used by the 'destinationLeft' notifier method
          */
-        destinationLeft, 
+        destinationLeft,
         /**
          * Service name used by the 'defineRule' method
          */
-        defineRule, 
+        defineRule,
         /**
          * Service name used by the 'removeRule' method
          */
-        removeRule, 
+        removeRule,
         /**
          * Service name used by the 'getRule' method
          */
@@ -103,15 +103,15 @@ public final class MessageConstants {
         /**
          * Service name used by the 'applyRules' method
          */
-        applyRules, 
+        applyRules,
         /**
          * Service name used by the 'getListOfRules' method
          */
-        getListOfRules, 
+        getListOfRules,
         /**
          * Service name used by the 'getListOfPlatforms' method
          */
-        getListOfPlatforms, 
+        getListOfPlatforms,
         /**
          * Service name used by the 'removePlatform' method
          */
@@ -119,23 +119,23 @@ public final class MessageConstants {
         /**
          * Service name used by the 'removeCamera' method
          */
-        removeCamera, 
+        removeCamera,
         /**
          * Service name used by the 'getCamera' method
          */
-        getCamera, 
+        getCamera,
         /**
          * Service name used by the 'removeParkingLot' method
          */
-        removeParkingLot, 
+        removeParkingLot,
         /**
          * Service name used by the 'removeBuilding' method
          */
-        removeBuilding, 
+        removeBuilding,
         /**
          * Service name used by the 'getBuilding' method
          */
-        getBuilding, 
+        getBuilding,
         /**
          * Service name used by the 'updateBuilding' method
          */
@@ -171,11 +171,11 @@ public final class MessageConstants {
         /**
          * Properties of the Zones
          */
-        ParkingLotName, Name, Ident, PlaneName, 
+        ParkingLotName, Name, Ident, PlaneName,
         /**
          * geoportal data
          */
-        GeoportalData, 
+        GeoportalData,
         /**
          * SWRL data
          */
@@ -187,12 +187,11 @@ public final class MessageConstants {
         /**
          * Notification message
          */
-        Notification, 
-        ;
+        Notification, ;
 
     }
 
-    public enum ContextModuleResponseProperties{
+    public enum ContextModuleResponseProperties {
         /**
          * name of the status property in the {@link BooleanNamedValue} response
          */

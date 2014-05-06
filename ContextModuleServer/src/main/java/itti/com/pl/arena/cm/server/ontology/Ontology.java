@@ -185,7 +185,8 @@ public interface Ontology {
      *            predefined ID of the zone
      * @param parkingLotName
      *            name of the parking lot
-     *            @param planeName name of the plane
+     * @param planeName
+     *            name of the plane
      * 
      * @param locations
      *            zone boundaries (list of zone vertexes stored as {@link Location} objects)
@@ -193,8 +194,8 @@ public interface Ontology {
      * @throws OntologyException
      *             processing exception
      */
-    public String updateZone(String zoneId, String parkingLotName, String planeName, List<itti.com.pl.arena.cm.dto.Location> locations)
-            throws OntologyException;
+    public String updateZone(String zoneId, String parkingLotName, String planeName,
+            List<itti.com.pl.arena.cm.dto.Location> locations) throws OntologyException;
 
     /**
      * Retrieves zone from the ontology
@@ -247,8 +248,10 @@ public interface Ontology {
     /**
      * Defines a new, or update an existing camera in the ontology
      * 
-     * @param camera camera object
-     * @param platformName ID of the platform, on which camera is installed
+     * @param camera
+     *            camera object
+     * @param platformName
+     *            ID of the platform, on which camera is installed
      * 
      * @throws OntologyException
      *             processing exception
@@ -267,15 +270,20 @@ public interface Ontology {
 
     /**
      * Adds a new rule to the ontology
-     * @param ruleName name of the rule
-     * @param ruleContent content of the rule
-     * @throws OntologyException 
+     * 
+     * @param ruleName
+     *            name of the rule
+     * @param ruleContent
+     *            content of the rule
+     * @throws OntologyException
      */
     public void addSwrlRule(String ruleName, String ruleContent) throws OntologyException;
 
     /**
      * Returns rule identified by its name from the ontology
-     * @param ruleName name of the rule
+     * 
+     * @param ruleName
+     *            name of the rule
      * @return rule definition
      * @throws OntologyException
      */
@@ -283,7 +291,9 @@ public interface Ontology {
 
     /**
      * Removes rule identified by its name from the ontology
-     * @param ruleName name of the rule
+     * 
+     * @param ruleName
+     *            name of the rule
      * @throws OntologyException
      */
     public void removeSwrlRule(String ruleName) throws OntologyException;

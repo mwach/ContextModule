@@ -42,8 +42,9 @@ public class ComboBoxButtonRow extends JPanel {
             }
         }
     }
-    public void addItem(String item){
-        if(StringHelper.hasContent(item)){
+
+    public void addItem(String item) {
+        if (StringHelper.hasContent(item)) {
             comboBox.addItem(item);
         }
     }
@@ -59,8 +60,8 @@ public class ComboBoxButtonRow extends JPanel {
     }
 
     public void setSelectedItem(String item) {
-        if(StringHelper.hasContent(item)){
-            if(getItems().contains(item)){
+        if (StringHelper.hasContent(item)) {
+            if (getItems().contains(item)) {
                 comboBox.setSelectedItem(item);
             }
         }
@@ -68,7 +69,7 @@ public class ComboBoxButtonRow extends JPanel {
 
     public List<String> getItems() {
         List<String> content = new ArrayList<>();
-        for(int i=0 ; i<comboBox.getItemCount() ; i++){
+        for (int i = 0; i < comboBox.getItemCount(); i++) {
             content.add(comboBox.getItemAt(i));
         }
         return content;
@@ -81,7 +82,7 @@ public class ComboBoxButtonRow extends JPanel {
     }
 
     public void removeSelectedItem() {
-        if(comboBox.getSelectedItem() != null){
+        if (comboBox.getSelectedItem() != null) {
             comboBox.removeItem(comboBox.getSelectedItem());
         }
     }

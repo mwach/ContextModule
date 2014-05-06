@@ -102,7 +102,7 @@ public class GpsListener implements HttpRequestHandler, LocationPublisher {
     }
 
     public void notifyListener(String newLocation) {
-//{"Latitude":53.12406409531832,"Longitude":17.973143979907036,"Altitude":110.0,"Bearing":325.0,"Speed":0.0,"Time":1396528691000,"Accuracy":5.0}
+        // {"Latitude":53.12406409531832,"Longitude":17.973143979907036,"Altitude":110.0,"Bearing":325.0,"Speed":0.0,"Time":1396528691000,"Accuracy":5.0}
         try {
             GpsLocation location = JsonHelper.fromJson(newLocation, GpsLocation.class);
             LogHelper.debug(GpsListener.class, "notifyListener", "GPS update received: %s", location);
@@ -112,7 +112,8 @@ public class GpsListener implements HttpRequestHandler, LocationPublisher {
             }
 
         } catch (JsonHelperException | RuntimeException exc) {
-            LogHelper.error(GpsListener.class, "notifyListener", "Could not deserialize GPS response '%s' into object: '%s'", newLocation, exc.getStackTrace());
+            LogHelper.error(GpsListener.class, "notifyListener", "Could not deserialize GPS response '%s' into object: '%s'",
+                    newLocation, exc.getStackTrace());
         }
     }
 
@@ -133,8 +134,8 @@ public class GpsListener implements HttpRequestHandler, LocationPublisher {
     public void shutdown() {
     }
 
-    private static class GpsLocation{
-//        {"Latitude":53.13749182038009,"Longitude":18.127436125651002,"Altitude":66.5,"Bearing":181.0,"Speed":0.1251000016927719,"Time":1395316203000,"Accuracy":15.0}
+    private static class GpsLocation {
+        // {"Latitude":53.13749182038009,"Longitude":18.127436125651002,"Altitude":66.5,"Bearing":181.0,"Speed":0.1251000016927719,"Time":1395316203000,"Accuracy":15.0}
 
         public double Latitude;
         public double Longitude;
@@ -145,7 +146,8 @@ public class GpsListener implements HttpRequestHandler, LocationPublisher {
         public double Accuracy;
     }
 
-    private Location createLocation(GpsLocation gpsLocation){
-        return  new Location(gpsLocation.Longitude, gpsLocation.Latitude, (int)gpsLocation.Bearing, gpsLocation.Altitude, gpsLocation.Accuracy, gpsLocation.Speed, gpsLocation.Time);
+    private Location createLocation(GpsLocation gpsLocation) {
+        return new Location(gpsLocation.Longitude, gpsLocation.Latitude, (int) gpsLocation.Bearing, gpsLocation.Altitude,
+                gpsLocation.Accuracy, gpsLocation.Speed, gpsLocation.Time);
     }
 }

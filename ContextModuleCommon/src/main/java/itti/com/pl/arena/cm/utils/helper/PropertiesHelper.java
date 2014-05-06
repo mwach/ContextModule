@@ -146,7 +146,6 @@ public final class PropertiesHelper {
     }
 
     public static boolean hasProperty(Properties properties, String propertyName) {
-        return StringHelper.hasContent(
-                PropertiesHelper.getPropertyAsString(properties, propertyName, null));
+        return StringHelper.hasContent(PropertiesHelper.getPropertyAsString(properties, propertyName, null));
     }
 }

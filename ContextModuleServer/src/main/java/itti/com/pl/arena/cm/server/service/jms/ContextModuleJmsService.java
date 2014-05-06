@@ -404,11 +404,11 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
             Building.Type buildingType = Building.Type.getType(instanceClass);
             Infrastructure.Type infrastructureType = Infrastructure.Type.getType(instanceClass);
 
-            if(buildingType != null){
+            if (buildingType != null) {
                 building = getOntology().getOntologyObject(buildingId, Building.class);
-            }else if(infrastructureType != null){
-                building = getOntology().getOntologyObject(buildingId, Infrastructure.class);                
-            }else{
+            } else if (infrastructureType != null) {
+                building = getOntology().getOntologyObject(buildingId, Infrastructure.class);
+            } else {
                 throw new OntologyException(ErrorMessages.ONTOLOGY_COULD_NOT_FIND_PARENT_CLASS, buildingId);
             }
         } catch (OntologyException e) {
@@ -530,8 +530,8 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
 
         } catch (OntologyException | JmsException exc) {
             // could not update data
-            LogHelper.exception(ContextModuleJmsService.class, "getCameraFieldOfView",
-                    "Could not retrieve data from ontology", exc);
+            LogHelper.exception(ContextModuleJmsService.class, "getCameraFieldOfView", "Could not retrieve data from ontology",
+                    exc);
         }
 
         // prepare response object
@@ -611,8 +611,8 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
 
             // try to parse JSON into object
             building = JsonHelper.fromJson(buildingRequest.getValue(), Building.class);
-            if(((Building)building).getType() == null){
-                building = JsonHelper.fromJson(buildingRequest.getValue(), Infrastructure.class);                
+            if (((Building) building).getType() == null) {
+                building = JsonHelper.fromJson(buildingRequest.getValue(), Infrastructure.class);
             }
             // update ontology with provided data
             ontology.updateBuilding(building);
@@ -647,10 +647,10 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
             for (AbstractNamedValue parameter : cameraObject.getFeatureVector().getFeature()) {
 
                 if (parameter instanceof SimpleNamedValue) {
-                    SimpleNamedValue snv = (SimpleNamedValue)parameter;
-                    if(StringHelper.equals(ContextModuleRequestProperties.Camera.name(), snv.getFeatureName())){
+                    SimpleNamedValue snv = (SimpleNamedValue) parameter;
+                    if (StringHelper.equals(ContextModuleRequestProperties.Camera.name(), snv.getFeatureName())) {
                         cameraJson = snv.getValue();
-                    }else if(StringHelper.equals(ContextModuleRequestProperties.PlatformName.name(), snv.getFeatureName())){
+                    } else if (StringHelper.equals(ContextModuleRequestProperties.PlatformName.name(), snv.getFeatureName())) {
                         platformName = snv.getValue();
                     }
                 }
@@ -688,7 +688,8 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
         }
 
         // no value in the object
-        if (requestObject instanceof SimpleNamedValue && (!StringHelper.hasContent(((SimpleNamedValue)requestObject).getValue()))) {
+        if (requestObject instanceof SimpleNamedValue
+                && (!StringHelper.hasContent(((SimpleNamedValue) requestObject).getValue()))) {
             throw new JmsException(ErrorMessages.JMS_NULL_VALUE_REQUEST_OBJECT);
         }
 
@@ -772,12 +773,14 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
             LogHelper.exception(ContextModuleJmsService.class, "getGISData", "Could not parse request data", exc);
         }
 
-        if(requestLocation == null){
-            LogHelper.error(ContextModuleJmsService.class, "getGISData", String.format("No location found in the request with ID: %s", parameters.getId()));
-            //prepare error response
-            return createObject(parameters.getId(), Arrays.asList(new AbstractNamedValue[]{
-                    prepareErrorResponse(parameters.getId(),
-                    String.format("No location provided in the request: '%s'", parameters.getHref()))}));
+        if (requestLocation == null) {
+            LogHelper.error(ContextModuleJmsService.class, "getGISData",
+                    String.format("No location found in the request with ID: %s", parameters.getId()));
+            // prepare error response
+            return createObject(
+                    parameters.getId(),
+                    Arrays.asList(new AbstractNamedValue[] { prepareErrorResponse(parameters.getId(),
+                            String.format("No location provided in the request: '%s'", parameters.getHref())) }));
         }
         return getGeoObjects(requestLocation, requestRange, requestClasses);
     }
@@ -863,7 +866,7 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
         String zoneId = null;
         // name of the parking lot correlated with that zone
         String parkingLotName = null;
-        //'plane name' zone attribute
+        // 'plane name' zone attribute
         String planeName = null;
 
         // get the zone definition
@@ -875,11 +878,10 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
             } else if (feature instanceof SimpleNamedValue) {
                 if (StringHelper.equalsIgnoreCase(ContextModuleRequestProperties.ParkingLotName.name(), feature.getFeatureName())) {
                     parkingLotName = ((SimpleNamedValue) feature).getValue();
-                } else if (StringHelper
-                        .equalsIgnoreCase(ContextModuleRequestProperties.Name.name(), feature.getFeatureName())) {
+                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequestProperties.Name.name(), feature.getFeatureName())) {
                     zoneId = ((SimpleNamedValue) feature).getValue();
-                } else if (StringHelper
-                        .equalsIgnoreCase(ContextModuleRequestProperties.PlaneName.name(), feature.getFeatureName())) {
+                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequestProperties.PlaneName.name(),
+                        feature.getFeatureName())) {
                     planeName = ((SimpleNamedValue) feature).getValue();
                 }
             } else {
@@ -894,8 +896,8 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
         }
 
         // prepare response object
-        SimpleNamedValue response = createSimpleNamedValue(zoneDefinition.getId(),
-                ContextModuleRequestProperties.Name.name(), zoneId);
+        SimpleNamedValue response = createSimpleNamedValue(zoneDefinition.getId(), ContextModuleRequestProperties.Name.name(),
+                zoneId);
         return response;
     }
 
@@ -907,11 +909,12 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
         String zoneId = zoneMessage.getValue();
         try {
             Zone zone = getOntology().getZone(zoneId);
-            if(zone != null)
-            {
-                responseVector.add(createSimpleNamedValue(zoneMessage.getId(), ContextModuleRequestProperties.Name.name(), zone.getId()));
-                if(StringHelper.hasContent(zone.getPlaneName())){
-                    responseVector.add(createSimpleNamedValue(zoneMessage.getId(), ContextModuleRequestProperties.PlaneName.name(), zone.getPlaneName()));
+            if (zone != null) {
+                responseVector.add(createSimpleNamedValue(zoneMessage.getId(), ContextModuleRequestProperties.Name.name(),
+                        zone.getId()));
+                if (StringHelper.hasContent(zone.getPlaneName())) {
+                    responseVector.add(createSimpleNamedValue(zoneMessage.getId(),
+                            ContextModuleRequestProperties.PlaneName.name(), zone.getPlaneName()));
                 }
                 for (itti.com.pl.arena.cm.dto.Location location : zone.getLocations()) {
                     AbstractNamedValue coordinate = createCoordinate(zoneMessage.getId(), location.getLongitude(),
@@ -1025,7 +1028,8 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
             getOntology().remove(platformId);
             status = true;
         } catch (OntologyException exc) {
-            LogHelper.exception(ContextModuleJmsService.class, "removePlatform", "Could not remove platform from the ontology", exc);
+            LogHelper.exception(ContextModuleJmsService.class, "removePlatform", "Could not remove platform from the ontology",
+                    exc);
         }
         // prepare response object
         BooleanNamedValue response = createBooleanNamedValue(platformMessage.getId(), platformId, status);
@@ -1055,7 +1059,7 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
         } catch (OntologyException exc) {
             LogHelper.exception(ContextModuleJmsService.class, "getRule", "Could not retrieve rule", exc);
         }
-        return createSimpleNamedValue(request.getId(), request.getFeatureName(), content);    
+        return createSimpleNamedValue(request.getId(), request.getFeatureName(), content);
     }
 
     @Override
@@ -1067,14 +1071,15 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
         } catch (OntologyException exc) {
             LogHelper.exception(ContextModuleJmsService.class, "removeRule", "Could not remove rule", exc);
         }
-        return createBooleanNamedValue(request.getId(), request.getFeatureName(), status);    
+        return createBooleanNamedValue(request.getId(), request.getFeatureName(), status);
     }
 
     @Override
     public BooleanNamedValue applyRules(SimpleNamedValue request) {
         boolean status = false;
         try {
-            getOntology().runSwrlEngine();;
+            getOntology().runSwrlEngine();
+            ;
             status = true;
         } catch (OntologyException exc) {
             LogHelper.exception(ContextModuleJmsService.class, "applyRules", "Could not run engine", exc);
@@ -1101,7 +1106,7 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
         Object response = createObject(request.getId(), responseVector);
 
         // add results to the response
-        return response;    
+        return response;
     }
 
     @Override
@@ -1153,7 +1158,7 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
         BooleanNamedValue response = createBooleanNamedValue(cameraMessage.getId(), cameraId, status);
 
         // add results to the response
-        return response;    
+        return response;
     }
 
     @Override
@@ -1166,13 +1171,14 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
             getOntology().remove(parkingLotId);
             status = true;
         } catch (OntologyException exc) {
-            LogHelper.exception(ContextModuleJmsService.class, "removeParkingLot", "Could not remove parking lot from the ontology", exc);
+            LogHelper.exception(ContextModuleJmsService.class, "removeParkingLot",
+                    "Could not remove parking lot from the ontology", exc);
         }
         // prepare response object
         BooleanNamedValue response = createBooleanNamedValue(parkingLotRequest.getId(), parkingLotId, status);
 
         // add results to the response
-        return response;    
+        return response;
     }
 
     @Override
@@ -1185,19 +1191,17 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
             getOntology().remove(buildingId);
             status = true;
         } catch (OntologyException exc) {
-            LogHelper.exception(ContextModuleJmsService.class, "removeBuilding", "Could not remove building/infrastructure from the ontology", exc);
+            LogHelper.exception(ContextModuleJmsService.class, "removeBuilding",
+                    "Could not remove building/infrastructure from the ontology", exc);
         }
         // prepare response object
         BooleanNamedValue response = createBooleanNamedValue(buildingRequest.getId(), buildingId, status);
 
         // add results to the response
-        return response;    
+        return response;
     }
 
-    private SimpleNamedValue prepareErrorResponse(String id, String message){
-        return createSimpleNamedValue(id,
-                ContextModuleRequestProperties.Error.name(),
-                message
-        );
+    private SimpleNamedValue prepareErrorResponse(String id, String message) {
+        return createSimpleNamedValue(id, ContextModuleRequestProperties.Error.name(), message);
     }
 }

@@ -142,10 +142,10 @@ public final class LogHelper {
             long threadId = Thread.currentThread().getId();
             String formattedMessage = String.format("[%s:%s][Thread:%d] %s", clazz.getName(), method, threadId, message);
 
-            //exceptions first
+            // exceptions first
             if (exception != null) {
                 logger.log(level, formattedMessage, exception);
-            //standard log messages
+                // standard log messages
             } else {
                 // check for NULL parameters
                 for (int i = 0; i < args.length; i++) {

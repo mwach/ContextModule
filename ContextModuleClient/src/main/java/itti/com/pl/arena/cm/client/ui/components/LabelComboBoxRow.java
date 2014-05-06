@@ -11,7 +11,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class LabelComboBoxRow extends JPanel{
+public class LabelComboBoxRow extends JPanel {
 
     /**
      * 
@@ -20,8 +20,7 @@ public class LabelComboBoxRow extends JPanel{
     private JLabel textLabel = null;
     private JComboBox<String> comboBox = null;
 
-    public LabelComboBoxRow(String label, List<String> content)
-    {
+    public LabelComboBoxRow(String label, List<String> content) {
         super(new GridLayout(1, 2));
         textLabel = new JLabel();
         comboBox = new JComboBox<String>();
@@ -30,25 +29,25 @@ public class LabelComboBoxRow extends JPanel{
         add(textLabel);
         add(comboBox);
     }
-    
-    public void setLabelText(String label){
-        if(label != null){
+
+    public void setLabelText(String label) {
+        if (label != null) {
             textLabel.setText(label);
         }
     }
 
-    public void setComboBoxContent(List<String> content){
+    public void setComboBoxContent(List<String> content) {
 
         comboBox.removeAllItems();
-        if(content != null){
+        if (content != null) {
             for (String item : content) {
-                comboBox.addItem(item.length() > 20 ? item.substring(0,20) : item);
+                comboBox.addItem(item.length() > 20 ? item.substring(0, 20) : item);
             }
         }
     }
 
     public void setOnChangeListener(ActionListener actionListener) {
-        if(actionListener != null){
+        if (actionListener != null) {
             comboBox.addActionListener(actionListener);
         }
     }
@@ -59,14 +58,14 @@ public class LabelComboBoxRow extends JPanel{
 
     public List<String> getItems() {
         List<String> items = new ArrayList<>();
-        for(int i=0 ; i<comboBox.getItemCount(); i++){
+        for (int i = 0; i < comboBox.getItemCount(); i++) {
             items.add(comboBox.getItemAt(i));
         }
         return items;
     }
 
     public void setSelectedItem(String item) {
-        if(StringHelper.hasContent(item) && getItems().contains(item)){
+        if (StringHelper.hasContent(item) && getItems().contains(item)) {
             comboBox.setSelectedItem(item);
         }
     }

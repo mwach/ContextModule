@@ -130,18 +130,16 @@ public class PlatformTracker implements Service, LocationListener {
         // try to persist latest location in the database
         if (location != null) {
             try {
-                //store location in the database
+                // store location in the database
                 getPersistence().create(getPlatformId(), location);
-                //update platform position in the ontology
+                // update platform position in the ontology
                 getOntology().updatePlatformPosition(getPlatformId(), location);
             } catch (PersistenceException exc) {
-                LogHelper
-                        .warning(PlatformTracker.class, "onLocationChange",
-                                "Could not persist location data: for platform %s. Details: %s", getPlatformId(),
-                                exc.getLocalizedMessage());
+                LogHelper.warning(PlatformTracker.class, "onLocationChange",
+                        "Could not persist location data: for platform %s. Details: %s", getPlatformId(),
+                        exc.getLocalizedMessage());
             } catch (OntologyException exc) {
-                LogHelper
-                .warning(PlatformTracker.class, "onLocationChange",
+                LogHelper.warning(PlatformTracker.class, "onLocationChange",
                         "Could not update ontlogy with platform '%s' data. Details: %s", getPlatformId(),
                         exc.getLocalizedMessage());
             }
@@ -157,13 +155,13 @@ public class PlatformTracker implements Service, LocationListener {
     public void checkPlatformStopped() {
 
         try {
-          //TODO: verify GPS time units
+            // TODO: verify GPS time units
             Location lastLocation = getPersistence().getLastPosition(getPlatformId());
             if (lastLocation == null) {
                 LogHelper.debug(PlatformTracker.class, "checkPlatformStopped",
                         "No location retrieved from the persistence storage");
                 return;
-            }//TODO: remove multiplier, but use delta location (e.g. min diff=1m, otherwise false positives)
+            }// TODO: remove multiplier, but use delta location (e.g. min diff=1m, otherwise false positives)
             if (DateTimeHelper.delta(lastLocation.getTime() * 1000, System.currentTimeMillis(), DateTimeHelper.SECOND) > getMaxIdleTime()) {
 
                 // check all the ranges, from the widest one to the closest

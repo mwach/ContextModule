@@ -45,28 +45,28 @@ public abstract class ContextModulePanel extends JPanel {
         buttonsPanel.setLayout(new GridLayout(1, 3, 5, 5));
         JButton refreshButton = new JButton(Messages.getString("ContextModulePanel.0")); //$NON-NLS-1$
         refreshButton.addActionListener(new ActionListener() {
-            
+
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                if(getContextModuleAdapter().isConnected()){
+                if (getContextModuleAdapter().isConnected()) {
                     onRefreshClick();
-                }else{
-                	showMessage(Messages.getString("ContextModulePanel.1")); //$NON-NLS-1$
+                } else {
+                    showMessage(Messages.getString("ContextModulePanel.1")); //$NON-NLS-1$
                 }
-                
+
             }
         });
         JButton saveButton = new JButton(Messages.getString("ContextModulePanel.2")); //$NON-NLS-1$
         saveButton.addActionListener(new ActionListener() {
-            
+
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                if(getContextModuleAdapter().isConnected()){
+                if (getContextModuleAdapter().isConnected()) {
                     onSaveClick();
-                }else{
-                	showMessage(Messages.getString("ContextModulePanel.3")); //$NON-NLS-1$
+                } else {
+                    showMessage(Messages.getString("ContextModulePanel.3")); //$NON-NLS-1$
                 }
-                
+
             }
         });
         JButton cancelButton = new JButton(Messages.getString("ContextModulePanel.4")); //$NON-NLS-1$
@@ -74,12 +74,12 @@ public abstract class ContextModulePanel extends JPanel {
 
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                if(getContextModuleAdapter().isConnected()){
+                if (getContextModuleAdapter().isConnected()) {
                     onCancelClick();
-                }else{
+                } else {
                     showMessage(Messages.getString("ContextModulePanel.5")); //$NON-NLS-1$
                 }
-                
+
             }
         });
 
@@ -114,7 +114,7 @@ public abstract class ContextModulePanel extends JPanel {
     }
 
     protected TextBoxButtonRow createTextBoxButtonRow(String textBoxText, String buttonText) {
- 
+
         return new TextBoxButtonRow(textBoxText, buttonText);
     }
 
@@ -142,7 +142,7 @@ public abstract class ContextModulePanel extends JPanel {
         return new JLabel(message);
     }
 
-    public void setContextModule(ContextModuleAdapter cmAdapter){
+    public void setContextModule(ContextModuleAdapter cmAdapter) {
         this.contextModuleAdapter = cmAdapter;
     }
 
@@ -151,14 +151,14 @@ public abstract class ContextModulePanel extends JPanel {
     }
 
     protected Component createImagePanel(String imagePath) {
-    	ImagePanel panel = new ImagePanel(imagePath);
-    	JPanel parentPanel = new JPanel();
-    	parentPanel.add(panel);
-    	parentPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-    	return parentPanel;
+        ImagePanel panel = new ImagePanel(imagePath);
+        JPanel parentPanel = new JPanel();
+        parentPanel.add(panel);
+        parentPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        return parentPanel;
     }
 
-    protected void showMessage(String message){
-    	JOptionPane.showMessageDialog(null, message);
+    protected void showMessage(String message) {
+        JOptionPane.showMessageDialog(null, message);
     }
 }

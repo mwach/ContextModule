@@ -6,25 +6,29 @@ import java.io.Serializable;
 
 /**
  * Class representing single point in the Cartesian -D space
+ * 
  * @author cm-admin
- *
+ * 
  */
-public class CartesianCoordinate implements Serializable{
+public class CartesianCoordinate implements Serializable {
 
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
 
-    //x coordinate
+    // x coordinate
     private double x;
-    //y coordinate
+    // y coordinate
     private double y;
 
     /**
      * Default constructor
-     * @param x coordinate
-     * @param y coordinate
+     * 
+     * @param x
+     *            coordinate
+     * @param y
+     *            coordinate
      */
     public CartesianCoordinate(double x, double y) {
         this.x = x;
@@ -33,6 +37,7 @@ public class CartesianCoordinate implements Serializable{
 
     /**
      * Returns value of the X coordinate
+     * 
      * @return x
      */
     public double getX() {
@@ -41,6 +46,7 @@ public class CartesianCoordinate implements Serializable{
 
     /**
      * Returns value of the Y coordinate
+     * 
      * @return y
      */
     public double getY() {
@@ -80,5 +86,4 @@ public class CartesianCoordinate implements Serializable{
         return true;
     }
 
-    
 }
