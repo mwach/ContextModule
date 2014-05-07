@@ -139,7 +139,23 @@ public final class MessageConstants {
         /**
          * Service name used by the 'updateBuilding' method
          */
-        updateBuilding,
+        updateBuilding, 
+        /**
+         * Service name used by the 'saveOntology' method
+         */
+        saveOntology, 
+        /**
+         * Service name used by the 'getListOfOntologies' method
+         */
+        getListOfOntologies, 
+        /**
+         * Service name used by the 'getCurrentOntology' method
+         */
+        getCurrentOntology,
+        /**
+         * Service name used by the 'loadOntology' method
+         */
+        loadOntology, 
 
         ;
     }

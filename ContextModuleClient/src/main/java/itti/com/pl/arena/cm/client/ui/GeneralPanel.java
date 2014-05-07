@@ -1,7 +1,9 @@
 package itti.com.pl.arena.cm.client.ui;
 
 import itti.com.pl.arena.cm.client.ui.components.ButtonRow;
+import itti.com.pl.arena.cm.client.ui.components.ComboBoxButtonRow;
 import itti.com.pl.arena.cm.client.ui.components.LabelTextBoxRow;
+import itti.com.pl.arena.cm.utils.helper.StringHelper;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -10,6 +12,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -26,6 +29,7 @@ public class GeneralPanel extends ContextModulePanel {
     private LabelTextBoxRow brokerUrlRow = null;
     private ButtonRow connectRow = null;
     private JTextArea logComponent = null;
+    private ComboBoxButtonRow restoreOntologyRow = null;
 
     /**
      * Create the dialog.
@@ -79,6 +83,42 @@ public class GeneralPanel extends ContextModulePanel {
         gbl.setConstraints(logComponent, gbc);
         panelGeneral.add(logComponent);
 
+        gbc.weighty = 0.0;
+        ButtonRow saveOntologyRow = createButtonRow("Save ontology"); //$NON-NLS-1$
+        saveOntologyRow.setOnClickListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                if(getContextModuleAdapter().saveOntology()){
+                    showMessage("Ontology successfully saved");
+                }else{
+                    showMessage("Could not save ontology");                    
+                }
+                onRefreshClick();
+            }
+        });
+        gbl.setConstraints(saveOntologyRow, gbc);
+        panelGeneral.add(saveOntologyRow);
+        restoreOntologyRow = createComboBoxButtonRow("Restore ontology", null); //$NON-NLS-1$
+        restoreOntologyRow.setOnClickListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String ontologyName = restoreOntologyRow.getSelectedItem();
+                if(!StringHelper.hasContent(ontologyName)){
+                    showMessage("Select ontology to load first");
+                }else{
+                    if(getContextModuleAdapter().loadOntology(ontologyName)){
+                        showMessage(String.format("Ontology '%s' successfully loaded", ontologyName));
+                    }else{
+                        showMessage("Could not load selected ontology");
+                    }
+                }
+            }
+        });
+        gbl.setConstraints(restoreOntologyRow, gbc);
+        panelGeneral.add(restoreOntologyRow);
+
         return panelGeneral;
     }
 
@@ -129,6 +169,9 @@ public class GeneralPanel extends ContextModulePanel {
 
     @Override
     protected void onRefreshClick() {
-        JOptionPane.showMessageDialog(null, Messages.getString("GeneralPanel.13")); //$NON-NLS-1$
+        List<String> ontologies = getContextModuleAdapter().getListOfOntologies();
+        restoreOntologyRow.setItems(ontologies);
+        String currentOntology = getContextModuleAdapter().getCurrentOntology();
+        restoreOntologyRow.setSelectedItem(currentOntology);
     }
 }

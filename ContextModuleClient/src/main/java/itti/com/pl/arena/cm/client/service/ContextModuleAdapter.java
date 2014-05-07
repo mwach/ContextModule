@@ -28,6 +28,7 @@ import eu.arena_fp7._1.AbstractNamedValue;
 import eu.arena_fp7._1.BooleanNamedValue;
 import eu.arena_fp7._1.FeatureVector;
 import eu.arena_fp7._1.Location;
+import eu.arena_fp7._1.Object;
 import eu.arena_fp7._1.RealWorldCoordinate;
 import eu.arena_fp7._1.SimpleNamedValue;
 
@@ -398,6 +399,46 @@ public class ContextModuleAdapter {
                 null);
         // send/receive
         BooleanNamedValue response = contextModule.applyRules(request);
+        // return parsed response
+        return response.isFeatureValue();
+    }
+
+    public boolean saveOntology() {
+        // prepare a request
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(),
+                null);
+        // send/receive
+        BooleanNamedValue response = contextModule.saveOntology(request);
+        // return parsed response
+        return response.isFeatureValue();
+    }
+
+    public List<String> getListOfOntologies() {
+        // prepare a request
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(),
+                null);
+        // send/receive
+        Object response = contextModule.getListOfOntologies(request);
+        // return parsed response
+        return getStringsFromFeatureVector(response.getFeatureVector());
+    }
+
+    public String getCurrentOntology() {
+        // prepare a request
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(),
+                null);
+        // send/receive
+        SimpleNamedValue response = contextModule.getCurrentOntology(request);
+        // return parsed response
+        return response.getValue();
+    }
+
+    public boolean loadOntology(String ontologyName) {
+        // prepare a request
+        SimpleNamedValue request = contextModule.createSimpleNamedValue(moduleName, ContextModuleRequestProperties.Name.name(),
+                ontologyName);
+        // send/receive
+        BooleanNamedValue response = contextModule.loadOntology(request);
         // return parsed response
         return response.isFeatureValue();
     }

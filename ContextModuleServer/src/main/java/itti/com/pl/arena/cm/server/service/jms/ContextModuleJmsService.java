@@ -308,6 +308,18 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
                 } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.updateBuilding.name(), data.getHref())
                         && (data instanceof SimpleNamedValue)) {
                     response = updateBuilding((SimpleNamedValue) data);
+                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.saveOntology.name(), data.getHref())
+                        && (data instanceof SimpleNamedValue)) {
+                    response = saveOntology((SimpleNamedValue) data);
+                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.loadOntology.name(), data.getHref())
+                        && (data instanceof SimpleNamedValue)) {
+                    response = loadOntology((SimpleNamedValue) data);
+                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getListOfOntologies.name(), data.getHref())
+                        && (data instanceof SimpleNamedValue)) {
+                    response = getListOfOntologies((SimpleNamedValue) data);
+                } else if (StringHelper.equalsIgnoreCase(ContextModuleRequests.getCurrentOntology.name(), data.getHref())
+                        && (data instanceof SimpleNamedValue)) {
+                    response = getCurrentOntology((SimpleNamedValue) data);
 
                 } else if (StringHelper.equalsIgnoreCase(data.getDataSourceId(), dataSourceId)) {
                     // special cases: error, loop detected
@@ -1197,6 +1209,42 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
         // prepare response object
         BooleanNamedValue response = createBooleanNamedValue(buildingRequest.getId(), buildingId, status);
 
+        // add results to the response
+        return response;
+    }
+
+    @Override
+    public BooleanNamedValue saveOntology(SimpleNamedValue request) {
+        // prepare response object
+        BooleanNamedValue response = createBooleanNamedValue(request.getId(), request.getFeatureName(), true);
+        // add results to the response
+        return response;
+    }
+
+    @Override
+    public Object getListOfOntologies(SimpleNamedValue request) {
+        // prepare response object
+        List<AbstractNamedValue> responseVector = new ArrayList<>();
+        responseVector.add(createSimpleNamedValue(request.getId(), request.getFeatureName(), "onto1"));
+        responseVector.add(createSimpleNamedValue(request.getId(), request.getFeatureName(), "onto2"));
+        responseVector.add(createSimpleNamedValue(request.getId(), request.getFeatureName(), "onto3"));
+        Object response = createObject(request.getId(), responseVector);
+        // add results to the response
+        return response;
+    }
+
+    @Override
+    public SimpleNamedValue getCurrentOntology(SimpleNamedValue request) {
+        // prepare response object
+        SimpleNamedValue response = createSimpleNamedValue(request.getId(), request.getFeatureName(), "onto2");
+        // add results to the response
+        return response;
+    }
+
+    @Override
+    public BooleanNamedValue loadOntology(SimpleNamedValue request) {
+        // prepare response object
+        BooleanNamedValue response = createBooleanNamedValue(request.getId(), request.getFeatureName(), true);
         // add results to the response
         return response;
     }

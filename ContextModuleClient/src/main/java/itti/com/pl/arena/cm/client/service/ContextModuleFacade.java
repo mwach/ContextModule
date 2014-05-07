@@ -489,6 +489,30 @@ public class ContextModuleFacade extends CMModuleImpl implements LocalContextMod
         return (Object) submitData(objectId);
     }
 
+    @Override
+    public BooleanNamedValue saveOntology(SimpleNamedValue request) {
+        request.setHref(ContextModuleRequests.saveOntology.name());
+        return (BooleanNamedValue) submitData(request);
+    }
+
+    @Override
+    public Object getListOfOntologies(SimpleNamedValue request) {
+        request.setHref(ContextModuleRequests.getListOfOntologies.name());
+        return (Object) submitData(request);
+    }
+
+    @Override
+    public SimpleNamedValue getCurrentOntology(SimpleNamedValue request) {
+        request.setHref(ContextModuleRequests.getCurrentOntology.name());
+        return (SimpleNamedValue) submitData(request);
+    }
+
+    @Override
+    public BooleanNamedValue loadOntology(SimpleNamedValue request) {
+        request.setHref(ContextModuleRequests.loadOntology.name());
+        return (BooleanNamedValue) submitData(request);
+    }
+
     /**
      * Submits data to the server
      * 
@@ -561,5 +585,4 @@ public class ContextModuleFacade extends CMModuleImpl implements LocalContextMod
         // response received
         LogHelper.debug(ContextModuleFacade.class, "waitForResponse", "Response received for message with ID: %s", id);
     }
-
 }

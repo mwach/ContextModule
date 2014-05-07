@@ -304,4 +304,33 @@ public interface ContextModule {
      */
     Object getListOfRules(SimpleNamedValue objectId);
 
+    /**
+     * Saves ontology in the local repository
+     * @param request empty request object
+     * @return save status: true if ontology was saved, false otherwise
+     */
+    BooleanNamedValue saveOntology(SimpleNamedValue request);
+
+    /**
+     * Returns a list of ontologies from the local repository
+     * @param request empty request object
+     * @return list of ontologies in the repository
+     */
+    Object getListOfOntologies(SimpleNamedValue request);
+
+
+    /**
+     * Returns name of the ontology in use
+     * @param request empty request object
+     * @return loaded ontology name
+     */
+    SimpleNamedValue getCurrentOntology(SimpleNamedValue request);
+
+    /**
+     * Loads ontology from the local repository
+     * @param request {@link SimpleNamedValue} containing ontology name
+     * @return load status: true if ontology was loaded, false otherwise
+     */
+    BooleanNamedValue loadOntology(SimpleNamedValue request);
+
 }

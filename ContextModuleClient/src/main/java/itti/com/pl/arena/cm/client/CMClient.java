@@ -66,6 +66,8 @@ public class CMClient {
             // initialize the client
             client.init();
 
+            parseObjectResponse(client.getCameraFieldOfView("Camera1"));
+
             Platform platform = createDummyPlatform("Vehicle_Ford_Focus");
             parseUpdatePlatformResponse(client.updatePlatform(platform));
 
@@ -402,6 +404,20 @@ public class CMClient {
         SimpleNamedValue objectId = createSimpleNamedValue(platformId);
         Object data = contextModule.getPlatform(objectId);
         LogHelper.debug(CMClient.class, "getPlatformsService", "Server response received: %s", String.valueOf(data));
+        return data;
+    }
+
+    /**
+     * Returns information about camera field of view
+     * 
+     * @param cameraId
+     *            ID of the camera
+     * @return Object containing information retrieved from ContextModule
+     */
+    public Object getCameraFieldOfView(String cameraId) {
+        SimpleNamedValue objectId = createSimpleNamedValue(cameraId);
+        Object data = contextModule.getCameraFieldOfView(objectId);
+        LogHelper.debug(CMClient.class, "getCameraFieldOfView", "Server response received: %s", String.valueOf(data));
         return data;
     }
 
