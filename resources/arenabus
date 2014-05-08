@@ -21,11 +21,24 @@ ARENABUS_PID="/var/run/$NAME.pid"
 
 MAIN_CLASS="com.safran.arena.impl.Server"
 
+ARENA_REPO_DIR='/var/lib/arenabus/repository/'
+
 LD_LIBRARY_PATH=/usr/local/lib
 export LD_LIBRARY_PATH=/usr/local/lib
 
 start_process()
 {
+	if [ ! -d $ARENA_REPO_DIR ]
+	then
+		mkdir -p $ARENA_REPO_DIR
+		chown root:cm-adm $ARENA_REPO_DIR
+		chown 775 $ARENA_REPO_DIR
+		if [ -f /var/lib/tomcat7/webapps/ContextModuleServer/WEB-INF/classes/Arena_update_v10h.owl ]
+		then
+			cp /var/lib/tomcat7/webapps/ContextModuleServer/WEB-INF/classes/Arena_update_v10h.owl $ARENA_REPO_DIR
+		fi
+	fi
+
 	java -cp /home/cm-admin/workspace/ContextModule/resources/libs/arena.jar:/home/cm-admin/workspace/ContextModule/resources/libs/ServicePlatformInterface.jar:/usr/local/share/java/zmq.jar  $MAIN_CLASS &
 	return 0
 }
