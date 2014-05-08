@@ -168,7 +168,7 @@ public class FieldOfViewObject extends OntologyObject {
             } else {
                 switch (searchCriteria) {
                 case Closest:
-                    if (visibleCoordinate.getRadius() < closestCoordinate.getRadius()) {
+                    if (visibleCoordinate.getDistance() < closestCoordinate.getDistance()) {
                         closestCoordinate = visibleCoordinate;
                     }
                     break;
@@ -190,4 +190,9 @@ public class FieldOfViewObject extends OntologyObject {
         return closestCoordinate;
     }
 
+    @Override
+    public String toString() {
+        return "FieldOfViewObject [visibility=" + visibility + ", leftAngle=" + leftAngle + ", rightAngle=" + rightAngle
+                + ", visibleObjects=" + visibleObjects + ", notVisibleObjects=" + notVisibleObjects + "]";
+    }
 }

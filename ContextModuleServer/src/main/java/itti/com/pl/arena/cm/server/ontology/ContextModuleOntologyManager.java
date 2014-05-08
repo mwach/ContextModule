@@ -200,12 +200,22 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
                 LocationHelper.createStringsFromLocations(parkingLot.getBoundaries().toArray(
                         new Location[parkingLot.getBoundaries().size()])));
 
+        //location (one of the boundaries)
+        Location location = parkingLot.getLocation();
+        if (location == null && !parkingLot.getBoundaries().isEmpty()) {
+            location = parkingLot.getBoundaries().iterator().next();
+        }
+        if (location != null) {
+            properties.put(OntologyConstants.Object_has_GPS_x.name(), new String[] { String.valueOf(location.getLongitude()) });
+            properties.put(OntologyConstants.Object_has_GPS_y.name(), new String[] { String.valueOf(location.getLatitude()) });
+        }
+
         // process buildings
         if (parkingLot.getBuildings() != null) {
             String[] buildingIds = new String[parkingLot.getBuildings().size()];
             int currentBuilding = 0;
             for (Entry<String, Building> building : parkingLot.getBuildings().entrySet()) {
-                updateBuildingInformation(building.getValue());
+                updateBuilding(building.getValue());
                 buildingIds[currentBuilding++] = building.getKey();
             }
             properties.put(OntologyConstants.Parking_has_building.name(), buildingIds);
@@ -216,7 +226,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
             String[] infrastructureIds = new String[parkingLot.getInfrastructure().size()];
             int currentInfrastructure = 0;
             for (Entry<String, Infrastructure> infrastructure : parkingLot.getInfrastructure().entrySet()) {
-                updateInfrastructureInformation(infrastructure.getValue());
+                updateInfrastructure(infrastructure.getValue());
                 infrastructureIds[currentInfrastructure++] = infrastructure.getKey();
             }
             properties.put(OntologyConstants.Parking_has_infrastructure.name(), infrastructureIds);
@@ -237,6 +247,10 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
     private Camera getCamera(String cameraId) throws OntologyException {
 
         Camera cameraInfo = null;
+
+        if (!StringHelper.hasContent(cameraId)) {
+            throw new OntologyException(ErrorMessages.ONTOLOGY_EMPTY_INSTANCE_NAME);
+        }
 
         Map<String, String[]> cameraInstance = getInstanceProperties(cameraId);
         if (!cameraInstance.isEmpty()) {
@@ -271,7 +285,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
                 return platformName;
             }
         }
-        return null;
+        throw new OntologyException(ErrorMessages.ONTOLOGY_CLASS_WITH_PROPERTY_NOT_FOUND, cameraId);
     }
 
     private OWLIndividual updateCameraInformation(Camera camera) throws OntologyException {
@@ -293,7 +307,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         return createSimpleInstance(OntologyConstants.Camera.name(), camera.getId(), properties);
     }
 
-    private OWLIndividual updateBuildingInformation(Building building) throws OntologyException {
+    private OWLIndividual updateBuilding(Building building) throws OntologyException {
 
         String buildingType = building.getType().name();
 
@@ -305,10 +319,19 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
                 LocationHelper.createStringsFromLocations(building.getBoundaries().toArray(
                         new Location[building.getBoundaries().size()])));
 
+        //location (one of the boundaries)
+        Location location = building.getLocation();
+        if (location == null && !building.getBoundaries().isEmpty()) {
+            location = building.getBoundaries().iterator().next();
+        }
+        if (location != null) {
+            properties.put(OntologyConstants.Object_has_GPS_x.name(), new String[] { String.valueOf(location.getLongitude()) });
+            properties.put(OntologyConstants.Object_has_GPS_y.name(), new String[] { String.valueOf(location.getLatitude()) });
+        }
         return createSimpleInstance(buildingType, building.getId(), properties);
     }
 
-    private OWLIndividual updateInfrastructureInformation(Infrastructure infrastructure) throws OntologyException {
+    private OWLIndividual updateInfrastructure(Infrastructure infrastructure) throws OntologyException {
 
         String infrastructureType = infrastructure.getType().name();
 
@@ -319,6 +342,16 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
                 OntologyConstants.Object_has_GPS_coordinates.name(),
                 LocationHelper.createStringsFromLocations(infrastructure.getBoundaries().toArray(
                         new Location[infrastructure.getBoundaries().size()])));
+
+        //location (one of the boundaries)
+        Location location = infrastructure.getLocation();
+        if (location == null && !infrastructure.getBoundaries().isEmpty()) {
+            location = infrastructure.getBoundaries().iterator().next();
+        }
+        if (location != null) {
+            properties.put(OntologyConstants.Object_has_GPS_x.name(), new String[] { String.valueOf(location.getLongitude()) });
+            properties.put(OntologyConstants.Object_has_GPS_y.name(), new String[] { String.valueOf(location.getLatitude()) });
+        }
 
         return createSimpleInstance(infrastructureType, infrastructure.getId(), properties);
     }
@@ -800,6 +833,8 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         LogHelper.debug(ContextModuleOntologyManager.class, "calculateArenaDistancesForPlatform",
                 "Calculating distance for platform %s", platformId);
 
+        Set<ArenaObjectCoordinate> objectCoordinates = new HashSet<>();
+
         // get the platform data from ontology
         Platform platform = getPlatform(platformId);
         Location referenceLocation = platform.getLocation();
@@ -810,11 +845,10 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
             LogHelper.warning(ContextModuleOntologyManager.class, "calculateDistancesForPlatform",
                     "There are no parkings for platform %s in location %s and radius %f", platformId, referenceLocation,
                     Range.Km1.getRangeInKms());
-            return null;
+            return objectCoordinates;
         }
 
         Set<String> buildings = getParkingLotInfrastructure(parkingLotId);
-        Set<ArenaObjectCoordinate> objectCoordinates = new HashSet<>();
         for (String buildingId : buildings) {
             // get the coordinates of the building
             ArenaObjectCoordinate objectCoordinate = new ArenaObjectCoordinate(buildingId);
@@ -902,6 +936,8 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
             // check if at least one item was visible
             // if yes - add it to the list
             if (!fovObject.getVisibleObjects().isEmpty()) {
+                fovObject.setVisibility(
+                        (100.0 * fovObject.getVisibleObjects().size()) / (fovObject.getVisibleObjects().size() + fovObject.getNotVisibleObjects().size()));
                 visibleObjects.add(fovObject);
             }
         }

@@ -83,8 +83,8 @@ public class ArenaObjectCoordinate extends OntologyObject implements Iterable<Ra
         for (RadialCoordinate radialCoordinate : radialCoordinates) {
 
             CartesianCoordinate cartesianCoordinate = new CartesianCoordinate(CoordinatesHelper.getXFromRadial(
-                    radialCoordinate.getRadius(), radialCoordinate.getAngle()), CoordinatesHelper.getYFromRadial(
-                    radialCoordinate.getRadius(), radialCoordinate.getAngle()));
+                    radialCoordinate.getDistance(), radialCoordinate.getAngle()), CoordinatesHelper.getYFromRadial(
+                    radialCoordinate.getDistance(), radialCoordinate.getAngle()));
             coordinates.add(cartesianCoordinate);
         }
         return coordinates;

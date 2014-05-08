@@ -16,20 +16,20 @@ public class RadialCoordinate implements Serializable {
     private static final long serialVersionUID = 1L;
 
     // radius (distance between points)
-    private double radius;
+    private double distance;
     // angle between points
     private double angle;
 
     /**
      * Default constructor
      * 
-     * @param radius
+     * @param distance
      *            radius
      * @param angle
      *            angle
      */
-    public RadialCoordinate(double radius, double angle) {
-        this.radius = radius;
+    public RadialCoordinate(double distance, double angle) {
+        this.distance = distance;
         this.angle = angle;
     }
 
@@ -47,8 +47,8 @@ public class RadialCoordinate implements Serializable {
      * 
      * @return radius
      */
-    public double getRadius() {
-        return radius;
+    public double getDistance() {
+        return distance;
     }
 
     /**
@@ -62,7 +62,7 @@ public class RadialCoordinate implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("%s [%f, %f]", this.getClass().getSimpleName(), getRadius(), getAngle());
+        return String.format("%s [%f, %f]", this.getClass().getSimpleName(), getDistance(), getAngle());
     }
 
 }

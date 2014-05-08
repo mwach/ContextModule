@@ -15,9 +15,11 @@ import org.junit.rules.ExpectedException;
 import itti.com.pl.arena.cm.dto.Location;
 import itti.com.pl.arena.cm.dto.coordinates.ArenaObjectCoordinate;
 import itti.com.pl.arena.cm.dto.coordinates.CartesianCoordinate;
+import itti.com.pl.arena.cm.dto.coordinates.FieldOfViewObject;
 import itti.com.pl.arena.cm.dto.dynamicobj.Camera;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform.Type;
+import itti.com.pl.arena.cm.dto.staticobj.Building;
 import itti.com.pl.arena.cm.dto.staticobj.ParkingLot;
 import itti.com.pl.arena.cm.server.TestHelper;
 import itti.com.pl.arena.cm.server.exception.ErrorMessages;
@@ -374,4 +376,125 @@ public class ContextModuleOntologyManagerTest {
         assertEquals(camera, ontoCamera);
     }
 
+    @Test
+    public void testGetCameraFieldOfViewNullCameraId() throws OntologyException {
+
+        // null camera name provided
+        String invalidCameraName = null;
+
+        expectedException.expect(OntologyException.class);
+        expectedException.expectMessage(String.format(ErrorMessages.ONTOLOGY_EMPTY_INSTANCE_NAME.getMessage()));
+
+        cmOntologyManager.getCameraFieldOfView(invalidCameraName);
+    }
+
+    @Test
+    public void testGetCameraFieldOfViewInvalidCameraId() throws OntologyException {
+
+        // non-existing camera name provided
+        String invalidCameraName = "dummyCamera" + System.currentTimeMillis();
+
+        expectedException.expect(OntologyException.class);
+        expectedException.expectMessage(String.format(ErrorMessages.ONTOLOGY_INSTANCE_NOT_FOUND.getMessage(), invalidCameraName));
+
+        cmOntologyManager.getCameraFieldOfView(invalidCameraName);
+    }
+
+    @Test
+    public void testGetCameraFieldOfViewValidCameraIdNoPlatform() throws OntologyException {
+
+        // valid camera name provided, but no platform associated with that camera
+        String cameraName = "dummyCamera" + System.currentTimeMillis();
+
+        expectedException.expect(OntologyException.class);
+        expectedException.expectMessage(String.format(ErrorMessages.ONTOLOGY_CLASS_WITH_PROPERTY_NOT_FOUND.getMessage(),
+                cameraName));
+
+        Camera camera = defineCamera(cameraName);
+        // no platform
+        cmOntologyManager.updateCamera(camera, null);
+
+        // no platform in the ontology
+        cmOntologyManager.getCameraFieldOfView(cameraName);
+    }
+
+    @Test
+    public void testGetCameraFieldOfViewValidCameraIdNoParking() throws OntologyException {
+
+        // valid camera name provided
+        String cameraName = "dummyCamera" + System.currentTimeMillis();
+        Camera camera = defineCamera(cameraName);
+        // on valid platform
+        String platformName = "dummyPlatform" + System.currentTimeMillis();
+        Platform platform = definePlatform(platformName, null);
+        cmOntologyManager.updatePlatform(platform);
+        cmOntologyManager.updateCamera(camera, platformName);
+
+        // but no other data associated with it - no parking/building etc... so nothing returned from ontology
+        assertTrue(cmOntologyManager.getCameraFieldOfView(cameraName).isEmpty());
+    }
+
+    @Test
+    public void testGetCameraFieldOfViewValidComplete() throws OntologyException {
+
+        // all data provided - some results should be returned
+
+        // define location
+        Location location = new Location(23.3242453, 43.53454324);
+
+        // define camera
+        String cameraName = "dummyCamera_" + System.currentTimeMillis();
+        Camera camera = defineCamera(cameraName);
+
+        // define platform
+        String platformName = "dummyPlatform_" + System.currentTimeMillis();
+        Platform platform = definePlatform(platformName, location);
+
+        // define parking lot
+        String parkingLotName = "dummyParkingLot_" + System.currentTimeMillis();
+        ParkingLot parkingLot = defineParkingLot(parkingLotName, location);
+
+        cmOntologyManager.updateParkingLot(parkingLot);
+        cmOntologyManager.updatePlatform(platform);
+        cmOntologyManager.updateCamera(camera, platformName);
+
+        // data in the ontology is complete, so some data should be returned by the service
+        Set<FieldOfViewObject> fows = cmOntologyManager.getCameraFieldOfView(cameraName);
+        assertFalse(fows.isEmpty());
+    }
+
+    private Camera defineCamera(String cameraName) {
+        return new Camera(cameraName, "fisheye", 90, 60, new CartesianCoordinate(-3, 1.5), 90);
+    }
+
+    private Platform definePlatform(String platformName, Location location) {
+        Platform platform = new Platform(platformName);
+        platform.setWidth(3);
+        platform.setHeight(3);
+        platform.setLength(3);
+        platform.setLocation(location);
+        return platform;
+    }
+
+    private ParkingLot defineParkingLot(String parkingLotName, Location location) {
+        ParkingLot parkingLot = new ParkingLot(parkingLotName);
+        parkingLot.addBoundary(location);
+        parkingLot.addBoundary(new Location(location.getLongitude() - 0.0004, location.getLatitude() - 0.0004));
+        parkingLot.addBoundary(new Location(location.getLongitude() + 0.0004, location.getLatitude() + 0.0004));
+        parkingLot.addBoundary(new Location(location.getLongitude() - 0.0004, location.getLatitude() + 0.0004));
+        parkingLot.addBuilding(defineBuilding("building_" + 435, parkingLotName, location));
+        parkingLot.addBuilding(defineBuilding("building_" + 437, parkingLotName, new Location(location.getLongitude() - 0.0002, location.getLatitude() - 0.0007)));
+        parkingLot.addBuilding(defineBuilding("building_" + 432, parkingLotName, new Location(location.getLongitude() + 0.0007, location.getLatitude() + 0.0003)));
+        return parkingLot;
+    }
+
+    private Building defineBuilding(String buildingName, String parkingLotName, Location location){
+        Building building = new Building(buildingName, parkingLotName, 
+                itti.com.pl.arena.cm.dto.staticobj.Building.Type.Other_building);
+        building.addBoundary(new Location(location.getLongitude() - 0.0002, location.getLatitude() - 0.0003));
+        building.addBoundary(new Location(location.getLongitude() + 0.0002, location.getLatitude() + 0.0003));
+        building.addBoundary(new Location(location.getLongitude() - 0.0009, location.getLatitude() - 0.0007));
+        building.addBoundary(new Location(location.getLongitude() - 0.0019, location.getLatitude() + 0.0017));
+        return building;
+    }
 }

@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import itti.com.pl.arena.cm.dto.coordinates.ArenaObjectCoordinate;
+import itti.com.pl.arena.cm.dto.coordinates.FieldOfViewObject;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
 import itti.com.pl.arena.cm.dto.staticobj.ParkingLot;
 import itti.com.pl.arena.cm.server.TestHelper;
@@ -220,6 +221,29 @@ public class ContextModuleJmsServiceTest {
         Object response = CMJmsService.getListOfPlatforms(Mockito.mock(SimpleNamedValue.class));
         // there are some platforms defined
         assertFalse(response.getFeatureVector().getFeature().isEmpty());
+    }
+
+    @Test
+    public void testGetCameraFieldOfView() throws OntologyException, JsonHelperException {
+
+        // prepare dummy ontology
+        Ontology ontology = Mockito.mock(Ontology.class);
+
+        //prepare dummy response
+        FieldOfViewObject fov = new FieldOfViewObject("id", -45, 45);
+        Set<FieldOfViewObject> ontologyResponse = new HashSet<>();
+        ontologyResponse.add(fov);
+        Mockito.when(ontology.getCameraFieldOfView(Mockito.anyString())).thenReturn(ontologyResponse);
+        CMJmsService.setOntology(ontology);
+
+        // call the service
+        SimpleNamedValue requestMsg = Mockito.mock(SimpleNamedValue.class);
+        Mockito.when(requestMsg.getValue()).thenReturn("value");
+        Object response = CMJmsService.getCameraFieldOfView(requestMsg);
+        // there are some features defined
+        assertFalse(response.getFeatureVector().getFeature().isEmpty());
+        //feature contains serialized FieldOfView object
+        assertEquals(JsonHelper.toJson(fov), ((SimpleNamedValue)response.getFeatureVector().getFeature().get(0)).getValue());
     }
 
 }

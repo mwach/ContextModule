@@ -525,6 +525,24 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
             // try to retrieve data from ontology
             Set<FieldOfViewObject> objects = getOntology().getCameraFieldOfView(cameraId);
 
+//            Set<FieldOfViewObject> objects = new HashSet<>();
+//            FieldOfViewObject fov1 = new FieldOfViewObject("WagerBuilding", -45, 45);
+//            fov1.setVisibility(30);
+//            fov1.addVisibleObject(new RadialCoordinate(112, 66.41275057977364));
+//            fov1.addVisibleObject(new RadialCoordinate(128, 70.00232702554302));
+//            fov1.addNotVisibleObject(new RadialCoordinate(95, 30.968464175979008));
+//            fov1.addNotVisibleObject(new RadialCoordinate(115, 69.831576255263784));
+//
+//            FieldOfViewObject fov2 = new FieldOfViewObject("JJ Thomson_Building", -45, 45);
+//            fov2.setVisibility(30);
+//            fov2.addVisibleObject(new RadialCoordinate(105, -30.051259937554753776));
+//            fov2.addVisibleObject(new RadialCoordinate(121, -45.862739621254498));
+//            fov2.addNotVisibleObject(new RadialCoordinate(138, -45.862739621254498));
+//            fov2.addNotVisibleObject(new RadialCoordinate(122, -60.99084619541485));
+//            
+//            objects.add(fov1);
+//            objects.add(fov2);
+            
             // data retrieved -create response message
             if (objects != null) {
                 for (FieldOfViewObject objectCoordinate : objects) {

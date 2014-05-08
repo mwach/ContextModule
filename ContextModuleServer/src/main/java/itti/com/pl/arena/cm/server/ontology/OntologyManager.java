@@ -63,6 +63,10 @@ public class OntologyManager implements Service {
         return model;
     }
 
+    protected synchronized final void setModel(JenaOWLModel model) {
+        this.model = model;
+    }
+
     // location of the ontology on disc
     private String ontologyLocation = null;
 
@@ -612,7 +616,7 @@ public class OntologyManager implements Service {
      */
     public void loadOntology(String fileName) throws OntologyException{
         this.modelName = fileName;
-        model = loadModel(getOntologyRepository(), fileName);
+        setModel(loadModel(getOntologyRepository(), fileName));
     }
 
     /**
