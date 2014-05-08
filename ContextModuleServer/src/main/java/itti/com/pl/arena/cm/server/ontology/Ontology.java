@@ -309,4 +309,34 @@ public interface Ontology {
      * @return list of SWRL rules. If there are no rules, empty list will be returned
      */
     public List<String> getSwrlRules() throws OntologyException;
+
+    /**
+     * Saves current ontology model to file
+     * 
+     * @param fileName
+     *            location of the file, where ontology should be saved
+     */
+    public void saveOntology(String fileName) throws OntologyException;
+
+    /**
+     * Loads ontology model from the file
+     * 
+     * @param fileName
+     *            location of the file containing ontology
+     */
+    public void loadOntology(String fileName) throws OntologyException;
+
+    /**
+     * Returns a list of all ontologies from the repository
+     * @return list of strings representing ontology names
+     * @throws OntologyException
+     */
+    public List<String> getListOfOntologies() throws OntologyException;
+
+    /**
+     * Returns name of the currently loaded ontology
+     * @return name of the ontology
+     * @throws OntologyException
+     */
+    public String getCurrentOntology() throws OntologyException;
 }

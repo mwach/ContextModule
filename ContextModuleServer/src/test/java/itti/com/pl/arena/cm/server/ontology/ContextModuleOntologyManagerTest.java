@@ -41,6 +41,7 @@ public class ContextModuleOntologyManagerTest {
 
         // to speed up tests, load ontology and then reuse it among tests
         ContextModuleOntologyManager manager = new ContextModuleOntologyManager();
+        manager.setOntologyRepository(OntologyManagerTest.ONTOLOGY_REPOSITORY);
         manager.setOntologyLocation(OntologyManagerTest.ONTOLOGY_LOCATION);
         manager.setOntologyNamespace(OntologyManagerTest.ONTOLOGY_NAMESPACE);
         manager.init();

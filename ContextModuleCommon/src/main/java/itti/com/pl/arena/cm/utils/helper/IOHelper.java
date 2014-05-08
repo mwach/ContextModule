@@ -5,6 +5,7 @@ import itti.com.pl.arena.cm.exception.ErrorMessages;
 
 import java.io.Closeable;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -219,5 +220,9 @@ public final class IOHelper {
         } finally {
             closeStream(stream);
         }
+    }
+
+    public static InputStream openStream(String absolutePath) throws IOException {
+        return new FileInputStream(absolutePath);
     }
 }

@@ -2,7 +2,6 @@ package itti.com.pl.arena.cm.server.ontology;
 
 import itti.com.pl.arena.cm.server.exception.ErrorMessages;
 import itti.com.pl.arena.cm.server.service.Service;
-import itti.com.pl.arena.cm.server.utils.helpers.SpringHelper;
 import itti.com.pl.arena.cm.utils.helper.IOHelper;
 import itti.com.pl.arena.cm.utils.helper.LogHelper;
 import itti.com.pl.arena.cm.utils.helper.NumbersHelper;
@@ -10,9 +9,11 @@ import itti.com.pl.arena.cm.utils.helper.StringHelper;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -53,6 +54,7 @@ public class OntologyManager implements Service {
             + "?directParent. ?directParent rdfs:subClassOf ?%s }";
 
     // in-memory ontology model
+    private String modelName = null;
     private JenaOWLModel model = null;
 
     private List<String> ignoredProperties = new ArrayList<>();
@@ -63,6 +65,9 @@ public class OntologyManager implements Service {
 
     // location of the ontology on disc
     private String ontologyLocation = null;
+
+    //location, where all the ontologies are stored
+    private String ontologyRepository = null;
 
     /**
      * Sets ontology location (must be done before calling 'init' method)
@@ -77,6 +82,20 @@ public class OntologyManager implements Service {
 
     private final String getOntologyLocation() {
         return ontologyLocation;
+    }
+
+    /**
+     * Sets ontology repository location (must be done before calling 'init' method)
+     * 
+     * @param ontologyRepository
+     *            location of the ontology repository
+     */
+    public final void setOntologyRepository(String ontologyRepository) {
+        this.ontologyRepository = ontologyRepository;
+    }
+
+    private final String getOntologyRepository() {
+        return ontologyRepository;
     }
 
     // namespace of the loaded ontology
@@ -108,7 +127,7 @@ public class OntologyManager implements Service {
 
         LogHelper.debug(OntologyManager.class, "init", "Initialization of the ontology '%s'", getOntologyLocation());
         try {
-            model = loadModel(getOntologyLocation());
+            loadOntology(getOntologyLocation());
         } catch (Exception exc) {
             LogHelper.exception(OntologyManager.class, "init", "Could not initialize ontology", exc);
             throw new BeanInitializationException(String.format(ErrorMessages.ONTOLOGY_CANNOT_LOAD.getMessage(),
@@ -581,8 +600,19 @@ public class OntologyManager implements Service {
      * @param fileName
      *            location of the file, where ontology should be saved
      */
-    public void saveOntology(String fileName) {
-        saveModel(getModel(), fileName);
+    public void saveOntology(String fileName) throws OntologyException{
+        saveModel(getModel(), getOntologyRepository(), fileName);
+    }
+
+    /**
+     * Loads ontology model from the file
+     * 
+     * @param fileName
+     *            location of the file containing ontology
+     */
+    public void loadOntology(String fileName) throws OntologyException{
+        this.modelName = fileName;
+        model = loadModel(getOntologyRepository(), fileName);
     }
 
     /**
@@ -751,25 +781,30 @@ public class OntologyManager implements Service {
     /**
      * Load ontology model from file
      * 
-     * @param ontologyLocation
-     *            location of the ontology file
+     * @param ontologyRepository
+     *          repository of the ontology
+     * @param ontologyName
+     *            name of the ontology file
      * @return loaded model
      * @throws OntologyException
      *             could not load ontology
      */
-    public static JenaOWLModel loadModel(String ontologyLocation) throws OntologyException {
+    public static JenaOWLModel loadModel(String ontologyRepository, String ontologyName) throws OntologyException {
 
-        LogHelper.debug(OntologyManager.class, "loadModel", "Init model: %s", ontologyLocation);
+        LogHelper.debug(OntologyManager.class, "loadModel", "Init model: %s from repository %s", ontologyName, ontologyRepository);
 
+        File ontologyLocation = null;
         InputStream ontologyInputStream = null;
         JenaOWLModel model = null;
         try {
-            ontologyInputStream = SpringHelper.getResourceInputStream(ontologyLocation);
+            ontologyLocation = 
+                    new File(new File(ontologyRepository), ontologyName);
+            ontologyInputStream = IOHelper.openStream(ontologyLocation.getAbsolutePath());
             model = ProtegeOWL.createJenaOWLModelFromInputStream(ontologyInputStream);
         } catch (Exception exc) {
             LogHelper.error(OntologyManager.class, "loadModel", "Cannot load ontlogy using given location. Details: %s",
                     exc.getLocalizedMessage());
-            throw new OntologyException(ErrorMessages.ONTOLOGY_CANNOT_LOAD, exc, ontologyLocation, exc.getLocalizedMessage());
+            throw new OntologyException(ErrorMessages.ONTOLOGY_CANNOT_LOAD, exc, StringHelper.toString(ontologyLocation), exc.getLocalizedMessage());
         } finally {
             IOHelper.closeStream(ontologyInputStream);
         }
@@ -783,16 +818,17 @@ public class OntologyManager implements Service {
      * 
      * @param model
      *            JenaOWLObject ontology model
+     *            @param repositoryLocation location of the arena repository
      * @param fileName
      *            name of the file, in which ontology should be saved
      * @throws OntologyAssemblyLayerException
      */
     @SuppressWarnings("deprecation")
-    public static void saveModel(JenaOWLModel model, String fileName) {
+    public static void saveModel(JenaOWLModel model, String repositoryLocation, String fileName) throws OntologyException{
 
         LogHelper.info(OntologyManager.class, "saveModel", "Saving ontology model");
 
-        File outputOntologyFile = new File(fileName);
+        File outputOntologyFile = new File(new File(repositoryLocation), fileName);
         OutputStream ontologyOutputStream = null;
 
         try {
@@ -810,8 +846,44 @@ public class OntologyManager implements Service {
 
         } catch (Exception exc) {
             LogHelper.exception(OntologyManager.class, "saveModel", "Could not save ontology", exc);
+            throw new OntologyException(ErrorMessages.ONTOLOGY_CANNOT_LOAD, fileName, exc.getLocalizedMessage());
         } finally {
             IOHelper.closeStream(ontologyOutputStream);
         }
     }
+
+    /**
+     * Returns a list of all ontologies from the repository
+     * @return list of strings representing ontology names
+     * @throws OntologyException
+     */
+    public List<String> getListOfOntologies() throws OntologyException{
+
+        if(!StringHelper.hasContent(getOntologyRepository())){
+            throw new OntologyException(ErrorMessages.ONTOLOGY_REPO_UNDEFINED);
+        }
+        File repository = new File(getOntologyRepository());
+        if(repository.exists() && repository.isDirectory()){
+            String[] files = repository.list(new FilenameFilter() {
+                
+                @Override
+                public boolean accept(File directory, String fileName) {
+                    return fileName != null && fileName.toLowerCase().endsWith("owl");
+                }
+            });
+            return Arrays.asList(files);
+        }else{
+            throw new OntologyException(ErrorMessages.ONTOLOGY_REPO_CANNOT_ACCESS, getOntologyRepository());
+        }
+    }
+
+    /**
+     * Returns name of the currently loaded ontology
+     * @return name of the ontology
+     * @throws OntologyException
+     */
+    public String getCurrentOntology() throws OntologyException{
+        return modelName;
+    }
+
 }

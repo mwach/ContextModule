@@ -1215,36 +1215,69 @@ public class ContextModuleJmsService extends CMModuleImpl implements LocalContex
 
     @Override
     public BooleanNamedValue saveOntology(SimpleNamedValue request) {
+
+        String ontologyFileName = String.format("ontology_%s.owl",
+                DateTimeHelper.formatTime(System.currentTimeMillis(), DateTimeHelper.FORMAT_DATE_TIME));
+        boolean success = false;
+        try {
+            getOntology().saveOntology(ontologyFileName);
+            success = true;
+        } catch (OntologyException exc) {
+            LogHelper.exception(ContextModuleJmsService.class, "saveOntology", "Could not save ontology", exc);
+        }
         // prepare response object
-        BooleanNamedValue response = createBooleanNamedValue(request.getId(), request.getFeatureName(), true);
+        BooleanNamedValue response = createBooleanNamedValue(request.getId(), request.getFeatureName(), success);
         // add results to the response
         return response;
     }
 
     @Override
     public Object getListOfOntologies(SimpleNamedValue request) {
+        List<String> savedModels = null;
+        try {
+            savedModels = getOntology().getListOfOntologies();
+        } catch (OntologyException exc) {
+            LogHelper.exception(ContextModuleJmsService.class, "getListOfOntologies", "Could not retrieve information from ontology", exc);
+        }
         // prepare response object
-        List<AbstractNamedValue> responseVector = new ArrayList<>();
-        responseVector.add(createSimpleNamedValue(request.getId(), request.getFeatureName(), "onto1"));
-        responseVector.add(createSimpleNamedValue(request.getId(), request.getFeatureName(), "onto2"));
-        responseVector.add(createSimpleNamedValue(request.getId(), request.getFeatureName(), "onto3"));
-        Object response = createObject(request.getId(), responseVector);
+        List<AbstractNamedValue> ontologies = new ArrayList<>();
+        if(savedModels != null){
+            for (String ontologyName : savedModels) {
+                ontologies.add(createSimpleNamedValue(request.getId(), request.getFeatureName(), ontologyName));
+            }
+        }
+        Object response = createObject(request.getId(), ontologies);
         // add results to the response
         return response;
     }
 
     @Override
     public SimpleNamedValue getCurrentOntology(SimpleNamedValue request) {
+
+        String currentModel = null;
+        try {
+            currentModel = getOntology().getCurrentOntology();
+        } catch (OntologyException exc) {
+            LogHelper.exception(ContextModuleJmsService.class, "getCurrentOntology", "Could not retrieve information from ontology", exc);
+        }
         // prepare response object
-        SimpleNamedValue response = createSimpleNamedValue(request.getId(), request.getFeatureName(), "onto2");
+        SimpleNamedValue response = createSimpleNamedValue(request.getId(), request.getFeatureName(), currentModel);
         // add results to the response
         return response;
     }
 
     @Override
     public BooleanNamedValue loadOntology(SimpleNamedValue request) {
+
+        boolean success = false;
+        try {
+            getOntology().loadOntology(request.getValue());
+            success = true;
+        } catch (OntologyException exc) {
+            LogHelper.exception(ContextModuleJmsService.class, "loadOntology", "Could not load ontology", exc);
+        }
         // prepare response object
-        BooleanNamedValue response = createBooleanNamedValue(request.getId(), request.getFeatureName(), true);
+        BooleanNamedValue response = createBooleanNamedValue(request.getId(), request.getFeatureName(), success);
         // add results to the response
         return response;
     }

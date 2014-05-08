@@ -13,6 +13,8 @@ import java.util.Date;
  */
 public final class DateTimeHelper {
 
+    public static final String FORMAT_DATE_TIME = "yyyy-MM-dd_HH-mm";
+
     public static final int SECOND = 1;
     public static final int MINUTE = 2;
     public static final int HOUR = 3;

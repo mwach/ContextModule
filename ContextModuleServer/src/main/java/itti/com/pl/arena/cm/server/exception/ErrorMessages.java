@@ -29,6 +29,9 @@ public enum ErrorMessages {
     ONTOLOGY_INSTANCE_IS_NOT_A_PARKING(207, "Provided object '%s' does not represent a parking lot"),
     ONTOLOGY_EMPTY_VALUE_PROVIDED(208, "Null or empty value provided for ontology variable '%s'"),
     ONTOLOGY_COULD_NOT_FIND_PARENT_CLASS(209, "Could not find class for instance '%s'"),
+    ONTOLOGY_CANNOT_SAVE(210, "Failed to save ontology '%s'. Details: %s"),
+    ONTOLOGY_REPO_UNDEFINED(211, "Ontology repository is not defined."),
+    ONTOLOGY_REPO_CANNOT_ACCESS(212, "Cannot access ontology repository: %s."),
 
     SPRING_HELPER_EMPTY_RESOURCE_LOCATION(501, "Empty resource provided"),
     SPRING_HELPER_COULD_NOT_OPEN_RESOURCE(502, "Could not open resource '%s'. Details: %s"),

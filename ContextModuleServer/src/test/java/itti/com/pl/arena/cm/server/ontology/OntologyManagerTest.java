@@ -22,6 +22,7 @@ import org.springframework.beans.factory.BeanInitializationException;
 
 public class OntologyManagerTest {
 
+    public static final String ONTOLOGY_REPOSITORY = "src/test/resources";
     public static final String ONTOLOGY_LOCATION = "TestOntology.owl";
     public static final String ONTOLOGY_NAMESPACE = "http://www.owl-ontologies.com/Ontology1350654591.owl#";
 
@@ -36,6 +37,7 @@ public class OntologyManagerTest {
         // to speed up tests, load ontology and then reuse it among tests
         ontologyManager = new OntologyManager();
         ontologyManager.setOntologyLocation(ONTOLOGY_LOCATION);
+        ontologyManager.setOntologyRepository(ONTOLOGY_REPOSITORY);
         ontologyManager.setOntologyNamespace(ONTOLOGY_NAMESPACE);
         ontologyManager.init();
     }
