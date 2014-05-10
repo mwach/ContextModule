@@ -126,29 +126,47 @@ public final class FieldOfViewHelper {
      * @param maxDoubleRight
      * @return
      */
-    public static double getPercentage(FieldOfViewObject fov, double maxDoubleLeft, double maxDoubleRight) {
+    public static double getPercentageWidthOfTheObjectInCameraFoV(FieldOfViewObject fov, double maxDoubleLeft, double maxDoubleRight) {
+        //get the object width in the camera field of view
         double buildingAngleForCamera = getBuildingAngleInTheCameraFieldOfView(fov, maxDoubleLeft, maxDoubleRight);
+        //get the total object width
         double buildingAngle = getBuildingWidthAngle(fov);
         return (100.0 * buildingAngleForCamera) / buildingAngle;
     }
 
+    /**
+     * Calculates total 'width' of the object in degrees (not only in the camera FoV)
+     * @param fov object coordinates
+     * @return object's width in degrees
+     */
     private static double getBuildingWidthAngle(FieldOfViewObject fov) {
         double minAngle = Constants.UNDEFINED_VALUE;
         double maxAngle = Constants.UNDEFINED_VALUE;
 
+        //get all coordinates (visible and non-visible)
         List<RadialCoordinate> allCoordinates = fov.getVisibleObjects();
         allCoordinates.addAll(fov.getNotVisibleObjects());
 
+        //for all the coordinates
         for (RadialCoordinate coordinate : allCoordinates) {
+            //search for the max and min angles
             if (coordinate.getAngle() > maxAngle || maxAngle == Constants.UNDEFINED_VALUE) {
                 maxAngle = coordinate.getAngle();
             } else if (coordinate.getAngle() < minAngle || minAngle == Constants.UNDEFINED_VALUE) {
                 minAngle = coordinate.getAngle();
             }
         }
+        //object's width is a difference between these two values
         return maxAngle - minAngle;
     }
 
+    /**
+     * Calculates width of the object in the camera FoV
+     * @param fov analyzed object's coordinates
+     * @param maxLeftAngle maximum camera left angle
+     * @param maxRightAngle maximum camera rigth angle
+     * @return
+     */
     private static double getBuildingAngleInTheCameraFieldOfView(FieldOfViewObject fov, double maxLeftAngle, double maxRightAngle) {
 
         double minAngle = Constants.UNDEFINED_VALUE;

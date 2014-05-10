@@ -954,7 +954,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
                     fovObject.setMaxRightCoordinate(
                             FieldOfViewHelper.getMaxRightCoordinate(fovObject));
                     fovObject.setObjectVisibilityInTheCamera(
-                            FieldOfViewHelper.getPercentage(fovObject, leftAngle, rightAngle));
+                            FieldOfViewHelper.getPercentageWidthOfTheObjectInCameraFoV(fovObject, leftAngle, rightAngle));
                 } catch (FieldOfViewHelperException exc) {
                     LogHelper.exception(ContextModuleOntologyManager.class, "getBuildingsInTheCameraFieldOfView", 
                             "Could not collect all statistical data", exc);
