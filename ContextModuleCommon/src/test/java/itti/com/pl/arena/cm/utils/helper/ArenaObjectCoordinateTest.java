@@ -53,7 +53,7 @@ public class ArenaObjectCoordinateTest {
         // set new value of the angle
         objectCoordinate.iterator().next().updateAngle(angleUpdate);
         // verify new value
-        Assert.assertEquals(angle + angleUpdate, objectCoordinate.iterator().next().getAngle(), 0.0001);
+        Assert.assertEquals(angle - angleUpdate, objectCoordinate.iterator().next().getAngle(), 0.0001);
     }
 
     @Test

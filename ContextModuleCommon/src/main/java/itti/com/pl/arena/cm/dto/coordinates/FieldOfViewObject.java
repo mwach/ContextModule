@@ -195,4 +195,10 @@ public class FieldOfViewObject extends OntologyObject {
         return "FieldOfViewObject [visibility=" + visibility + ", leftAngle=" + leftAngle + ", rightAngle=" + rightAngle
                 + ", visibleObjects=" + visibleObjects + ", notVisibleObjects=" + notVisibleObjects + "]";
     }
+
+    public String toPrettyString(){ 
+        return "FieldOfViewObject [id=" + getId() + ", visibility=" + visibility + ", leftAngle=" + 
+                    leftAngle + ", rightAngle=" + rightAngle + "\n" +
+                ", visibleObjects=" + visibleObjects + ",\n notVisibleObjects=" + notVisibleObjects + "]";
+    }
 }

@@ -19,6 +19,8 @@ import itti.com.pl.arena.cm.server.exception.ErrorMessages;
 import itti.com.pl.arena.cm.server.location.Range;
 import itti.com.pl.arena.cm.server.ontology.OntologyConstants;
 import itti.com.pl.arena.cm.server.service.PlatformTracker;
+import itti.com.pl.arena.cm.server.utils.helpers.FieldOfViewHelper;
+import itti.com.pl.arena.cm.server.utils.helpers.FieldOfViewHelperException;
 import itti.com.pl.arena.cm.utils.helper.LocationHelper;
 import itti.com.pl.arena.cm.utils.helper.LocationHelperException;
 import itti.com.pl.arena.cm.utils.helper.LogHelper;
@@ -861,7 +863,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
                     try {
                         coordinate = LocationHelper.getLocationFromString(coordinateStr);
                         double radius = LocationHelper.calculateDistance(coordinate, referenceLocation);
-                        double angle = LocationHelper.calculateAngle(coordinate, referenceLocation);
+                        double angle = LocationHelper.calculateAngle(referenceLocation, coordinate);
                         objectCoordinate.addRadialCoordinates(radius, angle);
                     } catch (LocationHelperException e) {
                         LogHelper.warning(ContextModuleOntologyManager.class, "calculateArenaDistancesForPlatform",
@@ -897,14 +899,17 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         // get the platform data from ontology
         Camera camera = getCamera(cameraId);
         String platformId = getPlatformWithCamera(camera.getId());
+        Platform platform = getPlatform(platformId);
 
         // get list of objects in the platform neighborhood
         // returned objects are 'transformed' - main axis of that coordinate system is truck's Y axis (not the 'real,
         // GPS one)
         Set<ArenaObjectCoordinate> platformNeighborhood = getPlatformNeighborhood(platformId);
 
+        double angleLeft = camera.getDirectionAngle() - camera.getAngleX() / 2;
+        double angleRight = camera.getDirectionAngle() + camera.getAngleX() / 2;
         Set<FieldOfViewObject> visibleBuildings = getBuildingsInTheCameraFieldOfView(platformNeighborhood,
-                camera.getDirectionAngle() - camera.getAngleX() / 2, camera.getDirectionAngle() + camera.getAngleX() / 2);
+                platform.getLocation(), angleLeft, angleRight);
         return visibleBuildings;
     }
 
@@ -913,6 +918,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
      * 
      * @param platformNeighborhood
      *            list of all building in the platform neighborhood
+     *            @param platformLocation location of the platform
      * @param leftAngle
      *            left angle of the camera field of view
      * @param rightAngle
@@ -920,7 +926,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
      * @return list of buildings in the pie determined by left and right angle
      */
     private Set<FieldOfViewObject> getBuildingsInTheCameraFieldOfView(Set<ArenaObjectCoordinate> platformNeighborhood,
-            double leftAngle, double rightAngle) {
+            Location platformLocation, double leftAngle, double rightAngle) {
         Set<FieldOfViewObject> visibleObjects = new HashSet<>();
 
         for (ArenaObjectCoordinate objectCoordinates : platformNeighborhood) {
@@ -934,11 +940,17 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
                 }
             }
             // check if at least one item was visible
-            // if yes - add it to the list
             if (!fovObject.getVisibleObjects().isEmpty()) {
-                fovObject.setVisibility(
-                        (100.0 * fovObject.getVisibleObjects().size()) / (fovObject.getVisibleObjects().size() + fovObject.getNotVisibleObjects().size()));
+                // if yes - add it to the list
                 visibleObjects.add(fovObject);
+                //and calculate additional properties
+                try {
+                    fovObject.setVisibility(
+                            FieldOfViewHelper.calculateVisibility(fovObject));
+                } catch (FieldOfViewHelperException exc) {
+                    LogHelper.exception(ContextModuleOntologyManager.class, "getBuildingsInTheCameraFieldOfView", 
+                            "Could not collect all statistical data", exc);
+                }
             }
         }
         return visibleObjects;

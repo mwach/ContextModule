@@ -111,18 +111,38 @@ public final class LocationHelper {
      * instructions from: http://stackoverflow.com/questions/7586063
      * 
      * @param baseLocation
-     *            first coordinate
-     * @param referenceLocation
-     *            second coordinate
+     *            main coordinate (e.g. platform location)
+     * @param remoteLocation
+     *            reference (remote) coordinate
      * @return angle between two locations measured radians
      */
-    public static Double calculateAngle(Location baseLocation, Location referenceLocation) {
+    public static Double calculateAngle(Location baseLocation, Location remoteLocation) {
 
-        double deltaLongitude = referenceLocation.getLongitude() - baseLocation.getLongitude();
-        double deltaLatitude = referenceLocation.getLatitude() - baseLocation.getLatitude();
+        double deltaLongitude = remoteLocation.getLongitude() - baseLocation.getLongitude();
+        double deltaLatitude = remoteLocation.getLatitude() - baseLocation.getLatitude();
 
-        double angle = Math.atan2(deltaLatitude, deltaLongitude) * 180 / Math.PI;
+        double angle = Math.toDegrees(Math.atan2(deltaLongitude, deltaLatitude));
+
         return angle;
+    }
+
+    public static double convertCoordinateToDouble(String coordinate) throws LocationHelperException{
+//        53'7'26.67
+        if(!StringHelper.hasContent(coordinate)){
+            throw new LocationHelperException(ErrorMessages.LOCATION_HELPER_NULL_LOCATION);
+        }
+        //replace 'second' double apostrophes with the single one
+        String[] params = coordinate.replace("''", "'").split("'");
+        double result = 0;
+        for(int i=0 ;i<params.length ; i++){
+            Double paramValue = NumbersHelper.getDoubleFromString(params[i]);
+            if(paramValue != null){
+                result += paramValue / (i == 0 ? 1 : Math.pow(60, i));
+            }else{
+                throw new LocationHelperException(ErrorMessages.LOCATION_HELPER_COULD_NOT_PARSE, params[i]);
+            }
+        }
+        return result;
     }
 
     private static class HaversineAlgorithm {
@@ -144,6 +164,5 @@ public final class LocationHelper {
 
             return d;
         }
-
     }
 }

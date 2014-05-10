@@ -8,6 +8,7 @@ import itti.com.pl.arena.cm.Constants;
 import itti.com.pl.arena.cm.client.service.ContextModuleClientException;
 import itti.com.pl.arena.cm.client.service.ContextModuleFacade;
 import itti.com.pl.arena.cm.dto.coordinates.CartesianCoordinate;
+import itti.com.pl.arena.cm.dto.coordinates.FieldOfViewObject;
 import itti.com.pl.arena.cm.dto.dynamicobj.Camera;
 import itti.com.pl.arena.cm.dto.dynamicobj.CameraType;
 import itti.com.pl.arena.cm.dto.dynamicobj.Platform;
@@ -66,10 +67,49 @@ public class CMClient {
             // initialize the client
             client.init();
 
-            parseObjectResponse(client.getCameraFieldOfView("Camera1"));
+            Platform platform = deserializeGetPlatformServiceResponse(
+                    client.getPlatformService("Vehicle_Skoda_Fabia"));
 
-            Platform platform = createDummyPlatform("Vehicle_Ford_Focus");
-            parseUpdatePlatformResponse(client.updatePlatform(platform));
+            //P1, go north
+            platform.setLocation(new itti.com.pl.arena.cm.dto.Location(17.973105555555556,53.123758333333335, 30));
+            client.updatePlatform(platform);
+            parseCameraFieldOfViewResponse(client.getCameraFieldOfView("Camera_Fabia_Front"));
+            parseCameraFieldOfViewResponse(client.getCameraFieldOfView("Camera_Fabia_Right"));
+
+          //P2, go north
+            platform.setLocation(new itti.com.pl.arena.cm.dto.Location(17.973216666666666,53.12399166666667, 30));
+            client.updatePlatform(platform);
+            parseCameraFieldOfViewResponse(client.getCameraFieldOfView("Camera_Fabia_Front"));
+            parseCameraFieldOfViewResponse(client.getCameraFieldOfView("Camera_Fabia_Right"));
+
+            //P3, go north
+            platform.setLocation(new itti.com.pl.arena.cm.dto.Location(17.973286111111108,53.12419722222222, 30));
+            client.updatePlatform(platform);
+            parseCameraFieldOfViewResponse(client.getCameraFieldOfView("Camera_Fabia_Front"));
+            parseCameraFieldOfViewResponse(client.getCameraFieldOfView("Camera_Fabia_Right"));
+
+            //P1, go south
+            platform.setLocation(new itti.com.pl.arena.cm.dto.Location(17.973105555555556,53.123758333333335, -150));
+            client.updatePlatform(platform);
+            parseCameraFieldOfViewResponse(client.getCameraFieldOfView("Camera_Fabia_Front"));
+            parseCameraFieldOfViewResponse(client.getCameraFieldOfView("Camera_Fabia_Right"));
+
+          //P2, go south
+            platform.setLocation(new itti.com.pl.arena.cm.dto.Location(17.973216666666666,53.12399166666667, -150));
+            client.updatePlatform(platform);
+            parseCameraFieldOfViewResponse(client.getCameraFieldOfView("Camera_Fabia_Front"));
+            parseCameraFieldOfViewResponse(client.getCameraFieldOfView("Camera_Fabia_Right"));
+
+            //P3, go south
+            platform.setLocation(new itti.com.pl.arena.cm.dto.Location(17.973286111111108,53.12419722222222, -150));
+            client.updatePlatform(platform);
+            parseCameraFieldOfViewResponse(client.getCameraFieldOfView("Camera_Fabia_Front"));
+            parseCameraFieldOfViewResponse(client.getCameraFieldOfView("Camera_Fabia_Right"));
+
+
+
+//            Platform platform = createDummyPlatform("Vehicle_Ford_Focus");
+//            parseUpdatePlatformResponse(client.updatePlatform(platform));
 
             client.getZone("Car_parking_zone_P3");
             // call all available CM public services
@@ -115,6 +155,20 @@ public class CMClient {
         // call 'exit' to interrupt the client listener thread
         System.exit(0);
     }
+
+
+    private static void parseCameraFieldOfViewResponse(Object cameraFieldOfView) {
+        for (AbstractNamedValue cameraView : cameraFieldOfView.getFeatureVector().getFeature()) {
+            String value = ((SimpleNamedValue)cameraView).getValue();
+            FieldOfViewObject fov;
+            try {
+                fov = JsonHelper.fromJson(value, FieldOfViewObject.class);
+                System.out.println(fov.toPrettyString());
+            } catch (JsonHelperException e) {
+            }
+        }
+    }
+
 
     private static ParkingLot createDummyParkingLot(String parkingLotId) {
         ParkingLot parkingLot = new ParkingLot(parkingLotId);
@@ -214,6 +268,23 @@ public class CMClient {
         if (platform != null) {
             parseFeatureVector(platform.getFeatureVector());
         }
+    }
+
+    /**
+     * Parses response received from getPlatform service
+     * 
+     * @param platform
+     *            information about truck
+     */
+    private static Platform deserializeGetPlatformServiceResponse(Object platform) {
+
+        try {
+            return JsonHelper.fromJson(((SimpleNamedValue)platform.getFeatureVector().getFeature().get(0)).getValue(), Platform.class);
+        } catch (JsonHelperException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**

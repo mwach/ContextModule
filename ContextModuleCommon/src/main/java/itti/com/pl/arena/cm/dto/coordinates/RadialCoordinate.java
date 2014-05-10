@@ -39,7 +39,7 @@ public class RadialCoordinate implements Serializable {
      * @param angle
      */
     public void updateAngle(double angle) {
-        this.angle += angle;
+        this.angle -= angle;
     }
 
     /**

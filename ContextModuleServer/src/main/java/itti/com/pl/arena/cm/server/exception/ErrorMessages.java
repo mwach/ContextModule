@@ -33,9 +33,11 @@ public enum ErrorMessages {
     ONTOLOGY_REPO_UNDEFINED(211, "Ontology repository is not defined."),
     ONTOLOGY_REPO_CANNOT_ACCESS(212, "Cannot access ontology repository: %s."),
     ONTOLOGY_CLASS_WITH_PROPERTY_NOT_FOUND(213, "No instance found with given instance properry: %s"),
+
     SPRING_HELPER_EMPTY_RESOURCE_LOCATION(501, "Empty resource provided"),
     SPRING_HELPER_COULD_NOT_OPEN_RESOURCE(502, "Could not open resource '%s'. Details: %s"),
     SPRING_HELPER_COULD_NOT_READ_RESOURCE(503, "Could not read resource '%s'. Details: %s"),
+    FIELD_OF_VIEW_HELPER_EMPRY_OBJECT(520, "Null argument provided"),
 
     PERSISTENCE_CANNOT_INITIALIZE(600, "Could not initialize database. Details: %s"),
     PERSISTENCE_CANNOT_LOAD_DRIVER(601, "Failed to load JDBC driver. Details: %s"),
@@ -58,7 +60,7 @@ public enum ErrorMessages {
     SWRL_EMPTY_RULE(801, "An attempt to add empty rule to ontology"),
     SWRL_ENGINE_FAILED(802, "Could not run SWRL engine. Details: %s"),
     SWRL_CANNOT_COLLECT_RULES(803, "Could not collect rule names from ontology. Details: %s"),
-    SWRL_CANNOT_GET_RULE(804, "Cannot find SWRL rule identified by it's name: '%s'")
+    SWRL_CANNOT_GET_RULE(804, "Cannot find SWRL rule identified by it's name: '%s'"), 
     ;
 
     /*
