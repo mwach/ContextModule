@@ -230,7 +230,7 @@ public class ContextModuleJmsServiceTest {
         Ontology ontology = Mockito.mock(Ontology.class);
 
         //prepare dummy response
-        FieldOfViewObject fov = new FieldOfViewObject("id", -45, 45);
+        FieldOfViewObject fov = new FieldOfViewObject("id");
         Set<FieldOfViewObject> ontologyResponse = new HashSet<>();
         ontologyResponse.add(fov);
         Mockito.when(ontology.getCameraFieldOfView(Mockito.anyString())).thenReturn(ontologyResponse);

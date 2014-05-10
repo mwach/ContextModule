@@ -930,7 +930,7 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
         Set<FieldOfViewObject> visibleObjects = new HashSet<>();
 
         for (ArenaObjectCoordinate objectCoordinates : platformNeighborhood) {
-            FieldOfViewObject fovObject = new FieldOfViewObject(objectCoordinates.getId(), leftAngle, rightAngle);
+            FieldOfViewObject fovObject = new FieldOfViewObject(objectCoordinates.getId());
             for (RadialCoordinate radialCoordinate : objectCoordinates) {
                 // check, if vertex inside camera field of view
                 if (radialCoordinate.getAngle() > leftAngle && radialCoordinate.getAngle() < rightAngle) {
@@ -947,6 +947,14 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
                 try {
                     fovObject.setVisibility(
                             FieldOfViewHelper.calculateVisibility(fovObject));
+                    fovObject.setClosestCoordinate(
+                            FieldOfViewHelper.getClosestCoordinate(fovObject));
+                    fovObject.setMaxLeftCoordinate(
+                            FieldOfViewHelper.getMaxLeftCoordinate(fovObject));
+                    fovObject.setMaxRightCoordinate(
+                            FieldOfViewHelper.getMaxRightCoordinate(fovObject));
+                    fovObject.setObjectVisibilityInTheCamera(
+                            FieldOfViewHelper.getPercentage(fovObject, leftAngle, rightAngle));
                 } catch (FieldOfViewHelperException exc) {
                     LogHelper.exception(ContextModuleOntologyManager.class, "getBuildingsInTheCameraFieldOfView", 
                             "Could not collect all statistical data", exc);

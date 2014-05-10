@@ -30,7 +30,7 @@ public class FieldOfViewHelperTest {
     @Test
     public void testCalculateVisibilityValidRequest() throws FieldOfViewHelperException {
 
-        FieldOfViewObject fov = new FieldOfViewObject("id", 0, 0);
+        FieldOfViewObject fov = new FieldOfViewObject("id");
         int visible = 1 + random.nextInt(10);
         int notVisible = random.nextInt(10);
 
