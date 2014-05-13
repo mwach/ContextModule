@@ -167,7 +167,7 @@ public final class FieldOfViewHelper {
      * @param maxRightAngle maximum camera rigth angle
      * @return
      */
-    private static double getBuildingAngleInTheCameraFieldOfView(FieldOfViewObject fov, double maxLeftAngle, double maxRightAngle) {
+    public static double getBuildingAngleInTheCameraFieldOfView(FieldOfViewObject fov, double maxLeftAngle, double maxRightAngle) {
 
         double minAngle = Constants.UNDEFINED_VALUE;
         double maxAngle = Constants.UNDEFINED_VALUE;

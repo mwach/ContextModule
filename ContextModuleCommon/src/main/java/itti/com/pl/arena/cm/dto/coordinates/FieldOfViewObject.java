@@ -22,6 +22,11 @@ public class FieldOfViewObject extends OntologyObject {
     // percentage of the visibility of the object in the camera
     private double visibility = Constants.UNDEFINED_VALUE;
 
+    // camera left angle
+    private double cameraLeftAngle = Constants.UNDEFINED_VALUE;
+    // camera right angle
+    private double cameraRightAngle = Constants.UNDEFINED_VALUE;
+
     //closest coordinate in the camera field of view
     private RadialCoordinate closestCoordinate = null;
     //closest coordinate in the camera field of view
@@ -29,8 +34,10 @@ public class FieldOfViewObject extends OntologyObject {
     //closest coordinate in the camera field of view
     private RadialCoordinate maxRightCoordinate = null;
 
+    // visibility of the object in the camera in degrees
+    private double cameraFoVOccupancy = Constants.UNDEFINED_VALUE;
     // percentage of the visibility of the object in the camera
-    private double objectVisibilityInTheCamera = Constants.UNDEFINED_VALUE;
+    private double cameraFoVOccupancyPercentage = Constants.UNDEFINED_VALUE;
 
     // list of objects in the camera FoV
     private List<RadialCoordinate> visibleObjects = new ArrayList<>();
@@ -58,6 +65,42 @@ public class FieldOfViewObject extends OntologyObject {
      */
     public void setVisibility(double visibility) {
         this.visibility = visibility;
+    }
+
+    /**
+     * returns camera left angle
+     * 
+     * @return camera left angle
+     */
+    public double getCameraLeftAngle() {
+        return cameraLeftAngle;
+    }
+
+    /**
+     * sets camera left angle
+     * 
+     * @param cameraLeftAngle camera left angle
+     */
+    public void setCameraLeftAngle(double cameraLeftAngle) {
+        this.cameraLeftAngle = cameraLeftAngle;
+    }
+
+    /**
+     * returns camera right angle
+     * 
+     * @return camera right angle
+     */
+    public double getCameraRightAngle() {
+        return cameraRightAngle;
+    }
+
+    /**
+     * sets camera left angle
+     * 
+     * @param cameraRightAngle camera right angle
+     */
+    public void setCameraRightAngle(double cameraRightAngle) {
+        this.cameraRightAngle = cameraRightAngle;
     }
 
     /**
@@ -115,12 +158,31 @@ public class FieldOfViewObject extends OntologyObject {
     }
 
     /**
+     * returns Building area in the camera field of view area in degrees
+     * 
+     * @return visibility in degrees
+     */
+    public double getCameraFoVOccupancy() {
+        return cameraFoVOccupancy;
+    }
+
+    /**
+     * sets Building area in the camera field of view area in degrees
+     * 
+     * @param visibility
+     *            visibility in degrees
+     */
+    public void setCameraFoVOccupancy(double objectVisibilityInTheCamera) {
+        this.cameraFoVOccupancy = objectVisibilityInTheCamera;
+    }
+
+    /**
      * returns Percentage of: building area in the camera field of view area
      * 
      * @return visibility in percentages
      */
-    public double getObjectVisibilityInTheCamera() {
-        return objectVisibilityInTheCamera;
+    public double getCameraFoVOccupancyPercentage() {
+        return cameraFoVOccupancyPercentage;
     }
 
     /**
@@ -129,10 +191,9 @@ public class FieldOfViewObject extends OntologyObject {
      * @param visibility
      *            visibility in percentages
      */
-    public void setObjectVisibilityInTheCamera(double objectVisibilityInTheCamera) {
-        this.objectVisibilityInTheCamera = objectVisibilityInTheCamera;
+    public void setCameraFoVOccupancyPercentage(double cameraFoVOccupancyPercentage) {
+        this.cameraFoVOccupancyPercentage = cameraFoVOccupancyPercentage;
     }
-
 
     public List<RadialCoordinate> getVisibleObjects() {
         return new ArrayList<>(visibleObjects);
@@ -161,7 +222,21 @@ public class FieldOfViewObject extends OntologyObject {
     }
 
     public String toPrettyString(){ 
-        return "FieldOfViewObject [id=" + getId() + ", visibility=" + visibility + "\n" +
-                ", visibleObjects=" + visibleObjects + ",\n notVisibleObjects=" + notVisibleObjects + "]";
+        return String.format(
+                "FieldOfViewObject [id=%s, visibility=%f%%,\n"
+                + "cameraLeftAngle=%f, cameraRightAngle=%f,\n"
+                + "cameraFoVOccupancyDegrees=%f,\n"
+                + "cameraFoVOccupancyPct=%f,\n"
+                + "pctOfTheBuildingInFoV=%f%%,\n"
+                + "closestCoordinate=%s,\n"
+                + "maxLeftCoordinate=%s,\n"
+                + "maxRightCoordinate=%s,\n"
+                + "visibleObjects=%s,\n"
+                + "notVisibleObjects=%s]",
+                getId(), getVisibility(), getCameraLeftAngle(), getCameraRightAngle(), getCameraFoVOccupancy(), 
+                Math.abs(100.0 * getCameraFoVOccupancy() / (getCameraRightAngle() - getCameraLeftAngle())),
+                getCameraFoVOccupancyPercentage(),
+                getClosestCoordinate(), getMaxLeftCoordinate(), getMaxRightCoordinate(),
+                getVisibleObjects(), getNotVisibleObjects());
     }
 }

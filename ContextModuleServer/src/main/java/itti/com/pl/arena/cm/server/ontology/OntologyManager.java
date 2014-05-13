@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Required;
 
 import edu.stanford.smi.protege.model.DefaultInstance;
 import edu.stanford.smi.protege.model.Instance;
+import edu.stanford.smi.protege.model.SimpleInstance;
 import edu.stanford.smi.protegex.owl.ProtegeOWL;
 import edu.stanford.smi.protegex.owl.jena.JenaOWLModel;
 import edu.stanford.smi.protegex.owl.model.OWLIndividual;
@@ -674,8 +675,11 @@ public class OntologyManager implements Service {
 
             // get list of imps
             for (Object imp : factory.getImps()) {
-                if (StringHelper.equals(ruleName, imp.toString())) {
-                    ruleContent = imp.toString();
+                if ((imp instanceof SimpleInstance) && StringHelper.equals(ruleName, 
+                        ((SimpleInstance)imp).getName())) {
+                    SimpleInstance si = (SimpleInstance)imp;
+                    ruleContent = si.getBrowserText();
+                    break;
                 }
             }
             if (!StringHelper.hasContent(ruleContent)) {
@@ -745,7 +749,10 @@ public class OntologyManager implements Service {
 
             // get list of imps
             for (Object imp : factory.getImps()) {
-                rules.add(imp.toString());
+                if(imp instanceof SimpleInstance)
+                {
+                    rules.add(((SimpleInstance)imp).getName());
+                }
             }
             LogHelper.debug(OntologyManager.class, "getSwrlRules", "Suffessfully colleted rule names. Defined rules: %s", rules);
         } catch (RuntimeException exc) {

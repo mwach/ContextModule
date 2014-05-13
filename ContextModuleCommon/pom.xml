@@ -7,4 +7,5 @@
   </parent>
   <groupId>itti.com.pl.arena.cm</groupId>
   <artifactId>ContextModuleCommon</artifactId>
+  <name>ContextModuleCommon</name>
 </project>

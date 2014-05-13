@@ -947,13 +947,17 @@ public class ContextModuleOntologyManager extends OntologyManager implements Ont
                 try {
                     fovObject.setVisibility(
                             FieldOfViewHelper.calculateVisibility(fovObject));
+                    fovObject.setCameraLeftAngle(leftAngle);
+                    fovObject.setCameraRightAngle(rightAngle);
                     fovObject.setClosestCoordinate(
                             FieldOfViewHelper.getClosestCoordinate(fovObject));
                     fovObject.setMaxLeftCoordinate(
                             FieldOfViewHelper.getMaxLeftCoordinate(fovObject));
                     fovObject.setMaxRightCoordinate(
                             FieldOfViewHelper.getMaxRightCoordinate(fovObject));
-                    fovObject.setObjectVisibilityInTheCamera(
+                    fovObject.setCameraFoVOccupancy(
+                            FieldOfViewHelper.getBuildingAngleInTheCameraFieldOfView(fovObject, leftAngle, rightAngle));
+                    fovObject.setCameraFoVOccupancyPercentage(
                             FieldOfViewHelper.getPercentageWidthOfTheObjectInCameraFoV(fovObject, leftAngle, rightAngle));
                 } catch (FieldOfViewHelperException exc) {
                     LogHelper.exception(ContextModuleOntologyManager.class, "getBuildingsInTheCameraFieldOfView", 

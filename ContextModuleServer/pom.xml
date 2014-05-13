@@ -9,6 +9,7 @@
 	<groupId>itti.com.pl.arena.cm</groupId>
 	<artifactId>ContextModuleServer</artifactId>
 	<packaging>war</packaging>
+        <name>ContextModuleServer</name>
 
 	<dependencies>
 		<dependency>
