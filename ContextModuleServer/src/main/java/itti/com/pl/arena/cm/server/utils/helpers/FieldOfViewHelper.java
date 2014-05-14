@@ -192,7 +192,7 @@ public final class FieldOfViewHelper {
             }
             // the same for other side
             else if (visibleCoordinate.getAngle() < minAngle || minAngle == Constants.UNDEFINED_VALUE) {
-                maxAngle = visibleCoordinate.getAngle();
+                minAngle = visibleCoordinate.getAngle();
             }
         }
         return maxAngle - minAngle;
